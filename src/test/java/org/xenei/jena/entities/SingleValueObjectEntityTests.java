@@ -24,6 +24,7 @@ import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.xenei.jena.entities.SingleValueObjectTestClass.SubPredicate;
 
 public class SingleValueObjectEntityTests
 {
@@ -193,5 +194,33 @@ public class SingleValueObjectEntityTests
 		tc.removeU();
 		Assert.assertNull(tc.getU());
 		Assert.assertNull(tc.getU2());
+	}
+	
+	@Test
+	public void testSubPredicate()
+	{
+		Resource r = model
+				.createResource("http://localhost/SubPredicateTest1");
+		SubPredicate sp = manager.read(r, SubPredicate.class);
+		sp.setName( "spTest");
+		
+		r = model
+				.createResource("http://localhost/SubPredicateTest2");
+		SubPredicate sp2 = manager.read(r, SubPredicate.class);
+		sp2.setName( "spTest2");
+
+		tc.setSubPredicate( sp );
+		Assert.assertNotNull( tc.getSubPredicate());
+		Assert.assertTrue( tc.getSubPredicate() instanceof SubPredicate );
+		Assert.assertEquals( sp.getName(), tc.getSubPredicate().getName());
+		
+		tc.setSubPredicate( sp2 );
+		Assert.assertNotNull( tc.getSubPredicate());
+		Assert.assertTrue( tc.getSubPredicate() instanceof SubPredicate );
+		Assert.assertEquals( sp2.getName(), tc.getSubPredicate().getName());
+		
+		tc.removeSubPredicate();
+		Assert.assertNull( tc.getSubPredicate());		
+		
 	}
 }

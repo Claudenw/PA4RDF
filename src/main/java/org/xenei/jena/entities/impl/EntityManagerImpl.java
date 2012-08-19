@@ -44,6 +44,7 @@ import java.util.zip.ZipInputStream;
 
 import org.apache.commons.proxy.Invoker;
 import org.apache.commons.proxy.ProxyFactory;
+import org.apache.commons.proxy.exception.InvokerException;
 import org.apache.commons.proxy.factory.cglib.CglibProxyFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -66,6 +67,8 @@ public class EntityManagerImpl implements EntityManager
 			.getLogger(EntityManagerImpl.class);
 
 	private Map<Class<?>, SubjectInfoImpl> classInfo = new HashMap<Class<?>, SubjectInfoImpl>();
+	
+	private ProxyFactory proxyFactory = new CglibProxyFactory();
 
 	/**
 	 * Constructor.
@@ -162,9 +165,9 @@ public class EntityManagerImpl implements EntityManager
 		// ResourceEntityProxy interceptor;
 		Invoker invoker = new ResourceEntityProxy(this, getResource(source),
 				subjectInfo);
-		ProxyFactory pf = new CglibProxyFactory();
+		
 		Class<?>[] classArray = new Class<?>[classes.size()];
-		return (T) pf.createInvokerProxy(invoker, classes.toArray(classArray));
+		return (T) proxyFactory.createInvokerProxy(invoker, classes.toArray(classArray));
 	}
 
 	/*
@@ -374,10 +377,36 @@ public class EntityManagerImpl implements EntityManager
 				}
 
 			}
-
 			classInfo.put(clazz, subjectInfo);
+			verifyNoNullMethods( clazz, subjectInfo );
 		}
 		return subjectInfo;
+	}
+	
+	private void verifyNoNullMethods( Class<?> clazz, SubjectInfo subjectInfo )
+	{
+		for (Method m : clazz.getMethods())
+		{
+			if (Modifier.isAbstract(m.getModifiers()))
+			{	
+				SubjectInfo workingInfo = subjectInfo;
+				if (m.getDeclaringClass() != subjectInfo.getImplementedClass())
+				{
+					workingInfo = getSubjectInfo(m.getDeclaringClass());
+				}
+				
+				if (TypeChecker.canBeSetFrom( workingInfo.getImplementedClass(), subjectInfo.getImplementedClass() ) &&
+						!TypeChecker.canBeSetFrom( workingInfo.getImplementedClass(), Resource.class ))
+				{	
+					if (workingInfo.getPredicateInfo(m) == null)
+					{
+						throw new InvokerException(String.format("%s.%s (declared as %s.%2$s) is not implemented and does not have @Predicate annotation",
+								clazz.getName(), m.getName(), m.getDeclaringClass()));
+					}
+				}
+			}
+		}
+		
 	}
 
 	private EffectivePredicate getEffectivePredicate( Method m )
@@ -939,17 +968,14 @@ public class EntityManagerImpl implements EntityManager
 		Class<?> sourceClass = source.getClass();
 		for (Method targetMethod : targetClass.getMethods())
 		{
-			// process only target "setX" methods.
-			if (targetMethod.getName().startsWith("set"))
+			if (ActionType.SETTER.isA( targetMethod.getName() ))
 			{
 				Class<?>[] targetMethodParams = targetMethod
 						.getParameterTypes();
 				if (targetMethodParams.length == 1)
 				{
-					String partialName = targetMethod.getName().substring(3);
+					String partialName = ActionType.SETTER.extractName(targetMethod.getName() );
 
-					Object targetObj = null;
-					Object configObj = null;
 					Method configMethod = null;
 					// try "getX" method
 					String configMethodName = "get" + partialName;
@@ -975,90 +1001,24 @@ public class EntityManagerImpl implements EntityManager
 					// verify that the config method was annotated as a
 					// predicate before
 					// we use it.
-					try
-					{
-						SubjectInfo subjectInfo = parse(configMethod
-								.getDeclaringClass());
-						if (subjectInfo.getPredicateInfo(configMethod) == null)
-						{
-							configMethod = null;
-						}
-					}
-					catch (MissingAnnotation e)
-					{
-						configMethod = null;
-					}
-					if (configMethod != null)
-					{
-						// see if we can do the assignment
-						boolean doAssignment = targetMethodParams[0]
-								.isAssignableFrom(configMethod.getReturnType());
-						// a flag to specify if we can accept a null value
-						boolean setNull = true;
+					
 						try
 						{
-							if (!doAssignment)
+							if (configMethod != null)
 							{
-								// can't do the assignment so see if there is a
-								// primitive -> object mapping issue
-								targetObj = targetMethodParams[0];
-
-								try
+								boolean setNull = !targetMethodParams[0].isPrimitive();
+								if (TypeChecker.canBeSetFrom(targetMethodParams[0], configMethod.getReturnType()))
 								{
-									if (targetMethodParams[0].isPrimitive())
+									Object val = configMethod.invoke(source);
+									if (setNull || val != null)
 									{
-										setNull = false; // we can not set a
-															// primitive to null
-									}
-									else
-									{
-										// the the primitive object type
-										targetObj = targetMethodParams[0]
-												.getField("TYPE").get(null);
-									}
-									// set the configuration object type.
-									configObj = configMethod.getReturnType()
-											.isPrimitive() ? configMethod
-											.getReturnType() : configMethod
-											.getReturnType().getField("TYPE")
-											.get(null);
-									// if they are equal we can do the
-									// assignment.
-									doAssignment = targetObj.equals(configObj);
-								}
-								catch (NoSuchFieldException e)
-								{
-									// this occurs when the TYPE field is not
-									// present
-									// i.e. when the object is not a wrapper for
-									// a primitive
-									// type.
-									if (e.getMessage().equals("TYPE"))
-									{
-										doAssignment = false;
-									}
-									else
-									{
-										throw e;
+										targetMethod.invoke(target, val);
 									}
 								}
-
-							}
-							// can we do the assignment now?
-							if (doAssignment)
-							{
-								Object val = configMethod.invoke(source);
-								if (setNull || val != null)
-								{
-									targetMethod.invoke(target, val);
-								}
+								
 							}
 						}
-						catch (SecurityException e)
-						{
-							throw new RuntimeException(e);
-						}
-						catch (NoSuchFieldException e)
+						catch (IllegalArgumentException e)
 						{
 							throw new RuntimeException(e);
 						}
@@ -1070,7 +1030,7 @@ public class EntityManagerImpl implements EntityManager
 						{
 							throw new RuntimeException(e);
 						}
-					}
+					
 				}
 			}
 		}

@@ -14,6 +14,7 @@
  */
 package org.xenei.jena.entities;
 
+import org.apache.commons.proxy.exception.InvokerException;
 import org.apache.log4j.PropertyConfigurator;
 import org.junit.Assert;
 import org.junit.Before;
@@ -28,7 +29,6 @@ public class EntityManagerTest {
 	public void setup()
 	{
 		PropertyConfigurator.configure("./src/test/resources/log4j.properties");
-		
 	}
 	
 	@Test
@@ -40,10 +40,22 @@ public class EntityManagerTest {
 	@Test
 	public void testPathParser() throws Exception
 	{
-		
 		manager.parseClasses( new String[] {"org.xenei.jena.entities"});
 		SubjectInfo ci = manager.getSubjectInfo( MultiValueObjectTestClass.class );
 		Assert.assertNotNull( ci.getPredicateInfo(MultiValueObjectTestClass.class.getMethod("getU" ) ));
+	}
+	
+	@Test
+	public void testPathParserWithBadClasses() throws Exception
+	{
+		try {
+			manager.parseClasses( new String[] {"org.xenei.jena.bad_entities"});
+			Assert.fail( "Should have thrown InvokerException" );
+		}
+		catch (InvokerException e)
+		{
+			// expected
+		}
 	}
 	
 	@Test
