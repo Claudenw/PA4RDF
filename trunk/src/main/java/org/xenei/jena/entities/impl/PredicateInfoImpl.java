@@ -419,13 +419,13 @@ public class PredicateInfoImpl implements PredicateInfo
 		}
 		if (returnType != null)
 		{
-			if (RDFNode.class.isAssignableFrom(returnType))
-			{
-				return new ResourceHandler();
-			}
 			if (returnType.getAnnotation(Subject.class) != null)
 			{
 				return new EntityHandler(entityManager, returnType);
+			}
+			if (RDFNode.class.isAssignableFrom(returnType))
+			{
+				return new ResourceHandler();
 			}
 			if (returnType.equals(URI.class))
 			{

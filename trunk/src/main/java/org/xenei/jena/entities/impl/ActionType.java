@@ -65,6 +65,34 @@ public enum ActionType
 	 }
 	 
 	 /**
+	  * Test to see if the function name is of this action type.
+	  * @param functionName The name to test
+	  * @return true if the function is of this type, false otherwise.
+	  */
+	 public boolean isA(String functionName)
+	 {
+		 if (functionName == null)
+		 {
+			 return false;
+		 }
+		 switch (this) {
+			 case EXISTENTIAL:
+				 return functionName.startsWith( "has");
+
+			 case GETTER:
+				 return functionName.startsWith( "get") || functionName.startsWith( "is" );
+				 
+			 case REMOVER:
+				 return functionName.startsWith( "remove");
+				 
+			 case SETTER:
+				 return functionName.startsWith( "set" ) || functionName.startsWith( "add" );
+		 }
+		return false;	 
+	 }
+	 
+	 
+	 /**
 	  * Extract the local name portion of the function name/
 	  * @param name The function name to extract the local portion from.
 	  * @return The local name.

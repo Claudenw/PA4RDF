@@ -113,14 +113,31 @@ public class ResourceEntityProxy implements Invoker
 			return resource;
 		}
 
+		SubjectInfo workingInfo = subjectInfo;
 		if (m.getDeclaringClass() != subjectInfo.getImplementedClass())
 		{
-			subjectInfo = entityManager.getSubjectInfo(m.getDeclaringClass());
+			workingInfo = entityManager.getSubjectInfo(m.getDeclaringClass());
 		}
-		PredicateInfo pi = subjectInfo.getPredicateInfo(m);
+		PredicateInfo pi = workingInfo.getPredicateInfo(m);
 
 		if (pi == null)
 		{
+			if (TypeChecker.canBeSetFrom( workingInfo.getImplementedClass(), subjectInfo.getImplementedClass() ) &&
+					TypeChecker.canBeSetFrom( workingInfo.getImplementedClass(), Resource.class ))
+			{
+				Class<?>[] argTypes = new Class<?>[args.length];
+				for (int i=0;i<args.length;i++ )
+				{
+					argTypes[i] = args[i].getClass();
+				}
+				try {
+					Method resourceMethod = Resource.class.getMethod(m.getName(), argTypes );
+					return resourceMethod.invoke(resource, args);
+				}
+				catch (Exception e) {
+					// do nothing  thow exception ouside of if.
+				}
+			}
 			throw new InvokerException(String.format("Null method (%s) called",
 					m.getName()));
 		}

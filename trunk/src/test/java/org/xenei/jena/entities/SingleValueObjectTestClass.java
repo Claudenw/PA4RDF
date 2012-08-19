@@ -23,7 +23,9 @@ import com.hp.hpl.jena.rdf.model.Resource;
 import com.hp.hpl.jena.rdf.model.RDFNode;
 
 @Subject( namespace="http://localhost/test#")
-public abstract class SingleValueObjectTestClass implements Resource {
+public abstract class SingleValueObjectTestClass  {
+	
+	public SingleValueObjectTestClass() {};
 
 	@Predicate
 	public abstract void setBool( Boolean b );
@@ -77,6 +79,20 @@ public abstract class SingleValueObjectTestClass implements Resource {
 	public abstract void removeU();
 	@Predicate( type=URI.class, name="u" )
 	public abstract String getU2();
+	
+	@Predicate
+	public abstract void setSubPredicate( SubPredicate subPredicate );
+	public abstract SubPredicate getSubPredicate();
+	public abstract void removeSubPredicate();
+	
+	
+	@Subject( namespace="http://localhost/test#")
+	public static abstract class SubPredicate {
+		public SubPredicate() {};
+		@Predicate
+		public abstract void setName( String name );
+		public abstract String getName();
+	}
 	
 }
 
