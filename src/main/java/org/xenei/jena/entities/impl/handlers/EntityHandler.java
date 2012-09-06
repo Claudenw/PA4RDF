@@ -21,7 +21,8 @@ import org.xenei.jena.entities.ResourceWrapper;
 import org.xenei.jena.entities.impl.ObjectHandler;
 
 /**
- * An ObjectHandler that creates EntityManager managed entitys from RDFResources and visa versa.
+ * An ObjectHandler that creates EntityManager managed entities from 
+ * RDFResources and visa versa.
  * 
  */
 public class EntityHandler implements ObjectHandler
