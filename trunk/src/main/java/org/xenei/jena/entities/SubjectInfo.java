@@ -28,7 +28,7 @@ public interface SubjectInfo
 	/**
 	 * Get the class that was annotated with the Subject annotation. e.g. the class
 	 * that this SubjectInfo is about.
-	 * @return
+	 * @return The class that contains the annotation.
 	 */
 	public Class<?> getImplementedClass();
 
@@ -51,16 +51,16 @@ public interface SubjectInfo
 	/**
 	 * The the URI string of the predicate property.
 	 * @param methodName The name of the method to get the predicate for.
-	 * @return
+	 * @return the URI string for the predicate property.
 	 */
 	public String getPredicateUriStr( String methodName );
 
 	/**
 	 * The the URI string of the predicate property.
-	 * @param methodName The method to get the predicate for.
-	 * @return
+	 * @param method The method to get the predicate for.
+	 * @return the URI string for the predicate property.
 	 */
-	public String getPredicateUriStr( Method m );
+	public String getPredicateUriStr( Method method );
 
 	/**
 	 * Get the Property that is the predicate for the method.
@@ -71,9 +71,9 @@ public interface SubjectInfo
 
 	/**
 	 * Get the Property that is the predicate for the method.
-	 * @param function The function to lookup.
+	 * @param method The method to lookup.
 	 * @return A property or null if method was not found
 	 */
-	public Property getPredicateProperty( Method m );
+	public Property getPredicateProperty( Method method );
 
 }

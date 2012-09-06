@@ -19,7 +19,23 @@ package org.xenei.jena.entities.impl;
  */
 public enum ActionType
 {
-	 GETTER(), SETTER(), REMOVER(), EXISTENTIAL() ; 
+	/**
+	 * Indicates a method that gets a value
+	 */
+	 GETTER(), 
+	 /**
+	  * Indicates a method that sets a value
+	  */
+	 SETTER(), 
+	 /**
+	  * Indicates a method that removes a value
+	  */
+	 REMOVER(), 
+	 /**
+	  * Indicates a method that checks for the existance of a value
+	  */
+	 EXISTENTIAL() ; 
+	 
 	
 
 	 /**

@@ -1,4 +1,4 @@
-/* 
+/*
  * Copyright 2012, XENEI.com
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -11,16 +11,20 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */ 
+ */
 
 package org.xenei.jena.entities;
 
 /**
- * An Entity Manager to mange instances of entities annotated with the Subject annotation 
- * @see {@link org.xenei.jena.entities.annotations.Subject}
+ * An Entity Manager to manage instances of entities annotated with the Subject
+ * annotation
  * 
- * The EntityManager handles all client interactions with the Jena Model using the annotated classes.
- *
+ * Subject Annotation
+ * 
+ * The EntityManager handles all client interactions with the Jena Model using
+ * the annotated classes.
+ * 
+ * @see org.xenei.jena.entities.annotations.Subject
  */
 public interface EntityManager
 {
@@ -41,10 +45,13 @@ public interface EntityManager
 	 * 
 	 * Does not verify that the resource passes the isInstance() check.
 	 * 
-	 * @see {@link isInstance()}
+	 * @see #isInstance(Object, Class)
 	 * @param source
 	 *            Must either implement Resource or ResourceWrapper interfaces.
-	 * @param clazz
+	 * @param primaryClass
+	 *            The class of the object to be returned.
+	 * @param secondaryClasses
+	 *            A lost of other classes that are implemented.
 	 * @return primaryClass instance that also implements ResourceWrapper.
 	 * @throws MissingAnnotation
 	 *             if any of the classes do not have Subject annotations.
@@ -77,7 +84,7 @@ public interface EntityManager
 	 * 
 	 * Classes are located using classLoader.getResource(packageAsPath)
 	 * 
-	 * @See {@link classLoader.getResources(path) }
+	 * @see java.lang.ClassLoader#getResources(String)
 	 * 
 	 *      If any Subject annotated classes are missing required annotations, a
 	 *      log entry is written.
@@ -97,17 +104,17 @@ public interface EntityManager
 	 * 
 	 * Classes are located using classLoader.getResource(packageAsPath)
 	 * 
-	 * @See {@link classLoader.getResources(path) }
 	 * 
-	 *      If any Subject annotated classes are missing required annotations, a
-	 *      log entry is written.
-	 *      If any Subject annotated classes faild parsing a MissingAnnotation
-	 *      exception is thrown after
-	 *      all classes have been processed.
+	 * If any Subject annotated classes are missing required annotations, a
+	 * log entry is written.
+	 * If any Subject annotated classes faild parsing a MissingAnnotation
+	 * exception is thrown after
+	 * all classes have been processed.
 	 * 
 	 * @param packageNames
 	 *            The array of package names to process
 	 * @throws MissingAnnotation
+	 * @see java.lang.ClassLoader#getResources(String)
 	 */
 	public void parseClasses( String[] packageNames ) throws MissingAnnotation;
 

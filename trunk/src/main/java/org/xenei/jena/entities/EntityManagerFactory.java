@@ -26,8 +26,7 @@ public class EntityManagerFactory
 	private static EntityManager manager;
 
 	/**
-	 * Get the entity manager.
-	 * @return
+	 * @return the entity manager
 	 */
 	public static EntityManager getEntityManager()
 	{

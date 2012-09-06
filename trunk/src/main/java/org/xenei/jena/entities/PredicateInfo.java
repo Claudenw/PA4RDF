@@ -29,8 +29,7 @@ public interface PredicateInfo
 {
 
 	/**
-	 * Get the action type for the predicate.
-	 * @return
+	 * @return the action type for the predicate.
 	 */
 	public ActionType getActionType();
 
