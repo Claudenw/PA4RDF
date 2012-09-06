@@ -31,6 +31,10 @@
 		<artifactId>oss-parent</artifactId>
 		<version>7</version>
 	</parent>
+	<issueManagement>
+		<system>Sourceforge Tickets</system>
+		<url>https://sourceforge.net/p/pa4rdf/tickets/</url>
+	</issueManagement>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
