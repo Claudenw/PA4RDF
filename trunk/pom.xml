@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.xenei</groupId>
 	<artifactId>Jena-PA</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>1.0</version>
 	<scm>
 		<url>http://svn.code.sf.net/p/pa4rdf/code</url>
 	</scm>
