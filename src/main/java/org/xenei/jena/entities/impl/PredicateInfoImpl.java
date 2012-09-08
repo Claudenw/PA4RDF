@@ -28,9 +28,12 @@ import com.hp.hpl.jena.util.iterator.ExtendedIterator;
 import com.hp.hpl.jena.util.iterator.Map1;
 
 import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xenei.jena.entities.EntityManager;
@@ -76,16 +79,70 @@ public class PredicateInfoImpl implements PredicateInfo
 	}
 
 	/**
+	 * Create a sorted list of registered data types.
+	 * 
+	 * The format is a String.format format string for two (2) string inputs.
+	 * The first one is the URI of the data type, the second the class name or a blank.
+	 * To reverse the display use "%2$s | %1$s"
+	 * 
+	 * If the nullCLassString is null registered data types without classes will not be included.
+	 * 
+	 * @param format  The output format or "%s | %s" if not specified.
+	 * @param nullClassString the string to print for null java class. 
+	 * @return A sorted list of registeded data types.
+	 */
+	public static List<String> dataTypeDump( String format, String nullClassString )
+	{
+		List<String> retval = new ArrayList<String>();
+		String fmt = StringUtils.defaultIfEmpty(format, "%s | %s");
+		
+		TypeMapper mapper = TypeMapper.getInstance();
+
+		for (final Iterator<RDFDatatype> iter = mapper.listTypes(); iter
+				.hasNext();)
+		{
+			final RDFDatatype dt = iter.next();
+			if (dt.getJavaClass() != null || nullClassString != null )
+			{
+				retval.add(String.format(fmt, dt.getURI(),
+						dataTypeDump_ClassType(dt.getJavaClass(), nullClassString)));
+			}
+		}
+		Collections.sort(retval);
+		return retval;
+	}
+
+	// helper function for dataTypeDump to format java class
+	private static String dataTypeDump_ClassType( Class<?> clazz, String nullClassString )
+	{
+		if (clazz == null)
+		{
+			return nullClassString;
+		}	
+		if (clazz.isArray())
+		{
+			return dataTypeDump_ClassType(clazz.getComponentType(), nullClassString) + "[]";
+		}
+		return clazz.getName();
+	}
+
+	/**
 	 * Constructor.
 	 * 
-	 * @param entityManager The EntityManager that this predicate is assocatied with.
-	 * @param predicate The EffectivePredicate instance that describes the predicate.
-	 * @param methodName The name of the method that this predicate calls.
-	 * @param valueClass The class type for the return (getter) or parameter (setter)
-	 * @throws MissingAnnotation If an annotation was required but not provided.
+	 * @param entityManager
+	 *            The EntityManager that this predicate is assocatied with.
+	 * @param predicate
+	 *            The EffectivePredicate instance that describes the predicate.
+	 * @param methodName
+	 *            The name of the method that this predicate calls.
+	 * @param valueClass
+	 *            The class type for the return (getter) or parameter (setter)
+	 * @throws MissingAnnotation
+	 *             If an annotation was required but not provided.
 	 */
-	public PredicateInfoImpl( EntityManager entityManager, EffectivePredicate predicate,
-			String methodName, Class<?> valueClass ) throws MissingAnnotation
+	public PredicateInfoImpl( EntityManager entityManager,
+			EffectivePredicate predicate, String methodName, Class<?> valueClass )
+			throws MissingAnnotation
 	{
 		this.methodName = methodName;
 		this.actionType = ActionType.parse(methodName);
@@ -132,12 +189,16 @@ public class PredicateInfoImpl implements PredicateInfo
 	/**
 	 * Execute the method against the resource with the arguments.
 	 * 
-	 * @param method The method to execute
-	 * @param resource The resource to execute it against 
-	 * @param args The arguments to the method.
+	 * @param method
+	 *            The method to execute
+	 * @param resource
+	 *            The resource to execute it against
+	 * @param args
+	 *            The arguments to the method.
 	 * @return The result of the execution
-	 * @throws NullPointerException if the return type of the method is a primitive and the 
-	 * predicate does not exist on the resource.
+	 * @throws NullPointerException
+	 *             if the return type of the method is a primitive and the
+	 *             predicate does not exist on the resource.
 	 */
 	public Object exec( Method method, Resource resource, Object[] args )
 	{
@@ -167,7 +228,7 @@ public class PredicateInfoImpl implements PredicateInfo
 		}
 		return retval;
 	}
-	
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -395,9 +456,13 @@ public class PredicateInfoImpl implements PredicateInfo
 
 	/**
 	 * Get the ObjectHandler for a predicate.
-	 * @param entityManager The entity manager this to use.
-	 * @param returnType The ObjectHandler of the proper type
-	 * @param pred The EffectivePredicate definition.
+	 * 
+	 * @param entityManager
+	 *            The entity manager this to use.
+	 * @param returnType
+	 *            The ObjectHandler of the proper type
+	 * @param pred
+	 *            The EffectivePredicate definition.
 	 * @return The object handler.
 	 */
 	public static ObjectHandler getHandler( EntityManager entityManager,
