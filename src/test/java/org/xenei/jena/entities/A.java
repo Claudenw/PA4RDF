@@ -12,4 +12,8 @@ public interface A extends Resource
 	void setX( String x );
 	String getX();
 	
+	@Predicate( emptyIsNull=true )
+	void setZ( String z );
+	String getZ();
+	
 }
