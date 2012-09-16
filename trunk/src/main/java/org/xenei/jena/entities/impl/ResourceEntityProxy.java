@@ -19,7 +19,9 @@ import com.hp.hpl.jena.rdf.model.Resource;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 
-import org.apache.commons.proxy.Invoker;
+import net.sf.cglib.proxy.MethodInterceptor;
+import net.sf.cglib.proxy.MethodProxy;
+
 import org.apache.commons.proxy.exception.InvokerException;
 import org.xenei.jena.entities.EntityManager;
 import org.xenei.jena.entities.PredicateInfo;
@@ -27,11 +29,12 @@ import org.xenei.jena.entities.ResourceWrapper;
 import org.xenei.jena.entities.SubjectInfo;
 
 /**
- * Implements the invoker that the proxy uses. 
+ * Implements the invoker that the proxy uses.
  * 
- * This method intercepts the annotated entity methods as well as the ResourceWrapper.getResource() method. 
+ * This method intercepts the annotated entity methods as well as the
+ * ResourceWrapper.getResource() method.
  */
-public class ResourceEntityProxy implements Invoker
+public class ResourceEntityProxy implements MethodInterceptor // Invoker
 {
 	private Resource resource;
 	private SubjectInfo subjectInfo;
@@ -61,9 +64,13 @@ public class ResourceEntityProxy implements Invoker
 
 	/**
 	 * The constructor
-	 * @param entityManager The entity manager to use.
-	 * @param resource The resource that is being wrapped
-	 * @param subjectInfo The subjectInfo for the resource.
+	 * 
+	 * @param entityManager
+	 *            The entity manager to use.
+	 * @param resource
+	 *            The resource that is being wrapped
+	 * @param subjectInfo
+	 *            The subjectInfo for the resource.
 	 */
 	public ResourceEntityProxy( EntityManager entityManager, Resource resource,
 			SubjectInfo subjectInfo )
@@ -76,8 +83,8 @@ public class ResourceEntityProxy implements Invoker
 	/**
 	 * Invokes an method on the proxy.
 	 */
-	public Object invoke( Object proxy, Method m, Object[] args )
-			throws Throwable
+	public Object intercept( Object obj, Method m, Object[] args,
+			MethodProxy proxy ) throws Throwable
 	{
 		if (!Modifier.isAbstract(m.getModifiers()))
 		{
@@ -85,7 +92,8 @@ public class ResourceEntityProxy implements Invoker
 			if (m.getName().equals("toString") && !m.isVarArgs()
 					&& m.getParameterTypes().length == 0)
 			{
-				return String.format("%s[%s]", subjectInfo.getClass(), resource);
+				return String
+						.format("%s[%s]", subjectInfo.getClass(), resource);
 			}
 			if (m.getName().equals("hashCode"))
 			{
@@ -105,7 +113,7 @@ public class ResourceEntityProxy implements Invoker
 				return false;
 			}
 
-			return m.invoke(proxy, args);
+			return proxy.invokeSuper(obj, args);
 		}
 
 		if (GET_RESOURCE.equals(m))
@@ -122,20 +130,25 @@ public class ResourceEntityProxy implements Invoker
 
 		if (pi == null)
 		{
-			if (TypeChecker.canBeSetFrom( workingInfo.getImplementedClass(), subjectInfo.getImplementedClass() ) &&
-					TypeChecker.canBeSetFrom( workingInfo.getImplementedClass(), Resource.class ))
+			if (TypeChecker.canBeSetFrom(workingInfo.getImplementedClass(),
+					subjectInfo.getImplementedClass())
+					&& TypeChecker.canBeSetFrom(
+							workingInfo.getImplementedClass(), Resource.class))
 			{
 				Class<?>[] argTypes = new Class<?>[args.length];
-				for (int i=0;i<args.length;i++ )
+				for (int i = 0; i < args.length; i++)
 				{
 					argTypes[i] = args[i].getClass();
 				}
-				try {
-					Method resourceMethod = Resource.class.getMethod(m.getName(), argTypes );
+				try
+				{
+					Method resourceMethod = Resource.class.getMethod(
+							m.getName(), argTypes);
 					return resourceMethod.invoke(resource, args);
 				}
-				catch (Exception e) {
-					// do nothing  thow exception ouside of if.
+				catch (Exception e)
+				{
+					// do nothing thow exception ouside of if.
 				}
 			}
 			throw new InvokerException(String.format("Null method (%s) called",

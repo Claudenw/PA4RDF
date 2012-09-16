@@ -19,6 +19,7 @@ import com.hp.hpl.jena.rdf.model.Literal;
 import com.hp.hpl.jena.rdf.model.RDFNode;
 import com.hp.hpl.jena.rdf.model.ResourceFactory;
 
+import org.apache.commons.lang3.StringUtils;
 import org.xenei.jena.entities.impl.ObjectHandler;
 
 /**
@@ -59,6 +60,15 @@ public class LiteralHandler implements ObjectHandler
 	public Object parseObject( RDFNode node )
 	{
 		return literalDatatype.parse( node.asLiteral().getLexicalForm());
+	}
+	
+	public boolean isEmpty( Object obj )
+	{
+		if (obj != null)
+		{
+			return StringUtils.isEmpty(createRDFNode( obj ).getLexicalForm());
+		}
+		return true;
 	}
 	
 	@Override

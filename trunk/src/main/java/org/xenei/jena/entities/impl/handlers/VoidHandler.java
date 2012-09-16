@@ -32,6 +32,11 @@ public class VoidHandler implements ObjectHandler
 	{
 		return null;
 	}
+	
+	public boolean isEmpty( Object obj )
+	{
+		return true;
+	}
 
 	/**
 	 * convert the node to a null

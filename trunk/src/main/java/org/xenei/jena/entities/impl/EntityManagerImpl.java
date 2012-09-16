@@ -42,10 +42,10 @@ import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
-import org.apache.commons.proxy.Invoker;
-import org.apache.commons.proxy.ProxyFactory;
+import net.sf.cglib.proxy.Enhancer;
+import net.sf.cglib.proxy.MethodInterceptor;
+
 import org.apache.commons.proxy.exception.InvokerException;
-import org.apache.commons.proxy.factory.cglib.CglibProxyFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xenei.jena.entities.EntityManager;
@@ -67,8 +67,6 @@ public class EntityManagerImpl implements EntityManager
 			.getLogger(EntityManagerImpl.class);
 
 	private Map<Class<?>, SubjectInfoImpl> classInfo = new HashMap<Class<?>, SubjectInfoImpl>();
-	
-	private ProxyFactory proxyFactory = new CglibProxyFactory();
 
 	/**
 	 * Constructor.
@@ -140,7 +138,10 @@ public class EntityManagerImpl implements EntityManager
 		{
 			throw new RuntimeException(e);
 		}
-		classes.add(primaryClass);
+		if (primaryClass.isInterface())
+		{
+			classes.add(primaryClass);
+		}
 		for (Class<?> cla : secondaryClasses)
 		{
 			if (!classes.contains(cla))
@@ -162,12 +163,18 @@ public class EntityManagerImpl implements EntityManager
 			classes.add(ResourceWrapper.class);
 		}
 
-		// ResourceEntityProxy interceptor;
-		Invoker invoker = new ResourceEntityProxy(this, getResource(source),
-				subjectInfo);
-		
+		MethodInterceptor interceptor = new ResourceEntityProxy(this,
+				getResource(source), subjectInfo);
 		Class<?>[] classArray = new Class<?>[classes.size()];
-		return (T) proxyFactory.createInvokerProxy(invoker, classes.toArray(classArray));
+
+		Enhancer e = new Enhancer();
+		if (!primaryClass.isInterface())
+		{
+			e.setSuperclass(primaryClass);
+		}
+		e.setInterfaces(classes.toArray(classArray));
+		e.setCallback(interceptor);
+		return (T) e.create();
 	}
 
 	/*
@@ -212,8 +219,10 @@ public class EntityManagerImpl implements EntityManager
 	 * Read an instance of clazz from Resource r. If r does not have the
 	 * required types as defined in the Subject annotation they will be added.
 	 * 
-	 * @param r The Resource to verify.
-	 * @param clazz The Subject annotated class to verify against.
+	 * @param r
+	 *            The Resource to verify.
+	 * @param clazz
+	 *            The Subject annotated class to verify against.
 	 * @return r for chaining
 	 */
 	public Resource addInstanceProperties( Resource r, Class<?> clazz )
@@ -378,35 +387,41 @@ public class EntityManagerImpl implements EntityManager
 
 			}
 			classInfo.put(clazz, subjectInfo);
-			verifyNoNullMethods( clazz, subjectInfo );
+			verifyNoNullMethods(clazz, subjectInfo);
 		}
 		return subjectInfo;
 	}
-	
+
 	private void verifyNoNullMethods( Class<?> clazz, SubjectInfo subjectInfo )
 	{
 		for (Method m : clazz.getMethods())
 		{
 			if (Modifier.isAbstract(m.getModifiers()))
-			{	
+			{
 				SubjectInfo workingInfo = subjectInfo;
 				if (m.getDeclaringClass() != subjectInfo.getImplementedClass())
 				{
 					workingInfo = getSubjectInfo(m.getDeclaringClass());
 				}
-				
-				if (TypeChecker.canBeSetFrom( workingInfo.getImplementedClass(), subjectInfo.getImplementedClass() ) &&
-						!TypeChecker.canBeSetFrom( workingInfo.getImplementedClass(), Resource.class ))
-				{	
+
+				if (TypeChecker.canBeSetFrom(workingInfo.getImplementedClass(),
+						subjectInfo.getImplementedClass())
+						&& !TypeChecker.canBeSetFrom(
+								workingInfo.getImplementedClass(),
+								Resource.class))
+				{
 					if (workingInfo.getPredicateInfo(m) == null)
 					{
-						throw new InvokerException(String.format("%s.%s (declared as %s.%2$s) is not implemented and does not have @Predicate annotation",
-								clazz.getName(), m.getName(), m.getDeclaringClass()));
+						throw new InvokerException(
+								String.format(
+										"%s.%s (declared as %s.%2$s) is not implemented and does not have @Predicate annotation",
+										clazz.getName(), m.getName(),
+										m.getDeclaringClass()));
 					}
 				}
 			}
 		}
-		
+
 	}
 
 	private EffectivePredicate getEffectivePredicate( Method m )
@@ -423,8 +438,8 @@ public class EntityManagerImpl implements EntityManager
 	}
 
 	private EffectivePredicate getEffectivePredicate( Method m,
-			Annotation[] paramAnnotations, Class<?> returnType, EffectivePredicate dflt )
-			throws MissingAnnotation
+			Annotation[] paramAnnotations, Class<?> returnType,
+			EffectivePredicate dflt ) throws MissingAnnotation
 	{
 		boolean typeSet = false;
 		EffectivePredicate retval = new EffectivePredicate().merge(
@@ -813,7 +828,7 @@ public class EntityManagerImpl implements EntityManager
 		{
 			throw new MissingAnnotation(String.format(
 					"Unable to parse all %s See log for more details",
-					(Object)packageNames));
+					(Object) packageNames));
 		}
 	}
 
@@ -953,13 +968,18 @@ public class EntityManagerImpl implements EntityManager
 	}
 
 	/**
-	 * Since the EntityManger implements the manager as a live data read against the Model, this method 
-	 * provides a mechanism to copy all the values from the source to the target.  It reads scans the 
-	 * target class for "set" methods and the source class for associated "get" methods.  If a pairing is
+	 * Since the EntityManger implements the manager as a live data read against
+	 * the Model, this method
+	 * provides a mechanism to copy all the values from the source to the
+	 * target. It reads scans the
+	 * target class for "set" methods and the source class for associated "get"
+	 * methods. If a pairing is
 	 * found the value of the "get" call is passed to the "set" call.
 	 * 
-	 * @param source The object that has the values to transfer.
-	 * @param target The object that has the receptors for the values.
+	 * @param source
+	 *            The object that has the values to transfer.
+	 * @param target
+	 *            The object that has the receptors for the values.
 	 * @return The target object after all setters have been called.
 	 */
 	public Object update( Object source, Object target )
@@ -968,13 +988,14 @@ public class EntityManagerImpl implements EntityManager
 		Class<?> sourceClass = source.getClass();
 		for (Method targetMethod : targetClass.getMethods())
 		{
-			if (ActionType.SETTER.isA( targetMethod.getName() ))
+			if (ActionType.SETTER.isA(targetMethod.getName()))
 			{
 				Class<?>[] targetMethodParams = targetMethod
 						.getParameterTypes();
 				if (targetMethodParams.length == 1)
 				{
-					String partialName = ActionType.SETTER.extractName(targetMethod.getName() );
+					String partialName = ActionType.SETTER
+							.extractName(targetMethod.getName());
 
 					Method configMethod = null;
 					// try "getX" method
@@ -1001,36 +1022,38 @@ public class EntityManagerImpl implements EntityManager
 					// verify that the config method was annotated as a
 					// predicate before
 					// we use it.
-					
-						try
+
+					try
+					{
+						if (configMethod != null)
 						{
-							if (configMethod != null)
+							boolean setNull = !targetMethodParams[0]
+									.isPrimitive();
+							if (TypeChecker.canBeSetFrom(targetMethodParams[0],
+									configMethod.getReturnType()))
 							{
-								boolean setNull = !targetMethodParams[0].isPrimitive();
-								if (TypeChecker.canBeSetFrom(targetMethodParams[0], configMethod.getReturnType()))
+								Object val = configMethod.invoke(source);
+								if (setNull || val != null)
 								{
-									Object val = configMethod.invoke(source);
-									if (setNull || val != null)
-									{
-										targetMethod.invoke(target, val);
-									}
+									targetMethod.invoke(target, val);
 								}
-								
 							}
+
 						}
-						catch (IllegalArgumentException e)
-						{
-							throw new RuntimeException(e);
-						}
-						catch (IllegalAccessException e)
-						{
-							throw new RuntimeException(e);
-						}
-						catch (InvocationTargetException e)
-						{
-							throw new RuntimeException(e);
-						}
-					
+					}
+					catch (IllegalArgumentException e)
+					{
+						throw new RuntimeException(e);
+					}
+					catch (IllegalAccessException e)
+					{
+						throw new RuntimeException(e);
+					}
+					catch (InvocationTargetException e)
+					{
+						throw new RuntimeException(e);
+					}
+
 				}
 			}
 		}

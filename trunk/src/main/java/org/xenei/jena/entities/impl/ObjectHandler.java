@@ -39,4 +39,12 @@ public interface ObjectHandler {
 	 * @return The Object from the unparsed RDFNode.
 	 */
 	Object parseObject( RDFNode node );	
+	
+	/**
+	 * Returns true if the object is considered empty.
+	 * @param obj the object that would be passed to createRDFNode
+	 * @return true if the object is a empty.
+	 */
+	boolean isEmpty( Object obj );
+	
 }

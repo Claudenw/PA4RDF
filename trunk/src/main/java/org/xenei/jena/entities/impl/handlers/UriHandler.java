@@ -17,6 +17,7 @@ package org.xenei.jena.entities.impl.handlers;
 import com.hp.hpl.jena.rdf.model.RDFNode;
 import com.hp.hpl.jena.rdf.model.ResourceFactory;
 
+import org.apache.commons.lang3.StringUtils;
 import org.xenei.jena.entities.impl.ObjectHandler;
 
 /**
@@ -25,7 +26,7 @@ import org.xenei.jena.entities.impl.ObjectHandler;
 public class UriHandler implements ObjectHandler
 {
 	/**
-	 * Conver the object as a string to an RDFNode.
+	 * Convert the object as a string to an RDFNode.
 	 * @param obj The object to convert
 	 * @return The RDFNode with the object string value as the URI.
 	 */
@@ -34,6 +35,10 @@ public class UriHandler implements ObjectHandler
 		return ResourceFactory.createResource(String.valueOf(obj));
 	}
 
+	public boolean isEmpty( Object obj )
+	{
+		return obj==null || StringUtils.isEmpty( String.valueOf( obj ));
+	}
 	/**
 	 * Return the URI string for the RDFnode
 	 * @param node the RDFNode
