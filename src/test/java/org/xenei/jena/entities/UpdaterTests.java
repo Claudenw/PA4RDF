@@ -90,6 +90,8 @@ public class UpdaterTests
 		DataSourceModelIface ds2 = manager.read( r , DataSourceModelIface.class );
 		manager.update(ds1, ds2);
 		
+		m.write(System.out, "TURTLE");
+		
 		Assert.assertEquals(1, ds2.getIntValue());
 		Assert.assertEquals(2.1, ds2.getDblValue());
 		Assert.assertEquals(3.2F, ds2.getFltValue());
