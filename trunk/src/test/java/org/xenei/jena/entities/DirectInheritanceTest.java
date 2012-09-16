@@ -56,5 +56,17 @@ public class DirectInheritanceTest
 		
 	}
 	
+	@Test
+	public void testEmptyIsNull()
+	{
+		theInstance.setZ( "foo" );
+		Assert.assertNotNull( theInstance.getZ() );
+		Assert.assertEquals( "foo", theInstance.getZ() );
+
+		theInstance.setZ( "" );
+		Assert.assertNull( theInstance.getZ() );
+
+	}
+	
 
 }
