@@ -336,7 +336,15 @@ public class PredicateInfoImpl implements PredicateInfo
 
 	private Object execAdd( Resource resource, Property p, Object[] args )
 	{
-		resource.addProperty(p, objectHandler.createRDFNode(args[0]));
+		boolean empty = objectHandler.isEmpty(args[0]);
+		if (!empty || !predicate.emptyIsNull() )
+		{
+			RDFNode o = objectHandler.createRDFNode(args[0]);
+			if (o != null)
+			{
+				resource.addProperty(p, o);
+			}
+		}
 		return null;
 	}
 

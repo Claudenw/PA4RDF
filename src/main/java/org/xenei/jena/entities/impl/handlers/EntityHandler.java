@@ -48,6 +48,11 @@ public class EntityHandler implements ObjectHandler
 	{
 		return ((ResourceWrapper) obj).getResource();
 	}
+	
+	public boolean isEmpty( Object obj )
+	{
+		return obj == null;
+	}
 
 	/**
 	 * Use the entity manager to create an instance of the valueClass from the

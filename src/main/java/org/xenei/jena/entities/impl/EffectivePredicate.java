@@ -32,6 +32,7 @@ class EffectivePredicate
 	String namespace = "";
 	String literalType = "";
 	Class<?> type = RDFNode.class;
+	boolean emptyIsNull = true;
 
 	public EffectivePredicate()
 	{
@@ -65,6 +66,7 @@ class EffectivePredicate
 					: predicate.literalType();
 			type = RDFNode.class.equals(predicate.type()) ? type : predicate
 					.type();
+			emptyIsNull = predicate.emptyIsNull();
 		}
 		return this;
 	}
@@ -92,6 +94,11 @@ class EffectivePredicate
 	public Class<?> type()
 	{
 		return type;
+	}
+	
+	public boolean emptyIsNull()
+	{
+		return emptyIsNull;
 	}
 
 }

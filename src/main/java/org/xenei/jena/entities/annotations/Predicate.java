@@ -92,4 +92,11 @@ public @interface Predicate
 	 * @return The object class.
 	 */
 	Class<?> type() default RDFNode.class;
+	
+	/**
+	 * If true empty strings are assumed to be null and are not inserted.
+	 * 
+	 * Default value = false
+	 */
+	boolean emptyIsNull() default false;
 }

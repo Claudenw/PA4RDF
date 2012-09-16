@@ -16,6 +16,7 @@ package org.xenei.jena.entities.impl.handlers;
 
 import com.hp.hpl.jena.rdf.model.RDFNode;
 
+import org.apache.commons.lang3.StringUtils;
 import org.xenei.jena.entities.impl.ObjectHandler;
 
 /**
@@ -29,7 +30,29 @@ public class ResourceHandler implements ObjectHandler
 	 */
 	public RDFNode createRDFNode( Object obj )
 	{
-		return (RDFNode) obj;
+		if (obj instanceof RDFNode)
+		{
+			return (RDFNode) obj;
+		}
+		throw new IllegalArgumentException( String.format( "%s is not an RDFNode", obj ));
+	}
+	
+	public boolean isEmpty( Object obj )
+	{
+		if (obj != null && obj instanceof RDFNode)
+		{
+			RDFNode node = (RDFNode) obj;
+			if (node.isLiteral())
+			{
+				return StringUtils.isEmpty(node.asLiteral().getLexicalForm());
+			}
+			if (node.isURIResource())
+			{
+				return StringUtils.isEmpty(node.asResource().getURI() );
+			}
+			return false;
+		}
+		return true;
 	}
 
 	/**
