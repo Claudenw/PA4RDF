@@ -18,7 +18,6 @@ import org.xenei.jena.entities.annotations.Subject;
 import org.xenei.jena.entities.annotations.Predicate;
 import org.xenei.jena.entities.annotations.URI;
 
-import com.hp.hpl.jena.rdf.model.Resource;
 
 import com.hp.hpl.jena.rdf.model.RDFNode;
 

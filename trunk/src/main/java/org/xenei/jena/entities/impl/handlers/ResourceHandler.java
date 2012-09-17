@@ -44,11 +44,11 @@ public class ResourceHandler implements ObjectHandler
 			RDFNode node = (RDFNode) obj;
 			if (node.isLiteral())
 			{
-				return StringUtils.isEmpty(node.asLiteral().getLexicalForm());
+				return StringUtils.isBlank(node.asLiteral().getLexicalForm());
 			}
 			if (node.isURIResource())
 			{
-				return StringUtils.isEmpty(node.asResource().getURI() );
+				return StringUtils.isBlank(node.asResource().getURI() );
 			}
 			return false;
 		}
