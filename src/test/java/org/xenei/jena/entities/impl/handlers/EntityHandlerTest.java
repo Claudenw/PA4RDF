@@ -16,39 +16,39 @@ public class EntityHandlerTest implements HandlerTestInterface
 	EntityManager em;
 	RDFNode node;
 	A instance;
-	
+
 	@Before
 	public void setup()
 	{
 		em = EntityManagerFactory.getEntityManager();
 		handler = new EntityHandler(em, A.class);
 		node = ResourceFactory.createResource();
-		instance = em.read( node, A.class );
+		instance = em.read(node, A.class);
 	}
-	
+
 	@Test
 	public void testCreateRDFNode()
 	{
-		RDFNode n = handler.createRDFNode( instance );
-		Assert.assertNotNull( n );
-		Assert.assertEquals( node, n );
+		RDFNode n = handler.createRDFNode(instance);
+		Assert.assertNotNull(n);
+		Assert.assertEquals(node, n);
 	}
 
 	@Test
 	public void testParseObject()
 	{
 		Object o = handler.parseObject(node);
-		Assert.assertNotNull( o );
-		Assert.assertTrue( o instanceof A );
+		Assert.assertNotNull(o);
+		Assert.assertTrue(o instanceof A);
 		A a2 = (A) o;
-		Assert.assertEquals( instance, a2 );
-		
+		Assert.assertEquals(instance, a2);
+
 	}
 
 	@Test
 	public void testIsEmpty()
 	{
-		Assert.assertTrue( handler.isEmpty( null ));
-		Assert.assertFalse( handler.isEmpty( instance ));
+		Assert.assertTrue(handler.isEmpty(null));
+		Assert.assertFalse(handler.isEmpty(instance));
 	}
 }

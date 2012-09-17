@@ -37,7 +37,7 @@ public class UriHandler implements ObjectHandler
 
 	public boolean isEmpty( Object obj )
 	{
-		return obj==null || StringUtils.isEmpty( String.valueOf( obj ));
+		return obj==null || StringUtils.isBlank( String.valueOf( obj ));
 	}
 	/**
 	 * Return the URI string for the RDFnode

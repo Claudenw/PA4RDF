@@ -66,7 +66,7 @@ public class LiteralHandler implements ObjectHandler
 	{
 		if (obj != null)
 		{
-			return StringUtils.isEmpty(createRDFNode( obj ).getLexicalForm());
+			return StringUtils.isBlank(createRDFNode( obj ).getLexicalForm());
 		}
 		return true;
 	}
