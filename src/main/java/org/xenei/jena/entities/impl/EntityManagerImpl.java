@@ -45,6 +45,7 @@ import java.util.zip.ZipInputStream;
 import net.sf.cglib.proxy.Enhancer;
 import net.sf.cglib.proxy.MethodInterceptor;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.proxy.exception.InvokerException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -320,7 +321,7 @@ public class EntityManagerImpl implements EntityManager
 		{
 			LOG.info("Parsing {}", clazz);
 			subjectInfo = new SubjectInfoImpl(clazz);
-
+			Subject subject = clazz.getAnnotation(Subject.class);
 			Map<String, Integer> addCount = countAdders(clazz.getMethods());
 			Annotation[] annotations;
 			for (Method m : clazz.getMethods())
@@ -339,7 +340,7 @@ public class EntityManagerImpl implements EntityManager
 								Integer i = addCount.get(m.getName());
 								if (i != null)
 								{
-									parseSetter(subjectInfo, m, (i > 1));
+									parseSetter(subjectInfo, m, (i > 1), subject);
 								}
 								break;
 
@@ -348,7 +349,7 @@ public class EntityManagerImpl implements EntityManager
 										subjectInfo, m);
 								if (annotations != null)
 								{
-									parseExistential(subjectInfo, m);
+									parseExistential(subjectInfo, m, subject);
 								}
 								break;
 
@@ -363,7 +364,7 @@ public class EntityManagerImpl implements EntityManager
 												m.getName(),
 												subjectInfo,
 												m.getAnnotation(Predicate.class)
-														.type(), null, false);
+														.type(), null, false, subject);
 									}
 								}
 								break;
@@ -373,7 +374,7 @@ public class EntityManagerImpl implements EntityManager
 										subjectInfo, m);
 								if (annotations != null)
 								{
-									parseRemover(subjectInfo, m);
+									parseRemover(subjectInfo, m, subject);
 								}
 								break;
 
@@ -427,23 +428,28 @@ public class EntityManagerImpl implements EntityManager
 	private EffectivePredicate getEffectivePredicate( Method m )
 			throws MissingAnnotation
 	{
-		return getEffectivePredicate(m, null, null, null);
+		return getEffectivePredicate(m, null, null, null, null);
 	}
 
 	private EffectivePredicate getEffectivePredicate( Method m,
-			Annotation[] paramAnnotations, Class<?> returnType )
+			Annotation[] paramAnnotations, Class<?> returnType, Subject subject )
 			throws MissingAnnotation
 	{
-		return getEffectivePredicate(m, paramAnnotations, returnType, null);
+		return getEffectivePredicate(m, paramAnnotations, returnType, null, subject);
 	}
 
 	private EffectivePredicate getEffectivePredicate( Method m,
 			Annotation[] paramAnnotations, Class<?> returnType,
-			EffectivePredicate dflt ) throws MissingAnnotation
+			EffectivePredicate dflt, Subject subject ) throws MissingAnnotation
 	{
 		boolean typeSet = false;
+		
 		EffectivePredicate retval = new EffectivePredicate().merge(
-				m.getAnnotation(Predicate.class)).merge(dflt);
+			m.getAnnotation(Predicate.class)).merge(dflt);
+		if (StringUtils.isBlank(retval.namespace()) && subject != null)
+		{
+			retval.namespace = subject.namespace();
+		}
 		if (paramAnnotations != null)
 		{
 			for (Annotation a : paramAnnotations)
@@ -485,7 +491,7 @@ public class EntityManagerImpl implements EntityManager
 			throw new MissingAnnotation(
 					String.format(
 							"Namespace is not defined in property, entity or uriString for %s",
-							m.getName()));
+							m.toString()));
 		}
 		if (!Util.notNameChar(retval.namespace().charAt(
 				retval.namespace().length() - 1)))
@@ -525,7 +531,7 @@ public class EntityManagerImpl implements EntityManager
 	 * @throws MissingAnnotation
 	 */
 	private void parseSetter( SubjectInfoImpl subjectInfo, Method m,
-			boolean multiAdd ) throws MissingAnnotation
+			boolean multiAdd, Subject subject ) throws MissingAnnotation
 	{
 
 		Class<?> parms[] = m.getParameterTypes();
@@ -537,7 +543,7 @@ public class EntityManagerImpl implements EntityManager
 																			// or
 																			// "add"
 			EffectivePredicate predicate = getEffectivePredicate(m,
-					m.getParameterAnnotations()[0], parms[0]);
+					m.getParameterAnnotations()[0], parms[0], subject);
 			PredicateInfoImpl pi = new PredicateInfoImpl(this, predicate,
 					m.getName(), valueType);
 			subjectInfo.add(pi);
@@ -545,22 +551,22 @@ public class EntityManagerImpl implements EntityManager
 			if (m.getName().startsWith("set"))
 			{
 				addGetterMethods("get" + subName, subjectInfo, valueType,
-						predicate, false);
+						predicate, false, subject);
 				isMethod = addGetterMethods("is" + subName, subjectInfo,
-						valueType, predicate, false);
+						valueType, predicate, false, subject);
 				addRemoverMethod(null, "remove" + subName, subjectInfo,
-						predicate);
+						predicate, subject);
 			}
 			else
 			// if (m.getName().startsWith("add"))
 			{
 				addGetterMethods("get" + subName, subjectInfo, valueType,
-						predicate, multiAdd);
+						predicate, multiAdd, subject);
 				isMethod = addHasMethods("has" + subName, subjectInfo,
-						valueType, predicate);
+						valueType, predicate, subject);
 
 				addRemoverMethod(parms[0], "remove" + subName, subjectInfo,
-						predicate);
+						predicate, subject);
 			}
 			if (isMethod != null
 					&& !Boolean.class.equals(isMethod.getReturnType()))
@@ -570,7 +576,7 @@ public class EntityManagerImpl implements EntityManager
 		}
 	}
 
-	private void parseExistential( SubjectInfoImpl subjectInfo, Method m )
+	private void parseExistential( SubjectInfoImpl subjectInfo, Method m, Subject subject )
 			throws MissingAnnotation
 	{
 		Method m2 = null;
@@ -579,7 +585,7 @@ public class EntityManagerImpl implements EntityManager
 			if (m.getParameterTypes().length == 1)
 			{
 				m2 = addHasMethods(m.getName(), subjectInfo,
-						m.getParameterTypes()[0], getEffectivePredicate(m));
+						m.getParameterTypes()[0], getEffectivePredicate(m), subject);
 			}
 		}
 		else if (m.getName().startsWith("is"))
@@ -587,7 +593,7 @@ public class EntityManagerImpl implements EntityManager
 			if (m.getParameterTypes().length == 0)
 			{
 				m2 = addGetterMethods(m.getName(), subjectInfo, Boolean.class,
-						getEffectivePredicate(m), false);
+						getEffectivePredicate(m), false, subject);
 			}
 		}
 		if (m2 != null && !Boolean.class.equals(m2.getReturnType()))
@@ -597,7 +603,7 @@ public class EntityManagerImpl implements EntityManager
 
 	}
 
-	private void parseRemover( SubjectInfoImpl subjectInfo, Method m )
+	private void parseRemover( SubjectInfoImpl subjectInfo, Method m, Subject subject )
 			throws MissingAnnotation
 	{
 		if (m.getParameterTypes().length == 1)
@@ -607,12 +613,12 @@ public class EntityManagerImpl implements EntityManager
 					m.getName(),
 					subjectInfo,
 					getEffectivePredicate(m, m.getParameterAnnotations()[0],
-							m.getParameterTypes()[0]));
+							m.getParameterTypes()[0], subject), subject );
 		}
 		else
 		{
 			addRemoverMethod(null, m.getName(), subjectInfo,
-					getEffectivePredicate(m));
+					getEffectivePredicate(m), subject);
 		}
 	}
 
@@ -624,7 +630,7 @@ public class EntityManagerImpl implements EntityManager
 
 	private Method addGetterMethods( String methodName,
 			SubjectInfoImpl subjectInfo, Class<?> setterValueType,
-			EffectivePredicate parentPredicate, boolean multiAdd )
+			EffectivePredicate parentPredicate, boolean multiAdd, Subject subject )
 			throws MissingAnnotation
 	{
 		Method m = null;
@@ -637,7 +643,7 @@ public class EntityManagerImpl implements EntityManager
 			if (Modifier.isAbstract(m.getModifiers()) && !m.isVarArgs())
 			{
 				EffectivePredicate predicate = getEffectivePredicate(m, null,
-						null, parentPredicate);
+						null, parentPredicate, subject);
 
 				if (m.getReturnType().equals(ExtendedIterator.class))
 				{
@@ -719,7 +725,7 @@ public class EntityManagerImpl implements EntityManager
 
 	private Method addHasMethods( String methodName,
 			SubjectInfoImpl subjectInfo, Class<?> valueType,
-			EffectivePredicate parentPredicate )
+			EffectivePredicate parentPredicate, Subject subject )
 	{
 		Method m = null;
 		try
@@ -730,7 +736,7 @@ public class EntityManagerImpl implements EntityManager
 			{
 				subjectInfo.add(new PredicateInfoImpl(this,
 						getEffectivePredicate(m, getParameterAnnotation(m),
-								valueType, parentPredicate), methodName,
+								valueType, parentPredicate, subject), methodName,
 						valueType));
 			}
 			else
@@ -754,7 +760,7 @@ public class EntityManagerImpl implements EntityManager
 	}
 
 	private Method addRemoverMethod( Class<?> argType, String name,
-			SubjectInfoImpl subjectInfo, EffectivePredicate parentPredicate )
+			SubjectInfoImpl subjectInfo, EffectivePredicate parentPredicate, Subject subject )
 			throws MissingAnnotation
 	{
 		Method m = null;
@@ -772,7 +778,7 @@ public class EntityManagerImpl implements EntityManager
 			if (Modifier.isAbstract(m.getModifiers()) && !m.isVarArgs())
 			{
 				EffectivePredicate predicate = getEffectivePredicate(m,
-						getParameterAnnotation(m), argType, parentPredicate);
+						getParameterAnnotation(m), argType, parentPredicate, subject);
 				if (argType == null)
 				{
 					predicate.type = null;

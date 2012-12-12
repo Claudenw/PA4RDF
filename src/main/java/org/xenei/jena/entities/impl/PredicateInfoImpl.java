@@ -402,12 +402,16 @@ public class PredicateInfoImpl implements PredicateInfo
 
 			StmtIterator iter = resource.listProperties(p);
 			Object retval = null;
-			if (iter.hasNext())
-			{
-				Statement s = iter.next();
-				return objectHandler.parseObject(s.getObject());
+			try {
+				if (iter.hasNext())
+				{
+					Statement s = iter.next();
+					return objectHandler.parseObject(s.getObject());
+				}
 			}
-			iter.close();
+			finally {
+				iter.close();
+			}
 			if (retval == null)
 			{
 				if (concreteType.isPrimitive())

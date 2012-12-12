@@ -17,6 +17,7 @@ package org.xenei.jena.entities.impl;
 
 import com.hp.hpl.jena.rdf.model.RDFNode;
 
+import org.apache.commons.lang.StringUtils;
 import org.xenei.jena.entities.annotations.Predicate;
 
 /**
@@ -43,10 +44,10 @@ class EffectivePredicate
 		if (predicate != null)
 		{
 			upcase = predicate.upcase();
-			name = "".equals(predicate.name()) ? name : predicate.name();
-			namespace = "".equals(predicate.namespace()) ? namespace
+			name = StringUtils.isBlank(predicate.name()) ? name : predicate.name();
+			namespace = StringUtils.isBlank(predicate.namespace()) ? namespace
 					: predicate.namespace();
-			literalType = "".equals(predicate.literalType()) ? literalType
+			literalType = StringUtils.isBlank(predicate.literalType()) ? literalType
 					: predicate.literalType();
 			type = RDFNode.class.equals(predicate.type()) ? type : predicate
 					.type();
@@ -59,10 +60,10 @@ class EffectivePredicate
 		if (predicate != null)
 		{
 			upcase = predicate.upcase();
-			name = "".equals(predicate.name()) ? name : predicate.name();
-			namespace = "".equals(predicate.namespace()) ? namespace
+			name = StringUtils.isBlank(predicate.name()) ? name : predicate.name();
+			namespace = StringUtils.isBlank(predicate.namespace()) ? namespace
 					: predicate.namespace();
-			literalType = "".equals(predicate.literalType()) ? literalType
+			literalType = StringUtils.isBlank(predicate.literalType()) ? literalType
 					: predicate.literalType();
 			type = RDFNode.class.equals(predicate.type()) ? type : predicate
 					.type();
