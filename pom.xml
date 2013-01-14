@@ -6,7 +6,7 @@
 	<version>1.0.1-SNAPSHOT</version>
 	<scm>
 		<connection>scm:svn:svn://svn.code.sf.net/p/pa4rdf/code/trunk</connection>
-		<developerConnection>scm:svn:svn+ssh://svn.code.sf.net/p/pa4rdf/code/trunk</developerConnection>
+		<developerConnection>scm:svn:https://svn.code.sf.net/p/pa4rdf/code/trunk</developerConnection>
 		<url>http://svn.code.sf.net/p/pa4rdf/code</url>
 	</scm>
 	<name>Persistence Annotations 4 RDF</name>
