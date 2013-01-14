@@ -1,12 +1,13 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.xenei</groupId>
 	<artifactId>Jena-PA</artifactId>
-	<version>1.0.1</version>
+	<version>1.0.1-SNAPSHOT</version>
 	<scm>
-		<connection>scm:svn:svn+ssh://svn.code.sf.net/p/pa4rdf/code/tags/Jena-PA-1.0.1</connection>
-		<developerConnection>scm:svn:svn+ssh://svn.code.sf.net/p/pa4rdf/code/tags/Jena-PA-1.0.1</developerConnection>
-		<url>http://svn.code.sf.net/p/pa4rdf/code/tags/Jena-PA-1.0.1</url>
+		<connection>scm:svn:svn+ssh://svn.code.sf.net/p/pa4rdf/code</connection>
+		<developerConnection>scm:svn:svn+ssh://svn.code.sf.net/p/pa4rdf/code</developerConnection>
+		<url>http://svn.code.sf.net/p/pa4rdf/code</url>
 	</scm>
 	<name>Persistence Annotations 4 RDF</name>
 	<url>http://sourceforge.net/p/pa4rdf/wiki/Home/</url>
@@ -252,7 +253,7 @@
 										</goals>
 									</pluginExecutionFilter>
 									<action>
-										<ignore />
+										<ignore></ignore>
 									</action>
 								</pluginExecution>
 							</pluginExecutions>
