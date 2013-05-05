@@ -29,9 +29,13 @@ import com.hp.hpl.jena.util.iterator.Map1;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Queue;
+import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -60,13 +64,13 @@ import org.xenei.jena.entities.impl.handlers.VoidHandler;
  */
 public class PredicateInfoImpl implements PredicateInfo
 {
-	private ObjectHandler objectHandler;
+	private final ObjectHandler objectHandler;
 	private Class<?> concreteType;
-	private Class<?> valueClass;
-	private String methodName;
+	private final Class<?> valueClass;
+	private final String methodName;
 	private Property property;
-	private ActionType actionType;
-	private EffectivePredicate predicate;
+	private final ActionType actionType;
+	private final EffectivePredicate predicate;
 
 	static
 	{
@@ -82,30 +86,38 @@ public class PredicateInfoImpl implements PredicateInfo
 	 * Create a sorted list of registered data types.
 	 * 
 	 * The format is a String.format format string for two (2) string inputs.
-	 * The first one is the URI of the data type, the second the class name or a blank.
+	 * The first one is the URI of the data type, the second the class name or a
+	 * blank.
 	 * To reverse the display use "%2$s | %1$s"
 	 * 
-	 * If the nullCLassString is null registered data types without classes will not be included.
+	 * If the nullCLassString is null registered data types without classes will
+	 * not be included.
 	 * 
-	 * @param format  The output format or "%s | %s" if not specified.
-	 * @param nullClassString the string to print for null java class. 
+	 * @param format
+	 *            The output format or "%s | %s" if not specified.
+	 * @param nullClassString
+	 *            the string to print for null java class.
 	 * @return A sorted list of registeded data types.
 	 */
-	public static List<String> dataTypeDump( String format, String nullClassString )
+	public static List<String> dataTypeDump( final String format,
+			final String nullClassString )
 	{
-		List<String> retval = new ArrayList<String>();
-		String fmt = StringUtils.defaultIfEmpty(format, "%s | %s");
-		
-		TypeMapper mapper = TypeMapper.getInstance();
+		final List<String> retval = new ArrayList<String>();
+		final String fmt = StringUtils.defaultIfEmpty(format, "%s | %s");
+
+		final TypeMapper mapper = TypeMapper.getInstance();
 
 		for (final Iterator<RDFDatatype> iter = mapper.listTypes(); iter
 				.hasNext();)
 		{
 			final RDFDatatype dt = iter.next();
-			if (dt.getJavaClass() != null || nullClassString != null )
+			if ((dt.getJavaClass() != null) || (nullClassString != null))
 			{
-				retval.add(String.format(fmt, dt.getURI(),
-						dataTypeDump_ClassType(dt.getJavaClass(), nullClassString)));
+				retval.add(String.format(
+						fmt,
+						dt.getURI(),
+						PredicateInfoImpl.dataTypeDump_ClassType(
+								dt.getJavaClass(), nullClassString)));
 			}
 		}
 		Collections.sort(retval);
@@ -113,357 +125,20 @@ public class PredicateInfoImpl implements PredicateInfo
 	}
 
 	// helper function for dataTypeDump to format java class
-	private static String dataTypeDump_ClassType( Class<?> clazz, String nullClassString )
+	private static String dataTypeDump_ClassType( final Class<?> clazz,
+			final String nullClassString )
 	{
 		if (clazz == null)
 		{
 			return nullClassString;
-		}	
+		}
 		if (clazz.isArray())
 		{
-			return dataTypeDump_ClassType(clazz.getComponentType(), nullClassString) + "[]";
+			return PredicateInfoImpl.dataTypeDump_ClassType(
+					clazz.getComponentType(), nullClassString)
+					+ "[]";
 		}
 		return clazz.getName();
-	}
-
-	/**
-	 * Constructor.
-	 * 
-	 * @param entityManager
-	 *            The EntityManager that this predicate is assocatied with.
-	 * @param predicate
-	 *            The EffectivePredicate instance that describes the predicate.
-	 * @param methodName
-	 *            The name of the method that this predicate calls.
-	 * @param valueClass
-	 *            The class type for the return (getter) or parameter (setter)
-	 * @throws MissingAnnotation
-	 *             If an annotation was required but not provided.
-	 */
-	public PredicateInfoImpl( EntityManager entityManager,
-			EffectivePredicate predicate, String methodName, Class<?> valueClass )
-			throws MissingAnnotation
-	{
-		this.methodName = methodName;
-		this.actionType = ActionType.parse(methodName);
-		this.valueClass = valueClass;
-		if (predicate == null)
-		{
-			throw new IllegalArgumentException("Predicate may not be null");
-		}
-		this.predicate = predicate;
-		if (URI.class.equals(predicate.type()))
-		{
-			concreteType = URI.class;
-		}
-		else
-		{
-			if (valueClass != null
-					&& Iterator.class.isAssignableFrom(valueClass))
-			{
-				concreteType = predicate.type();
-			}
-			else
-			{
-				concreteType = valueClass;
-			}
-		}
-
-		if (concreteType != null && valueClass != null)
-		{
-			if (concreteType.isPrimitive() && !valueClass.isPrimitive())
-			{
-				// This allows us to have setters that take primitives but
-				// getters
-				// that return objects.
-				concreteType = valueClass;
-			}
-			else if (!concreteType.isPrimitive() && valueClass.isPrimitive())
-			{
-				concreteType = valueClass;
-			}
-		}
-		objectHandler = getHandler(entityManager, concreteType, predicate);
-	}
-
-	/**
-	 * Execute the method against the resource with the arguments.
-	 * 
-	 * @param method
-	 *            The method to execute
-	 * @param resource
-	 *            The resource to execute it against
-	 * @param args
-	 *            The arguments to the method.
-	 * @return The result of the execution
-	 * @throws NullPointerException
-	 *             if the return type of the method is a primitive and the
-	 *             predicate does not exist on the resource.
-	 */
-	public Object exec( Method method, Resource resource, Object[] args )
-	{
-		Property p = createResourceProperty(resource);
-		Object retval = null;
-		switch (actionType)
-		{
-			case GETTER:
-				retval = execRead(resource, p);
-				break;
-			case SETTER:
-				if (method.getName().startsWith("set"))
-				{
-					retval = execSet(resource, p, args);
-				}
-				else
-				{
-					retval = execAdd(resource, p, args);
-				}
-				break;
-			case REMOVER:
-				retval = execRemove(resource, p, args);
-				break;
-			case EXISTENTIAL:
-				retval = execHas(resource, p, args);
-				break;
-		}
-		return retval;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.xenei.jena.entities.impl.PredicateInfo#getFunction()
-	 */
-	public String getMethodName()
-	{
-		return methodName;
-	}
-
-	/**
-	 * Get the action type for the functin.
-	 */
-	public ActionType getActionType()
-	{
-		return actionType;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.xenei.jena.entities.impl.PredicateInfo#getNamespace()
-	 */
-	public String getNamespace()
-	{
-		return predicate.namespace();
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.xenei.jena.entities.impl.PredicateInfo#getValue()
-	 */
-	public Class<?> getValueClass()
-	{
-		return valueClass;
-	}
-
-	@Override
-	public String toString()
-	{
-		return String.format("%s(%s)", methodName, valueClass);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.xenei.jena.entities.impl.PredicateInfo#getUri()
-	 */
-	public String getUriString()
-	{
-		return predicate.namespace() + predicate.name();
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.xenei.jena.entities.impl.PredicateInfo#getProperty()
-	 */
-	public Property getProperty()
-	{
-		if (property == null)
-		{
-			property = ResourceFactory.createProperty(getUriString());
-		}
-		return property;
-	}
-
-	private Object execHas( Resource resource, Property p, Object[] args )
-	{
-		try
-		{
-			resource.getModel().enterCriticalSection(Lock.READ);
-
-			return resource
-					.hasProperty(p, objectHandler.createRDFNode(args[0]));
-		}
-		finally
-		{
-			resource.getModel().leaveCriticalSection();
-		}
-	}
-
-	private Object execRemove( Resource resource, Property p, Object[] args )
-	{
-		try
-		{
-			resource.getModel().enterCriticalSection(Lock.WRITE);
-			if (valueClass == null)
-			{
-				resource.removeAll(p);
-			}
-			else
-			{
-				resource.getModel().remove(resource, p,
-						objectHandler.createRDFNode(args[0]));
-			}
-			return null;
-		}
-		finally
-		{
-			resource.getModel().leaveCriticalSection();
-		}
-	}
-
-	private Object execAdd( Resource resource, Property p, Object[] args )
-	{
-		boolean empty = objectHandler.isEmpty(args[0]);
-		if (!empty || !predicate.emptyIsNull() )
-		{
-			RDFNode o = objectHandler.createRDFNode(args[0]);
-			if (o != null)
-			{
-				resource.addProperty(p, o);
-			}
-		}
-		return null;
-	}
-
-	private Object execSet( Resource resource, Property p, Object[] args )
-	{
-		try
-		{
-			resource.getModel().enterCriticalSection(Lock.WRITE);
-			resource.removeAll(p); // just in case it get set by another thread
-									// first.
-			return execAdd(resource, p, args);
-		}
-		finally
-		{
-			List<Statement> l = resource.listProperties(p).toList();
-			if (l.size() > 1)
-			{
-				Logger log = LoggerFactory.getLogger(PredicateInfoImpl.class);
-				try
-				{
-					throw new Exception(String.format(
-							"Error processing %s.set%s", resource, p));
-				}
-				catch (Exception e)
-				{
-					log.error("Error:", e);
-					for (Statement s : l)
-					{
-						log.error("Statement: {} ", s.asTriple());
-					}
-				}
-
-			}
-			resource.getModel().leaveCriticalSection();
-		}
-	}
-
-	private Object execRead( Resource resource, Property p )
-	{
-		if (Iterator.class.isAssignableFrom(valueClass))
-		{
-			return execReadMultiple(resource, p);
-		}
-		else
-		{
-			return execReadSingle(resource, p);
-		}
-	}
-
-	private Object execReadSingle( Resource resource, Property p )
-	{
-		try
-		{
-			resource.getModel().enterCriticalSection(Lock.READ);
-
-			StmtIterator iter = resource.listProperties(p);
-			Object retval = null;
-			try {
-				if (iter.hasNext())
-				{
-					Statement s = iter.next();
-					return objectHandler.parseObject(s.getObject());
-				}
-			}
-			finally {
-				iter.close();
-			}
-			if (retval == null)
-			{
-				if (concreteType.isPrimitive())
-				{
-					throw new NullPointerException(
-							String.format(
-									"Null valueClass (%s) was assigned to a variable of primitive type: %s",
-									this.methodName, concreteType));
-				}
-
-			}
-			return retval;
-		}
-		finally
-		{
-			resource.getModel().leaveCriticalSection();
-		}
-	}
-
-	private ExtendedIterator<?> execReadMultiple( Resource resource, Property p )
-	{
-		try
-		{
-			resource.getModel().enterCriticalSection(Lock.READ);
-
-			NodeIterator iter = resource.getModel().listObjectsOfProperty(
-					resource, p);
-
-			return iter.mapWith(new Map1<RDFNode, Object>() {
-
-				public Object map1( RDFNode rdfNode )
-				{
-					return objectHandler.parseObject(rdfNode);
-				}
-			});
-		}
-		finally
-		{
-			resource.getModel().leaveCriticalSection();
-		}
-	}
-
-	private Property createResourceProperty( Resource resource )
-	{
-		return (resource.getModel() == null) ? ResourceFactory
-				.createProperty(getUriString()) : resource.getModel()
-				.createProperty(getUriString());
-	}
-
-	public ObjectHandler getObjectHandler()
-	{
-		return objectHandler;
 	}
 
 	/**
@@ -477,12 +152,12 @@ public class PredicateInfoImpl implements PredicateInfo
 	 *            The EffectivePredicate definition.
 	 * @return The object handler.
 	 */
-	public static ObjectHandler getHandler( EntityManager entityManager,
-			Class<?> returnType, EffectivePredicate pred )
+	public static ObjectHandler getHandler( final EntityManager entityManager,
+			final Class<?> returnType, final EffectivePredicate pred )
 	{
-		TypeMapper typeMapper = TypeMapper.getInstance();
+		final TypeMapper typeMapper = TypeMapper.getInstance();
 		RDFDatatype dt = null;
-		if (pred != null && !pred.literalType().equals(""))
+		if ((pred != null) && !pred.literalType().equals(""))
 		{
 			dt = typeMapper.getSafeTypeByName(pred.literalType());
 		}
@@ -510,5 +185,407 @@ public class PredicateInfoImpl implements PredicateInfo
 			}
 		}
 		return new VoidHandler();
+	}
+
+	/**
+	 * Constructor.
+	 * 
+	 * @param entityManager
+	 *            The EntityManager that this predicate is assocatied with.
+	 * @param predicate
+	 *            The EffectivePredicate instance that describes the predicate.
+	 * @param methodName
+	 *            The name of the method that this predicate calls.
+	 * @param valueClass
+	 *            The class type for the return (getter) or parameter (setter)
+	 * @throws MissingAnnotation
+	 *             If an annotation was required but not provided.
+	 */
+	public PredicateInfoImpl( final EntityManager entityManager,
+			final EffectivePredicate predicate, final String methodName,
+			final Class<?> valueClass ) throws MissingAnnotation
+	{
+		this.methodName = methodName;
+		this.actionType = ActionType.parse(methodName);
+		this.valueClass = valueClass;
+		if (predicate == null)
+		{
+			throw new IllegalArgumentException("Predicate may not be null");
+		}
+		this.predicate = predicate;
+		if (URI.class.equals(predicate.type()))
+		{
+			concreteType = URI.class;
+		}
+		else
+		{
+			if ((valueClass != null)
+					&& (Iterator.class.isAssignableFrom(valueClass) || Collection.class
+							.isAssignableFrom(valueClass)))
+			{
+				concreteType = predicate.type();
+			}
+			else
+			{
+				concreteType = valueClass;
+			}
+		}
+
+		if ((concreteType != null) && (valueClass != null))
+		{
+			if (concreteType.isPrimitive() && !valueClass.isPrimitive())
+			{
+				// This allows us to have setters that take primitives but
+				// getters
+				// that return objects.
+				concreteType = valueClass;
+			}
+			else if (!concreteType.isPrimitive() && valueClass.isPrimitive())
+			{
+				concreteType = valueClass;
+			}
+		}
+		objectHandler = PredicateInfoImpl.getHandler(entityManager,
+				concreteType, predicate);
+	}
+
+	private Property createResourceProperty( final Resource resource )
+	{
+		return (resource.getModel() == null) ? ResourceFactory
+				.createProperty(getUriString()) : resource.getModel()
+				.createProperty(getUriString());
+	}
+
+	/**
+	 * Execute the method against the resource with the arguments.
+	 * 
+	 * @param method
+	 *            The method to execute
+	 * @param resource
+	 *            The resource to execute it against
+	 * @param args
+	 *            The arguments to the method.
+	 * @return The result of the execution
+	 * @throws NullPointerException
+	 *             if the return type of the method is a primitive and the
+	 *             predicate does not exist on the resource.
+	 */
+	public Object exec( final Method method, final Resource resource,
+			final Object[] args )
+	{
+		final Property p = createResourceProperty(resource);
+		Object retval = null;
+		switch (actionType)
+		{
+			case GETTER:
+				retval = execRead(resource, p);
+				break;
+			case SETTER:
+				if (method.getName().startsWith("set"))
+				{
+					retval = execSet(resource, p, args);
+				}
+				else
+				{
+					retval = execAdd(resource, p, args);
+				}
+				break;
+			case REMOVER:
+				retval = execRemove(resource, p, args);
+				break;
+			case EXISTENTIAL:
+				retval = execHas(resource, p, args);
+				break;
+		}
+		return retval;
+	}
+
+	private Object execAdd( final Resource resource, final Property p,
+			final Object[] args )
+	{
+		final boolean empty = objectHandler.isEmpty(args[0]);
+		if (!empty || !predicate.emptyIsNull())
+		{
+			final RDFNode o = objectHandler.createRDFNode(args[0]);
+			if (o != null)
+			{
+				resource.addProperty(p, o);
+			}
+		}
+		return null;
+	}
+
+	private Object execHas( final Resource resource, final Property p,
+			final Object[] args )
+	{
+		try
+		{
+			resource.getModel().enterCriticalSection(Lock.READ);
+
+			return resource
+					.hasProperty(p, objectHandler.createRDFNode(args[0]));
+		}
+		finally
+		{
+			resource.getModel().leaveCriticalSection();
+		}
+	}
+
+	private Object execRead( final Resource resource, final Property p )
+	{
+		if (Iterator.class.isAssignableFrom(valueClass))
+		{
+			return execReadMultiple(resource, p);
+		}
+		else if (Collection.class.isAssignableFrom(valueClass))
+		{
+			return execReadCollection(resource, p);
+		}
+		else
+		{
+			return execReadSingle(resource, p);
+		}
+	}
+
+	private Object execReadCollection( final Resource resource, final Property p )
+	{
+		resource.getModel().enterCriticalSection(Lock.READ);
+		try
+		{
+			final NodeIterator iter = resource.getModel()
+					.listObjectsOfProperty(resource, p);
+
+			final ExtendedIterator<Object> oIter = iter
+					.mapWith(new Map1<RDFNode, Object>() {
+
+						@Override
+						public Object map1( final RDFNode rdfNode )
+						{
+							return objectHandler.parseObject(rdfNode);
+						}
+					});
+			if (List.class.isAssignableFrom(valueClass))
+			{
+				return oIter.toList();
+			}
+			else if (Set.class.isAssignableFrom(valueClass))
+			{
+				return oIter.toSet();
+			}
+			else if (Queue.class.isAssignableFrom(valueClass))
+			{
+				return new LinkedList(oIter.toList());
+			}
+			else
+			{
+				return oIter.toList();
+			}
+
+		}
+		finally
+		{
+			resource.getModel().leaveCriticalSection();
+		}
+	}
+
+	private ExtendedIterator<?> execReadMultiple( final Resource resource,
+			final Property p )
+	{
+		resource.getModel().enterCriticalSection(Lock.READ);
+		try
+		{
+			final NodeIterator iter = resource.getModel()
+					.listObjectsOfProperty(resource, p);
+
+			return iter.mapWith(new Map1<RDFNode, Object>() {
+
+				@Override
+				public Object map1( final RDFNode rdfNode )
+				{
+					return objectHandler.parseObject(rdfNode);
+				}
+			});
+		}
+		finally
+		{
+			resource.getModel().leaveCriticalSection();
+		}
+	}
+
+	private Object execReadSingle( final Resource resource, final Property p )
+	{
+		try
+		{
+			resource.getModel().enterCriticalSection(Lock.READ);
+
+			final StmtIterator iter = resource.listProperties(p);
+			final Object retval = null;
+			try
+			{
+				if (iter.hasNext())
+				{
+					final Statement s = iter.next();
+					return objectHandler.parseObject(s.getObject());
+				}
+			}
+			finally
+			{
+				iter.close();
+			}
+			if (retval == null)
+			{
+				if (concreteType.isPrimitive())
+				{
+					throw new NullPointerException(
+							String.format(
+									"Null valueClass (%s) was assigned to a variable of primitive type: %s",
+									this.methodName, concreteType));
+				}
+
+			}
+			return retval;
+		}
+		finally
+		{
+			resource.getModel().leaveCriticalSection();
+		}
+	}
+
+	private Object execRemove( final Resource resource, final Property p,
+			final Object[] args )
+	{
+		try
+		{
+			resource.getModel().enterCriticalSection(Lock.WRITE);
+			if (valueClass == null)
+			{
+				resource.removeAll(p);
+			}
+			else
+			{
+				resource.getModel().remove(resource, p,
+						objectHandler.createRDFNode(args[0]));
+			}
+			return null;
+		}
+		finally
+		{
+			resource.getModel().leaveCriticalSection();
+		}
+	}
+
+	private Object execSet( final Resource resource, final Property p,
+			final Object[] args )
+	{
+		try
+		{
+			resource.getModel().enterCriticalSection(Lock.WRITE);
+			resource.removeAll(p); // just in case it get set by another thread
+									// first.
+			return execAdd(resource, p, args);
+		}
+		finally
+		{
+			final List<Statement> l = resource.listProperties(p).toList();
+			if (l.size() > 1)
+			{
+				final Logger log = LoggerFactory
+						.getLogger(PredicateInfoImpl.class);
+				try
+				{
+					throw new Exception(String.format(
+							"Error processing %s.set%s", resource, p));
+				}
+				catch (final Exception e)
+				{
+					log.error("Error:", e);
+					for (final Statement s : l)
+					{
+						log.error("Statement: {} ", s.asTriple());
+					}
+				}
+
+			}
+			resource.getModel().leaveCriticalSection();
+		}
+	}
+
+	/**
+	 * Get the action type for the functin.
+	 */
+	@Override
+	public ActionType getActionType()
+	{
+		return actionType;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.xenei.jena.entities.impl.PredicateInfo#getFunction()
+	 */
+	@Override
+	public String getMethodName()
+	{
+		return methodName;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.xenei.jena.entities.impl.PredicateInfo#getNamespace()
+	 */
+	@Override
+	public String getNamespace()
+	{
+		return predicate.namespace();
+	}
+
+	public ObjectHandler getObjectHandler()
+	{
+		return objectHandler;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.xenei.jena.entities.impl.PredicateInfo#getProperty()
+	 */
+	@Override
+	public Property getProperty()
+	{
+		if (property == null)
+		{
+			property = ResourceFactory.createProperty(getUriString());
+		}
+		return property;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.xenei.jena.entities.impl.PredicateInfo#getUri()
+	 */
+	@Override
+	public String getUriString()
+	{
+		return predicate.namespace() + predicate.name();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.xenei.jena.entities.impl.PredicateInfo#getValue()
+	 */
+	@Override
+	public Class<?> getValueClass()
+	{
+		return valueClass;
+	}
+
+	@Override
+	public String toString()
+	{
+		return String.format("%s(%s)", methodName, valueClass);
 	}
 }

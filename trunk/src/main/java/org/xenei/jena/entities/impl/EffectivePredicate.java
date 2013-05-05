@@ -39,12 +39,23 @@ class EffectivePredicate
 	{
 	}
 
-	public EffectivePredicate merge( EffectivePredicate predicate )
+	public boolean emptyIsNull()
+	{
+		return emptyIsNull;
+	}
+
+	public String literalType()
+	{
+		return literalType;
+	}
+
+	public EffectivePredicate merge( final EffectivePredicate predicate )
 	{
 		if (predicate != null)
 		{
 			upcase = predicate.upcase();
-			name = StringUtils.isBlank(predicate.name()) ? name : predicate.name();
+			name = StringUtils.isBlank(predicate.name()) ? name : predicate
+					.name();
 			namespace = StringUtils.isBlank(predicate.namespace()) ? namespace
 					: predicate.namespace();
 			literalType = StringUtils.isBlank(predicate.literalType()) ? literalType
@@ -55,12 +66,13 @@ class EffectivePredicate
 		return this;
 	}
 
-	public EffectivePredicate merge( Predicate predicate )
+	public EffectivePredicate merge( final Predicate predicate )
 	{
 		if (predicate != null)
 		{
 			upcase = predicate.upcase();
-			name = StringUtils.isBlank(predicate.name()) ? name : predicate.name();
+			name = StringUtils.isBlank(predicate.name()) ? name : predicate
+					.name();
 			namespace = StringUtils.isBlank(predicate.namespace()) ? namespace
 					: predicate.namespace();
 			literalType = StringUtils.isBlank(predicate.literalType()) ? literalType
@@ -82,24 +94,14 @@ class EffectivePredicate
 		return namespace;
 	}
 
-	public boolean upcase()
-	{
-		return upcase;
-	}
-
-	public String literalType()
-	{
-		return literalType;
-	}
-
 	public Class<?> type()
 	{
 		return type;
 	}
-	
-	public boolean emptyIsNull()
+
+	public boolean upcase()
 	{
-		return emptyIsNull;
+		return upcase;
 	}
 
 }

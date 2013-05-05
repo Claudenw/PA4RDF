@@ -21,47 +21,60 @@ import org.apache.commons.lang3.StringUtils;
 import org.xenei.jena.entities.impl.ObjectHandler;
 
 /**
- * An ObjectHandler that handles converting RDFNodes to URI strings and visa versa
+ * An ObjectHandler that handles converting RDFNodes to URI strings and visa
+ * versa
  */
 public class UriHandler implements ObjectHandler
 {
 	/**
 	 * Convert the object as a string to an RDFNode.
-	 * @param obj The object to convert
+	 * 
+	 * @param obj
+	 *            The object to convert
 	 * @return The RDFNode with the object string value as the URI.
 	 */
-	public RDFNode createRDFNode( Object obj )
+	@Override
+	public RDFNode createRDFNode( final Object obj )
 	{
 		return ResourceFactory.createResource(String.valueOf(obj));
 	}
 
-	public boolean isEmpty( Object obj )
-	{
-		return obj==null || StringUtils.isBlank( String.valueOf( obj ));
-	}
-	/**
-	 * Return the URI string for the RDFnode
-	 * @param node the RDFNode
-	 * @return the URI fo the RDF node
-	 * @throws Exception if the node is not a Resource.
-	 */
-	public Object parseObject( RDFNode node )
-	{
-		return node.asResource().getURI();
-	}
-	
 	@Override
-	public String toString() {return "UriHandler"; }
-	
-	@Override
-	public boolean equals(Object o)
+	public boolean equals( final Object o )
 	{
 		return o instanceof UriHandler;
 	}
-	
+
 	@Override
 	public int hashCode()
 	{
 		return toString().hashCode();
+	}
+
+	@Override
+	public boolean isEmpty( final Object obj )
+	{
+		return (obj == null) || StringUtils.isBlank(String.valueOf(obj));
+	}
+
+	/**
+	 * Return the URI string for the RDFnode
+	 * 
+	 * @param node
+	 *            the RDFNode
+	 * @return the URI fo the RDF node
+	 * @throws Exception
+	 *             if the node is not a Resource.
+	 */
+	@Override
+	public Object parseObject( final RDFNode node )
+	{
+		return node.asResource().getURI();
+	}
+
+	@Override
+	public String toString()
+	{
+		return "UriHandler";
 	}
 }

@@ -38,7 +38,7 @@ public class SingleValueObjectEntityTests
 	{
 		manager = EntityManagerFactory.getEntityManager();
 		model = ModelFactory.createDefaultModel();
-		Resource r = model
+		final Resource r = model
 				.createResource("http://localhost/SingleValueObjectEntityTests");
 		tc = manager.read(r, SingleValueObjectTestClass.class);
 	}
@@ -67,8 +67,8 @@ public class SingleValueObjectEntityTests
 	@Test
 	public void testChar()
 	{
-		char c = 'a';
-		Character cc = new Character(c);
+		final char c = 'a';
+		final Character cc = new Character(c);
 		tc.setChar(c);
 		Assert.assertEquals(cc, tc.getChar());
 		tc.setChar('x');
@@ -82,8 +82,8 @@ public class SingleValueObjectEntityTests
 	@Test
 	public void testDbl()
 	{
-		double c = 3.14;
-		Double cc = new Double(c);
+		final double c = 3.14;
+		final Double cc = new Double(c);
 		tc.setDbl(c);
 		Assert.assertEquals(cc, tc.getDbl());
 		tc.setDbl(0.0);
@@ -95,10 +95,26 @@ public class SingleValueObjectEntityTests
 	}
 
 	@Test
+	public void testEntity()
+	{
+		Resource r = model.createResource("testclass");
+		final TestClass c = manager.read(r, TestClass.class);
+		tc.setEnt(c);
+		Assert.assertEquals(c, tc.getEnt());
+		r = model.createResource("testclass2");
+		final TestClass cc = manager.read(r, TestClass.class);
+		tc.setEnt(cc);
+		Assert.assertTrue(!c.equals(tc.getEnt()));
+		tc.removeEnt();
+		Assert.assertNull(tc.getEnt());
+
+	}
+
+	@Test
 	public void testFlt()
 	{
-		float c = 3.14F;
-		Float cc = new Float(c);
+		final float c = 3.14F;
+		final Float cc = new Float(c);
 		tc.setFlt(c);
 		Assert.assertEquals(cc, tc.getFlt());
 		tc.setFlt(0.0F);
@@ -110,25 +126,10 @@ public class SingleValueObjectEntityTests
 	}
 
 	@Test
-	public void testLng()
-	{
-		long c = 3;
-		Long cc = new Long(c);
-		tc.setLng(c);
-		Assert.assertEquals(cc, tc.getLng());
-		tc.setLng(0L);
-		Assert.assertTrue(!cc.equals(tc.getLng()));
-		tc.setLng(cc);
-		Assert.assertEquals(cc, tc.getLng());
-		tc.removeLng();
-		Assert.assertNull(tc.getLng());
-	}
-
-	@Test
 	public void testInt()
 	{
-		int c = 3;
-		Integer cc = new Integer(c);
+		final int c = 3;
+		final Integer cc = new Integer(c);
 		tc.setInt(c);
 		Assert.assertEquals(cc, tc.getInt());
 		tc.setInt(0);
@@ -140,9 +141,37 @@ public class SingleValueObjectEntityTests
 	}
 
 	@Test
+	public void testLng()
+	{
+		final long c = 3;
+		final Long cc = new Long(c);
+		tc.setLng(c);
+		Assert.assertEquals(cc, tc.getLng());
+		tc.setLng(0L);
+		Assert.assertTrue(!cc.equals(tc.getLng()));
+		tc.setLng(cc);
+		Assert.assertEquals(cc, tc.getLng());
+		tc.removeLng();
+		Assert.assertNull(tc.getLng());
+	}
+
+	@Test
+	public void testRdf()
+	{
+		final RDFNode n = model.createResource("rdfNode");
+		tc.setRDF(n);
+		Assert.assertEquals(n, tc.getRDF());
+		tc.setRDF(model.createResource("anotherRdfNode"));
+		Assert.assertTrue(!n.equals(tc.getStr()));
+		tc.removeRDF();
+		Assert.assertNull(tc.getRDF());
+
+	}
+
+	@Test
 	public void testStr()
 	{
-		String cc = "string";
+		final String cc = "string";
 		tc.setStr("string");
 		Assert.assertEquals(cc, tc.getStr());
 		tc.setStr("foo");
@@ -154,38 +183,35 @@ public class SingleValueObjectEntityTests
 	}
 
 	@Test
-	public void testRdf()
+	public void testSubPredicate()
 	{
-		RDFNode n = model.createResource("rdfNode");
-		tc.setRDF(n);
-		Assert.assertEquals(n, tc.getRDF());
-		tc.setRDF(model.createResource("anotherRdfNode"));
-		Assert.assertTrue(!n.equals(tc.getStr()));
-		tc.removeRDF();
-		Assert.assertNull(tc.getRDF());
+		Resource r = model.createResource("http://localhost/SubPredicateTest1");
+		final SubPredicate sp = manager.read(r, SubPredicate.class);
+		sp.setName("spTest");
 
-	}
+		r = model.createResource("http://localhost/SubPredicateTest2");
+		final SubPredicate sp2 = manager.read(r, SubPredicate.class);
+		sp2.setName("spTest2");
 
-	@Test
-	public void testEntity()
-	{
-		Resource r = model.createResource("testclass");
-		TestClass c = manager.read(r, TestClass.class);
-		tc.setEnt(c);
-		Assert.assertEquals(c, tc.getEnt());
-		r = model.createResource("testclass2");
-		TestClass cc = manager.read(r, TestClass.class);
-		tc.setEnt(cc);
-		Assert.assertTrue(!c.equals(tc.getEnt()));
-		tc.removeEnt();
-		Assert.assertNull(tc.getEnt());
+		tc.setSubPredicate(sp);
+		Assert.assertNotNull(tc.getSubPredicate());
+		Assert.assertTrue(tc.getSubPredicate() instanceof SubPredicate);
+		Assert.assertEquals(sp.getName(), tc.getSubPredicate().getName());
+
+		tc.setSubPredicate(sp2);
+		Assert.assertNotNull(tc.getSubPredicate());
+		Assert.assertTrue(tc.getSubPredicate() instanceof SubPredicate);
+		Assert.assertEquals(sp2.getName(), tc.getSubPredicate().getName());
+
+		tc.removeSubPredicate();
+		Assert.assertNull(tc.getSubPredicate());
 
 	}
 
 	@Test
 	public void testURI()
 	{
-		Resource r = ResourceFactory.createResource("uriTest");
+		final Resource r = ResourceFactory.createResource("uriTest");
 		tc.setU(r);
 		Assert.assertEquals(r, tc.getU());
 		Assert.assertEquals("uriTest", tc.getU2());
@@ -194,33 +220,5 @@ public class SingleValueObjectEntityTests
 		tc.removeU();
 		Assert.assertNull(tc.getU());
 		Assert.assertNull(tc.getU2());
-	}
-	
-	@Test
-	public void testSubPredicate()
-	{
-		Resource r = model
-				.createResource("http://localhost/SubPredicateTest1");
-		SubPredicate sp = manager.read(r, SubPredicate.class);
-		sp.setName( "spTest");
-		
-		r = model
-				.createResource("http://localhost/SubPredicateTest2");
-		SubPredicate sp2 = manager.read(r, SubPredicate.class);
-		sp2.setName( "spTest2");
-
-		tc.setSubPredicate( sp );
-		Assert.assertNotNull( tc.getSubPredicate());
-		Assert.assertTrue( tc.getSubPredicate() instanceof SubPredicate );
-		Assert.assertEquals( sp.getName(), tc.getSubPredicate().getName());
-		
-		tc.setSubPredicate( sp2 );
-		Assert.assertNotNull( tc.getSubPredicate());
-		Assert.assertTrue( tc.getSubPredicate() instanceof SubPredicate );
-		Assert.assertEquals( sp2.getName(), tc.getSubPredicate().getName());
-		
-		tc.removeSubPredicate();
-		Assert.assertNull( tc.getSubPredicate());		
-		
 	}
 }

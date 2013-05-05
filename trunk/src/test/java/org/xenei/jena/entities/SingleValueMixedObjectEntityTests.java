@@ -32,9 +32,9 @@ public class SingleValueMixedObjectEntityTests
 	@Before
 	public void setup()
 	{
-		EntityManager manager = EntityManagerFactory.getEntityManager();
+		final EntityManager manager = EntityManagerFactory.getEntityManager();
 		model = ModelFactory.createDefaultModel();
-		Resource r = model
+		final Resource r = model
 				.createResource("http://localhost/SingleValueMixedTypeEntityTests");
 		tc = manager.read(r, SingleValueMixedTypeTestClass.class);
 	}
@@ -43,6 +43,20 @@ public class SingleValueMixedObjectEntityTests
 	public void teardown()
 	{
 		model.close();
+	}
+
+	@Test
+	public void testB()
+	{
+		tc.setB(true);
+		Assert.assertTrue(tc.isB());
+		tc.setB(false);
+		Assert.assertTrue(!tc.isB());
+		tc.setB(Boolean.TRUE);
+		Assert.assertTrue(tc.isB());
+		tc.setB(Boolean.FALSE);
+		Assert.assertTrue(!tc.isB());
+
 	}
 
 	@Test
@@ -61,38 +75,10 @@ public class SingleValueMixedObjectEntityTests
 	}
 
 	@Test
-	public void testB()
-	{
-		tc.setB(true);
-		Assert.assertTrue(tc.isB());
-		tc.setB(false);
-		Assert.assertTrue(!tc.isB());
-		tc.setB(Boolean.TRUE);
-		Assert.assertTrue(tc.isB());
-		tc.setB(Boolean.FALSE);
-		Assert.assertTrue(!tc.isB());
-
-	}
-
-	@Test
-	public void testChar()
-	{
-		char c = 'a';
-		Character cc = new Character(c);
-		Assert.assertNull(tc.getChar());
-		tc.setChar(c);
-		Assert.assertEquals(cc, Character.valueOf(tc.getChar()));
-		tc.setChar('x');
-		Assert.assertTrue(!cc.equals(tc.getChar()));
-		tc.setChar(cc);
-		Assert.assertEquals(cc, Character.valueOf(tc.getChar()));
-	}
-
-	@Test
 	public void testC()
 	{
-		char c = 'a';
-		Character cc = new Character(c);
+		final char c = 'a';
+		final Character cc = new Character(c);
 		tc.setC(c);
 		Assert.assertEquals(cc, Character.valueOf(tc.getC()));
 		tc.setC('x');
@@ -103,10 +89,37 @@ public class SingleValueMixedObjectEntityTests
 	}
 
 	@Test
+	public void testChar()
+	{
+		final char c = 'a';
+		final Character cc = new Character(c);
+		Assert.assertNull(tc.getChar());
+		tc.setChar(c);
+		Assert.assertEquals(cc, Character.valueOf(tc.getChar()));
+		tc.setChar('x');
+		Assert.assertTrue(!cc.equals(tc.getChar()));
+		tc.setChar(cc);
+		Assert.assertEquals(cc, Character.valueOf(tc.getChar()));
+	}
+
+	@Test
+	public void testD()
+	{
+		final double c = 3.14;
+		final Double cc = new Double(c);
+		tc.setD(c);
+		Assert.assertEquals(cc, Double.valueOf(tc.getD()));
+		tc.setD(0.0);
+		Assert.assertTrue(!cc.equals(tc.getD()));
+		tc.setD(cc);
+		Assert.assertEquals(cc, Double.valueOf(tc.getD()));
+	}
+
+	@Test
 	public void testDbl()
 	{
-		double c = 3.14;
-		Double cc = new Double(c);
+		final double c = 3.14;
+		final Double cc = new Double(c);
 		Assert.assertNull(tc.getDbl());
 		tc.setDbl(c);
 		Assert.assertEquals(cc, Double.valueOf(tc.getDbl()));
@@ -117,23 +130,23 @@ public class SingleValueMixedObjectEntityTests
 	}
 
 	@Test
-	public void testD()
+	public void testF()
 	{
-		double c = 3.14;
-		Double cc = new Double(c);
-		tc.setD(c);
-		Assert.assertEquals(cc, Double.valueOf(tc.getD()));
-		tc.setD(0.0);
-		Assert.assertTrue(!cc.equals(tc.getD()));
-		tc.setD(cc);
-		Assert.assertEquals(cc, Double.valueOf(tc.getD()));
+		final float c = 3.14F;
+		final Float cc = new Float(c);
+		tc.setF(c);
+		Assert.assertEquals(cc, Float.valueOf(tc.getF()));
+		tc.setF(0.0F);
+		Assert.assertTrue(!cc.equals(tc.getF()));
+		tc.setF(cc);
+		Assert.assertEquals(cc, Float.valueOf(tc.getF()));
 	}
 
 	@Test
 	public void testFlt()
 	{
-		float c = 3.14F;
-		Float cc = new Float(c);
+		final float c = 3.14F;
+		final Float cc = new Float(c);
 		Assert.assertNull(tc.getFlt());
 		tc.setFlt(c);
 		Assert.assertEquals(cc, Float.valueOf(tc.getFlt()));
@@ -145,50 +158,23 @@ public class SingleValueMixedObjectEntityTests
 	}
 
 	@Test
-	public void testF()
+	public void testI()
 	{
-		float c = 3.14F;
-		Float cc = new Float(c);
-		tc.setF(c);
-		Assert.assertEquals(cc, Float.valueOf(tc.getF()));
-		tc.setF(0.0F);
-		Assert.assertTrue(!cc.equals(tc.getF()));
-		tc.setF(cc);
-		Assert.assertEquals(cc, Float.valueOf(tc.getF()));
-	}
-
-	@Test
-	public void testLng()
-	{
-		long c = 3;
-		Long cc = new Long(c);
-		Assert.assertNull(tc.getLng());
-		tc.setLng(c);
-		Assert.assertEquals(cc, Long.valueOf(tc.getLng()));
-		tc.setLng(0L);
-		Assert.assertTrue(!cc.equals(tc.getLng()));
-		tc.setLng(cc);
-		Assert.assertEquals(cc, Long.valueOf(tc.getLng()));
-	}
-
-	@Test
-	public void testL()
-	{
-		long c = 3;
-		Long cc = new Long(c);
-		tc.setL(c);
-		Assert.assertEquals(cc, Long.valueOf(tc.getL()));
-		tc.setL(0L);
-		Assert.assertTrue(!cc.equals(tc.getL()));
-		tc.setL(cc);
-		Assert.assertEquals(cc, Long.valueOf(tc.getL()));
+		final int c = 3;
+		final Integer cc = new Integer(c);
+		tc.setI(c);
+		Assert.assertEquals(cc, Integer.valueOf(tc.getI()));
+		tc.setI(0);
+		Assert.assertTrue(!cc.equals(tc.getI()));
+		tc.setI(cc);
+		Assert.assertEquals(cc, Integer.valueOf(tc.getI()));
 	}
 
 	@Test
 	public void testInt()
 	{
-		int c = 3;
-		Integer cc = new Integer(c);
+		final int c = 3;
+		final Integer cc = new Integer(c);
 		Assert.assertNull(tc.getInt());
 		tc.setInt(c);
 		Assert.assertEquals(cc, Integer.valueOf(tc.getInt()));
@@ -199,16 +185,30 @@ public class SingleValueMixedObjectEntityTests
 	}
 
 	@Test
-	public void testI()
+	public void testL()
 	{
-		int c = 3;
-		Integer cc = new Integer(c);
-		tc.setI(c);
-		Assert.assertEquals(cc, Integer.valueOf(tc.getI()));
-		tc.setI(0);
-		Assert.assertTrue(!cc.equals(tc.getI()));
-		tc.setI(cc);
-		Assert.assertEquals(cc, Integer.valueOf(tc.getI()));
+		final long c = 3;
+		final Long cc = new Long(c);
+		tc.setL(c);
+		Assert.assertEquals(cc, Long.valueOf(tc.getL()));
+		tc.setL(0L);
+		Assert.assertTrue(!cc.equals(tc.getL()));
+		tc.setL(cc);
+		Assert.assertEquals(cc, Long.valueOf(tc.getL()));
+	}
+
+	@Test
+	public void testLng()
+	{
+		final long c = 3;
+		final Long cc = new Long(c);
+		Assert.assertNull(tc.getLng());
+		tc.setLng(c);
+		Assert.assertEquals(cc, Long.valueOf(tc.getLng()));
+		tc.setLng(0L);
+		Assert.assertTrue(!cc.equals(tc.getLng()));
+		tc.setLng(cc);
+		Assert.assertEquals(cc, Long.valueOf(tc.getLng()));
 	}
 
 }

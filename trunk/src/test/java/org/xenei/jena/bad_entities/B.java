@@ -8,13 +8,14 @@ import org.xenei.jena.entities.annotations.Subject;
 /**
  * A class that will fail.
  */
-@Subject( namespace="http://example.com/")
-public interface B 
+@Subject( namespace = "http://example.com/" )
+public interface B
 {
+	Model getModel();
+
+	String getX();
+
 	@Predicate
 	void setX( String x );
-	String getX();
-	
-	Model getModel();
-	
+
 }

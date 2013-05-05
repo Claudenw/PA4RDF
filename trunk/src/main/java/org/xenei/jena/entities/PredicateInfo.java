@@ -22,7 +22,8 @@ import org.xenei.jena.entities.impl.ActionType;
 /**
  * Information about the predicate.
  * 
- * This class should contain enough information to make translation from graph to instance variables
+ * This class should contain enough information to make translation from graph
+ * to instance variables
  * possible.
  */
 public interface PredicateInfo
@@ -48,15 +49,11 @@ public interface PredicateInfo
 	public String getNamespace();
 
 	/**
-	 * get the value class.
+	 * Get the predicate as a property.
 	 * 
-	 * The value class is the class that is returned (for a getter type method)
-	 * or the class type
-	 * of the argument (for a setter type method).
-	 * 
-	 * @return The class
+	 * @return The property for the predicate.
 	 */
-	public Class<?> getValueClass();
+	public Property getProperty();
 
 	/**
 	 * Get the predicate URI as a string.
@@ -66,10 +63,14 @@ public interface PredicateInfo
 	public String getUriString();
 
 	/**
-	 * Get the predicate as a property.
+	 * get the value class.
 	 * 
-	 * @return The property for the predicate.
+	 * The value class is the class that is returned (for a getter type method)
+	 * or the class type
+	 * of the argument (for a setter type method).
+	 * 
+	 * @return The class
 	 */
-	public Property getProperty();
+	public Class<?> getValueClass();
 
 }

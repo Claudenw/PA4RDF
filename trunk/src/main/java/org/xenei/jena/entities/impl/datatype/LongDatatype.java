@@ -20,9 +20,11 @@ import com.hp.hpl.jena.datatypes.xsd.impl.XSDBaseNumericType;
 import org.apache.xerces.impl.dv.ValidatedInfo;
 
 /**
- * A XSDBaseNumericType instance that converts a number into Long and visa versa.
+ * A XSDBaseNumericType instance that converts a number into Long and visa
+ * versa.
  * 
- * The standard Jena numeric data types covert longs to integer if they fall below the 
+ * The standard Jena numeric data types covert longs to integer if they fall
+ * below the
  * Integer.MAX_VALUE limit.
  */
 public class LongDatatype extends XSDBaseNumericType
@@ -34,7 +36,7 @@ public class LongDatatype extends XSDBaseNumericType
 	}
 
 	@Override
-	public Object convertValidatedDataValue( ValidatedInfo validatedInfo )
+	public Object convertValidatedDataValue( final ValidatedInfo validatedInfo )
 			throws DatatypeFormatException
 	{
 		return new Long(validatedInfo.normalizedValue);

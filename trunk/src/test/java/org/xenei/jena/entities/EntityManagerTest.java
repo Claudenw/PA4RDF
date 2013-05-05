@@ -21,48 +21,67 @@ import org.junit.Before;
 import org.junit.Test;
 import org.xenei.jena.entities.impl.EntityManagerImpl;
 
-public class EntityManagerTest {
-	
+public class EntityManagerTest
+{
+
 	EntityManager manager = new EntityManagerImpl();
-	
+
 	@Before
 	public void setup()
 	{
 		PropertyConfigurator.configure("./src/test/resources/log4j.properties");
 	}
-	
+
 	@Test
 	public void testBasicParser() throws Exception
 	{
 		manager.getSubjectInfo(MultiValueObjectTestClass.class);
+		manager.getSubjectInfo(CollectionValueObjectTestClass.class);
+	}
+
+	@Test
+	public void testClassParser() throws Exception
+	{
+		manager.parseClasses(new String[] {
+				MultiValueObjectTestClass.class.getName(),
+				CollectionValueObjectTestClass.class.getName() });
+		SubjectInfo ci = manager
+				.getSubjectInfo(MultiValueObjectTestClass.class);
+		Assert.assertNotNull(ci
+				.getPredicateInfo(MultiValueObjectTestClass.class
+						.getMethod("getU")));
+		ci = manager.getSubjectInfo(CollectionValueObjectTestClass.class);
+		Assert.assertNotNull(ci
+				.getPredicateInfo(CollectionValueObjectTestClass.class
+						.getMethod("getU")));
 	}
 
 	@Test
 	public void testPathParser() throws Exception
 	{
-		manager.parseClasses( new String[] {"org.xenei.jena.entities"});
-		SubjectInfo ci = manager.getSubjectInfo( MultiValueObjectTestClass.class );
-		Assert.assertNotNull( ci.getPredicateInfo(MultiValueObjectTestClass.class.getMethod("getU" ) ));
+		manager.parseClasses(new String[] { "org.xenei.jena.entities" });
+		SubjectInfo ci = manager
+				.getSubjectInfo(MultiValueObjectTestClass.class);
+		Assert.assertNotNull(ci
+				.getPredicateInfo(MultiValueObjectTestClass.class
+						.getMethod("getU")));
+		ci = manager.getSubjectInfo(CollectionValueObjectTestClass.class);
+		Assert.assertNotNull(ci
+				.getPredicateInfo(CollectionValueObjectTestClass.class
+						.getMethod("getU")));
 	}
-	
+
 	@Test
 	public void testPathParserWithBadClasses() throws Exception
 	{
-		try {
-			manager.parseClasses( new String[] {"org.xenei.jena.bad_entities"});
-			Assert.fail( "Should have thrown InvokerException" );
+		try
+		{
+			manager.parseClasses(new String[] { "org.xenei.jena.bad_entities" });
+			Assert.fail("Should have thrown InvokerException");
 		}
-		catch (InvokerException e)
+		catch (final InvokerException e)
 		{
 			// expected
 		}
-	}
-	
-	@Test
-	public void testClassParser() throws Exception
-	{
-		manager.parseClasses( new String[] {MultiValueObjectTestClass.class.getName()});
-		SubjectInfo ci = manager.getSubjectInfo( MultiValueObjectTestClass.class );
-		Assert.assertNotNull( ci.getPredicateInfo(MultiValueObjectTestClass.class.getMethod("getU" ) ));
 	}
 }

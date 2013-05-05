@@ -21,21 +21,25 @@ import org.xenei.jena.entities.ResourceWrapper;
 import org.xenei.jena.entities.impl.ObjectHandler;
 
 /**
- * An ObjectHandler that creates EntityManager managed entities from 
+ * An ObjectHandler that creates EntityManager managed entities from
  * RDFResources and visa versa.
  * 
  */
 public class EntityHandler implements ObjectHandler
 {
-	private Class<?> valueClass;
-	private EntityManager entityManager;
-	
+	private final Class<?> valueClass;
+	private final EntityManager entityManager;
+
 	/**
 	 * Constructor.
-	 * @param entityManager The EntityManager to use.
-	 * @param valueClass The Subject annotated class to create.
+	 * 
+	 * @param entityManager
+	 *            The EntityManager to use.
+	 * @param valueClass
+	 *            The Subject annotated class to create.
 	 */
-	public EntityHandler( EntityManager entityManager, Class<?> valueClass )
+	public EntityHandler( final EntityManager entityManager,
+			final Class<?> valueClass )
 	{
 		this.entityManager = entityManager;
 		this.valueClass = valueClass;
@@ -44,40 +48,48 @@ public class EntityHandler implements ObjectHandler
 	/**
 	 * Create an RDFNode representation for the subject class.
 	 */
-	public RDFNode createRDFNode( Object obj )
+	@Override
+	public RDFNode createRDFNode( final Object obj )
 	{
 		return ((ResourceWrapper) obj).getResource();
 	}
-	
-	public boolean isEmpty( Object obj )
+
+	@Override
+	public boolean equals( final Object o )
+	{
+		return o instanceof EntityHandler;
+	}
+
+	@Override
+	public int hashCode()
+	{
+		return toString().hashCode();
+	}
+
+	@Override
+	public boolean isEmpty( final Object obj )
 	{
 		return obj == null;
 	}
 
 	/**
 	 * Use the entity manager to create an instance of the valueClass from the
-	 * resource.  Effectively calls entityManager.read( node.asResource, valueClass )
+	 * resource. Effectively calls entityManager.read( node.asResource,
+	 * valueClass )
 	 * 
-	 * @param node The RDFNode to wrap with the valueClass.
+	 * @param node
+	 *            The RDFNode to wrap with the valueClass.
 	 * @return the instance of the valueClass.
 	 */
-	public Object parseObject( RDFNode node )
+	@Override
+	public Object parseObject( final RDFNode node )
 	{
 		return entityManager.read(node.asResource(), valueClass);
 	}
-	
+
 	@Override
-	public String toString() { return "EntityHandler"; }
-	
-	@Override
-	public boolean equals( Object o )
+	public String toString()
 	{
-		return o instanceof EntityHandler;
-	}
-	
-	@Override
-	public int hashCode()
-	{
-		return toString().hashCode();
+		return "EntityHandler";
 	}
 }

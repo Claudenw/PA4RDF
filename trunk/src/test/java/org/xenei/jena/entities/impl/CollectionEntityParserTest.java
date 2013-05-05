@@ -5,15 +5,18 @@ import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
 import com.hp.hpl.jena.rdf.model.RDFNode;
 import com.hp.hpl.jena.rdf.model.Resource;
-import com.hp.hpl.jena.util.iterator.ExtendedIterator;
+
+import java.util.List;
+import java.util.Queue;
+import java.util.Set;
 
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.xenei.jena.entities.CollectionValueObjectTestClass;
 import org.xenei.jena.entities.EntityManager;
 import org.xenei.jena.entities.MissingAnnotation;
-import org.xenei.jena.entities.MultiValueObjectTestClass;
 import org.xenei.jena.entities.SubjectInfo;
 import org.xenei.jena.entities.TestClass;
 import org.xenei.jena.entities.impl.handlers.EntityHandler;
@@ -21,7 +24,7 @@ import org.xenei.jena.entities.impl.handlers.LiteralHandler;
 import org.xenei.jena.entities.impl.handlers.ResourceHandler;
 import org.xenei.jena.entities.impl.handlers.UriHandler;
 
-public class MultiValueEntityParserTest
+public class CollectionEntityParserTest
 {
 
 	private Model m;
@@ -34,9 +37,9 @@ public class MultiValueEntityParserTest
 	public void setup() throws MissingAnnotation
 	{
 		m = ModelFactory.createDefaultModel();
-		clazz = MultiValueObjectTestClass.class;
+		clazz = CollectionValueObjectTestClass.class;
 		final Resource r = m
-				.createResource("http://localhost/MultiValueEntityTests");
+				.createResource("http://localhost/CollectionValueEntityTests");
 		manager.read(r, clazz);
 		subjectInfo = manager.getSubjectInfo(clazz);
 	}
@@ -59,9 +62,9 @@ public class MultiValueEntityParserTest
 		Assert.assertEquals(handler, pi.getObjectHandler());
 		Assert.assertEquals("addBool", pi.getMethodName());
 		Assert.assertEquals(Boolean.class, pi.getValueClass());
-		Assert.assertEquals(MultiValueEntityParserTest.namespaceStr + "bool",
+		Assert.assertEquals(CollectionEntityParserTest.namespaceStr + "bool",
 				pi.getUriString());
-		Assert.assertEquals(MultiValueEntityParserTest.namespaceStr,
+		Assert.assertEquals(CollectionEntityParserTest.namespaceStr,
 				pi.getNamespace());
 
 		pi = (PredicateInfoImpl) subjectInfo.getPredicateInfo("removeBool",
@@ -70,9 +73,9 @@ public class MultiValueEntityParserTest
 		Assert.assertEquals(handler, pi.getObjectHandler());
 		Assert.assertEquals("removeBool", pi.getMethodName());
 		Assert.assertEquals(Boolean.class, pi.getValueClass());
-		Assert.assertEquals(MultiValueEntityParserTest.namespaceStr + "bool",
+		Assert.assertEquals(CollectionEntityParserTest.namespaceStr + "bool",
 				pi.getUriString());
-		Assert.assertEquals(MultiValueEntityParserTest.namespaceStr,
+		Assert.assertEquals(CollectionEntityParserTest.namespaceStr,
 				pi.getNamespace());
 
 		final Class<?> c = (Class<?>) Boolean.class.getField("TYPE").get(null);
@@ -82,9 +85,9 @@ public class MultiValueEntityParserTest
 		Assert.assertEquals(handler, pi.getObjectHandler());
 		Assert.assertEquals("addBool", pi.getMethodName());
 		Assert.assertEquals(Boolean.class, pi.getValueClass());
-		Assert.assertEquals(MultiValueEntityParserTest.namespaceStr + "bool",
+		Assert.assertEquals(CollectionEntityParserTest.namespaceStr + "bool",
 				pi.getUriString());
-		Assert.assertEquals(MultiValueEntityParserTest.namespaceStr,
+		Assert.assertEquals(CollectionEntityParserTest.namespaceStr,
 				pi.getNamespace());
 
 		pi = (PredicateInfoImpl) subjectInfo.getPredicateInfo("removeBool", c);
@@ -92,9 +95,9 @@ public class MultiValueEntityParserTest
 		Assert.assertEquals(handler, pi.getObjectHandler());
 		Assert.assertEquals("removeBool", pi.getMethodName());
 		Assert.assertEquals(Boolean.class, pi.getValueClass());
-		Assert.assertEquals(MultiValueEntityParserTest.namespaceStr + "bool",
+		Assert.assertEquals(CollectionEntityParserTest.namespaceStr + "bool",
 				pi.getUriString());
-		Assert.assertEquals(MultiValueEntityParserTest.namespaceStr,
+		Assert.assertEquals(CollectionEntityParserTest.namespaceStr,
 				pi.getNamespace());
 
 	}
@@ -104,15 +107,15 @@ public class MultiValueEntityParserTest
 			IllegalAccessException, NoSuchFieldException
 	{
 		PredicateInfoImpl pi = (PredicateInfoImpl) subjectInfo
-				.getPredicateInfo("getChar", ExtendedIterator.class);
+				.getPredicateInfo("getChar", List.class);
 		final ObjectHandler handler = new LiteralHandler(TypeMapper
 				.getInstance().getTypeByClass(Character.class));
 		Assert.assertEquals("getChar", pi.getMethodName());
 		Assert.assertEquals(handler, pi.getObjectHandler());
-		Assert.assertEquals(ExtendedIterator.class, pi.getValueClass());
-		Assert.assertEquals(MultiValueEntityParserTest.namespaceStr + "char",
+		Assert.assertEquals(List.class, pi.getValueClass());
+		Assert.assertEquals(CollectionEntityParserTest.namespaceStr + "char",
 				pi.getUriString());
-		Assert.assertEquals(MultiValueEntityParserTest.namespaceStr,
+		Assert.assertEquals(CollectionEntityParserTest.namespaceStr,
 				pi.getNamespace());
 
 		pi = (PredicateInfoImpl) subjectInfo.getPredicateInfo("addChar",
@@ -120,9 +123,9 @@ public class MultiValueEntityParserTest
 		Assert.assertEquals("addChar", pi.getMethodName());
 		Assert.assertEquals(handler, pi.getObjectHandler());
 		Assert.assertEquals(Character.class, pi.getValueClass());
-		Assert.assertEquals(MultiValueEntityParserTest.namespaceStr + "char",
+		Assert.assertEquals(CollectionEntityParserTest.namespaceStr + "char",
 				pi.getUriString());
-		Assert.assertEquals(MultiValueEntityParserTest.namespaceStr,
+		Assert.assertEquals(CollectionEntityParserTest.namespaceStr,
 				pi.getNamespace());
 
 		pi = (PredicateInfoImpl) subjectInfo.getPredicateInfo("removeChar",
@@ -130,9 +133,9 @@ public class MultiValueEntityParserTest
 		Assert.assertEquals("removeChar", pi.getMethodName());
 		Assert.assertEquals(handler, pi.getObjectHandler());
 		Assert.assertEquals(Character.class, pi.getValueClass());
-		Assert.assertEquals(MultiValueEntityParserTest.namespaceStr + "char",
+		Assert.assertEquals(CollectionEntityParserTest.namespaceStr + "char",
 				pi.getUriString());
-		Assert.assertEquals(MultiValueEntityParserTest.namespaceStr,
+		Assert.assertEquals(CollectionEntityParserTest.namespaceStr,
 				pi.getNamespace());
 
 		pi = (PredicateInfoImpl) subjectInfo.getPredicateInfo("hasChar",
@@ -140,9 +143,9 @@ public class MultiValueEntityParserTest
 		Assert.assertEquals("hasChar", pi.getMethodName());
 		Assert.assertEquals(handler, pi.getObjectHandler());
 		Assert.assertEquals(Character.class, pi.getValueClass());
-		Assert.assertEquals(MultiValueEntityParserTest.namespaceStr + "char",
+		Assert.assertEquals(CollectionEntityParserTest.namespaceStr + "char",
 				pi.getUriString());
-		Assert.assertEquals(MultiValueEntityParserTest.namespaceStr,
+		Assert.assertEquals(CollectionEntityParserTest.namespaceStr,
 				pi.getNamespace());
 
 		final Class<?> c = (Class<?>) Character.class.getField("TYPE")
@@ -152,27 +155,27 @@ public class MultiValueEntityParserTest
 		Assert.assertEquals("addChar", pi.getMethodName());
 		Assert.assertEquals(handler, pi.getObjectHandler());
 		Assert.assertEquals(Character.class, pi.getValueClass());
-		Assert.assertEquals(MultiValueEntityParserTest.namespaceStr + "char",
+		Assert.assertEquals(CollectionEntityParserTest.namespaceStr + "char",
 				pi.getUriString());
-		Assert.assertEquals(MultiValueEntityParserTest.namespaceStr,
+		Assert.assertEquals(CollectionEntityParserTest.namespaceStr,
 				pi.getNamespace());
 
 		pi = (PredicateInfoImpl) subjectInfo.getPredicateInfo("removeChar", c);
 		Assert.assertEquals("removeChar", pi.getMethodName());
 		Assert.assertEquals(handler, pi.getObjectHandler());
 		Assert.assertEquals(Character.class, pi.getValueClass());
-		Assert.assertEquals(MultiValueEntityParserTest.namespaceStr + "char",
+		Assert.assertEquals(CollectionEntityParserTest.namespaceStr + "char",
 				pi.getUriString());
-		Assert.assertEquals(MultiValueEntityParserTest.namespaceStr,
+		Assert.assertEquals(CollectionEntityParserTest.namespaceStr,
 				pi.getNamespace());
 
 		pi = (PredicateInfoImpl) subjectInfo.getPredicateInfo("hasChar", c);
 		Assert.assertEquals("hasChar", pi.getMethodName());
 		Assert.assertEquals(handler, pi.getObjectHandler());
 		Assert.assertEquals(Character.class, pi.getValueClass());
-		Assert.assertEquals(MultiValueEntityParserTest.namespaceStr + "char",
+		Assert.assertEquals(CollectionEntityParserTest.namespaceStr + "char",
 				pi.getUriString());
-		Assert.assertEquals(MultiValueEntityParserTest.namespaceStr,
+		Assert.assertEquals(CollectionEntityParserTest.namespaceStr,
 				pi.getNamespace());
 	}
 
@@ -181,15 +184,15 @@ public class MultiValueEntityParserTest
 			IllegalAccessException, NoSuchFieldException
 	{
 		PredicateInfoImpl pi = (PredicateInfoImpl) subjectInfo
-				.getPredicateInfo("getDbl", ExtendedIterator.class);
+				.getPredicateInfo("getDbl", Queue.class);
 		final ObjectHandler handler = new LiteralHandler(TypeMapper
 				.getInstance().getTypeByClass(Double.class));
 		Assert.assertEquals("getDbl", pi.getMethodName());
 		Assert.assertEquals(handler, pi.getObjectHandler());
-		Assert.assertEquals(ExtendedIterator.class, pi.getValueClass());
-		Assert.assertEquals(MultiValueEntityParserTest.namespaceStr + "dbl",
+		Assert.assertEquals(Queue.class, pi.getValueClass());
+		Assert.assertEquals(CollectionEntityParserTest.namespaceStr + "dbl",
 				pi.getUriString());
-		Assert.assertEquals(MultiValueEntityParserTest.namespaceStr,
+		Assert.assertEquals(CollectionEntityParserTest.namespaceStr,
 				pi.getNamespace());
 
 		pi = (PredicateInfoImpl) subjectInfo.getPredicateInfo("addDbl",
@@ -197,9 +200,9 @@ public class MultiValueEntityParserTest
 		Assert.assertEquals("addDbl", pi.getMethodName());
 		Assert.assertEquals(handler, pi.getObjectHandler());
 		Assert.assertEquals(Double.class, pi.getValueClass());
-		Assert.assertEquals(MultiValueEntityParserTest.namespaceStr + "dbl",
+		Assert.assertEquals(CollectionEntityParserTest.namespaceStr + "dbl",
 				pi.getUriString());
-		Assert.assertEquals(MultiValueEntityParserTest.namespaceStr,
+		Assert.assertEquals(CollectionEntityParserTest.namespaceStr,
 				pi.getNamespace());
 
 		pi = (PredicateInfoImpl) subjectInfo.getPredicateInfo("removeDbl",
@@ -207,9 +210,9 @@ public class MultiValueEntityParserTest
 		Assert.assertEquals("removeDbl", pi.getMethodName());
 		Assert.assertEquals(handler, pi.getObjectHandler());
 		Assert.assertEquals(Double.class, pi.getValueClass());
-		Assert.assertEquals(MultiValueEntityParserTest.namespaceStr + "dbl",
+		Assert.assertEquals(CollectionEntityParserTest.namespaceStr + "dbl",
 				pi.getUriString());
-		Assert.assertEquals(MultiValueEntityParserTest.namespaceStr,
+		Assert.assertEquals(CollectionEntityParserTest.namespaceStr,
 				pi.getNamespace());
 
 		pi = (PredicateInfoImpl) subjectInfo.getPredicateInfo("hasDbl",
@@ -217,9 +220,9 @@ public class MultiValueEntityParserTest
 		Assert.assertEquals("hasDbl", pi.getMethodName());
 		Assert.assertEquals(handler, pi.getObjectHandler());
 		Assert.assertEquals(Double.class, pi.getValueClass());
-		Assert.assertEquals(MultiValueEntityParserTest.namespaceStr + "dbl",
+		Assert.assertEquals(CollectionEntityParserTest.namespaceStr + "dbl",
 				pi.getUriString());
-		Assert.assertEquals(MultiValueEntityParserTest.namespaceStr,
+		Assert.assertEquals(CollectionEntityParserTest.namespaceStr,
 				pi.getNamespace());
 
 		final Class<?> c = (Class<?>) Double.class.getField("TYPE").get(null);
@@ -228,27 +231,27 @@ public class MultiValueEntityParserTest
 		Assert.assertEquals("addDbl", pi.getMethodName());
 		Assert.assertEquals(handler, pi.getObjectHandler());
 		Assert.assertEquals(Double.class, pi.getValueClass());
-		Assert.assertEquals(MultiValueEntityParserTest.namespaceStr + "dbl",
+		Assert.assertEquals(CollectionEntityParserTest.namespaceStr + "dbl",
 				pi.getUriString());
-		Assert.assertEquals(MultiValueEntityParserTest.namespaceStr,
+		Assert.assertEquals(CollectionEntityParserTest.namespaceStr,
 				pi.getNamespace());
 
 		pi = (PredicateInfoImpl) subjectInfo.getPredicateInfo("removeDbl", c);
 		Assert.assertEquals("removeDbl", pi.getMethodName());
 		Assert.assertEquals(handler, pi.getObjectHandler());
 		Assert.assertEquals(Double.class, pi.getValueClass());
-		Assert.assertEquals(MultiValueEntityParserTest.namespaceStr + "dbl",
+		Assert.assertEquals(CollectionEntityParserTest.namespaceStr + "dbl",
 				pi.getUriString());
-		Assert.assertEquals(MultiValueEntityParserTest.namespaceStr,
+		Assert.assertEquals(CollectionEntityParserTest.namespaceStr,
 				pi.getNamespace());
 
 		pi = (PredicateInfoImpl) subjectInfo.getPredicateInfo("hasDbl", c);
 		Assert.assertEquals("hasDbl", pi.getMethodName());
 		Assert.assertEquals(handler, pi.getObjectHandler());
 		Assert.assertEquals(Double.class, pi.getValueClass());
-		Assert.assertEquals(MultiValueEntityParserTest.namespaceStr + "dbl",
+		Assert.assertEquals(CollectionEntityParserTest.namespaceStr + "dbl",
 				pi.getUriString());
-		Assert.assertEquals(MultiValueEntityParserTest.namespaceStr,
+		Assert.assertEquals(CollectionEntityParserTest.namespaceStr,
 				pi.getNamespace());
 
 	}
@@ -257,16 +260,16 @@ public class MultiValueEntityParserTest
 	public void testEntity()
 	{
 		PredicateInfoImpl pi = (PredicateInfoImpl) subjectInfo
-				.getPredicateInfo("getEnt", ExtendedIterator.class);
+				.getPredicateInfo("getEnt", Queue.class);
 		Assert.assertEquals("getEnt", pi.getMethodName());
 		final ObjectHandler handler = new EntityHandler(manager,
 				TestClass.class);
 
 		Assert.assertEquals(handler, pi.getObjectHandler());
-		Assert.assertEquals(ExtendedIterator.class, pi.getValueClass());
-		Assert.assertEquals(MultiValueEntityParserTest.namespaceStr + "ent",
+		Assert.assertEquals(Queue.class, pi.getValueClass());
+		Assert.assertEquals(CollectionEntityParserTest.namespaceStr + "ent",
 				pi.getUriString());
-		Assert.assertEquals(MultiValueEntityParserTest.namespaceStr,
+		Assert.assertEquals(CollectionEntityParserTest.namespaceStr,
 				pi.getNamespace());
 
 		pi = (PredicateInfoImpl) subjectInfo.getPredicateInfo("addEnt",
@@ -274,9 +277,9 @@ public class MultiValueEntityParserTest
 		Assert.assertEquals("addEnt", pi.getMethodName());
 		Assert.assertEquals(handler, pi.getObjectHandler());
 		Assert.assertEquals(TestClass.class, pi.getValueClass());
-		Assert.assertEquals(MultiValueEntityParserTest.namespaceStr + "ent",
+		Assert.assertEquals(CollectionEntityParserTest.namespaceStr + "ent",
 				pi.getUriString());
-		Assert.assertEquals(MultiValueEntityParserTest.namespaceStr,
+		Assert.assertEquals(CollectionEntityParserTest.namespaceStr,
 				pi.getNamespace());
 
 		pi = (PredicateInfoImpl) subjectInfo.getPredicateInfo("removeEnt",
@@ -284,9 +287,9 @@ public class MultiValueEntityParserTest
 		Assert.assertEquals("removeEnt", pi.getMethodName());
 		Assert.assertEquals(handler, pi.getObjectHandler());
 		Assert.assertEquals(TestClass.class, pi.getValueClass());
-		Assert.assertEquals(MultiValueEntityParserTest.namespaceStr + "ent",
+		Assert.assertEquals(CollectionEntityParserTest.namespaceStr + "ent",
 				pi.getUriString());
-		Assert.assertEquals(MultiValueEntityParserTest.namespaceStr,
+		Assert.assertEquals(CollectionEntityParserTest.namespaceStr,
 				pi.getNamespace());
 
 		pi = (PredicateInfoImpl) subjectInfo.getPredicateInfo("hasEnt",
@@ -294,9 +297,9 @@ public class MultiValueEntityParserTest
 		Assert.assertEquals("hasEnt", pi.getMethodName());
 		Assert.assertEquals(handler, pi.getObjectHandler());
 		Assert.assertEquals(TestClass.class, pi.getValueClass());
-		Assert.assertEquals(MultiValueEntityParserTest.namespaceStr + "ent",
+		Assert.assertEquals(CollectionEntityParserTest.namespaceStr + "ent",
 				pi.getUriString());
-		Assert.assertEquals(MultiValueEntityParserTest.namespaceStr,
+		Assert.assertEquals(CollectionEntityParserTest.namespaceStr,
 				pi.getNamespace());
 	}
 
@@ -306,16 +309,16 @@ public class MultiValueEntityParserTest
 	{
 
 		PredicateInfoImpl pi = (PredicateInfoImpl) subjectInfo
-				.getPredicateInfo("getFlt", ExtendedIterator.class);
+				.getPredicateInfo("getFlt", Set.class);
 		final ObjectHandler handler = new LiteralHandler(TypeMapper
 				.getInstance().getTypeByClass(Float.class));
 
 		Assert.assertEquals("getFlt", pi.getMethodName());
 		Assert.assertEquals(handler, pi.getObjectHandler());
-		Assert.assertEquals(ExtendedIterator.class, pi.getValueClass());
-		Assert.assertEquals(MultiValueEntityParserTest.namespaceStr + "flt",
+		Assert.assertEquals(Set.class, pi.getValueClass());
+		Assert.assertEquals(CollectionEntityParserTest.namespaceStr + "flt",
 				pi.getUriString());
-		Assert.assertEquals(MultiValueEntityParserTest.namespaceStr,
+		Assert.assertEquals(CollectionEntityParserTest.namespaceStr,
 				pi.getNamespace());
 
 		pi = (PredicateInfoImpl) subjectInfo.getPredicateInfo("addFlt",
@@ -323,9 +326,9 @@ public class MultiValueEntityParserTest
 		Assert.assertEquals("addFlt", pi.getMethodName());
 		Assert.assertEquals(handler, pi.getObjectHandler());
 		Assert.assertEquals(Float.class, pi.getValueClass());
-		Assert.assertEquals(MultiValueEntityParserTest.namespaceStr + "flt",
+		Assert.assertEquals(CollectionEntityParserTest.namespaceStr + "flt",
 				pi.getUriString());
-		Assert.assertEquals(MultiValueEntityParserTest.namespaceStr,
+		Assert.assertEquals(CollectionEntityParserTest.namespaceStr,
 				pi.getNamespace());
 
 		pi = (PredicateInfoImpl) subjectInfo.getPredicateInfo("removeFlt",
@@ -333,9 +336,9 @@ public class MultiValueEntityParserTest
 		Assert.assertEquals("removeFlt", pi.getMethodName());
 		Assert.assertEquals(handler, pi.getObjectHandler());
 		Assert.assertEquals(Float.class, pi.getValueClass());
-		Assert.assertEquals(MultiValueEntityParserTest.namespaceStr + "flt",
+		Assert.assertEquals(CollectionEntityParserTest.namespaceStr + "flt",
 				pi.getUriString());
-		Assert.assertEquals(MultiValueEntityParserTest.namespaceStr,
+		Assert.assertEquals(CollectionEntityParserTest.namespaceStr,
 				pi.getNamespace());
 
 		pi = (PredicateInfoImpl) subjectInfo.getPredicateInfo("hasFlt",
@@ -343,9 +346,9 @@ public class MultiValueEntityParserTest
 		Assert.assertEquals("hasFlt", pi.getMethodName());
 		Assert.assertEquals(handler, pi.getObjectHandler());
 		Assert.assertEquals(Float.class, pi.getValueClass());
-		Assert.assertEquals(MultiValueEntityParserTest.namespaceStr + "flt",
+		Assert.assertEquals(CollectionEntityParserTest.namespaceStr + "flt",
 				pi.getUriString());
-		Assert.assertEquals(MultiValueEntityParserTest.namespaceStr,
+		Assert.assertEquals(CollectionEntityParserTest.namespaceStr,
 				pi.getNamespace());
 
 		final Class<?> c = (Class<?>) Float.class.getField("TYPE").get(null);
@@ -354,27 +357,27 @@ public class MultiValueEntityParserTest
 		Assert.assertEquals("addFlt", pi.getMethodName());
 		Assert.assertEquals(handler, pi.getObjectHandler());
 		Assert.assertEquals(Float.class, pi.getValueClass());
-		Assert.assertEquals(MultiValueEntityParserTest.namespaceStr + "flt",
+		Assert.assertEquals(CollectionEntityParserTest.namespaceStr + "flt",
 				pi.getUriString());
-		Assert.assertEquals(MultiValueEntityParserTest.namespaceStr,
+		Assert.assertEquals(CollectionEntityParserTest.namespaceStr,
 				pi.getNamespace());
 
 		pi = (PredicateInfoImpl) subjectInfo.getPredicateInfo("removeFlt", c);
 		Assert.assertEquals("removeFlt", pi.getMethodName());
 		Assert.assertEquals(handler, pi.getObjectHandler());
 		Assert.assertEquals(Float.class, pi.getValueClass());
-		Assert.assertEquals(MultiValueEntityParserTest.namespaceStr + "flt",
+		Assert.assertEquals(CollectionEntityParserTest.namespaceStr + "flt",
 				pi.getUriString());
-		Assert.assertEquals(MultiValueEntityParserTest.namespaceStr,
+		Assert.assertEquals(CollectionEntityParserTest.namespaceStr,
 				pi.getNamespace());
 
 		pi = (PredicateInfoImpl) subjectInfo.getPredicateInfo("hasFlt", c);
 		Assert.assertEquals("hasFlt", pi.getMethodName());
 		Assert.assertEquals(handler, pi.getObjectHandler());
 		Assert.assertEquals(Float.class, pi.getValueClass());
-		Assert.assertEquals(MultiValueEntityParserTest.namespaceStr + "flt",
+		Assert.assertEquals(CollectionEntityParserTest.namespaceStr + "flt",
 				pi.getUriString());
-		Assert.assertEquals(MultiValueEntityParserTest.namespaceStr,
+		Assert.assertEquals(CollectionEntityParserTest.namespaceStr,
 				pi.getNamespace());
 	}
 
@@ -384,16 +387,16 @@ public class MultiValueEntityParserTest
 	{
 
 		PredicateInfoImpl pi = (PredicateInfoImpl) subjectInfo
-				.getPredicateInfo("getInt", ExtendedIterator.class);
+				.getPredicateInfo("getInt", Queue.class);
 		final ObjectHandler handler = new LiteralHandler(TypeMapper
 				.getInstance().getTypeByClass(Integer.class));
 
 		Assert.assertEquals("getInt", pi.getMethodName());
 		Assert.assertEquals(handler, pi.getObjectHandler());
-		Assert.assertEquals(ExtendedIterator.class, pi.getValueClass());
-		Assert.assertEquals(MultiValueEntityParserTest.namespaceStr + "int",
+		Assert.assertEquals(Queue.class, pi.getValueClass());
+		Assert.assertEquals(CollectionEntityParserTest.namespaceStr + "int",
 				pi.getUriString());
-		Assert.assertEquals(MultiValueEntityParserTest.namespaceStr,
+		Assert.assertEquals(CollectionEntityParserTest.namespaceStr,
 				pi.getNamespace());
 
 		pi = (PredicateInfoImpl) subjectInfo.getPredicateInfo("addInt",
@@ -401,9 +404,9 @@ public class MultiValueEntityParserTest
 		Assert.assertEquals("addInt", pi.getMethodName());
 		Assert.assertEquals(handler, pi.getObjectHandler());
 		Assert.assertEquals(Integer.class, pi.getValueClass());
-		Assert.assertEquals(MultiValueEntityParserTest.namespaceStr + "int",
+		Assert.assertEquals(CollectionEntityParserTest.namespaceStr + "int",
 				pi.getUriString());
-		Assert.assertEquals(MultiValueEntityParserTest.namespaceStr,
+		Assert.assertEquals(CollectionEntityParserTest.namespaceStr,
 				pi.getNamespace());
 
 		pi = (PredicateInfoImpl) subjectInfo.getPredicateInfo("removeInt",
@@ -411,9 +414,9 @@ public class MultiValueEntityParserTest
 		Assert.assertEquals("removeInt", pi.getMethodName());
 		Assert.assertEquals(handler, pi.getObjectHandler());
 		Assert.assertEquals(Integer.class, pi.getValueClass());
-		Assert.assertEquals(MultiValueEntityParserTest.namespaceStr + "int",
+		Assert.assertEquals(CollectionEntityParserTest.namespaceStr + "int",
 				pi.getUriString());
-		Assert.assertEquals(MultiValueEntityParserTest.namespaceStr,
+		Assert.assertEquals(CollectionEntityParserTest.namespaceStr,
 				pi.getNamespace());
 
 		pi = (PredicateInfoImpl) subjectInfo.getPredicateInfo("hasInt",
@@ -421,9 +424,9 @@ public class MultiValueEntityParserTest
 		Assert.assertEquals("hasInt", pi.getMethodName());
 		Assert.assertEquals(handler, pi.getObjectHandler());
 		Assert.assertEquals(Integer.class, pi.getValueClass());
-		Assert.assertEquals(MultiValueEntityParserTest.namespaceStr + "int",
+		Assert.assertEquals(CollectionEntityParserTest.namespaceStr + "int",
 				pi.getUriString());
-		Assert.assertEquals(MultiValueEntityParserTest.namespaceStr,
+		Assert.assertEquals(CollectionEntityParserTest.namespaceStr,
 				pi.getNamespace());
 
 		final Class<?> c = (Class<?>) Integer.class.getField("TYPE").get(null);
@@ -432,27 +435,27 @@ public class MultiValueEntityParserTest
 		Assert.assertEquals("addInt", pi.getMethodName());
 		Assert.assertEquals(handler, pi.getObjectHandler());
 		Assert.assertEquals(Integer.class, pi.getValueClass());
-		Assert.assertEquals(MultiValueEntityParserTest.namespaceStr + "int",
+		Assert.assertEquals(CollectionEntityParserTest.namespaceStr + "int",
 				pi.getUriString());
-		Assert.assertEquals(MultiValueEntityParserTest.namespaceStr,
+		Assert.assertEquals(CollectionEntityParserTest.namespaceStr,
 				pi.getNamespace());
 
 		pi = (PredicateInfoImpl) subjectInfo.getPredicateInfo("removeInt", c);
 		Assert.assertEquals("removeInt", pi.getMethodName());
 		Assert.assertEquals(handler, pi.getObjectHandler());
 		Assert.assertEquals(Integer.class, pi.getValueClass());
-		Assert.assertEquals(MultiValueEntityParserTest.namespaceStr + "int",
+		Assert.assertEquals(CollectionEntityParserTest.namespaceStr + "int",
 				pi.getUriString());
-		Assert.assertEquals(MultiValueEntityParserTest.namespaceStr,
+		Assert.assertEquals(CollectionEntityParserTest.namespaceStr,
 				pi.getNamespace());
 
 		pi = (PredicateInfoImpl) subjectInfo.getPredicateInfo("hasInt", c);
 		Assert.assertEquals("hasInt", pi.getMethodName());
 		Assert.assertEquals(handler, pi.getObjectHandler());
 		Assert.assertEquals(Integer.class, pi.getValueClass());
-		Assert.assertEquals(MultiValueEntityParserTest.namespaceStr + "int",
+		Assert.assertEquals(CollectionEntityParserTest.namespaceStr + "int",
 				pi.getUriString());
-		Assert.assertEquals(MultiValueEntityParserTest.namespaceStr,
+		Assert.assertEquals(CollectionEntityParserTest.namespaceStr,
 				pi.getNamespace());
 
 	}
@@ -462,16 +465,16 @@ public class MultiValueEntityParserTest
 			IllegalAccessException, NoSuchFieldException
 	{
 		PredicateInfoImpl pi = (PredicateInfoImpl) subjectInfo
-				.getPredicateInfo("getLng", ExtendedIterator.class);
+				.getPredicateInfo("getLng", List.class);
 		final ObjectHandler handler = new LiteralHandler(TypeMapper
 				.getInstance().getTypeByClass(Long.class));
 
 		Assert.assertEquals("getLng", pi.getMethodName());
 		Assert.assertEquals(handler, pi.getObjectHandler());
-		Assert.assertEquals(ExtendedIterator.class, pi.getValueClass());
-		Assert.assertEquals(MultiValueEntityParserTest.namespaceStr + "lng",
+		Assert.assertEquals(List.class, pi.getValueClass());
+		Assert.assertEquals(CollectionEntityParserTest.namespaceStr + "lng",
 				pi.getUriString());
-		Assert.assertEquals(MultiValueEntityParserTest.namespaceStr,
+		Assert.assertEquals(CollectionEntityParserTest.namespaceStr,
 				pi.getNamespace());
 
 		pi = (PredicateInfoImpl) subjectInfo.getPredicateInfo("addLng",
@@ -479,9 +482,9 @@ public class MultiValueEntityParserTest
 		Assert.assertEquals("addLng", pi.getMethodName());
 		Assert.assertEquals(handler, pi.getObjectHandler());
 		Assert.assertEquals(Long.class, pi.getValueClass());
-		Assert.assertEquals(MultiValueEntityParserTest.namespaceStr + "lng",
+		Assert.assertEquals(CollectionEntityParserTest.namespaceStr + "lng",
 				pi.getUriString());
-		Assert.assertEquals(MultiValueEntityParserTest.namespaceStr,
+		Assert.assertEquals(CollectionEntityParserTest.namespaceStr,
 				pi.getNamespace());
 
 		pi = (PredicateInfoImpl) subjectInfo.getPredicateInfo("removeLng",
@@ -489,9 +492,9 @@ public class MultiValueEntityParserTest
 		Assert.assertEquals("removeLng", pi.getMethodName());
 		Assert.assertEquals(handler, pi.getObjectHandler());
 		Assert.assertEquals(Long.class, pi.getValueClass());
-		Assert.assertEquals(MultiValueEntityParserTest.namespaceStr + "lng",
+		Assert.assertEquals(CollectionEntityParserTest.namespaceStr + "lng",
 				pi.getUriString());
-		Assert.assertEquals(MultiValueEntityParserTest.namespaceStr,
+		Assert.assertEquals(CollectionEntityParserTest.namespaceStr,
 				pi.getNamespace());
 
 		pi = (PredicateInfoImpl) subjectInfo.getPredicateInfo("hasLng",
@@ -499,9 +502,9 @@ public class MultiValueEntityParserTest
 		Assert.assertEquals("hasLng", pi.getMethodName());
 		Assert.assertEquals(handler, pi.getObjectHandler());
 		Assert.assertEquals(Long.class, pi.getValueClass());
-		Assert.assertEquals(MultiValueEntityParserTest.namespaceStr + "lng",
+		Assert.assertEquals(CollectionEntityParserTest.namespaceStr + "lng",
 				pi.getUriString());
-		Assert.assertEquals(MultiValueEntityParserTest.namespaceStr,
+		Assert.assertEquals(CollectionEntityParserTest.namespaceStr,
 				pi.getNamespace());
 
 		final Class<?> c = (Class<?>) Long.class.getField("TYPE").get(null);
@@ -510,27 +513,27 @@ public class MultiValueEntityParserTest
 		Assert.assertEquals("addLng", pi.getMethodName());
 		Assert.assertEquals(handler, pi.getObjectHandler());
 		Assert.assertEquals(Long.class, pi.getValueClass());
-		Assert.assertEquals(MultiValueEntityParserTest.namespaceStr + "lng",
+		Assert.assertEquals(CollectionEntityParserTest.namespaceStr + "lng",
 				pi.getUriString());
-		Assert.assertEquals(MultiValueEntityParserTest.namespaceStr,
+		Assert.assertEquals(CollectionEntityParserTest.namespaceStr,
 				pi.getNamespace());
 
 		pi = (PredicateInfoImpl) subjectInfo.getPredicateInfo("removeLng", c);
 		Assert.assertEquals("removeLng", pi.getMethodName());
 		Assert.assertEquals(handler, pi.getObjectHandler());
 		Assert.assertEquals(Long.class, pi.getValueClass());
-		Assert.assertEquals(MultiValueEntityParserTest.namespaceStr + "lng",
+		Assert.assertEquals(CollectionEntityParserTest.namespaceStr + "lng",
 				pi.getUriString());
-		Assert.assertEquals(MultiValueEntityParserTest.namespaceStr,
+		Assert.assertEquals(CollectionEntityParserTest.namespaceStr,
 				pi.getNamespace());
 
 		pi = (PredicateInfoImpl) subjectInfo.getPredicateInfo("hasLng", c);
 		Assert.assertEquals("hasLng", pi.getMethodName());
 		Assert.assertEquals(handler, pi.getObjectHandler());
 		Assert.assertEquals(Long.class, pi.getValueClass());
-		Assert.assertEquals(MultiValueEntityParserTest.namespaceStr + "lng",
+		Assert.assertEquals(CollectionEntityParserTest.namespaceStr + "lng",
 				pi.getUriString());
-		Assert.assertEquals(MultiValueEntityParserTest.namespaceStr,
+		Assert.assertEquals(CollectionEntityParserTest.namespaceStr,
 				pi.getNamespace());
 
 	}
@@ -539,15 +542,15 @@ public class MultiValueEntityParserTest
 	public void testRdf()
 	{
 		PredicateInfoImpl pi = (PredicateInfoImpl) subjectInfo
-				.getPredicateInfo("getRDF", ExtendedIterator.class);
+				.getPredicateInfo("getRDF", List.class);
 		final ObjectHandler handler = new ResourceHandler();
 
 		Assert.assertEquals("getRDF", pi.getMethodName());
 		Assert.assertEquals(handler, pi.getObjectHandler());
-		Assert.assertEquals(ExtendedIterator.class, pi.getValueClass());
-		Assert.assertEquals(MultiValueEntityParserTest.namespaceStr + "rDF",
+		Assert.assertEquals(List.class, pi.getValueClass());
+		Assert.assertEquals(CollectionEntityParserTest.namespaceStr + "rDF",
 				pi.getUriString());
-		Assert.assertEquals(MultiValueEntityParserTest.namespaceStr,
+		Assert.assertEquals(CollectionEntityParserTest.namespaceStr,
 				pi.getNamespace());
 
 		pi = (PredicateInfoImpl) subjectInfo.getPredicateInfo("addRDF",
@@ -555,9 +558,9 @@ public class MultiValueEntityParserTest
 		Assert.assertEquals("addRDF", pi.getMethodName());
 		Assert.assertEquals(handler, pi.getObjectHandler());
 		Assert.assertEquals(RDFNode.class, pi.getValueClass());
-		Assert.assertEquals(MultiValueEntityParserTest.namespaceStr + "rDF",
+		Assert.assertEquals(CollectionEntityParserTest.namespaceStr + "rDF",
 				pi.getUriString());
-		Assert.assertEquals(MultiValueEntityParserTest.namespaceStr,
+		Assert.assertEquals(CollectionEntityParserTest.namespaceStr,
 				pi.getNamespace());
 
 		pi = (PredicateInfoImpl) subjectInfo.getPredicateInfo("removeRDF",
@@ -565,9 +568,9 @@ public class MultiValueEntityParserTest
 		Assert.assertEquals("removeRDF", pi.getMethodName());
 		Assert.assertEquals(handler, pi.getObjectHandler());
 		Assert.assertEquals(RDFNode.class, pi.getValueClass());
-		Assert.assertEquals(MultiValueEntityParserTest.namespaceStr + "rDF",
+		Assert.assertEquals(CollectionEntityParserTest.namespaceStr + "rDF",
 				pi.getUriString());
-		Assert.assertEquals(MultiValueEntityParserTest.namespaceStr,
+		Assert.assertEquals(CollectionEntityParserTest.namespaceStr,
 				pi.getNamespace());
 
 		pi = (PredicateInfoImpl) subjectInfo.getPredicateInfo("hasRDF",
@@ -575,9 +578,9 @@ public class MultiValueEntityParserTest
 		Assert.assertEquals("hasRDF", pi.getMethodName());
 		Assert.assertEquals(handler, pi.getObjectHandler());
 		Assert.assertEquals(RDFNode.class, pi.getValueClass());
-		Assert.assertEquals(MultiValueEntityParserTest.namespaceStr + "rDF",
+		Assert.assertEquals(CollectionEntityParserTest.namespaceStr + "rDF",
 				pi.getUriString());
-		Assert.assertEquals(MultiValueEntityParserTest.namespaceStr,
+		Assert.assertEquals(CollectionEntityParserTest.namespaceStr,
 				pi.getNamespace());
 	}
 
@@ -585,16 +588,16 @@ public class MultiValueEntityParserTest
 	public void testStr()
 	{
 		PredicateInfoImpl pi = (PredicateInfoImpl) subjectInfo
-				.getPredicateInfo("getStr", ExtendedIterator.class);
+				.getPredicateInfo("getStr", Set.class);
 		final ObjectHandler handler = new LiteralHandler(TypeMapper
 				.getInstance().getTypeByClass(String.class));
 
 		Assert.assertEquals("getStr", pi.getMethodName());
 		Assert.assertEquals(handler, pi.getObjectHandler());
-		Assert.assertEquals(ExtendedIterator.class, pi.getValueClass());
-		Assert.assertEquals(MultiValueEntityParserTest.namespaceStr + "str",
+		Assert.assertEquals(Set.class, pi.getValueClass());
+		Assert.assertEquals(CollectionEntityParserTest.namespaceStr + "str",
 				pi.getUriString());
-		Assert.assertEquals(MultiValueEntityParserTest.namespaceStr,
+		Assert.assertEquals(CollectionEntityParserTest.namespaceStr,
 				pi.getNamespace());
 
 		pi = (PredicateInfoImpl) subjectInfo.getPredicateInfo("addStr",
@@ -602,9 +605,9 @@ public class MultiValueEntityParserTest
 		Assert.assertEquals("addStr", pi.getMethodName());
 		Assert.assertEquals(handler, pi.getObjectHandler());
 		Assert.assertEquals(String.class, pi.getValueClass());
-		Assert.assertEquals(MultiValueEntityParserTest.namespaceStr + "str",
+		Assert.assertEquals(CollectionEntityParserTest.namespaceStr + "str",
 				pi.getUriString());
-		Assert.assertEquals(MultiValueEntityParserTest.namespaceStr,
+		Assert.assertEquals(CollectionEntityParserTest.namespaceStr,
 				pi.getNamespace());
 
 		pi = (PredicateInfoImpl) subjectInfo.getPredicateInfo("removeStr",
@@ -612,9 +615,9 @@ public class MultiValueEntityParserTest
 		Assert.assertEquals("removeStr", pi.getMethodName());
 		Assert.assertEquals(handler, pi.getObjectHandler());
 		Assert.assertEquals(String.class, pi.getValueClass());
-		Assert.assertEquals(MultiValueEntityParserTest.namespaceStr + "str",
+		Assert.assertEquals(CollectionEntityParserTest.namespaceStr + "str",
 				pi.getUriString());
-		Assert.assertEquals(MultiValueEntityParserTest.namespaceStr,
+		Assert.assertEquals(CollectionEntityParserTest.namespaceStr,
 				pi.getNamespace());
 
 		pi = (PredicateInfoImpl) subjectInfo.getPredicateInfo("hasStr",
@@ -622,9 +625,9 @@ public class MultiValueEntityParserTest
 		Assert.assertEquals("hasStr", pi.getMethodName());
 		Assert.assertEquals(handler, pi.getObjectHandler());
 		Assert.assertEquals(String.class, pi.getValueClass());
-		Assert.assertEquals(MultiValueEntityParserTest.namespaceStr + "str",
+		Assert.assertEquals(CollectionEntityParserTest.namespaceStr + "str",
 				pi.getUriString());
-		Assert.assertEquals(MultiValueEntityParserTest.namespaceStr,
+		Assert.assertEquals(CollectionEntityParserTest.namespaceStr,
 				pi.getNamespace());
 	}
 
@@ -632,16 +635,16 @@ public class MultiValueEntityParserTest
 	public void testURI()
 	{
 		PredicateInfoImpl pi = (PredicateInfoImpl) subjectInfo
-				.getPredicateInfo("getU", ExtendedIterator.class);
+				.getPredicateInfo("getU", Set.class);
 		final ObjectHandler resHandler = new ResourceHandler();
 		final ObjectHandler uriHandler = new UriHandler();
 
 		Assert.assertEquals("getU", pi.getMethodName());
 		Assert.assertEquals(resHandler, pi.getObjectHandler());
-		Assert.assertEquals(ExtendedIterator.class, pi.getValueClass());
-		Assert.assertEquals(MultiValueEntityParserTest.namespaceStr + "u",
+		Assert.assertEquals(Set.class, pi.getValueClass());
+		Assert.assertEquals(CollectionEntityParserTest.namespaceStr + "u",
 				pi.getUriString());
-		Assert.assertEquals(MultiValueEntityParserTest.namespaceStr,
+		Assert.assertEquals(CollectionEntityParserTest.namespaceStr,
 				pi.getNamespace());
 
 		pi = (PredicateInfoImpl) subjectInfo.getPredicateInfo("addU",
@@ -649,9 +652,9 @@ public class MultiValueEntityParserTest
 		Assert.assertEquals("addU", pi.getMethodName());
 		Assert.assertEquals(uriHandler, pi.getObjectHandler());
 		Assert.assertEquals(String.class, pi.getValueClass());
-		Assert.assertEquals(MultiValueEntityParserTest.namespaceStr + "u",
+		Assert.assertEquals(CollectionEntityParserTest.namespaceStr + "u",
 				pi.getUriString());
-		Assert.assertEquals(MultiValueEntityParserTest.namespaceStr,
+		Assert.assertEquals(CollectionEntityParserTest.namespaceStr,
 				pi.getNamespace());
 
 		pi = (PredicateInfoImpl) subjectInfo.getPredicateInfo("addU",
@@ -659,9 +662,9 @@ public class MultiValueEntityParserTest
 		Assert.assertEquals("addU", pi.getMethodName());
 		Assert.assertEquals(resHandler, pi.getObjectHandler());
 		Assert.assertEquals(RDFNode.class, pi.getValueClass());
-		Assert.assertEquals(MultiValueEntityParserTest.namespaceStr + "u",
+		Assert.assertEquals(CollectionEntityParserTest.namespaceStr + "u",
 				pi.getUriString());
-		Assert.assertEquals(MultiValueEntityParserTest.namespaceStr,
+		Assert.assertEquals(CollectionEntityParserTest.namespaceStr,
 				pi.getNamespace());
 
 		pi = (PredicateInfoImpl) subjectInfo.getPredicateInfo("removeU",
@@ -669,9 +672,9 @@ public class MultiValueEntityParserTest
 		Assert.assertEquals("removeU", pi.getMethodName());
 		Assert.assertEquals(resHandler, pi.getObjectHandler());
 		Assert.assertEquals(RDFNode.class, pi.getValueClass());
-		Assert.assertEquals(MultiValueEntityParserTest.namespaceStr + "u",
+		Assert.assertEquals(CollectionEntityParserTest.namespaceStr + "u",
 				pi.getUriString());
-		Assert.assertEquals(MultiValueEntityParserTest.namespaceStr,
+		Assert.assertEquals(CollectionEntityParserTest.namespaceStr,
 				pi.getNamespace());
 
 		pi = (PredicateInfoImpl) subjectInfo.getPredicateInfo("removeU",
@@ -679,9 +682,9 @@ public class MultiValueEntityParserTest
 		Assert.assertEquals("removeU", pi.getMethodName());
 		Assert.assertEquals(uriHandler, pi.getObjectHandler());
 		Assert.assertEquals(String.class, pi.getValueClass());
-		Assert.assertEquals(MultiValueEntityParserTest.namespaceStr + "u",
+		Assert.assertEquals(CollectionEntityParserTest.namespaceStr + "u",
 				pi.getUriString());
-		Assert.assertEquals(MultiValueEntityParserTest.namespaceStr,
+		Assert.assertEquals(CollectionEntityParserTest.namespaceStr,
 				pi.getNamespace());
 
 		pi = (PredicateInfoImpl) subjectInfo.getPredicateInfo("hasU",
@@ -689,9 +692,9 @@ public class MultiValueEntityParserTest
 		Assert.assertEquals("hasU", pi.getMethodName());
 		Assert.assertEquals(uriHandler, pi.getObjectHandler());
 		Assert.assertEquals(String.class, pi.getValueClass());
-		Assert.assertEquals(MultiValueEntityParserTest.namespaceStr + "u",
+		Assert.assertEquals(CollectionEntityParserTest.namespaceStr + "u",
 				pi.getUriString());
-		Assert.assertEquals(MultiValueEntityParserTest.namespaceStr,
+		Assert.assertEquals(CollectionEntityParserTest.namespaceStr,
 				pi.getNamespace());
 
 		pi = (PredicateInfoImpl) subjectInfo.getPredicateInfo("hasU",
@@ -699,19 +702,19 @@ public class MultiValueEntityParserTest
 		Assert.assertEquals("hasU", pi.getMethodName());
 		Assert.assertEquals(resHandler, pi.getObjectHandler());
 		Assert.assertEquals(RDFNode.class, pi.getValueClass());
-		Assert.assertEquals(MultiValueEntityParserTest.namespaceStr + "u",
+		Assert.assertEquals(CollectionEntityParserTest.namespaceStr + "u",
 				pi.getUriString());
-		Assert.assertEquals(MultiValueEntityParserTest.namespaceStr,
+		Assert.assertEquals(CollectionEntityParserTest.namespaceStr,
 				pi.getNamespace());
 
 		pi = (PredicateInfoImpl) subjectInfo.getPredicateInfo("getU2",
-				ExtendedIterator.class);
+				List.class);
 		Assert.assertEquals("getU2", pi.getMethodName());
 		Assert.assertEquals(uriHandler, pi.getObjectHandler());
-		Assert.assertEquals(ExtendedIterator.class, pi.getValueClass());
-		Assert.assertEquals(MultiValueEntityParserTest.namespaceStr + "u",
+		Assert.assertEquals(List.class, pi.getValueClass());
+		Assert.assertEquals(CollectionEntityParserTest.namespaceStr + "u",
 				pi.getUriString());
-		Assert.assertEquals(MultiValueEntityParserTest.namespaceStr,
+		Assert.assertEquals(CollectionEntityParserTest.namespaceStr,
 				pi.getNamespace());
 	}
 
@@ -719,16 +722,16 @@ public class MultiValueEntityParserTest
 	public void testURIOrdering()
 	{
 		PredicateInfoImpl pi = (PredicateInfoImpl) subjectInfo
-				.getPredicateInfo("getU3", ExtendedIterator.class);
+				.getPredicateInfo("getU3", Queue.class);
 		final ObjectHandler resHandler = new ResourceHandler();
 		final ObjectHandler uriHandler = new UriHandler();
 
 		Assert.assertEquals("getU3", pi.getMethodName());
 		Assert.assertEquals(resHandler, pi.getObjectHandler());
-		Assert.assertEquals(ExtendedIterator.class, pi.getValueClass());
-		Assert.assertEquals(MultiValueEntityParserTest.namespaceStr + "u3",
+		Assert.assertEquals(Queue.class, pi.getValueClass());
+		Assert.assertEquals(CollectionEntityParserTest.namespaceStr + "u3",
 				pi.getUriString());
-		Assert.assertEquals(MultiValueEntityParserTest.namespaceStr,
+		Assert.assertEquals(CollectionEntityParserTest.namespaceStr,
 				pi.getNamespace());
 
 		pi = (PredicateInfoImpl) subjectInfo.getPredicateInfo("addU3",
@@ -736,9 +739,9 @@ public class MultiValueEntityParserTest
 		Assert.assertEquals("addU3", pi.getMethodName());
 		Assert.assertEquals(uriHandler, pi.getObjectHandler());
 		Assert.assertEquals(String.class, pi.getValueClass());
-		Assert.assertEquals(MultiValueEntityParserTest.namespaceStr + "u3",
+		Assert.assertEquals(CollectionEntityParserTest.namespaceStr + "u3",
 				pi.getUriString());
-		Assert.assertEquals(MultiValueEntityParserTest.namespaceStr,
+		Assert.assertEquals(CollectionEntityParserTest.namespaceStr,
 				pi.getNamespace());
 
 		pi = (PredicateInfoImpl) subjectInfo.getPredicateInfo("addU3",
@@ -746,9 +749,9 @@ public class MultiValueEntityParserTest
 		Assert.assertEquals("addU3", pi.getMethodName());
 		Assert.assertEquals(resHandler, pi.getObjectHandler());
 		Assert.assertEquals(RDFNode.class, pi.getValueClass());
-		Assert.assertEquals(MultiValueEntityParserTest.namespaceStr + "u3",
+		Assert.assertEquals(CollectionEntityParserTest.namespaceStr + "u3",
 				pi.getUriString());
-		Assert.assertEquals(MultiValueEntityParserTest.namespaceStr,
+		Assert.assertEquals(CollectionEntityParserTest.namespaceStr,
 				pi.getNamespace());
 
 		pi = (PredicateInfoImpl) subjectInfo.getPredicateInfo("removeU3",
@@ -756,9 +759,9 @@ public class MultiValueEntityParserTest
 		Assert.assertEquals("removeU3", pi.getMethodName());
 		Assert.assertEquals(resHandler, pi.getObjectHandler());
 		Assert.assertEquals(RDFNode.class, pi.getValueClass());
-		Assert.assertEquals(MultiValueEntityParserTest.namespaceStr + "u3",
+		Assert.assertEquals(CollectionEntityParserTest.namespaceStr + "u3",
 				pi.getUriString());
-		Assert.assertEquals(MultiValueEntityParserTest.namespaceStr,
+		Assert.assertEquals(CollectionEntityParserTest.namespaceStr,
 				pi.getNamespace());
 
 		pi = (PredicateInfoImpl) subjectInfo.getPredicateInfo("removeU3",
@@ -766,9 +769,9 @@ public class MultiValueEntityParserTest
 		Assert.assertEquals("removeU3", pi.getMethodName());
 		Assert.assertEquals(uriHandler, pi.getObjectHandler());
 		Assert.assertEquals(String.class, pi.getValueClass());
-		Assert.assertEquals(MultiValueEntityParserTest.namespaceStr + "u3",
+		Assert.assertEquals(CollectionEntityParserTest.namespaceStr + "u3",
 				pi.getUriString());
-		Assert.assertEquals(MultiValueEntityParserTest.namespaceStr,
+		Assert.assertEquals(CollectionEntityParserTest.namespaceStr,
 				pi.getNamespace());
 
 		pi = (PredicateInfoImpl) subjectInfo.getPredicateInfo("hasU3",
@@ -776,9 +779,9 @@ public class MultiValueEntityParserTest
 		Assert.assertEquals("hasU3", pi.getMethodName());
 		Assert.assertEquals(uriHandler, pi.getObjectHandler());
 		Assert.assertEquals(String.class, pi.getValueClass());
-		Assert.assertEquals(MultiValueEntityParserTest.namespaceStr + "u3",
+		Assert.assertEquals(CollectionEntityParserTest.namespaceStr + "u3",
 				pi.getUriString());
-		Assert.assertEquals(MultiValueEntityParserTest.namespaceStr,
+		Assert.assertEquals(CollectionEntityParserTest.namespaceStr,
 				pi.getNamespace());
 
 		pi = (PredicateInfoImpl) subjectInfo.getPredicateInfo("hasU3",
@@ -786,19 +789,19 @@ public class MultiValueEntityParserTest
 		Assert.assertEquals("hasU3", pi.getMethodName());
 		Assert.assertEquals(resHandler, pi.getObjectHandler());
 		Assert.assertEquals(RDFNode.class, pi.getValueClass());
-		Assert.assertEquals(MultiValueEntityParserTest.namespaceStr + "u3",
+		Assert.assertEquals(CollectionEntityParserTest.namespaceStr + "u3",
 				pi.getUriString());
-		Assert.assertEquals(MultiValueEntityParserTest.namespaceStr,
+		Assert.assertEquals(CollectionEntityParserTest.namespaceStr,
 				pi.getNamespace());
 
 		pi = (PredicateInfoImpl) subjectInfo.getPredicateInfo("getU4",
-				ExtendedIterator.class);
+				Set.class);
 		Assert.assertEquals("getU4", pi.getMethodName());
 		Assert.assertEquals(uriHandler, pi.getObjectHandler());
-		Assert.assertEquals(ExtendedIterator.class, pi.getValueClass());
-		Assert.assertEquals(MultiValueEntityParserTest.namespaceStr + "u3",
+		Assert.assertEquals(Set.class, pi.getValueClass());
+		Assert.assertEquals(CollectionEntityParserTest.namespaceStr + "u3",
 				pi.getUriString());
-		Assert.assertEquals(MultiValueEntityParserTest.namespaceStr,
+		Assert.assertEquals(CollectionEntityParserTest.namespaceStr,
 				pi.getNamespace());
 	}
 

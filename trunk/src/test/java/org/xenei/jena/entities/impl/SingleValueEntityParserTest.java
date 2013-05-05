@@ -51,45 +51,56 @@ public class SingleValueEntityParserTest
 	{
 		PredicateInfoImpl pi = (PredicateInfoImpl) subjectInfo
 				.getPredicateInfo("isBool", Boolean.class);
-		ObjectHandler handler = new LiteralHandler( TypeMapper.getInstance().getTypeByClass(Boolean.class) );	
-		
+		final ObjectHandler handler = new LiteralHandler(TypeMapper
+				.getInstance().getTypeByClass(Boolean.class));
+
 		Assert.assertEquals("isBool", pi.getMethodName());
 		Assert.assertEquals(handler, pi.getObjectHandler());
 		Assert.assertEquals(Boolean.class, pi.getValueClass());
-		Assert.assertEquals(namespaceStr + "bool", pi.getUriString());
-		Assert.assertEquals(namespaceStr, pi.getNamespace());
+		Assert.assertEquals(SingleValueEntityParserTest.namespaceStr + "bool",
+				pi.getUriString());
+		Assert.assertEquals(SingleValueEntityParserTest.namespaceStr,
+				pi.getNamespace());
 
 		pi = (PredicateInfoImpl) subjectInfo.getPredicateInfo("setBool",
 				Boolean.class);
 		Assert.assertEquals("setBool", pi.getMethodName());
 		Assert.assertEquals(handler, pi.getObjectHandler());
 		Assert.assertEquals(Boolean.class, pi.getValueClass());
-		Assert.assertEquals(namespaceStr + "bool", pi.getUriString());
-		Assert.assertEquals(namespaceStr, pi.getNamespace());
+		Assert.assertEquals(SingleValueEntityParserTest.namespaceStr + "bool",
+				pi.getUriString());
+		Assert.assertEquals(SingleValueEntityParserTest.namespaceStr,
+				pi.getNamespace());
 
 		pi = (PredicateInfoImpl) subjectInfo.getPredicateInfo("removeBool",
 				null);
 		Assert.assertEquals("removeBool", pi.getMethodName());
 		Assert.assertEquals(new VoidHandler(), pi.getObjectHandler());
 		Assert.assertEquals(null, pi.getValueClass());
-		Assert.assertEquals(namespaceStr + "bool", pi.getUriString());
-		Assert.assertEquals(namespaceStr, pi.getNamespace());
+		Assert.assertEquals(SingleValueEntityParserTest.namespaceStr + "bool",
+				pi.getUriString());
+		Assert.assertEquals(SingleValueEntityParserTest.namespaceStr,
+				pi.getNamespace());
 
-		Class<?> c = (Class<?>) Boolean.class.getField("TYPE").get(null);
+		final Class<?> c = (Class<?>) Boolean.class.getField("TYPE").get(null);
 
 		pi = (PredicateInfoImpl) subjectInfo.getPredicateInfo("isBool", c);
 		Assert.assertEquals("isBool", pi.getMethodName());
 		Assert.assertEquals(handler, pi.getObjectHandler());
 		Assert.assertEquals(Boolean.class, pi.getValueClass());
-		Assert.assertEquals(namespaceStr + "bool", pi.getUriString());
-		Assert.assertEquals(namespaceStr, pi.getNamespace());
+		Assert.assertEquals(SingleValueEntityParserTest.namespaceStr + "bool",
+				pi.getUriString());
+		Assert.assertEquals(SingleValueEntityParserTest.namespaceStr,
+				pi.getNamespace());
 
 		pi = (PredicateInfoImpl) subjectInfo.getPredicateInfo("setBool", c);
 		Assert.assertEquals("setBool", pi.getMethodName());
 		Assert.assertEquals(handler, pi.getObjectHandler());
 		Assert.assertEquals(Boolean.class, pi.getValueClass());
-		Assert.assertEquals(namespaceStr + "bool", pi.getUriString());
-		Assert.assertEquals(namespaceStr, pi.getNamespace());
+		Assert.assertEquals(SingleValueEntityParserTest.namespaceStr + "bool",
+				pi.getUriString());
+		Assert.assertEquals(SingleValueEntityParserTest.namespaceStr,
+				pi.getNamespace());
 
 	}
 
@@ -99,45 +110,57 @@ public class SingleValueEntityParserTest
 	{
 		PredicateInfoImpl pi = (PredicateInfoImpl) subjectInfo
 				.getPredicateInfo("getChar", Character.class);
-		ObjectHandler handler = new LiteralHandler( TypeMapper.getInstance().getTypeByClass(Character.class) );	
+		final ObjectHandler handler = new LiteralHandler(TypeMapper
+				.getInstance().getTypeByClass(Character.class));
 
 		Assert.assertEquals("getChar", pi.getMethodName());
 		Assert.assertEquals(handler, pi.getObjectHandler());
 		Assert.assertEquals(Character.class, pi.getValueClass());
-		Assert.assertEquals(namespaceStr + "char", pi.getUriString());
-		Assert.assertEquals(namespaceStr, pi.getNamespace());
+		Assert.assertEquals(SingleValueEntityParserTest.namespaceStr + "char",
+				pi.getUriString());
+		Assert.assertEquals(SingleValueEntityParserTest.namespaceStr,
+				pi.getNamespace());
 
 		pi = (PredicateInfoImpl) subjectInfo.getPredicateInfo("setChar",
 				Character.class);
 		Assert.assertEquals("setChar", pi.getMethodName());
 		Assert.assertEquals(handler, pi.getObjectHandler());
 		Assert.assertEquals(Character.class, pi.getValueClass());
-		Assert.assertEquals(namespaceStr + "char", pi.getUriString());
-		Assert.assertEquals(namespaceStr, pi.getNamespace());
+		Assert.assertEquals(SingleValueEntityParserTest.namespaceStr + "char",
+				pi.getUriString());
+		Assert.assertEquals(SingleValueEntityParserTest.namespaceStr,
+				pi.getNamespace());
 
 		pi = (PredicateInfoImpl) subjectInfo.getPredicateInfo("removeChar",
 				null);
 		Assert.assertEquals("removeChar", pi.getMethodName());
 		Assert.assertEquals(new VoidHandler(), pi.getObjectHandler());
 		Assert.assertEquals(null, pi.getValueClass());
-		Assert.assertEquals(namespaceStr + "char", pi.getUriString());
-		Assert.assertEquals(namespaceStr, pi.getNamespace());
+		Assert.assertEquals(SingleValueEntityParserTest.namespaceStr + "char",
+				pi.getUriString());
+		Assert.assertEquals(SingleValueEntityParserTest.namespaceStr,
+				pi.getNamespace());
 
-		Class<?> c = (Class<?>) Character.class.getField("TYPE").get(null);
+		final Class<?> c = (Class<?>) Character.class.getField("TYPE")
+				.get(null);
 
 		pi = (PredicateInfoImpl) subjectInfo.getPredicateInfo("getChar", c);
 		Assert.assertEquals("getChar", pi.getMethodName());
 		Assert.assertEquals(handler, pi.getObjectHandler());
 		Assert.assertEquals(Character.class, pi.getValueClass());
-		Assert.assertEquals(namespaceStr + "char", pi.getUriString());
-		Assert.assertEquals(namespaceStr, pi.getNamespace());
+		Assert.assertEquals(SingleValueEntityParserTest.namespaceStr + "char",
+				pi.getUriString());
+		Assert.assertEquals(SingleValueEntityParserTest.namespaceStr,
+				pi.getNamespace());
 
 		pi = (PredicateInfoImpl) subjectInfo.getPredicateInfo("setChar", c);
 		Assert.assertEquals("setChar", pi.getMethodName());
 		Assert.assertEquals(handler, pi.getObjectHandler());
 		Assert.assertEquals(Character.class, pi.getValueClass());
-		Assert.assertEquals(namespaceStr + "char", pi.getUriString());
-		Assert.assertEquals(namespaceStr, pi.getNamespace());
+		Assert.assertEquals(SingleValueEntityParserTest.namespaceStr + "char",
+				pi.getUriString());
+		Assert.assertEquals(SingleValueEntityParserTest.namespaceStr,
+				pi.getNamespace());
 
 	}
 
@@ -147,46 +170,94 @@ public class SingleValueEntityParserTest
 	{
 		PredicateInfoImpl pi = (PredicateInfoImpl) subjectInfo
 				.getPredicateInfo("getDbl", Double.class);
-		ObjectHandler handler = new LiteralHandler( TypeMapper.getInstance().getTypeByClass(Double.class) );		
+		final ObjectHandler handler = new LiteralHandler(TypeMapper
+				.getInstance().getTypeByClass(Double.class));
 
 		Assert.assertEquals("getDbl", pi.getMethodName());
 		Assert.assertEquals(handler, pi.getObjectHandler());
 		Assert.assertEquals(Double.class, pi.getValueClass());
-		Assert.assertEquals(namespaceStr + "dbl", pi.getUriString());
-		Assert.assertEquals(namespaceStr, pi.getNamespace());
+		Assert.assertEquals(SingleValueEntityParserTest.namespaceStr + "dbl",
+				pi.getUriString());
+		Assert.assertEquals(SingleValueEntityParserTest.namespaceStr,
+				pi.getNamespace());
 
 		pi = (PredicateInfoImpl) subjectInfo.getPredicateInfo("setDbl",
 				Double.class);
 		Assert.assertEquals("setDbl", pi.getMethodName());
 		Assert.assertEquals(handler, pi.getObjectHandler());
 		Assert.assertEquals(Double.class, pi.getValueClass());
-		Assert.assertEquals(namespaceStr + "dbl", pi.getUriString());
-		Assert.assertEquals(namespaceStr, pi.getNamespace());
+		Assert.assertEquals(SingleValueEntityParserTest.namespaceStr + "dbl",
+				pi.getUriString());
+		Assert.assertEquals(SingleValueEntityParserTest.namespaceStr,
+				pi.getNamespace());
 
 		pi = (PredicateInfoImpl) subjectInfo
 				.getPredicateInfo("removeDbl", null);
 		Assert.assertEquals("removeDbl", pi.getMethodName());
 		Assert.assertEquals(new VoidHandler(), pi.getObjectHandler());
 		Assert.assertEquals(null, pi.getValueClass());
-		Assert.assertEquals(namespaceStr + "dbl", pi.getUriString());
-		Assert.assertEquals(namespaceStr, pi.getNamespace());
+		Assert.assertEquals(SingleValueEntityParserTest.namespaceStr + "dbl",
+				pi.getUriString());
+		Assert.assertEquals(SingleValueEntityParserTest.namespaceStr,
+				pi.getNamespace());
 
-		Class<?> c = (Class<?>) Double.class.getField("TYPE").get(null);
+		final Class<?> c = (Class<?>) Double.class.getField("TYPE").get(null);
 
 		pi = (PredicateInfoImpl) subjectInfo.getPredicateInfo("getDbl", c);
 		Assert.assertEquals("getDbl", pi.getMethodName());
 		Assert.assertEquals(handler, pi.getObjectHandler());
 		Assert.assertEquals(Double.class, pi.getValueClass());
-		Assert.assertEquals(namespaceStr + "dbl", pi.getUriString());
-		Assert.assertEquals(namespaceStr, pi.getNamespace());
+		Assert.assertEquals(SingleValueEntityParserTest.namespaceStr + "dbl",
+				pi.getUriString());
+		Assert.assertEquals(SingleValueEntityParserTest.namespaceStr,
+				pi.getNamespace());
 
 		pi = (PredicateInfoImpl) subjectInfo.getPredicateInfo("setDbl", c);
 		Assert.assertEquals("setDbl", pi.getMethodName());
 		Assert.assertEquals(handler, pi.getObjectHandler());
 		Assert.assertEquals(Double.class, pi.getValueClass());
-		Assert.assertEquals(namespaceStr + "dbl", pi.getUriString());
-		Assert.assertEquals(namespaceStr, pi.getNamespace());
+		Assert.assertEquals(SingleValueEntityParserTest.namespaceStr + "dbl",
+				pi.getUriString());
+		Assert.assertEquals(SingleValueEntityParserTest.namespaceStr,
+				pi.getNamespace());
 
+	}
+
+	@Test
+	public void testEntity()
+	{
+		PredicateInfoImpl pi = (PredicateInfoImpl) subjectInfo
+				.getPredicateInfo("getEnt", TestClass.class);
+		final ObjectHandler handler = new EntityHandler(manager,
+				TestClass.class);
+
+		Assert.assertEquals("getEnt", pi.getMethodName());
+		Assert.assertEquals(handler, pi.getObjectHandler());
+		Assert.assertEquals(TestClass.class, pi.getValueClass());
+		Assert.assertEquals(SingleValueEntityParserTest.namespaceStr + "ent",
+				pi.getUriString());
+		Assert.assertEquals(SingleValueEntityParserTest.namespaceStr,
+				pi.getNamespace());
+
+		pi = (PredicateInfoImpl) subjectInfo.getPredicateInfo("setEnt",
+				TestClass.class);
+		Assert.assertEquals("setEnt", pi.getMethodName());
+		Assert.assertEquals(handler, pi.getObjectHandler());
+		Assert.assertEquals(TestClass.class, pi.getValueClass());
+		Assert.assertEquals(SingleValueEntityParserTest.namespaceStr + "ent",
+				pi.getUriString());
+		Assert.assertEquals(SingleValueEntityParserTest.namespaceStr,
+				pi.getNamespace());
+
+		pi = (PredicateInfoImpl) subjectInfo
+				.getPredicateInfo("removeEnt", null);
+		Assert.assertEquals("removeEnt", pi.getMethodName());
+		Assert.assertEquals(new VoidHandler(), pi.getObjectHandler());
+		Assert.assertEquals(null, pi.getValueClass());
+		Assert.assertEquals(SingleValueEntityParserTest.namespaceStr + "ent",
+				pi.getUriString());
+		Assert.assertEquals(SingleValueEntityParserTest.namespaceStr,
+				pi.getNamespace());
 	}
 
 	@Test
@@ -195,93 +266,57 @@ public class SingleValueEntityParserTest
 	{
 		PredicateInfoImpl pi = (PredicateInfoImpl) subjectInfo
 				.getPredicateInfo("getFlt", Float.class);
-		ObjectHandler handler = new LiteralHandler( TypeMapper.getInstance().getTypeByClass(Float.class) );		
+		final ObjectHandler handler = new LiteralHandler(TypeMapper
+				.getInstance().getTypeByClass(Float.class));
 
 		Assert.assertEquals("getFlt", pi.getMethodName());
 		Assert.assertEquals(handler, pi.getObjectHandler());
 		Assert.assertEquals(Float.class, pi.getValueClass());
-		Assert.assertEquals(namespaceStr + "flt", pi.getUriString());
-		Assert.assertEquals(namespaceStr, pi.getNamespace());
+		Assert.assertEquals(SingleValueEntityParserTest.namespaceStr + "flt",
+				pi.getUriString());
+		Assert.assertEquals(SingleValueEntityParserTest.namespaceStr,
+				pi.getNamespace());
 
 		pi = (PredicateInfoImpl) subjectInfo.getPredicateInfo("setFlt",
 				Float.class);
 		Assert.assertEquals("setFlt", pi.getMethodName());
 		Assert.assertEquals(handler, pi.getObjectHandler());
 		Assert.assertEquals(Float.class, pi.getValueClass());
-		Assert.assertEquals(namespaceStr + "flt", pi.getUriString());
-		Assert.assertEquals(namespaceStr, pi.getNamespace());
+		Assert.assertEquals(SingleValueEntityParserTest.namespaceStr + "flt",
+				pi.getUriString());
+		Assert.assertEquals(SingleValueEntityParserTest.namespaceStr,
+				pi.getNamespace());
 
 		pi = (PredicateInfoImpl) subjectInfo
 				.getPredicateInfo("removeFlt", null);
 		Assert.assertEquals("removeFlt", pi.getMethodName());
 		Assert.assertEquals(new VoidHandler(), pi.getObjectHandler());
 		Assert.assertEquals(null, pi.getValueClass());
-		Assert.assertEquals(namespaceStr + "flt", pi.getUriString());
-		Assert.assertEquals(namespaceStr, pi.getNamespace());
+		Assert.assertEquals(SingleValueEntityParserTest.namespaceStr + "flt",
+				pi.getUriString());
+		Assert.assertEquals(SingleValueEntityParserTest.namespaceStr,
+				pi.getNamespace());
 
-		Class<?> c = (Class<?>) Float.class.getField("TYPE").get(null);
+		final Class<?> c = (Class<?>) Float.class.getField("TYPE").get(null);
 
 		pi = (PredicateInfoImpl) subjectInfo.getPredicateInfo("getFlt", c);
 		Assert.assertEquals("getFlt", pi.getMethodName());
 		Assert.assertEquals(handler, pi.getObjectHandler());
 		Assert.assertEquals(Float.class, pi.getValueClass());
-		Assert.assertEquals(namespaceStr + "flt", pi.getUriString());
-		Assert.assertEquals(namespaceStr, pi.getNamespace());
+		Assert.assertEquals(SingleValueEntityParserTest.namespaceStr + "flt",
+				pi.getUriString());
+		Assert.assertEquals(SingleValueEntityParserTest.namespaceStr,
+				pi.getNamespace());
 
 		pi = (PredicateInfoImpl) subjectInfo.getPredicateInfo("setFlt", c);
 		Assert.assertEquals("setFlt", pi.getMethodName());
 		Assert.assertEquals(handler, pi.getObjectHandler());
 		Assert.assertEquals(Float.class, pi.getValueClass());
-		Assert.assertEquals(namespaceStr + "flt", pi.getUriString());
-		Assert.assertEquals(namespaceStr, pi.getNamespace());
+		Assert.assertEquals(SingleValueEntityParserTest.namespaceStr + "flt",
+				pi.getUriString());
+		Assert.assertEquals(SingleValueEntityParserTest.namespaceStr,
+				pi.getNamespace());
 
-	}
-
-	@Test
-	public void testLng() throws IllegalArgumentException, SecurityException,
-			IllegalAccessException, NoSuchFieldException
-	{
-		PredicateInfoImpl pi = (PredicateInfoImpl) subjectInfo
-				.getPredicateInfo("getLng", Long.class);
-		ObjectHandler handler = new LiteralHandler( TypeMapper.getInstance().getTypeByClass(Long.class) );		
-
-		Assert.assertEquals("getLng", pi.getMethodName());
-		Assert.assertEquals(handler, pi.getObjectHandler());
-		Assert.assertEquals(Long.class, pi.getValueClass());
-		Assert.assertEquals(namespaceStr + "lng", pi.getUriString());
-		Assert.assertEquals(namespaceStr, pi.getNamespace());
-
-		pi = (PredicateInfoImpl) subjectInfo.getPredicateInfo("setLng",
-				Long.class);
-		Assert.assertEquals("setLng", pi.getMethodName());
-		Assert.assertEquals(handler, pi.getObjectHandler());
-		Assert.assertEquals(Long.class, pi.getValueClass());
-		Assert.assertEquals(namespaceStr + "lng", pi.getUriString());
-		Assert.assertEquals(namespaceStr, pi.getNamespace());
-
-		pi = (PredicateInfoImpl) subjectInfo
-				.getPredicateInfo("removeLng", null);
-		Assert.assertEquals("removeLng", pi.getMethodName());
-		Assert.assertEquals(new VoidHandler(), pi.getObjectHandler());
-		Assert.assertEquals(null, pi.getValueClass());
-		Assert.assertEquals(namespaceStr + "lng", pi.getUriString());
-		Assert.assertEquals(namespaceStr, pi.getNamespace());
-
-		Class<?> c = (Class<?>) Long.class.getField("TYPE").get(null);
-
-		pi = (PredicateInfoImpl) subjectInfo.getPredicateInfo("getLng", c);
-		Assert.assertEquals("getLng", pi.getMethodName());
-		Assert.assertEquals(handler, pi.getObjectHandler());
-		Assert.assertEquals(Long.class, pi.getValueClass());
-		Assert.assertEquals(namespaceStr + "lng", pi.getUriString());
-		Assert.assertEquals(namespaceStr, pi.getNamespace());
-
-		pi = (PredicateInfoImpl) subjectInfo.getPredicateInfo("setLng", c);
-		Assert.assertEquals("setLng", pi.getMethodName());
-		Assert.assertEquals(handler, pi.getObjectHandler());
-		Assert.assertEquals(Long.class, pi.getValueClass());
-		Assert.assertEquals(namespaceStr + "lng", pi.getUriString());
-		Assert.assertEquals(namespaceStr, pi.getNamespace());
 	}
 
 	@Test
@@ -291,76 +326,115 @@ public class SingleValueEntityParserTest
 
 		PredicateInfoImpl pi = (PredicateInfoImpl) subjectInfo
 				.getPredicateInfo("getInt", Integer.class);
-		ObjectHandler handler = new LiteralHandler( TypeMapper.getInstance().getTypeByClass(Integer.class) );		
+		final ObjectHandler handler = new LiteralHandler(TypeMapper
+				.getInstance().getTypeByClass(Integer.class));
 
 		Assert.assertEquals("getInt", pi.getMethodName());
 		Assert.assertEquals(handler, pi.getObjectHandler());
 		Assert.assertEquals(Integer.class, pi.getValueClass());
-		Assert.assertEquals(namespaceStr + "int", pi.getUriString());
-		Assert.assertEquals(namespaceStr, pi.getNamespace());
+		Assert.assertEquals(SingleValueEntityParserTest.namespaceStr + "int",
+				pi.getUriString());
+		Assert.assertEquals(SingleValueEntityParserTest.namespaceStr,
+				pi.getNamespace());
 
 		pi = (PredicateInfoImpl) subjectInfo.getPredicateInfo("setInt",
 				Integer.class);
 		Assert.assertEquals("setInt", pi.getMethodName());
 		Assert.assertEquals(handler, pi.getObjectHandler());
 		Assert.assertEquals(Integer.class, pi.getValueClass());
-		Assert.assertEquals(namespaceStr + "int", pi.getUriString());
-		Assert.assertEquals(namespaceStr, pi.getNamespace());
+		Assert.assertEquals(SingleValueEntityParserTest.namespaceStr + "int",
+				pi.getUriString());
+		Assert.assertEquals(SingleValueEntityParserTest.namespaceStr,
+				pi.getNamespace());
 
 		pi = (PredicateInfoImpl) subjectInfo
 				.getPredicateInfo("removeInt", null);
 		Assert.assertEquals("removeInt", pi.getMethodName());
 		Assert.assertEquals(new VoidHandler(), pi.getObjectHandler());
 		Assert.assertEquals(null, pi.getValueClass());
-		Assert.assertEquals(namespaceStr + "int", pi.getUriString());
-		Assert.assertEquals(namespaceStr, pi.getNamespace());
+		Assert.assertEquals(SingleValueEntityParserTest.namespaceStr + "int",
+				pi.getUriString());
+		Assert.assertEquals(SingleValueEntityParserTest.namespaceStr,
+				pi.getNamespace());
 
-		Class<?> c = (Class<?>) Integer.class.getField("TYPE").get(null);
+		final Class<?> c = (Class<?>) Integer.class.getField("TYPE").get(null);
 
 		pi = (PredicateInfoImpl) subjectInfo.getPredicateInfo("getInt", c);
 		Assert.assertEquals("getInt", pi.getMethodName());
 		Assert.assertEquals(handler, pi.getObjectHandler());
 		Assert.assertEquals(Integer.class, pi.getValueClass());
-		Assert.assertEquals(namespaceStr + "int", pi.getUriString());
-		Assert.assertEquals(namespaceStr, pi.getNamespace());
+		Assert.assertEquals(SingleValueEntityParserTest.namespaceStr + "int",
+				pi.getUriString());
+		Assert.assertEquals(SingleValueEntityParserTest.namespaceStr,
+				pi.getNamespace());
 
 		pi = (PredicateInfoImpl) subjectInfo.getPredicateInfo("setInt", c);
 		Assert.assertEquals("setInt", pi.getMethodName());
 		Assert.assertEquals(handler, pi.getObjectHandler());
 		Assert.assertEquals(Integer.class, pi.getValueClass());
-		Assert.assertEquals(namespaceStr + "int", pi.getUriString());
-		Assert.assertEquals(namespaceStr, pi.getNamespace());
+		Assert.assertEquals(SingleValueEntityParserTest.namespaceStr + "int",
+				pi.getUriString());
+		Assert.assertEquals(SingleValueEntityParserTest.namespaceStr,
+				pi.getNamespace());
 
 	}
 
 	@Test
-	public void testStr()
+	public void testLng() throws IllegalArgumentException, SecurityException,
+			IllegalAccessException, NoSuchFieldException
 	{
 		PredicateInfoImpl pi = (PredicateInfoImpl) subjectInfo
-				.getPredicateInfo("getStr", String.class);
-		ObjectHandler handler = new LiteralHandler( TypeMapper.getInstance().getTypeByClass(String.class) );		
+				.getPredicateInfo("getLng", Long.class);
+		final ObjectHandler handler = new LiteralHandler(TypeMapper
+				.getInstance().getTypeByClass(Long.class));
 
-		Assert.assertEquals("getStr", pi.getMethodName());
+		Assert.assertEquals("getLng", pi.getMethodName());
 		Assert.assertEquals(handler, pi.getObjectHandler());
-		Assert.assertEquals(String.class, pi.getValueClass());
-		Assert.assertEquals(namespaceStr + "str", pi.getUriString());
-		Assert.assertEquals(namespaceStr, pi.getNamespace());
+		Assert.assertEquals(Long.class, pi.getValueClass());
+		Assert.assertEquals(SingleValueEntityParserTest.namespaceStr + "lng",
+				pi.getUriString());
+		Assert.assertEquals(SingleValueEntityParserTest.namespaceStr,
+				pi.getNamespace());
 
-		pi = (PredicateInfoImpl) subjectInfo.getPredicateInfo("setStr",
-				String.class);
-		Assert.assertEquals("setStr", pi.getMethodName());
+		pi = (PredicateInfoImpl) subjectInfo.getPredicateInfo("setLng",
+				Long.class);
+		Assert.assertEquals("setLng", pi.getMethodName());
 		Assert.assertEquals(handler, pi.getObjectHandler());
-		Assert.assertEquals(String.class, pi.getValueClass());
-		Assert.assertEquals(namespaceStr + "str", pi.getUriString());
-		Assert.assertEquals(namespaceStr, pi.getNamespace());
+		Assert.assertEquals(Long.class, pi.getValueClass());
+		Assert.assertEquals(SingleValueEntityParserTest.namespaceStr + "lng",
+				pi.getUriString());
+		Assert.assertEquals(SingleValueEntityParserTest.namespaceStr,
+				pi.getNamespace());
 
 		pi = (PredicateInfoImpl) subjectInfo
-				.getPredicateInfo("removeStr", null);
-		Assert.assertEquals("removeStr", pi.getMethodName());
+				.getPredicateInfo("removeLng", null);
+		Assert.assertEquals("removeLng", pi.getMethodName());
 		Assert.assertEquals(new VoidHandler(), pi.getObjectHandler());
 		Assert.assertEquals(null, pi.getValueClass());
-		Assert.assertEquals(namespaceStr + "str", pi.getUriString());
-		Assert.assertEquals(namespaceStr, pi.getNamespace());
+		Assert.assertEquals(SingleValueEntityParserTest.namespaceStr + "lng",
+				pi.getUriString());
+		Assert.assertEquals(SingleValueEntityParserTest.namespaceStr,
+				pi.getNamespace());
+
+		final Class<?> c = (Class<?>) Long.class.getField("TYPE").get(null);
+
+		pi = (PredicateInfoImpl) subjectInfo.getPredicateInfo("getLng", c);
+		Assert.assertEquals("getLng", pi.getMethodName());
+		Assert.assertEquals(handler, pi.getObjectHandler());
+		Assert.assertEquals(Long.class, pi.getValueClass());
+		Assert.assertEquals(SingleValueEntityParserTest.namespaceStr + "lng",
+				pi.getUriString());
+		Assert.assertEquals(SingleValueEntityParserTest.namespaceStr,
+				pi.getNamespace());
+
+		pi = (PredicateInfoImpl) subjectInfo.getPredicateInfo("setLng", c);
+		Assert.assertEquals("setLng", pi.getMethodName());
+		Assert.assertEquals(handler, pi.getObjectHandler());
+		Assert.assertEquals(Long.class, pi.getValueClass());
+		Assert.assertEquals(SingleValueEntityParserTest.namespaceStr + "lng",
+				pi.getUriString());
+		Assert.assertEquals(SingleValueEntityParserTest.namespaceStr,
+				pi.getNamespace());
 	}
 
 	@Test
@@ -368,59 +442,72 @@ public class SingleValueEntityParserTest
 	{
 		PredicateInfoImpl pi = (PredicateInfoImpl) subjectInfo
 				.getPredicateInfo("getRDF", RDFNode.class);
-		ObjectHandler handler = new ResourceHandler();	
-		
+		final ObjectHandler handler = new ResourceHandler();
+
 		Assert.assertEquals("getRDF", pi.getMethodName());
 		Assert.assertEquals(handler, pi.getObjectHandler());
 		Assert.assertEquals(RDFNode.class, pi.getValueClass());
-		Assert.assertEquals(namespaceStr + "rDF", pi.getUriString());
-		Assert.assertEquals(namespaceStr, pi.getNamespace());
+		Assert.assertEquals(SingleValueEntityParserTest.namespaceStr + "rDF",
+				pi.getUriString());
+		Assert.assertEquals(SingleValueEntityParserTest.namespaceStr,
+				pi.getNamespace());
 
 		pi = (PredicateInfoImpl) subjectInfo.getPredicateInfo("setRDF",
 				RDFNode.class);
 		Assert.assertEquals("setRDF", pi.getMethodName());
 		Assert.assertEquals(handler, pi.getObjectHandler());
 		Assert.assertEquals(RDFNode.class, pi.getValueClass());
-		Assert.assertEquals(namespaceStr + "rDF", pi.getUriString());
-		Assert.assertEquals(namespaceStr, pi.getNamespace());
+		Assert.assertEquals(SingleValueEntityParserTest.namespaceStr + "rDF",
+				pi.getUriString());
+		Assert.assertEquals(SingleValueEntityParserTest.namespaceStr,
+				pi.getNamespace());
 
 		pi = (PredicateInfoImpl) subjectInfo
 				.getPredicateInfo("removeRDF", null);
 		Assert.assertEquals("removeRDF", pi.getMethodName());
 		Assert.assertEquals(new VoidHandler(), pi.getObjectHandler());
 		Assert.assertEquals(null, pi.getValueClass());
-		Assert.assertEquals(namespaceStr + "rDF", pi.getUriString());
-		Assert.assertEquals(namespaceStr, pi.getNamespace());
+		Assert.assertEquals(SingleValueEntityParserTest.namespaceStr + "rDF",
+				pi.getUriString());
+		Assert.assertEquals(SingleValueEntityParserTest.namespaceStr,
+				pi.getNamespace());
 	}
 
 	@Test
-	public void testEntity()
+	public void testStr()
 	{
 		PredicateInfoImpl pi = (PredicateInfoImpl) subjectInfo
-				.getPredicateInfo("getEnt", TestClass.class);
-		ObjectHandler handler = new EntityHandler(manager, TestClass.class );	
-		
-		Assert.assertEquals("getEnt", pi.getMethodName());
-		Assert.assertEquals(handler, pi.getObjectHandler());
-		Assert.assertEquals(TestClass.class, pi.getValueClass());
-		Assert.assertEquals(namespaceStr + "ent", pi.getUriString());
-		Assert.assertEquals(namespaceStr, pi.getNamespace());
+				.getPredicateInfo("getStr", String.class);
+		final ObjectHandler handler = new LiteralHandler(TypeMapper
+				.getInstance().getTypeByClass(String.class));
 
-		pi = (PredicateInfoImpl) subjectInfo.getPredicateInfo("setEnt",
-				TestClass.class);
-		Assert.assertEquals("setEnt", pi.getMethodName());
+		Assert.assertEquals("getStr", pi.getMethodName());
 		Assert.assertEquals(handler, pi.getObjectHandler());
-		Assert.assertEquals(TestClass.class, pi.getValueClass());
-		Assert.assertEquals(namespaceStr + "ent", pi.getUriString());
-		Assert.assertEquals(namespaceStr, pi.getNamespace());
+		Assert.assertEquals(String.class, pi.getValueClass());
+		Assert.assertEquals(SingleValueEntityParserTest.namespaceStr + "str",
+				pi.getUriString());
+		Assert.assertEquals(SingleValueEntityParserTest.namespaceStr,
+				pi.getNamespace());
+
+		pi = (PredicateInfoImpl) subjectInfo.getPredicateInfo("setStr",
+				String.class);
+		Assert.assertEquals("setStr", pi.getMethodName());
+		Assert.assertEquals(handler, pi.getObjectHandler());
+		Assert.assertEquals(String.class, pi.getValueClass());
+		Assert.assertEquals(SingleValueEntityParserTest.namespaceStr + "str",
+				pi.getUriString());
+		Assert.assertEquals(SingleValueEntityParserTest.namespaceStr,
+				pi.getNamespace());
 
 		pi = (PredicateInfoImpl) subjectInfo
-				.getPredicateInfo("removeEnt", null);
-		Assert.assertEquals("removeEnt", pi.getMethodName());
+				.getPredicateInfo("removeStr", null);
+		Assert.assertEquals("removeStr", pi.getMethodName());
 		Assert.assertEquals(new VoidHandler(), pi.getObjectHandler());
 		Assert.assertEquals(null, pi.getValueClass());
-		Assert.assertEquals(namespaceStr + "ent", pi.getUriString());
-		Assert.assertEquals(namespaceStr, pi.getNamespace());
+		Assert.assertEquals(SingleValueEntityParserTest.namespaceStr + "str",
+				pi.getUriString());
+		Assert.assertEquals(SingleValueEntityParserTest.namespaceStr,
+				pi.getNamespace());
 	}
 
 	@Test
@@ -429,45 +516,55 @@ public class SingleValueEntityParserTest
 		PredicateInfoImpl pi = (PredicateInfoImpl) subjectInfo
 				.getPredicateInfo("getU", RDFNode.class);
 
-		ObjectHandler uriHandler = new UriHandler();
-		ObjectHandler rdfHandler = new ResourceHandler();
-		
+		final ObjectHandler uriHandler = new UriHandler();
+		final ObjectHandler rdfHandler = new ResourceHandler();
+
 		Assert.assertEquals("getU", pi.getMethodName());
 		Assert.assertEquals(rdfHandler, pi.getObjectHandler());
 		Assert.assertEquals(RDFNode.class, pi.getValueClass());
-		Assert.assertEquals(namespaceStr + "u", pi.getUriString());
-		Assert.assertEquals(namespaceStr, pi.getNamespace());
+		Assert.assertEquals(SingleValueEntityParserTest.namespaceStr + "u",
+				pi.getUriString());
+		Assert.assertEquals(SingleValueEntityParserTest.namespaceStr,
+				pi.getNamespace());
 
 		pi = (PredicateInfoImpl) subjectInfo.getPredicateInfo("setU",
 				String.class);
 		Assert.assertEquals("setU", pi.getMethodName());
 		Assert.assertEquals(uriHandler, pi.getObjectHandler());
 		Assert.assertEquals(String.class, pi.getValueClass());
-		Assert.assertEquals(namespaceStr + "u", pi.getUriString());
-		Assert.assertEquals(namespaceStr, pi.getNamespace());
+		Assert.assertEquals(SingleValueEntityParserTest.namespaceStr + "u",
+				pi.getUriString());
+		Assert.assertEquals(SingleValueEntityParserTest.namespaceStr,
+				pi.getNamespace());
 
 		pi = (PredicateInfoImpl) subjectInfo.getPredicateInfo("setU",
 				RDFNode.class);
 		Assert.assertEquals("setU", pi.getMethodName());
 		Assert.assertEquals(rdfHandler, pi.getObjectHandler());
 		Assert.assertEquals(RDFNode.class, pi.getValueClass());
-		Assert.assertEquals(namespaceStr + "u", pi.getUriString());
-		Assert.assertEquals(namespaceStr, pi.getNamespace());
+		Assert.assertEquals(SingleValueEntityParserTest.namespaceStr + "u",
+				pi.getUriString());
+		Assert.assertEquals(SingleValueEntityParserTest.namespaceStr,
+				pi.getNamespace());
 
 		pi = (PredicateInfoImpl) subjectInfo.getPredicateInfo("removeU", null);
 		Assert.assertEquals("removeU", pi.getMethodName());
 		Assert.assertEquals(new VoidHandler(), pi.getObjectHandler());
 		Assert.assertEquals(null, pi.getValueClass());
-		Assert.assertEquals(namespaceStr + "u", pi.getUriString());
-		Assert.assertEquals(namespaceStr, pi.getNamespace());
+		Assert.assertEquals(SingleValueEntityParserTest.namespaceStr + "u",
+				pi.getUriString());
+		Assert.assertEquals(SingleValueEntityParserTest.namespaceStr,
+				pi.getNamespace());
 
 		pi = (PredicateInfoImpl) subjectInfo.getPredicateInfo("getU2",
 				String.class);
 		Assert.assertEquals("getU2", pi.getMethodName());
 		Assert.assertEquals(uriHandler, pi.getObjectHandler());
 		Assert.assertEquals(String.class, pi.getValueClass());
-		Assert.assertEquals(namespaceStr + "u", pi.getUriString());
-		Assert.assertEquals(namespaceStr, pi.getNamespace());
+		Assert.assertEquals(SingleValueEntityParserTest.namespaceStr + "u",
+				pi.getUriString());
+		Assert.assertEquals(SingleValueEntityParserTest.namespaceStr,
+				pi.getNamespace());
 	}
 
 }

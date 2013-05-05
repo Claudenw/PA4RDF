@@ -1,4 +1,4 @@
-/* 
+/*
  * Copyright 2012, XENEI.com
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -11,7 +11,7 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */ 
+ */
 
 package org.xenei.jena.entities.annotations;
 
@@ -51,36 +51,15 @@ import java.lang.annotation.RetentionPolicy;
 public @interface Predicate
 {
 	/**
-	 * The name of the predicate.  This is the local name in RDF parlance. 
-	 * If not specified it defaults to the name of the function with the action 
-	 * prefix removed. @see{ @link org.xenei.jena.entities.impl.ActionType}. 
+	 * If true empty strings are assumed to be null and are not inserted.
 	 * 
-	 * The namespace may be specified as part of the name.  In this case the namespace
-	 * value need not be set.
-	 * 
-	 * @return the local name of the RDF predicate.
+	 * Default value = false
 	 */
-	String name() default "";
+	boolean emptyIsNull() default false;
 
 	/**
-	 * The namespace for the predicate.  If not specified defaults to the namespace for the 
-	 * subject that this predicate is part of.  The namespace may be specified with this field
-	 * or as part of the name field.
-	 * 
-	 * @return The namespace portion of the RDF predicate.
-	 */
-	String namespace() default "";
-	
-	/**
-	 * determines if the local name should have the first character upper cased.
-	 * If false (the default) the first character will be lower cased.
-	 * If true, the first character will be upper cased.
-	 */
-	boolean upcase() default false;
-	
-	/**
 	 * The name of the literal type or an empty string if not is use.
-	 * If specified it is used in a call to typeMapper.getSafeTypeByName() 
+	 * If specified it is used in a call to typeMapper.getSafeTypeByName()
 	 * to get the RDFDatatype used to parse and unparse literal values.
 	 * 
 	 * @return The name of the literal type or an empty string.
@@ -88,15 +67,41 @@ public @interface Predicate
 	String literalType() default "";
 
 	/**
-	 * The java object class that will be returned when the object is read from the RDF model.
+	 * The name of the predicate. This is the local name in RDF parlance.
+	 * If not specified it defaults to the name of the function with the action
+	 * prefix removed. @see{ @link org.xenei.jena.entities.impl.ActionType}.
+	 * 
+	 * The namespace may be specified as part of the name. In this case the
+	 * namespace
+	 * value need not be set.
+	 * 
+	 * @return the local name of the RDF predicate.
+	 */
+	String name() default "";
+
+	/**
+	 * The namespace for the predicate. If not specified defaults to the
+	 * namespace for the
+	 * subject that this predicate is part of. The namespace may be specified
+	 * with this field
+	 * or as part of the name field.
+	 * 
+	 * @return The namespace portion of the RDF predicate.
+	 */
+	String namespace() default "";
+
+	/**
+	 * The java object class that will be returned when the object is read from
+	 * the RDF model.
+	 * 
 	 * @return The object class.
 	 */
 	Class<?> type() default RDFNode.class;
-	
+
 	/**
-	 * If true empty strings are assumed to be null and are not inserted.
-	 * 
-	 * Default value = false
+	 * determines if the local name should have the first character upper cased.
+	 * If false (the default) the first character will be lower cased.
+	 * If true, the first character will be upper cased.
 	 */
-	boolean emptyIsNull() default false;
+	boolean upcase() default false;
 }

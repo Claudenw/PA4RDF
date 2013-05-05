@@ -41,27 +41,6 @@ public interface EntityManager
 	public SubjectInfo getSubjectInfo( Class<?> clazz );
 
 	/**
-	 * Read an instance of clazz from source.
-	 * 
-	 * Does not verify that the resource passes the isInstance() check.
-	 * 
-	 * @see #isInstance(Object, Class)
-	 * @param source
-	 *            Must either implement Resource or ResourceWrapper interfaces.
-	 * @param primaryClass
-	 *            The class of the object to be returned.
-	 * @param secondaryClasses
-	 *            A lost of other classes that are implemented.
-	 * @return primaryClass instance that also implements ResourceWrapper.
-	 * @throws MissingAnnotation
-	 *             if any of the classes do not have Subject annotations.
-	 * @throws IllegalArgumentException
-	 *             if source implements neither Resource nor ResourceWrapper.
-	 */
-	public <T> T read( Object source, Class<T> primaryClass,
-			Class<?>... secondaryClasses );
-
-	/**
 	 * Determine if target has all the properties required in the Subject( type
 	 * ) annotation value.
 	 * 
@@ -117,6 +96,27 @@ public interface EntityManager
 	 * @see java.lang.ClassLoader#getResources(String)
 	 */
 	public void parseClasses( String[] packageNames ) throws MissingAnnotation;
+
+	/**
+	 * Read an instance of clazz from source.
+	 * 
+	 * Does not verify that the resource passes the isInstance() check.
+	 * 
+	 * @see #isInstance(Object, Class)
+	 * @param source
+	 *            Must either implement Resource or ResourceWrapper interfaces.
+	 * @param primaryClass
+	 *            The class of the object to be returned.
+	 * @param secondaryClasses
+	 *            A lost of other classes that are implemented.
+	 * @return primaryClass instance that also implements ResourceWrapper.
+	 * @throws MissingAnnotation
+	 *             if any of the classes do not have Subject annotations.
+	 * @throws IllegalArgumentException
+	 *             if source implements neither Resource nor ResourceWrapper.
+	 */
+	public <T> T read( Object source, Class<T> primaryClass,
+			Class<?>... secondaryClasses );
 
 	/**
 	 * Calls the target.setX predicate methods with the results of the
