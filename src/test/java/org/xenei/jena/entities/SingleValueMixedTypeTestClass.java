@@ -14,71 +14,85 @@
  */
 package org.xenei.jena.entities;
 
-import org.xenei.jena.entities.annotations.Subject;
-import org.xenei.jena.entities.annotations.Predicate;
-import org.xenei.jena.entities.annotations.URI;
-
+import com.hp.hpl.jena.rdf.model.RDFNode;
 import com.hp.hpl.jena.rdf.model.Resource;
 
-import com.hp.hpl.jena.rdf.model.RDFNode;
+import org.xenei.jena.entities.annotations.Predicate;
+import org.xenei.jena.entities.annotations.Subject;
+import org.xenei.jena.entities.annotations.URI;
 
-@Subject( namespace="http://localhost/test#")
-public abstract class SingleValueMixedTypeTestClass implements Resource {
-	
-	@Predicate
-	public abstract void setBool( boolean b );
-	public abstract Boolean isBool();
-	
-	@Predicate
-	public abstract void setChar( char b );
-	public abstract Character getChar();	
-	
-	@Predicate
-	public abstract void setDbl( double b );
+@Subject( namespace = "http://localhost/test#" )
+public abstract class SingleValueMixedTypeTestClass implements Resource
+{
+
+	public abstract char getC();
+
+	public abstract Character getChar();
+
+	public abstract double getD();
+
 	public abstract Double getDbl();
-	
-	@Predicate
-	public abstract void setFlt( float b );
+
+	public abstract float getF();
+
 	public abstract Float getFlt();
-	
-	@Predicate
-	public abstract void setLng( long b );
-	public abstract Long getLng();
-	
-	@Predicate
-	public abstract void setInt( int b );
+
+	public abstract int getI();
+
 	public abstract Integer getInt();
-	
+
+	public abstract long getL();
+
+	public abstract Long getLng();
+
+	public abstract RDFNode getU();
+
+	@Predicate( type = URI.class )
+	public abstract String getU2();
+
+	public abstract boolean isB();
+
+	public abstract Boolean isBool();
+
 	@Predicate
 	public abstract void setB( Boolean b );
-	public abstract boolean isB();
-	
+
+	@Predicate
+	public abstract void setBool( boolean b );
+
 	@Predicate
 	public abstract void setC( Character b );
-	public abstract char getC();	
-	
+
+	@Predicate
+	public abstract void setChar( char b );
+
 	@Predicate
 	public abstract void setD( Double b );
-	public abstract double getD();
-	
+
+	@Predicate
+	public abstract void setDbl( double b );
+
 	@Predicate
 	public abstract void setF( Float b );
-	public abstract float getF();
-	
+
 	@Predicate
-	public abstract void setL( Long b );
-	public abstract long getL();
-	
+	public abstract void setFlt( float b );
+
 	@Predicate
 	public abstract void setI( Integer b );
-	public abstract int getI();
+
+	@Predicate
+	public abstract void setInt( int b );
+
+	@Predicate
+	public abstract void setL( Long b );
+
+	@Predicate
+	public abstract void setLng( long b );
 
 	@Predicate
 	public abstract void setU( @URI String b );
-	public abstract RDFNode getU();
-	
+
 	@Predicate
 	public abstract void setU2( RDFNode n );
-	@Predicate( type=URI.class )
-	public abstract String getU2();
 }

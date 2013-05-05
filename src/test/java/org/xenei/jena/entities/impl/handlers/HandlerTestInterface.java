@@ -4,8 +4,8 @@ public interface HandlerTestInterface
 {
 	public void testCreateRDFNode();
 
-	public void testParseObject();
-
 	public void testIsEmpty();
+
+	public void testParseObject();
 
 }

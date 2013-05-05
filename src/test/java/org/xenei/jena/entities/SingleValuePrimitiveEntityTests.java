@@ -33,9 +33,9 @@ public class SingleValuePrimitiveEntityTests
 	public void setup()
 	{
 		model = ModelFactory.createDefaultModel();
-		Resource r = model
+		final Resource r = model
 				.createResource("http://localhost/SingleValuePrimitiveEntityTests");
-		EntityManager manager = EntityManagerFactory.getEntityManager();
+		final EntityManager manager = EntityManagerFactory.getEntityManager();
 		tc = manager.read(r, SingleValuePrimitiveTestClass.class);
 	}
 
@@ -62,7 +62,7 @@ public class SingleValuePrimitiveEntityTests
 			tc.isBool();
 			Assert.fail("Should have thrown NullPointerException");
 		}
-		catch (NullPointerException e)
+		catch (final NullPointerException e)
 		{
 			// expected
 		}
@@ -71,8 +71,8 @@ public class SingleValuePrimitiveEntityTests
 	@Test
 	public void testChar()
 	{
-		char c = 'a';
-		Character cc = new Character(c);
+		final char c = 'a';
+		final Character cc = new Character(c);
 		tc.setChar(c);
 		Assert.assertEquals(cc, Character.valueOf(tc.getChar()));
 		tc.setChar('x');
@@ -85,7 +85,7 @@ public class SingleValuePrimitiveEntityTests
 			tc.getChar();
 			Assert.fail("Should have thrown NullPointerException");
 		}
-		catch (NullPointerException e)
+		catch (final NullPointerException e)
 		{
 			// expected
 		}
@@ -94,8 +94,8 @@ public class SingleValuePrimitiveEntityTests
 	@Test
 	public void testDbl()
 	{
-		double c = 3.14;
-		Double cc = new Double(c);
+		final double c = 3.14;
+		final Double cc = new Double(c);
 		tc.setDbl(c);
 		Assert.assertEquals(cc, Double.valueOf(tc.getDbl()));
 		tc.setDbl(0.0);
@@ -108,7 +108,7 @@ public class SingleValuePrimitiveEntityTests
 			tc.getDbl();
 			Assert.fail("Should have thrown NullPointerException");
 		}
-		catch (NullPointerException e)
+		catch (final NullPointerException e)
 		{
 			// expected
 		}
@@ -118,8 +118,8 @@ public class SingleValuePrimitiveEntityTests
 	@Test
 	public void testFlt()
 	{
-		float c = 3.14F;
-		Float cc = new Float(c);
+		final float c = 3.14F;
+		final Float cc = new Float(c);
 		tc.setFlt(c);
 		Assert.assertEquals(cc, Float.valueOf(tc.getFlt()));
 		tc.setFlt(0.0F);
@@ -132,31 +132,7 @@ public class SingleValuePrimitiveEntityTests
 			tc.getFlt();
 			Assert.fail("Should have thrown NullPointerException");
 		}
-		catch (NullPointerException e)
-		{
-			// expected
-		}
-		;
-	}
-
-	@Test
-	public void testLng()
-	{
-		long c = 3;
-		Long cc = new Long(c);
-		tc.setLng(c);
-		Assert.assertEquals(cc, Long.valueOf(tc.getLng()));
-		tc.setLng(0L);
-		Assert.assertTrue(!cc.equals(tc.getLng()));
-		tc.setLng(cc);
-		Assert.assertEquals(cc, Long.valueOf(tc.getLng()));
-		tc.removeLng();
-		try
-		{
-			tc.getLng();
-			Assert.fail("Should have thrown NullPointerException");
-		}
-		catch (NullPointerException e)
+		catch (final NullPointerException e)
 		{
 			// expected
 		}
@@ -166,8 +142,8 @@ public class SingleValuePrimitiveEntityTests
 	@Test
 	public void testInt()
 	{
-		int c = 3;
-		Integer cc = new Integer(c);
+		final int c = 3;
+		final Integer cc = new Integer(c);
 		tc.setInt(c);
 		Assert.assertEquals(cc, Integer.valueOf(tc.getInt()));
 		tc.setInt(0);
@@ -180,7 +156,31 @@ public class SingleValuePrimitiveEntityTests
 			tc.getInt();
 			Assert.fail("Should have thrown NullPointerException");
 		}
-		catch (NullPointerException e)
+		catch (final NullPointerException e)
+		{
+			// expected
+		}
+		;
+	}
+
+	@Test
+	public void testLng()
+	{
+		final long c = 3;
+		final Long cc = new Long(c);
+		tc.setLng(c);
+		Assert.assertEquals(cc, Long.valueOf(tc.getLng()));
+		tc.setLng(0L);
+		Assert.assertTrue(!cc.equals(tc.getLng()));
+		tc.setLng(cc);
+		Assert.assertEquals(cc, Long.valueOf(tc.getLng()));
+		tc.removeLng();
+		try
+		{
+			tc.getLng();
+			Assert.fail("Should have thrown NullPointerException");
+		}
+		catch (final NullPointerException e)
 		{
 			// expected
 		}

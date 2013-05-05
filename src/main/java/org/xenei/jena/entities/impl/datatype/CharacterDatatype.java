@@ -34,13 +34,15 @@ public class CharacterDatatype extends XSDBaseStringType
 	/**
 	 * Parse the single character string into a Character object.
 	 * 
-	 * @param lexical The single character string
-	 * @throws DatatypeFormatException if lexical is more than one character
+	 * @param lexical
+	 *            The single character string
+	 * @throws DatatypeFormatException
+	 *             if lexical is more than one character
 	 */
 	@Override
-	public Object parseValidated( String lexical )
+	public Object parseValidated( final String lexical )
 	{
-		String val = lexical.trim();
+		final String val = lexical.trim();
 		if (val.length() != 1)
 		{
 			throw new DatatypeFormatException(lexical, this,

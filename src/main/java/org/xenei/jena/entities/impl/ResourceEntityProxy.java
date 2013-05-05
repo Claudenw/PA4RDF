@@ -36,9 +36,9 @@ import org.xenei.jena.entities.SubjectInfo;
  */
 public class ResourceEntityProxy implements MethodInterceptor // Invoker
 {
-	private Resource resource;
-	private SubjectInfo subjectInfo;
-	private EntityManager entityManager;
+	private final Resource resource;
+	private final SubjectInfo subjectInfo;
+	private final EntityManager entityManager;
 
 	/**
 	 * The getResource method from the ResourceWrapper class.
@@ -49,14 +49,14 @@ public class ResourceEntityProxy implements MethodInterceptor // Invoker
 	{
 		try
 		{
-			GET_RESOURCE = ResourceWrapper.class
+			ResourceEntityProxy.GET_RESOURCE = ResourceWrapper.class
 					.getDeclaredMethod("getResource");
 		}
-		catch (SecurityException e)
+		catch (final SecurityException e)
 		{
 			throw new RuntimeException(e);
 		}
-		catch (NoSuchMethodException e)
+		catch (final NoSuchMethodException e)
 		{
 			throw new RuntimeException(e);
 		}
@@ -72,8 +72,8 @@ public class ResourceEntityProxy implements MethodInterceptor // Invoker
 	 * @param subjectInfo
 	 *            The subjectInfo for the resource.
 	 */
-	public ResourceEntityProxy( EntityManager entityManager, Resource resource,
-			SubjectInfo subjectInfo )
+	public ResourceEntityProxy( final EntityManager entityManager,
+			final Resource resource, final SubjectInfo subjectInfo )
 	{
 		this.resource = resource;
 		this.entityManager = entityManager;
@@ -83,14 +83,15 @@ public class ResourceEntityProxy implements MethodInterceptor // Invoker
 	/**
 	 * Invokes an method on the proxy.
 	 */
-	public Object intercept( Object obj, Method m, Object[] args,
-			MethodProxy proxy ) throws Throwable
+	@Override
+	public Object intercept( final Object obj, final Method m,
+			final Object[] args, final MethodProxy proxy ) throws Throwable
 	{
 		if (!Modifier.isAbstract(m.getModifiers()))
 		{
 
 			if (m.getName().equals("toString") && !m.isVarArgs()
-					&& m.getParameterTypes().length == 0)
+					&& (m.getParameterTypes().length == 0))
 			{
 				return String
 						.format("%s[%s]", subjectInfo.getClass(), resource);
@@ -116,7 +117,7 @@ public class ResourceEntityProxy implements MethodInterceptor // Invoker
 			return proxy.invokeSuper(obj, args);
 		}
 
-		if (GET_RESOURCE.equals(m))
+		if (ResourceEntityProxy.GET_RESOURCE.equals(m))
 		{
 			return resource;
 		}
@@ -126,7 +127,7 @@ public class ResourceEntityProxy implements MethodInterceptor // Invoker
 		{
 			workingInfo = entityManager.getSubjectInfo(m.getDeclaringClass());
 		}
-		PredicateInfo pi = workingInfo.getPredicateInfo(m);
+		final PredicateInfo pi = workingInfo.getPredicateInfo(m);
 
 		if (pi == null)
 		{
@@ -135,18 +136,18 @@ public class ResourceEntityProxy implements MethodInterceptor // Invoker
 					&& TypeChecker.canBeSetFrom(
 							workingInfo.getImplementedClass(), Resource.class))
 			{
-				Class<?>[] argTypes = new Class<?>[args.length];
+				final Class<?>[] argTypes = new Class<?>[args.length];
 				for (int i = 0; i < args.length; i++)
 				{
 					argTypes[i] = args[i].getClass();
 				}
 				try
 				{
-					Method resourceMethod = Resource.class.getMethod(
+					final Method resourceMethod = Resource.class.getMethod(
 							m.getName(), argTypes);
 					return resourceMethod.invoke(resource, args);
 				}
-				catch (Exception e)
+				catch (final Exception e)
 				{
 					// do nothing thow exception ouside of if.
 				}

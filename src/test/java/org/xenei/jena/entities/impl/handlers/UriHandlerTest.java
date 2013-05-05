@@ -21,22 +21,16 @@ public class UriHandlerTest implements HandlerTestInterface
 		instance = 5;
 	}
 
+	@Override
 	@Test
 	public void testCreateRDFNode()
 	{
-		RDFNode n = handler.createRDFNode("http://example.com");
+		final RDFNode n = handler.createRDFNode("http://example.com");
 		Assert.assertNotNull(n);
 		Assert.assertEquals(node, n);
 	}
 
-	@Test
-	public void testParseObject()
-	{
-		Object o = handler.parseObject(node);
-		Assert.assertNotNull(o);
-		Assert.assertEquals("http://example.com", o);
-	}
-
+	@Override
 	@Test
 	public void testIsEmpty()
 	{
@@ -46,5 +40,14 @@ public class UriHandlerTest implements HandlerTestInterface
 		Assert.assertTrue(handler.isEmpty(" "));
 		Assert.assertFalse(handler.isEmpty("foo"));
 
+	}
+
+	@Override
+	@Test
+	public void testParseObject()
+	{
+		final Object o = handler.parseObject(node);
+		Assert.assertNotNull(o);
+		Assert.assertEquals("http://example.com", o);
 	}
 }

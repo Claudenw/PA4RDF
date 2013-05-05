@@ -29,22 +29,22 @@ public class CharDatatype extends XSDBaseStringType
 		super("string", null);
 		try
 		{
-			this.javaClass = (Class<?>) Character.class.getField("TYPE")
-					.get(null);
+			this.javaClass = (Class<?>) Character.class.getField("TYPE").get(
+					null);
 		}
-		catch (IllegalArgumentException e)
+		catch (final IllegalArgumentException e)
 		{
 			throw new RuntimeException(e);
 		}
-		catch (SecurityException e)
+		catch (final SecurityException e)
 		{
 			throw new RuntimeException(e);
 		}
-		catch (IllegalAccessException e)
+		catch (final IllegalAccessException e)
 		{
 			throw new RuntimeException(e);
 		}
-		catch (NoSuchFieldException e)
+		catch (final NoSuchFieldException e)
 		{
 			throw new RuntimeException(e);
 		}
@@ -53,13 +53,15 @@ public class CharDatatype extends XSDBaseStringType
 	/**
 	 * Parse the single character string into a char.class object.
 	 * 
-	 * @param lexical The single character string
-	 * @throws DatatypeFormatException if lexical is more than one character
+	 * @param lexical
+	 *            The single character string
+	 * @throws DatatypeFormatException
+	 *             if lexical is more than one character
 	 */
 	@Override
-	public Object parseValidated( String lexical )
+	public Object parseValidated( final String lexical )
 	{
-		String val = lexical.trim();
+		final String val = lexical.trim();
 		if (val.length() != 1)
 		{
 			throw new DatatypeFormatException(lexical, this,

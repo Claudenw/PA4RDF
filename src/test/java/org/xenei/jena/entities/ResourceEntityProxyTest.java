@@ -42,9 +42,9 @@ public class ResourceEntityProxyTest
 	@Test
 	public void testEquality()
 	{
-		Resource r = model.createResource("http://localhost/foo");
-		TestClass ti1 = manager.read(r, TestClass.class);
-		TestClass ti2 = manager.read(r, TestClass.class);
+		final Resource r = model.createResource("http://localhost/foo");
+		final TestClass ti1 = manager.read(r, TestClass.class);
+		final TestClass ti2 = manager.read(r, TestClass.class);
 
 		Assert.assertEquals(ti1, ti2);
 		Assert.assertEquals(ti2, ti1);
@@ -54,10 +54,10 @@ public class ResourceEntityProxyTest
 	@Test
 	public void testParsing() throws SecurityException, NoSuchMethodException
 	{
-		Resource r = model.createResource("http://localhost/foo");
+		final Resource r = model.createResource("http://localhost/foo");
 		manager.read(r, TestClass.class);
-		SubjectInfo ci = manager.getSubjectInfo(TestClass.class);
-		String namespaceStr = "http://localhost/test#";
+		final SubjectInfo ci = manager.getSubjectInfo(TestClass.class);
+		final String namespaceStr = "http://localhost/test#";
 
 		Assert.assertEquals(TestClass.class, ci.getImplementedClass());
 
@@ -135,46 +135,12 @@ public class ResourceEntityProxyTest
 	}
 
 	@Test
-	public void testSingleGetSetRemove()
-	{
-		Resource r = model.createResource("http://localhost/foo");
-		TestClass ti1 = manager.read(r, TestClass.class);
-
-		ti1.setBar("foo");
-		Assert.assertEquals("foo", ti1.getBar());
-		ti1.removeBar();
-		Assert.assertEquals(null, ti1.getBar());
-
-		ti1.addBaz("foo");
-		ti1.addBaz("foo2");
-		List<String> result = ti1.getBaz().toList();
-		Assert.assertEquals(2, result.size());
-		Assert.assertTrue(result.contains("foo"));
-		Assert.assertTrue(result.contains("foo2"));
-		ti1.removeBaz("foo");
-		result = ti1.getBaz().toList();
-		Assert.assertEquals(1, result.size());
-		Assert.assertTrue(result.contains("foo2"));
-		ti1.removeBaz("foo2");
-		result = ti1.getBaz().toList();
-		Assert.assertEquals(0, result.size());
-
-		ti1.setFlag(true);
-		Assert.assertTrue(ti1.isFlag());
-		ti1.setFlag(false);
-		Assert.assertTrue(!ti1.isFlag());
-		ti1.removeFlag();
-		Assert.assertNull(ti1.isFlag());
-
-	}
-
-	@Test
 	public void testPropertyRenaming() throws SecurityException,
 			NoSuchMethodException
 	{
-		SubjectInfo ci = manager
+		final SubjectInfo ci = manager
 				.getSubjectInfo(TestPropertyRenamingInterface.class);
-		String namespace = "http://localhost/different#";
+		final String namespace = "http://localhost/different#";
 
 		Assert.assertEquals(TestPropertyRenamingInterface.class,
 				ci.getImplementedClass());
@@ -254,5 +220,39 @@ public class ResourceEntityProxyTest
 		Assert.assertEquals(namespace, pi.getNamespace());
 		Assert.assertEquals(namespace + "foo3", pi.getUriString());
 		Assert.assertEquals(null, pi.getValueClass());
+	}
+
+	@Test
+	public void testSingleGetSetRemove()
+	{
+		final Resource r = model.createResource("http://localhost/foo");
+		final TestClass ti1 = manager.read(r, TestClass.class);
+
+		ti1.setBar("foo");
+		Assert.assertEquals("foo", ti1.getBar());
+		ti1.removeBar();
+		Assert.assertEquals(null, ti1.getBar());
+
+		ti1.addBaz("foo");
+		ti1.addBaz("foo2");
+		List<String> result = ti1.getBaz().toList();
+		Assert.assertEquals(2, result.size());
+		Assert.assertTrue(result.contains("foo"));
+		Assert.assertTrue(result.contains("foo2"));
+		ti1.removeBaz("foo");
+		result = ti1.getBaz().toList();
+		Assert.assertEquals(1, result.size());
+		Assert.assertTrue(result.contains("foo2"));
+		ti1.removeBaz("foo2");
+		result = ti1.getBaz().toList();
+		Assert.assertEquals(0, result.size());
+
+		ti1.setFlag(true);
+		Assert.assertTrue(ti1.isFlag());
+		ti1.setFlag(false);
+		Assert.assertTrue(!ti1.isFlag());
+		ti1.removeFlag();
+		Assert.assertNull(ti1.isFlag());
+
 	}
 }

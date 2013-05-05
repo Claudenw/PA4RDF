@@ -23,27 +23,18 @@ public class LiteralHandlerTest implements HandlerTestInterface
 		instance = 5;
 	}
 
+	@Override
 	@Test
 	public void testCreateRDFNode()
 	{
-		RDFNode n = handler.createRDFNode(Integer.valueOf(5));
+		final RDFNode n = handler.createRDFNode(Integer.valueOf(5));
 		Assert.assertNotNull(n);
-		Literal l = ResourceFactory.createTypedLiteral("5",
+		final Literal l = ResourceFactory.createTypedLiteral("5",
 				XSDDatatype.XSDinteger);
 		Assert.assertEquals(l, n);
 	}
 
-	@Test
-	public void testParseObject()
-	{
-		Object o = handler.parseObject(node);
-		Assert.assertNotNull(o);
-		Assert.assertTrue(o instanceof Integer);
-		Integer a2 = (Integer) o;
-		Assert.assertEquals(instance, a2);
-
-	}
-
+	@Override
 	@Test
 	public void testIsEmpty()
 	{
@@ -55,6 +46,18 @@ public class LiteralHandlerTest implements HandlerTestInterface
 		Assert.assertTrue(handler.isEmpty(" "));
 		Assert.assertFalse(handler.isEmpty(instance));
 		Assert.assertFalse(handler.isEmpty("foo"));
+
+	}
+
+	@Override
+	@Test
+	public void testParseObject()
+	{
+		final Object o = handler.parseObject(node);
+		Assert.assertNotNull(o);
+		Assert.assertTrue(o instanceof Integer);
+		final Integer a2 = (Integer) o;
+		Assert.assertEquals(instance, a2);
 
 	}
 }

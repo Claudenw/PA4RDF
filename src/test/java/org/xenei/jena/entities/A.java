@@ -5,15 +5,17 @@ import com.hp.hpl.jena.rdf.model.Resource;
 import org.xenei.jena.entities.annotations.Predicate;
 import org.xenei.jena.entities.annotations.Subject;
 
-@Subject( namespace="http://example.com/")
+@Subject( namespace = "http://example.com/" )
 public interface A extends Resource
 {
+	String getX();
+
+	String getZ();
+
 	@Predicate
 	void setX( String x );
-	String getX();
-	
-	@Predicate( emptyIsNull=true )
+
+	@Predicate( emptyIsNull = true )
 	void setZ( String z );
-	String getZ();
-	
+
 }

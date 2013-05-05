@@ -25,42 +25,52 @@ public class VoidHandler implements ObjectHandler
 {
 	/**
 	 * Convert the object to null
-	 * @param obj The object to convert
+	 * 
+	 * @param obj
+	 *            The object to convert
 	 * @return null
 	 */
-	public RDFNode createRDFNode( Object obj )
+	@Override
+	public RDFNode createRDFNode( final Object obj )
 	{
 		return null;
 	}
-	
-	public boolean isEmpty( Object obj )
+
+	@Override
+	public boolean equals( final Object o )
+	{
+		return o instanceof VoidHandler;
+	}
+
+	@Override
+	public int hashCode()
+	{
+		return toString().hashCode();
+	}
+
+	@Override
+	public boolean isEmpty( final Object obj )
 	{
 		return true;
 	}
 
 	/**
 	 * convert the node to a null
-	 * @param node The node to convert.
+	 * 
+	 * @param node
+	 *            The node to convert.
 	 * @return null.
 	 */
-	public Object parseObject( RDFNode node )
+	@Override
+	public Object parseObject( final RDFNode node )
 	{
 		return null;
 	}
-	
+
 	@Override
-	public String toString() { return "VoidHandler"; }
-	
-	@Override
-	public boolean equals( Object o )
+	public String toString()
 	{
-		return o instanceof VoidHandler;
+		return "VoidHandler";
 	}
-	
-	@Override
-	public int hashCode()
-	{
-		return toString().hashCode();
-	}
-	
+
 }

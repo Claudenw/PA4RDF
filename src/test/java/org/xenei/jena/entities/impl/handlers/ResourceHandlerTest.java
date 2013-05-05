@@ -22,22 +22,16 @@ public class ResourceHandlerTest implements HandlerTestInterface
 		instance = 5;
 	}
 
+	@Override
 	@Test
 	public void testCreateRDFNode()
 	{
-		RDFNode n = handler.createRDFNode(node);
+		final RDFNode n = handler.createRDFNode(node);
 		Assert.assertNotNull(n);
 		Assert.assertEquals(node, n);
 	}
 
-	@Test
-	public void testParseObject()
-	{
-		Object o = handler.parseObject(node);
-		Assert.assertNotNull(o);
-		Assert.assertEquals(node, o);
-	}
-
+	@Override
 	@Test
 	public void testIsEmpty()
 	{
@@ -53,5 +47,14 @@ public class ResourceHandlerTest implements HandlerTestInterface
 				"", XSDDatatype.XSDstring)));
 		Assert.assertTrue(handler.isEmpty(ResourceFactory.createTypedLiteral(
 				" ", XSDDatatype.XSDstring)));
+	}
+
+	@Override
+	@Test
+	public void testParseObject()
+	{
+		final Object o = handler.parseObject(node);
+		Assert.assertNotNull(o);
+		Assert.assertEquals(node, o);
 	}
 }

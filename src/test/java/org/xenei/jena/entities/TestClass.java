@@ -24,24 +24,24 @@ public abstract class TestClass
 {
 
 	@Predicate
-	abstract public void setBar( String value );
+	abstract public void addBaz( String str );
 
 	abstract public String getBar();
 
-	abstract public void removeBar();
-
-	@Predicate
-	abstract public void addBaz( String str );
-
 	abstract public ExtendedIterator<String> getBaz();
-
-	abstract public void removeBaz( String str );
-
-	@Predicate
-	abstract public void setFlag( Boolean state );
 
 	abstract public Boolean isFlag();
 
+	abstract public void removeBar();
+
+	abstract public void removeBaz( String str );
+
 	abstract public void removeFlag();
+
+	@Predicate
+	abstract public void setBar( String value );
+
+	@Predicate
+	abstract public void setFlag( Boolean state );
 
 }

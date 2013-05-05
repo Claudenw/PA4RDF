@@ -26,29 +26,32 @@ public class EntityHandlerTest implements HandlerTestInterface
 		instance = em.read(node, A.class);
 	}
 
+	@Override
 	@Test
 	public void testCreateRDFNode()
 	{
-		RDFNode n = handler.createRDFNode(instance);
+		final RDFNode n = handler.createRDFNode(instance);
 		Assert.assertNotNull(n);
 		Assert.assertEquals(node, n);
 	}
 
-	@Test
-	public void testParseObject()
-	{
-		Object o = handler.parseObject(node);
-		Assert.assertNotNull(o);
-		Assert.assertTrue(o instanceof A);
-		A a2 = (A) o;
-		Assert.assertEquals(instance, a2);
-
-	}
-
+	@Override
 	@Test
 	public void testIsEmpty()
 	{
 		Assert.assertTrue(handler.isEmpty(null));
 		Assert.assertFalse(handler.isEmpty(instance));
+	}
+
+	@Override
+	@Test
+	public void testParseObject()
+	{
+		final Object o = handler.parseObject(node);
+		Assert.assertNotNull(o);
+		Assert.assertTrue(o instanceof A);
+		final A a2 = (A) o;
+		Assert.assertEquals(instance, a2);
+
 	}
 }

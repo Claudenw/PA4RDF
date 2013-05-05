@@ -23,46 +23,46 @@ import org.xenei.jena.entities.annotations.Subject;
 public abstract class SingleValuePrimitiveTestClass implements Resource
 {
 
-	@Predicate
-	public abstract void setBool( boolean b );
+	public abstract char getChar();
+
+	public abstract double getDbl();
+
+	public abstract float getFlt();
+
+	public abstract int getInt();
+
+	public abstract long getLng();
 
 	public abstract boolean isBool();
 
 	public abstract void removeBool();
 
-	@Predicate
-	public abstract void setChar( char b );
-
-	public abstract char getChar();
-
 	public abstract void removeChar();
-
-	@Predicate
-	public abstract void setDbl( double b );
-
-	public abstract double getDbl();
 
 	public abstract void removeDbl();
 
-	@Predicate
-	public abstract void setFlt( float b );
-
-	public abstract float getFlt();
-
 	public abstract void removeFlt();
 
-	@Predicate
-	public abstract void setLng( long b );
-
-	public abstract long getLng();
+	public abstract void removeInt();
 
 	public abstract void removeLng();
 
 	@Predicate
+	public abstract void setBool( boolean b );
+
+	@Predicate
+	public abstract void setChar( char b );
+
+	@Predicate
+	public abstract void setDbl( double b );
+
+	@Predicate
+	public abstract void setFlt( float b );
+
+	@Predicate
 	public abstract void setInt( int b );
 
-	public abstract int getInt();
-
-	public abstract void removeInt();
+	@Predicate
+	public abstract void setLng( long b );
 
 }

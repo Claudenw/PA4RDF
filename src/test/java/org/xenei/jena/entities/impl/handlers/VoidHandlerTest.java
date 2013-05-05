@@ -21,20 +21,15 @@ public class VoidHandlerTest implements HandlerTestInterface
 		instance = 5;
 	}
 
+	@Override
 	@Test
 	public void testCreateRDFNode()
 	{
-		RDFNode n = handler.createRDFNode(Integer.valueOf(5));
+		final RDFNode n = handler.createRDFNode(Integer.valueOf(5));
 		Assert.assertNull(n);
 	}
 
-	@Test
-	public void testParseObject()
-	{
-		Object o = handler.parseObject(node);
-		Assert.assertNull(o);
-	}
-
+	@Override
 	@Test
 	public void testIsEmpty()
 	{
@@ -44,5 +39,13 @@ public class VoidHandlerTest implements HandlerTestInterface
 		Assert.assertTrue(handler.isEmpty(" "));
 		Assert.assertTrue(handler.isEmpty("foo"));
 
+	}
+
+	@Override
+	@Test
+	public void testParseObject()
+	{
+		final Object o = handler.parseObject(node);
+		Assert.assertNull(o);
 	}
 }

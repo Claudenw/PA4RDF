@@ -25,22 +25,12 @@ import org.xenei.jena.entities.SubjectInfo;
 
 public class SubjectInfoImpl implements SubjectInfo
 {
-	private Class<?> implementedClass;
-	private Map<String, Map<ObjectHandler, PredicateInfo>> predicateInfo = new HashMap<String, Map<ObjectHandler, PredicateInfo>>();
+	private final Class<?> implementedClass;
+	private final Map<String, Map<ObjectHandler, PredicateInfo>> predicateInfo = new HashMap<String, Map<ObjectHandler, PredicateInfo>>();
 
-	public SubjectInfoImpl( Class<?> implementedClass )
+	public SubjectInfoImpl( final Class<?> implementedClass )
 	{
 		this.implementedClass = implementedClass;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.xenei.jena.entities.impl.SubjectInfo#getImplementedClass()
-	 */
-	public Class<?> getImplementedClass()
-	{
-		return implementedClass;
 	}
 
 	/**
@@ -49,7 +39,7 @@ public class SubjectInfoImpl implements SubjectInfo
 	 * @param pi
 	 *            The predicateInfo to add.
 	 */
-	public void add( PredicateInfoImpl pi )
+	public void add( final PredicateInfoImpl pi )
 	{
 		Map<ObjectHandler, PredicateInfo> map = predicateInfo.get(pi
 				.getMethodName());
@@ -65,18 +55,76 @@ public class SubjectInfoImpl implements SubjectInfo
 	/*
 	 * (non-Javadoc)
 	 * 
+	 * @see org.xenei.jena.entities.impl.SubjectInfo#getImplementedClass()
+	 */
+	@Override
+	public Class<?> getImplementedClass()
+	{
+		return implementedClass;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.xenei.jena.entities.impl.SubjectInfo#getPredicateInfo(java.lang.reflect
+	 * .Method)
+	 */
+	@Override
+	public PredicateInfo getPredicateInfo( final Method m )
+	{
+		if (m.isVarArgs() || (m.getParameterTypes().length > 1))
+		{
+			return null;
+		}
+		if (m.getParameterTypes().length == 0)
+		{
+			// must be a getter or single value remove
+			return getPredicateInfo(m.getName(), m.getReturnType());
+		}
+		else
+		{
+			return getPredicateInfo(m.getName(), m.getParameterTypes()[0]);
+		}
+	}
+
+	private PredicateInfo getPredicateInfo( final String function )
+	{
+		final Map<ObjectHandler, PredicateInfo> map = predicateInfo
+				.get(function);
+		if (map == null)
+		{
+			throw new IllegalArgumentException(String.format(
+					"Function %s not found", function));
+		}
+		if (map.values().isEmpty())
+		{
+			{
+				throw new IllegalArgumentException(String.format(
+						"Function %s not found", function));
+			}
+		}
+		return map.values().iterator().next();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see
 	 * org.xenei.jena.entities.impl.SubjectInfo#getPredicateInfo(java.lang.String
 	 * , java.lang.Class)
 	 */
-	public PredicateInfo getPredicateInfo( String function, Class<?> clazz )
+	@Override
+	public PredicateInfo getPredicateInfo( final String function,
+			final Class<?> clazz )
 	{
-		Map<ObjectHandler, PredicateInfo> map = predicateInfo.get(function);
+		final Map<ObjectHandler, PredicateInfo> map = predicateInfo
+				.get(function);
 		if (map != null)
 		{
-			for (PredicateInfo pi : map.values())
+			for (final PredicateInfo pi : map.values())
 			{
-				Class<?> valueClass = pi.getValueClass();
+				final Class<?> valueClass = pi.getValueClass();
 				switch (pi.getActionType())
 				{
 					case SETTER:
@@ -106,7 +154,7 @@ public class SubjectInfoImpl implements SubjectInfo
 						else
 						{
 							// it does not want an argument
-							if (clazz == null || clazz.equals(void.class))
+							if ((clazz == null) || clazz.equals(void.class))
 							{
 								return pi;
 							}
@@ -119,49 +167,50 @@ public class SubjectInfoImpl implements SubjectInfo
 	}
 
 	/**
-	 * Remove a predicate info from this subject.
+	 * Get the RDF Property for the method
 	 * 
-	 * @param function
-	 *            The function to remove
-	 * @param clazz
-	 *            The class that is expected for the parameter (setter) or for
-	 *            return (getter).
+	 * @param m
+	 *            The method to get the property for.
 	 */
-	public void removePredicateInfo( String function, Class<?> clazz )
+	@Override
+	public Property getPredicateProperty( final Method m )
 	{
-		Map<ObjectHandler, PredicateInfo> map = predicateInfo.get(function);
-		if (map != null)
-		{
-			map.remove(clazz);
-			if (map.isEmpty())
-			{
-				predicateInfo.remove(function);
-			}
-		}
+		return getPredicateInfo(m).getProperty();
+	}
+
+	/**
+	 * Get the RDF property for a method name.
+	 * 
+	 * @param methodName
+	 *            The method name to locate
+	 */
+	@Override
+	public Property getPredicateProperty( final String methodName )
+	{
+		return getPredicateInfo(methodName).getProperty();
 	}
 
 	/*
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.xenei.jena.entities.impl.SubjectInfo#getPredicateInfo(java.lang.reflect
-	 * .Method)
+	 * org.xenei.jena.entities.impl.SubjectInfo#getUri(java.lang.reflect.Method)
 	 */
-	public PredicateInfo getPredicateInfo( Method m )
+	@Override
+	public String getPredicateUriStr( final Method m )
 	{
-		if (m.isVarArgs() || m.getParameterTypes().length > 1)
-		{
-			return null;
-		}
-		if (m.getParameterTypes().length == 0)
-		{
-			// must be a getter or single value remove
-			return getPredicateInfo(m.getName(), m.getReturnType());
-		}
-		else
-		{
-			return getPredicateInfo(m.getName(), m.getParameterTypes()[0]);
-		}
+		return getPredicateInfo(m).getUriString();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.xenei.jena.entities.impl.SubjectInfo#getUri(java.lang.String)
+	 */
+	@Override
+	public String getPredicateUriStr( final String function )
+	{
+		return getPredicateInfo(function).getUriString();
 	}
 
 	/**
@@ -170,9 +219,9 @@ public class SubjectInfoImpl implements SubjectInfo
 	 * @param m
 	 *            the method to rermove
 	 */
-	public void removePredicateInfo( Method m )
+	public void removePredicateInfo( final Method m )
 	{
-		if (m.isVarArgs() || m.getParameterTypes().length > 1)
+		if (m.isVarArgs() || (m.getParameterTypes().length > 1))
 		{
 			return;
 		}
@@ -187,65 +236,27 @@ public class SubjectInfoImpl implements SubjectInfo
 		}
 	}
 
-	private PredicateInfo getPredicateInfo( String function )
+	/**
+	 * Remove a predicate info from this subject.
+	 * 
+	 * @param function
+	 *            The function to remove
+	 * @param clazz
+	 *            The class that is expected for the parameter (setter) or for
+	 *            return (getter).
+	 */
+	public void removePredicateInfo( final String function, final Class<?> clazz )
 	{
-		Map<ObjectHandler, PredicateInfo> map = predicateInfo.get(function);
-		if (map == null)
+		final Map<ObjectHandler, PredicateInfo> map = predicateInfo
+				.get(function);
+		if (map != null)
 		{
-			throw new IllegalArgumentException(String.format(
-					"Function %s not found", function));
-		}
-		if (map.values().isEmpty())
-		{
+			map.remove(clazz);
+			if (map.isEmpty())
 			{
-				throw new IllegalArgumentException(String.format(
-						"Function %s not found", function));
+				predicateInfo.remove(function);
 			}
 		}
-		return map.values().iterator().next();
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.xenei.jena.entities.impl.SubjectInfo#getUri(java.lang.String)
-	 */
-	public String getPredicateUriStr( String function )
-	{
-		return getPredicateInfo(function).getUriString();
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.xenei.jena.entities.impl.SubjectInfo#getUri(java.lang.reflect.Method)
-	 */
-	public String getPredicateUriStr( Method m )
-	{
-		return getPredicateInfo(m).getUriString();
-	}
-
-	/**
-	 * Get the RDF Property for the method
-	 * 
-	 * @param m
-	 *            The method to get the property for.
-	 */
-	public Property getPredicateProperty( Method m )
-	{
-		return getPredicateInfo(m).getProperty();
-	}
-
-	/**
-	 * Get the RDF property for a method name.
-	 * 
-	 * @param methodName
-	 *            The method name to locate
-	 */
-	public Property getPredicateProperty( String methodName )
-	{
-		return getPredicateInfo(methodName).getProperty();
 	}
 
 }

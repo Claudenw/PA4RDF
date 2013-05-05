@@ -17,34 +17,43 @@ package org.xenei.jena.entities.impl;
 import com.hp.hpl.jena.rdf.model.RDFNode;
 
 /**
- * The interface for the internal ObjectHandler.  
+ * The interface for the internal ObjectHandler.
  * 
- * The handler will create the RDFNode from the object passed to the setter method, and will 
+ * The handler will create the RDFNode from the object passed to the setter
+ * method, and will
  * create the object to be returned for the getter method.
  * 
- * In general X.equals( parseObject( createRDFNode( X ))) should hold true as should
+ * In general X.equals( parseObject( createRDFNode( X ))) should hold true as
+ * should
  * X.equals( createRDFNode( parseObject( X ))).
  */
-public interface ObjectHandler {
+public interface ObjectHandler
+{
 	/**
 	 * Parse the object into an RDFNode representation.
-	 * @param obj The object to represent
+	 * 
+	 * @param obj
+	 *            The object to represent
 	 * @return The RDFNode representation
 	 */
 	RDFNode createRDFNode( Object obj );
-	
-	/**
-	 * Parse the RDF node into an object.
-	 * @param node The RDFNode to be unparsed.
-	 * @return The Object from the unparsed RDFNode.
-	 */
-	Object parseObject( RDFNode node );	
-	
+
 	/**
 	 * Returns true if the object is considered empty.
-	 * @param obj the object that would be passed to createRDFNode
+	 * 
+	 * @param obj
+	 *            the object that would be passed to createRDFNode
 	 * @return true if the object is a empty.
 	 */
 	boolean isEmpty( Object obj );
-	
+
+	/**
+	 * Parse the RDF node into an object.
+	 * 
+	 * @param node
+	 *            The RDFNode to be unparsed.
+	 * @return The Object from the unparsed RDFNode.
+	 */
+	Object parseObject( RDFNode node );
+
 }

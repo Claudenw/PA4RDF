@@ -1,4 +1,4 @@
-/* 
+/*
  * Copyright 2012, XENEI.com
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -11,7 +11,7 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */ 
+ */
 
 package org.xenei.jena.entities;
 
@@ -21,13 +21,11 @@ package org.xenei.jena.entities;
 public class MissingAnnotation extends Exception
 {
 
-	
 	private static final long serialVersionUID = -5874216486380814195L;
 
-	public MissingAnnotation( String message )
+	public MissingAnnotation( final String message )
 	{
 		super(message);
 	}
-
 
 }

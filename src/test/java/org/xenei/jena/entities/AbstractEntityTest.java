@@ -12,7 +12,8 @@ import org.junit.Test;
 public class AbstractEntityTest
 {
 	private Model m;
-	private EntityManager manager = EntityManagerFactory.getEntityManager();
+	private final EntityManager manager = EntityManagerFactory
+			.getEntityManager();
 	private AbstractEntity theInstance;
 	private Resource r;
 
@@ -26,6 +27,12 @@ public class AbstractEntityTest
 	}
 
 	@Test
+	public void testConcreteMethod()
+	{
+		Assert.assertEquals("Y", theInstance.getY());
+	}
+
+	@Test
 	public void testSetRetrieve()
 	{
 		String x = theInstance.getX();
@@ -33,12 +40,6 @@ public class AbstractEntityTest
 		theInstance.setX("foo");
 		x = theInstance.getX();
 		Assert.assertEquals("foo", theInstance.getX());
-	}
-
-	@Test
-	public void testConcreteMethod()
-	{
-		Assert.assertEquals("Y", theInstance.getY());
 	}
 
 }

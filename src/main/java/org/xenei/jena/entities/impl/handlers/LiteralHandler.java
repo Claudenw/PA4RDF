@@ -28,65 +28,80 @@ import org.xenei.jena.entities.impl.ObjectHandler;
  */
 public class LiteralHandler implements ObjectHandler
 {
-	private RDFDatatype literalDatatype ;
-	
+	private final RDFDatatype literalDatatype;
+
 	/**
 	 * Create a LiteralHandler that converts literalDatatype objects.
-	 * @param literalDatatype The RDFDatatype that will be converted to/from.
+	 * 
+	 * @param literalDatatype
+	 *            The RDFDatatype that will be converted to/from.
 	 */
-	public LiteralHandler( RDFDatatype literalDatatype )
+	public LiteralHandler( final RDFDatatype literalDatatype )
 	{
-		this.literalDatatype=literalDatatype;
-	}
-	
-	/**
-	 * Convert the object to a Literal using the literalDatatype.
-	 * @param obj the Object to convert.
-	 * @return The literal representation of the object
-	 * @throws An exception of object can not be parsed to a lexical form.
-	 */
-	public Literal createRDFNode( Object obj )
-	{
-		String lexicalForm = literalDatatype.unparse(obj);
-		return ResourceFactory.createTypedLiteral( lexicalForm, literalDatatype );
+		this.literalDatatype = literalDatatype;
 	}
 
 	/**
-	 * Convert a Literal to an object using the Literaldata type to parse it.
-	 * @param node The literal node.
-	 * @return The parsed object
-	 * @throws An exception if node is not a Liter that can be parsed by literalDatatype.
+	 * Convert the object to a Literal using the literalDatatype.
+	 * 
+	 * @param obj
+	 *            the Object to convert.
+	 * @return The literal representation of the object
+	 * @throws An
+	 *             exception of object can not be parsed to a lexical form.
 	 */
-	public Object parseObject( RDFNode node )
-	{
-		return literalDatatype.parse( node.asLiteral().getLexicalForm());
-	}
-	
-	public boolean isEmpty( Object obj )
-	{
-		if (obj != null)
-		{
-			return StringUtils.isBlank(createRDFNode( obj ).getLexicalForm());
-		}
-		return true;
-	}
-	
 	@Override
-	public String toString(){ return "LiteralHandler{"+literalDatatype+"}";}
-	
+	public Literal createRDFNode( final Object obj )
+	{
+		final String lexicalForm = literalDatatype.unparse(obj);
+		return ResourceFactory.createTypedLiteral(lexicalForm, literalDatatype);
+	}
+
 	@Override
-	public boolean equals( Object o)
+	public boolean equals( final Object o )
 	{
 		if (o instanceof LiteralHandler)
 		{
-			return literalDatatype.equals( ((LiteralHandler)o).literalDatatype );
+			return literalDatatype.equals(((LiteralHandler) o).literalDatatype);
 		}
 		return false;
 	}
-	
+
 	@Override
 	public int hashCode()
 	{
 		return toString().hashCode();
+	}
+
+	@Override
+	public boolean isEmpty( final Object obj )
+	{
+		if (obj != null)
+		{
+			return StringUtils.isBlank(createRDFNode(obj).getLexicalForm());
+		}
+		return true;
+	}
+
+	/**
+	 * Convert a Literal to an object using the Literaldata type to parse it.
+	 * 
+	 * @param node
+	 *            The literal node.
+	 * @return The parsed object
+	 * @throws An
+	 *             exception if node is not a Liter that can be parsed by
+	 *             literalDatatype.
+	 */
+	@Override
+	public Object parseObject( final RDFNode node )
+	{
+		return literalDatatype.parse(node.asLiteral().getLexicalForm());
+	}
+
+	@Override
+	public String toString()
+	{
+		return "LiteralHandler{" + literalDatatype + "}";
 	}
 }

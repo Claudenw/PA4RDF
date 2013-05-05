@@ -20,35 +20,52 @@ import org.apache.commons.lang3.StringUtils;
 import org.xenei.jena.entities.impl.ObjectHandler;
 
 /**
- * An ObjectHandler that does not convert RDFNodes. 
+ * An ObjectHandler that does not convert RDFNodes.
  */
 public class ResourceHandler implements ObjectHandler
 {
 	/**
 	 * Convert an object to an RDFNode.
-	 * @throws ClassCastExcepton if obj is not an instance of RDFNode  
+	 * 
+	 * @throws ClassCastExcepton
+	 *             if obj is not an instance of RDFNode
 	 */
-	public RDFNode createRDFNode( Object obj )
+	@Override
+	public RDFNode createRDFNode( final Object obj )
 	{
 		if (obj instanceof RDFNode)
 		{
 			return (RDFNode) obj;
 		}
-		throw new IllegalArgumentException( String.format( "%s is not an RDFNode", obj ));
+		throw new IllegalArgumentException(String.format(
+				"%s is not an RDFNode", obj));
 	}
-	
-	public boolean isEmpty( Object obj )
+
+	@Override
+	public boolean equals( final Object o )
 	{
-		if (obj != null && obj instanceof RDFNode)
+		return o instanceof ResourceHandler;
+	}
+
+	@Override
+	public int hashCode()
+	{
+		return toString().hashCode();
+	}
+
+	@Override
+	public boolean isEmpty( final Object obj )
+	{
+		if ((obj != null) && (obj instanceof RDFNode))
 		{
-			RDFNode node = (RDFNode) obj;
+			final RDFNode node = (RDFNode) obj;
 			if (node.isLiteral())
 			{
 				return StringUtils.isBlank(node.asLiteral().getLexicalForm());
 			}
 			if (node.isURIResource())
 			{
-				return StringUtils.isBlank(node.asResource().getURI() );
+				return StringUtils.isBlank(node.asResource().getURI());
 			}
 			return false;
 		}
@@ -57,23 +74,20 @@ public class ResourceHandler implements ObjectHandler
 
 	/**
 	 * Returns the argument
-	 * @param node The RDFNode to parse/return
-	 * @return The node parameter 
+	 * 
+	 * @param node
+	 *            The RDFNode to parse/return
+	 * @return The node parameter
 	 */
-	public Object parseObject( RDFNode node )
+	@Override
+	public Object parseObject( final RDFNode node )
 	{
 		return node;
 	}
-	
+
 	@Override
-	public String toString() { return "ResourceHandler"; }
-	
-	@Override
-	public boolean equals( Object o )
+	public String toString()
 	{
-		return o instanceof ResourceHandler;
+		return "ResourceHandler";
 	}
-	
-	@Override
-	public int hashCode() { return toString().hashCode(); }
 }

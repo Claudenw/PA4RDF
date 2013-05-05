@@ -26,7 +26,7 @@ public class DumpDataTypes
 	 * 
 	 * arg1 = Output format
 	 * The format is a String.format format string for two (2) string inputs.
-	 * The first format parameter is the URI of the data type, the second 
+	 * The first format parameter is the URI of the data type, the second
 	 * format parameter is the class name.
 	 * The default value is "%s | %s". To reverse the display use "%2$s | %1$s".
 	 * 
@@ -40,7 +40,7 @@ public class DumpDataTypes
 	 * @see org.xenei.jena.entities.impl.PredicateInfoImpl#dataTypeDump(String,
 	 *      String)
 	 */
-	public static void main( String[] args )
+	public static void main( final String[] args )
 	{
 		String fmt = "%s | %s";
 		String nullString = null;
@@ -53,7 +53,7 @@ public class DumpDataTypes
 		{
 			nullString = args[1];
 		}
-		for (String s : PredicateInfoImpl.dataTypeDump(fmt, nullString))
+		for (final String s : PredicateInfoImpl.dataTypeDump(fmt, nullString))
 		{
 			System.out.println(s);
 		}

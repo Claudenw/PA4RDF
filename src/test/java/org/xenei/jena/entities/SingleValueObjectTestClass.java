@@ -14,84 +14,113 @@
  */
 package org.xenei.jena.entities;
 
-import org.xenei.jena.entities.annotations.Subject;
-import org.xenei.jena.entities.annotations.Predicate;
-import org.xenei.jena.entities.annotations.URI;
-
-
 import com.hp.hpl.jena.rdf.model.RDFNode;
 
-@Subject( namespace="http://localhost/test#")
-public abstract class SingleValueObjectTestClass  {
-	
-	public SingleValueObjectTestClass() {};
+import org.xenei.jena.entities.annotations.Predicate;
+import org.xenei.jena.entities.annotations.Subject;
+import org.xenei.jena.entities.annotations.URI;
+
+@Subject( namespace = "http://localhost/test#" )
+public abstract class SingleValueObjectTestClass
+{
+
+	@Subject( namespace = "http://localhost/test#" )
+	public static abstract class SubPredicate
+	{
+		public SubPredicate()
+		{
+		};
+
+		public abstract String getName();
+
+		@Predicate
+		public abstract void setName( String name );
+	};
+
+	public SingleValueObjectTestClass()
+	{
+	}
+
+	public abstract Character getChar();
+
+	public abstract Double getDbl();
+
+	public abstract TestClass getEnt();
+
+	public abstract Float getFlt();
+
+	public abstract Integer getInt();
+
+	public abstract Long getLng();
+
+	public abstract RDFNode getRDF();
+
+	public abstract String getStr();
+
+	public abstract SubPredicate getSubPredicate();
+
+	public abstract RDFNode getU();
+
+	@Predicate( type = URI.class, name = "u" )
+	public abstract String getU2();
+
+	public abstract Boolean isBool();
+
+	public abstract void removeBool();
+
+	public abstract void removeChar();
+
+	public abstract void removeDbl();
+
+	public abstract void removeEnt();
+
+	public abstract void removeFlt();
+
+	public abstract void removeInt();
+
+	public abstract void removeLng();
+
+	public abstract void removeRDF();
+
+	public abstract void removeStr();
+
+	public abstract void removeSubPredicate();
+
+	public abstract void removeU();
 
 	@Predicate
 	public abstract void setBool( Boolean b );
-	public abstract Boolean isBool();
-	public abstract void removeBool();
-	
+
 	@Predicate
 	public abstract void setChar( Character b );
-	public abstract Character getChar();
-	public abstract void removeChar();	
-	
+
 	@Predicate
 	public abstract void setDbl( Double b );
-	public abstract Double getDbl();
-	public abstract void removeDbl();
-	
-	@Predicate
-	public abstract void setFlt( Float b );
-	public abstract Float getFlt();
-	public abstract void removeFlt();
-	
-	@Predicate
-	public abstract void setLng( Long b );
-	public abstract Long getLng();
-	public abstract void removeLng();
-	
-	@Predicate
-	public abstract void setInt( Integer b );
-	public abstract Integer getInt();
-	public abstract void removeInt();
-	
-	@Predicate
-	public abstract void setStr( String b );
-	public abstract String getStr();
-	public abstract void removeStr();
-	
-	@Predicate
-	public abstract void setRDF( RDFNode b );
-	public abstract RDFNode getRDF();
-	public abstract void removeRDF();
-	
+
 	@Predicate
 	public abstract void setEnt( TestClass b );
-	public abstract TestClass getEnt();
-	public abstract void removeEnt();
-	
+
 	@Predicate
-	public abstract void setU( @URI String b );
-	public abstract void setU( RDFNode b );
-	public abstract RDFNode getU();
-	public abstract void removeU();
-	@Predicate( type=URI.class, name="u" )
-	public abstract String getU2();
-	
+	public abstract void setFlt( Float b );
+
+	@Predicate
+	public abstract void setInt( Integer b );
+
+	@Predicate
+	public abstract void setLng( Long b );
+
+	@Predicate
+	public abstract void setRDF( RDFNode b );
+
+	@Predicate
+	public abstract void setStr( String b );
+
 	@Predicate
 	public abstract void setSubPredicate( SubPredicate subPredicate );
-	public abstract SubPredicate getSubPredicate();
-	public abstract void removeSubPredicate();
-	
-	
-	@Subject( namespace="http://localhost/test#")
-	public static abstract class SubPredicate {
-		public SubPredicate() {};
-		@Predicate
-		public abstract void setName( String name );
-		public abstract String getName();
-	}
-	
-}
 
+	public abstract void setU( RDFNode b );
+
+	@Predicate
+	public abstract void setU( @URI String b );
+
+}

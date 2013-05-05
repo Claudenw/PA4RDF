@@ -8,11 +8,12 @@ import org.xenei.jena.entities.annotations.Subject;
 /**
  * A class that is OK for testing
  */
-@Subject( namespace="http://example.com/")
+@Subject( namespace = "http://example.com/" )
 public interface A extends Resource
 {
+	String getX();
+
 	@Predicate
 	void setX( String x );
-	String getX();
-	
+
 }
