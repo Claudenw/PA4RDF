@@ -18,6 +18,7 @@ package org.xenei.jena.entities;
 import com.hp.hpl.jena.rdf.model.Property;
 
 import java.lang.reflect.Method;
+import java.util.Collection;
 
 /**
  * Information about a subject annotated object.
@@ -90,5 +91,12 @@ public interface SubjectInfo
 	 * @return the URI string for the predicate property.
 	 */
 	public String getPredicateUriStr( String methodName );
+	
+	/**
+	 * Validate that this subject info implements all the methods for all the 
+	 * interfaces listed in iface.
+	 * @param iface The list of interfaces that this subjectInfo should implement.
+	 */
+	public void validate(final Collection<Class<?>> iface);
 
 }
