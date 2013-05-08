@@ -14,17 +14,21 @@
  */
 package org.xenei.jena.entities;
 
+import com.hp.hpl.jena.rdf.model.Model;
+import com.hp.hpl.jena.rdf.model.ModelFactory;
+
 import org.apache.commons.proxy.exception.InvokerException;
 import org.apache.log4j.PropertyConfigurator;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.xenei.jena.entities.bad.B;
 import org.xenei.jena.entities.impl.EntityManagerImpl;
 
 public class EntityManagerTest
 {
 
-	EntityManager manager = new EntityManagerImpl();
+	private EntityManager manager = new EntityManagerImpl();
 
 	@Before
 	public void setup()
@@ -74,9 +78,11 @@ public class EntityManagerTest
 	@Test
 	public void testPathParserWithBadClasses() throws Exception
 	{
+		Model model = ModelFactory.createDefaultModel();
 		try
 		{
-			manager.parseClasses(new String[] { "org.xenei.jena.bad_entities" });
+			manager.parseClasses(new String[] { "org.xenei.jena.entities.bad" });
+			manager.read( model.createResource(), org.xenei.jena.entities.bad.A.class, B.class);
 			Assert.fail("Should have thrown InvokerException");
 		}
 		catch (final InvokerException e)
