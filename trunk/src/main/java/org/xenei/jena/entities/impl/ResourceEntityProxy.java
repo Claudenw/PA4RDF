@@ -27,6 +27,7 @@ import org.xenei.jena.entities.EntityManager;
 import org.xenei.jena.entities.PredicateInfo;
 import org.xenei.jena.entities.ResourceWrapper;
 import org.xenei.jena.entities.SubjectInfo;
+import org.xenei.jena.entities.annotations.Predicate;
 
 /**
  * Implements the invoker that the proxy uses.
@@ -87,41 +88,63 @@ public class ResourceEntityProxy implements MethodInterceptor // Invoker
 	public Object intercept( final Object obj, final Method m,
 			final Object[] args, final MethodProxy proxy ) throws Throwable
 	{
+		// handle the cases where the method is not abstract
 		if (!Modifier.isAbstract(m.getModifiers()))
 		{
+			return interceptNonAbstract( obj, m, args, proxy );
+		} else {
+			return interceptAnnotated( obj, m, args, proxy );
+		}
+	}
 
-			if (m.getName().equals("toString") && !m.isVarArgs()
-					&& (m.getParameterTypes().length == 0))
+	// handle the cases where the method is not abstract
+	private Object interceptNonAbstract( final Object obj, final Method m,
+			final Object[] args, final MethodProxy proxy ) throws Throwable
+	{	
+		// handle the special case methods
+		if (m.getName().equals("toString") && !m.isVarArgs()
+				&& (m.getParameterTypes().length == 0))
+		{
+			return String
+					.format("%s[%s]", subjectInfo.getClass(), resource);
+		}
+		if (m.getName().equals("hashCode"))
+		{
+			return resource.hashCode();
+		}
+		if (m.getName().equals("equals"))
+		{
+			if (args[0] instanceof ResourceWrapper)
 			{
-				return String
-						.format("%s[%s]", subjectInfo.getClass(), resource);
+				return resource.equals(((ResourceWrapper) args[0])
+						.getResource());
 			}
-			if (m.getName().equals("hashCode"))
+			if (args[0] instanceof Resource)
 			{
-				return resource.hashCode();
+				return resource.equals(args[0]);
 			}
-			if (m.getName().equals("equals"))
-			{
-				if (args[0] instanceof ResourceWrapper)
-				{
-					return resource.equals(((ResourceWrapper) args[0])
-							.getResource());
-				}
-				if (args[0] instanceof Resource)
-				{
-					return resource.equals(args[0]);
-				}
-				return false;
-			}
-
-			return proxy.invokeSuper(obj, args);
+			return false;
 		}
 
+		Predicate p = m.getAnnotation( Predicate.class );
+		if (p != null)
+		{
+			return interceptAnnotatedNonAbstract( obj, m, args, proxy, p );
+		}
+		return proxy.invokeSuper(obj, args);
+	}
+
+	private Object interceptAnnotated( final Object obj, final Method m,
+			final Object[] args, final MethodProxy proxy ) throws Throwable
+	{
+		
+		// handle the resource wrapper method call.
 		if (ResourceEntityProxy.GET_RESOURCE.equals(m))
 		{
 			return resource;
 		}
 
+		
 		SubjectInfo workingInfo = subjectInfo;
 		if (m.getDeclaringClass() != subjectInfo.getImplementedClass())
 		{
@@ -166,4 +189,12 @@ public class ResourceEntityProxy implements MethodInterceptor // Invoker
 				PredicateInfoImpl.class));
 	}
 
+	// non abstract annotated methods 
+	// override the implementation unless annotatation includes the 
+	// update=true value -- not implemented
+	private Object interceptAnnotatedNonAbstract( final Object obj, final Method m,
+			final Object[] args, final MethodProxy proxy, Predicate p ) throws Throwable
+	{
+		return interceptAnnotated( obj, m, args, proxy );
+	}
 }

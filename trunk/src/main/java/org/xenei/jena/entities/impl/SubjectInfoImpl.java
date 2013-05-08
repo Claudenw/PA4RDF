@@ -15,22 +15,30 @@
 package org.xenei.jena.entities.impl;
 
 import com.hp.hpl.jena.rdf.model.Property;
+import com.hp.hpl.jena.rdf.model.Resource;
 
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.commons.proxy.exception.InvokerException;
 import org.xenei.jena.entities.PredicateInfo;
 import org.xenei.jena.entities.SubjectInfo;
+import org.xenei.jena.entities.annotations.Predicate;
 
 public class SubjectInfoImpl implements SubjectInfo
 {
+	private boolean validated;
 	private final Class<?> implementedClass;
 	private final Map<String, Map<ObjectHandler, PredicateInfo>> predicateInfo = new HashMap<String, Map<ObjectHandler, PredicateInfo>>();
 
 	public SubjectInfoImpl( final Class<?> implementedClass )
 	{
 		this.implementedClass = implementedClass;
+		this.validated = false;
 	}
 
 	/**
@@ -217,7 +225,7 @@ public class SubjectInfoImpl implements SubjectInfo
 	 * Remove a predicate info from this subject.
 	 * 
 	 * @param m
-	 *            the method to rermove
+	 *            the method to remove
 	 */
 	public void removePredicateInfo( final Method m )
 	{
@@ -257,6 +265,94 @@ public class SubjectInfoImpl implements SubjectInfo
 				predicateInfo.remove(function);
 			}
 		}
+	}
+
+	@Override
+	public void validate( final Collection<Class<?>> iface )
+	{
+		if (validated)
+		{
+			return;
+		}
+		final Collection<Class<?>> clazz = new ArrayList<Class<?>>(iface);
+		if (!implementedClass.isInterface())
+		{
+			clazz.add(implementedClass);
+		}
+		// clazz.remove(Resource.class);
+		verifyNoNullMethods(clazz);
+		validated = true;
+	}
+
+	/**
+	 * Verify that all methods are implements or annotated with @Predicate
+	 * 
+	 * @param clazz
+	 * @param subjectInfo
+	 * @throws SecurityException
+	 * @throws NoSuchMethodException
+	 */
+	private void verifyNoNullMethods( final Collection<Class<?>> clazz )
+	{
+
+		for (final Class<?> c : clazz)
+		{
+			for (final Method method : c.getMethods())
+			{
+				if (getPredicateInfo(method) == null)
+				{
+					// if the method is not annotated check for instance
+					if (method.getAnnotation(Predicate.class) == null)
+					{
+						Method m;
+						try
+						{
+							m = implementedClass.getMethod(method.getName(),
+									method.getParameterTypes());
+						}
+						catch (NoSuchMethodException | SecurityException e)
+						{
+							throw new InvokerException(
+									String.format(
+											"%s.%s (declared as %s.%2$s) is not implemented and does not have @Predicate annotation",
+											c.getName(), method.getName(),
+											method.getDeclaringClass()));
+						}
+						if (Modifier.isAbstract(m.getModifiers()))
+						{
+							if (m.getAnnotation(Predicate.class) == null)
+							{
+								// see if we implement Resource and is method is
+								// from Resource
+								if (Resource.class
+										.isAssignableFrom(implementedClass))
+								{
+									try
+									{
+										Resource.class.getMethod(
+												method.getName(),
+												method.getParameterTypes());
+										// method is found so all is ok
+										return;
+									}
+									catch (final NoSuchMethodException expected)
+									{
+										// do nothing
+									}
+								}
+								throw new InvokerException(
+										String.format(
+												"%s.%s (declared as %s.%2$s) is not implemented and does not have @Predicate annotation",
+												c.getName(), method.getName(),
+												method.getDeclaringClass()));
+
+							}
+						}
+					}
+				}
+			}
+		}
+
 	}
 
 }

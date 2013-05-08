@@ -31,11 +31,13 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -96,7 +98,7 @@ public class EntityManagerImpl implements EntityManager
 			m = subjectInfo.getImplementedClass().getMethod(methodName,
 					(Class<?>[]) null);
 
-			if (Modifier.isAbstract(m.getModifiers()) && !m.isVarArgs())
+			if (shouldProcess(m))
 			{
 				final EffectivePredicate predicate = getEffectivePredicate(m,
 						null, null, parentPredicate, subject);
@@ -190,7 +192,7 @@ public class EntityManagerImpl implements EntityManager
 		{
 			m = subjectInfo.getImplementedClass().getMethod(methodName,
 					new Class<?>[] { valueType });
-			if (Modifier.isAbstract(m.getModifiers()) && !m.isVarArgs())
+			if (shouldProcess(m))
 			{
 				subjectInfo.add(new PredicateInfoImpl(this,
 						getEffectivePredicate(m, getParameterAnnotation(m),
@@ -265,7 +267,7 @@ public class EntityManagerImpl implements EntityManager
 				m = subjectInfo.getImplementedClass().getMethod(name,
 						new Class<?>[] { argType });
 			}
-			if (Modifier.isAbstract(m.getModifiers()) && !m.isVarArgs())
+			if (shouldProcess(m))
 			{
 				final EffectivePredicate predicate = getEffectivePredicate(m,
 						getParameterAnnotation(m), argType, parentPredicate,
@@ -495,6 +497,11 @@ public class EntityManagerImpl implements EntityManager
 		{
 			retval.namespace = subject.namespace();
 		}
+		if (StringUtils.isBlank(retval.namespace()))
+		{
+			retval.namespace = getMethodNamespace(m);
+
+		}
 		if (paramAnnotations != null)
 		{
 			for (final Annotation a : paramAnnotations)
@@ -574,6 +581,75 @@ public class EntityManagerImpl implements EntityManager
 	{
 		return getEffectivePredicate(m, paramAnnotations, returnType, null,
 				subject);
+	}
+
+	/**
+	 * Get the namespace from annotations on the methods that method overrides.
+	 * 
+	 * @param method
+	 *            the method that overrides other methods.
+	 * @return the namespace string or an empty string.
+	 */
+	private String getMethodNamespace( final Method method )
+	{
+
+		if (method.getDeclaringClass().equals(Object.class))
+		{
+			return "";
+		}
+		final Set<Class<?>> interfaces = new LinkedHashSet<Class<?>>();
+		interfaces.addAll(Arrays.asList(method.getDeclaringClass()
+				.getInterfaces()));
+
+		for (Class<?> superClass = method.getDeclaringClass().getSuperclass(); superClass != Object.class && superClass != null; superClass = superClass
+				.getSuperclass())
+		{
+			interfaces.addAll(Arrays.asList(superClass.getInterfaces()));
+			try
+			{
+				final Method m = superClass.getMethod(method.getName(),
+						method.getParameterTypes());
+				final Predicate p = m.getAnnotation(Predicate.class);
+				if ((p != null) && StringUtils.isNotBlank(p.namespace()))
+				{
+					return p.namespace();
+				}
+				final Subject s = superClass.getAnnotation(Subject.class);
+				if ((s != null) && StringUtils.isNotBlank(s.namespace()))
+				{
+					return s.namespace();
+				}
+			}
+			catch (final NoSuchMethodException e)
+			{
+				// do nothing
+			}
+		}
+
+		for (final Class<?> iface : interfaces)
+		{
+			try
+			{
+				final Method m = iface.getMethod(method.getName(),
+						method.getParameterTypes());
+				final Predicate p = m.getAnnotation(Predicate.class);
+				if ((p != null) && StringUtils.isNotBlank(p.namespace()))
+				{
+					return p.namespace();
+				}
+				final Subject s = iface.getAnnotation(Subject.class);
+				if ((s != null) && StringUtils.isNotBlank(s.namespace()))
+				{
+					return s.namespace();
+				}
+			}
+			catch (final NoSuchMethodException ignored)
+			{
+				// do nothing
+			}
+		}
+		return "";
+
 	}
 
 	private String getNamespace( final Class<?> clazz )
@@ -696,7 +772,7 @@ public class EntityManagerImpl implements EntityManager
 			{
 
 				// only process abstract methods and does not have var args
-				if (Modifier.isAbstract(m.getModifiers()) && !m.isVarArgs())
+				if (shouldProcess(m))
 				{
 					try
 					{
@@ -759,7 +835,6 @@ public class EntityManagerImpl implements EntityManager
 
 			}
 			classInfo.put(clazz, subjectInfo);
-			verifyNoNullMethods(clazz, subjectInfo);
 		}
 		return subjectInfo;
 	}
@@ -952,7 +1027,7 @@ public class EntityManagerImpl implements EntityManager
 		{
 			classes.add(ResourceWrapper.class);
 		}
-
+		subjectInfo.validate(classes);
 		final MethodInterceptor interceptor = new ResourceEntityProxy(this,
 				getResource(source), subjectInfo);
 		final Class<?>[] classArray = new Class<?>[classes.size()];
@@ -965,6 +1040,24 @@ public class EntityManagerImpl implements EntityManager
 		e.setInterfaces(classes.toArray(classArray));
 		e.setCallback(interceptor);
 		return (T) e.create();
+	}
+
+	/**
+	 * Only process abstract methods or methods with Predicate annotations
+	 * and only when either of those is not varArgs.
+	 * 
+	 * @param m
+	 * @return
+	 */
+	private boolean shouldProcess( final Method m )
+	{
+		boolean retval = !m.isVarArgs();
+		if (retval)
+		{
+			retval = Modifier.isAbstract(m.getModifiers())
+					|| (m.getAnnotation(Predicate.class) != null);
+		}
+		return retval;
 	}
 
 	/**
@@ -1061,49 +1154,5 @@ public class EntityManagerImpl implements EntityManager
 		return target;
 	}
 
-	/**
-	 * Verify that all methods are implements or annotated with @Predicate
-	 * 
-	 * @param clazz
-	 * @param subjectInfo
-	 */
-	private void verifyNoNullMethods( final Class<?> clazz,
-			final SubjectInfo subjectInfo )
-	{
-		for (final Method m : clazz.getMethods())
-		{
-			if (Modifier.isAbstract(m.getModifiers()))
-			{
-				SubjectInfo workingInfo = subjectInfo;
-				if (m.getDeclaringClass() != subjectInfo.getImplementedClass())
-				{
-					try
-					{
-						workingInfo = parse(m.getDeclaringClass());
-					}
-					catch (final MissingAnnotation e)
-					{
-						throw new IllegalArgumentException(e);
-					}
-				}
-
-				if (TypeChecker.canBeSetFrom(workingInfo.getImplementedClass(),
-						subjectInfo.getImplementedClass())
-						&& !TypeChecker.canBeSetFrom(
-								workingInfo.getImplementedClass(),
-								Resource.class))
-				{
-					if (workingInfo.getPredicateInfo(m) == null)
-					{
-						throw new InvokerException(
-								String.format(
-										"%s.%s (declared as %s.%2$s) is not implemented and does not have @Predicate annotation",
-										clazz.getName(), m.getName(),
-										m.getDeclaringClass()));
-					}
-				}
-			}
-		}
-
-	}
+	
 }
