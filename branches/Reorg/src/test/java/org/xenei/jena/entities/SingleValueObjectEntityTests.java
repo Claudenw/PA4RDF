@@ -24,7 +24,9 @@ import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.xenei.jena.entities.SingleValueObjectTestClass.SubPredicate;
+import org.xenei.jena.entities.testing.abst.SingleValueObjectTestClass;
+import org.xenei.jena.entities.testing.abst.TestClass;
+import org.xenei.jena.entities.testing.abst.SingleValueObjectTestClass.SubPredicate;
 
 public class SingleValueObjectEntityTests
 {

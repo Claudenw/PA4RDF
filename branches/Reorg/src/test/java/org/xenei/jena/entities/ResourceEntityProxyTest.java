@@ -25,6 +25,8 @@ import java.util.List;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.xenei.jena.entities.testing.abst.TestClass;
+import org.xenei.jena.entities.testing.abst.TestPropertyRenamingInterface;
 
 public class ResourceEntityProxyTest
 {
