@@ -104,4 +104,12 @@ public @interface Predicate
 	 * If true, the first character will be upper cased.
 	 */
 	boolean upcase() default false;
+	
+	/**
+	 * Indicates that a method is an implementation of an abstract method to allow the 
+	 * class to be concrete while not providing a concrete implementation of the Predicate
+	 * annotated methods.
+	 * @return
+	 */
+	boolean impl() default false;
 }

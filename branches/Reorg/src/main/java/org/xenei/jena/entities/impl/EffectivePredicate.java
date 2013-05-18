@@ -17,8 +17,13 @@ package org.xenei.jena.entities.impl;
 
 import com.hp.hpl.jena.rdf.model.RDFNode;
 
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Method;
+
 import org.apache.commons.lang.StringUtils;
 import org.xenei.jena.entities.annotations.Predicate;
+import org.xenei.jena.entities.annotations.Subject;
+import org.xenei.jena.entities.annotations.URI;
 
 /**
  * An class that mimics the Predicate annotation but allows processing to modify
@@ -32,11 +37,64 @@ class EffectivePredicate
 	String name = "";
 	String namespace = "";
 	String literalType = "";
-	Class<?> type = RDFNode.class;
+	Class<?> type = null;
 	boolean emptyIsNull = true;
+	boolean impl = false;
 
 	public EffectivePredicate()
 	{
+	}
+	
+	public EffectivePredicate( Method m )
+	{
+		if (m != null)
+		{
+			
+			if (m.getParameterTypes().length > 0)
+			{
+			
+				for (final Annotation a : m.getParameterAnnotations()[0])
+				{
+					if (a instanceof URI)
+					{
+						this.type = URI.class;
+					}
+				}
+			}
+			
+			Subject s =m.getDeclaringClass().getAnnotation( Subject.class);
+			if (s != null)
+			{
+				this.namespace = s.namespace();
+			}
+			merge( m.getAnnotation(Predicate.class));
+			if (StringUtils.isBlank( name ))
+			{
+				try {
+				ActionType actionType  = ActionType.parse(m.getName());
+				setName( actionType.extractName( m.getName() ));	
+				}
+				catch (IllegalArgumentException e)
+				{
+					// expected when not an action method.
+				}
+			}
+		}
+	}
+	
+	public void setName(String name) {
+		if (StringUtils.isNotBlank(name))
+		{
+			final String s = name.substring(0, 1);
+			if (upcase())
+			{
+				this.name = name.replaceFirst(s, s.toUpperCase());
+			}
+			else
+			{
+				this.name = name.replaceFirst(s, s.toLowerCase());
+			}
+		}
 	}
 
 	public boolean emptyIsNull()
@@ -54,8 +112,8 @@ class EffectivePredicate
 		if (predicate != null)
 		{
 			upcase = predicate.upcase();
-			name = StringUtils.isBlank(predicate.name()) ? name : predicate
-					.name();
+			setName(  StringUtils.isBlank(predicate.name()) ? name : predicate
+					.name() );
 			namespace = StringUtils.isBlank(predicate.namespace()) ? namespace
 					: predicate.namespace();
 			literalType = StringUtils.isBlank(predicate.literalType()) ? literalType
@@ -71,8 +129,8 @@ class EffectivePredicate
 		if (predicate != null)
 		{
 			upcase = predicate.upcase();
-			name = StringUtils.isBlank(predicate.name()) ? name : predicate
-					.name();
+			setName( StringUtils.isBlank(predicate.name()) ? name : predicate
+					.name() );
 			namespace = StringUtils.isBlank(predicate.namespace()) ? namespace
 					: predicate.namespace();
 			literalType = StringUtils.isBlank(predicate.literalType()) ? literalType
@@ -80,6 +138,7 @@ class EffectivePredicate
 			type = RDFNode.class.equals(predicate.type()) ? type : predicate
 					.type();
 			emptyIsNull = predicate.emptyIsNull();
+			System.out.println( predicate.type() );
 		}
 		return this;
 	}
@@ -96,12 +155,23 @@ class EffectivePredicate
 
 	public Class<?> type()
 	{
-		return type;
+		return type==null?RDFNode.class:type;
 	}
 
+	public boolean isTypeNotSet()
+	{
+		return type == null;
+	}
+
+	
 	public boolean upcase()
 	{
 		return upcase;
+	}
+	
+	public boolean impl()
+	{
+		return impl;
 	}
 
 }

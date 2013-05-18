@@ -201,7 +201,8 @@ public class PredicateInfoImpl implements PredicateInfo
 	 * @throws MissingAnnotation
 	 *             If an annotation was required but not provided.
 	 */
-	public PredicateInfoImpl( final EntityManager entityManager,
+	public PredicateInfoImpl( 
+			final EntityManager entityManager,
 			final EffectivePredicate predicate, final String methodName,
 			final Class<?> valueClass ) throws MissingAnnotation
 	{
