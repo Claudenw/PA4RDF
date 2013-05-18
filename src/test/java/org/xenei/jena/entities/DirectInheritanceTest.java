@@ -9,7 +9,8 @@ import org.apache.log4j.PropertyConfigurator;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.xenei.jena.entities.bad.B;
+import org.xenei.jena.entities.testing.bad.B;
+import org.xenei.jena.entities.testing.iface.A;
 
 public class DirectInheritanceTest
 {

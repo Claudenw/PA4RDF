@@ -22,8 +22,10 @@ import org.apache.log4j.PropertyConfigurator;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.xenei.jena.entities.bad.B;
 import org.xenei.jena.entities.impl.EntityManagerImpl;
+import org.xenei.jena.entities.testing.abst.CollectionValueObjectTestClass;
+import org.xenei.jena.entities.testing.abst.MultiValueObjectTestClass;
+import org.xenei.jena.entities.testing.bad.B;
 
 public class EntityManagerTest
 {
@@ -82,7 +84,7 @@ public class EntityManagerTest
 		try
 		{
 			manager.parseClasses(new String[] { "org.xenei.jena.entities.bad" });
-			manager.read( model.createResource(), org.xenei.jena.entities.bad.A.class, B.class);
+			manager.read( model.createResource(), org.xenei.jena.entities.testing.bad.A.class, B.class);
 			Assert.fail("Should have thrown InvokerException");
 		}
 		catch (final InvokerException e)
