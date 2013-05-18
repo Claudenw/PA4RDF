@@ -13,7 +13,7 @@ import org.xenei.jena.entities.impl.PredicateInfoImpl;
 import org.xenei.jena.entities.impl.handlers.ResourceHandler;
 import org.xenei.jena.entities.impl.handlers.UriHandler;
 
-public class AbstractSimpleURITest extends BaseAbstractParserTest
+public abstract class AbstractSimpleURITest extends BaseAbstractParserTest
 {
 	protected AbstractSimpleURITest( final Class<?> classUnderTest )
 	{

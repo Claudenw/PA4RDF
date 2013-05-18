@@ -8,7 +8,7 @@ import org.xenei.jena.entities.annotations.Predicate;
 import org.xenei.jena.entities.annotations.Subject;
 
 @Subject( namespace = "http://example.com/" )
-public interface CollectionInterface extends Resource
+public interface CollectionInterface 
 {
 	List<String> getX();
 	

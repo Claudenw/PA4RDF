@@ -23,7 +23,7 @@ public class MethodParserMultiValueEntityTest extends BaseAbstractParserTest
 {
 	private static final String NS = "http://localhost/test#";
 
-	protected MethodParserMultiValueEntityTest( final Class<?> classUnderTest )
+	public MethodParserMultiValueEntityTest()
 	{
 		super(MultiValueObjectTestClass.class);
 	}

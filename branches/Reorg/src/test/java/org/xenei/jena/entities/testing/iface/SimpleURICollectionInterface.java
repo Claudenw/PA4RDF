@@ -11,7 +11,7 @@ import org.xenei.jena.entities.annotations.Subject;
 import org.xenei.jena.entities.annotations.URI;
 
 @Subject( namespace = "http://example.com/" )
-public interface SimpleURICollectionInterface extends Resource
+public interface SimpleURICollectionInterface
 {
 	List<RDFNode> getU();
 	
