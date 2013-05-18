@@ -20,6 +20,8 @@ import com.hp.hpl.jena.rdf.model.Property;
 import java.lang.reflect.Method;
 import java.util.Collection;
 
+import org.xenei.jena.entities.annotations.Subject;
+
 /**
  * Information about a subject annotated object.
  */
@@ -35,6 +37,11 @@ public interface SubjectInfo
 	 */
 	public Class<?> getImplementedClass();
 
+	/**
+	 * Get the @Subject annotation object for this subject.
+	 * @return
+	 */
+	public Subject getSubject();
 	/**
 	 * Get the predicateInfo or return null if not found
 	 * 

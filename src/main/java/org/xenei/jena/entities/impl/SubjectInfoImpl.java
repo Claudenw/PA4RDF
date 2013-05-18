@@ -28,6 +28,7 @@ import org.apache.commons.proxy.exception.InvokerException;
 import org.xenei.jena.entities.PredicateInfo;
 import org.xenei.jena.entities.SubjectInfo;
 import org.xenei.jena.entities.annotations.Predicate;
+import org.xenei.jena.entities.annotations.Subject;
 
 public class SubjectInfoImpl implements SubjectInfo
 {
@@ -39,6 +40,14 @@ public class SubjectInfoImpl implements SubjectInfo
 	{
 		this.implementedClass = implementedClass;
 		this.validated = false;
+	}
+	
+	/**
+	 * Get the subject annotation for this class.
+	 * @return
+	 */
+	public Subject getSubject() {
+		return implementedClass.getAnnotation(Subject.class);
 	}
 
 	/**
