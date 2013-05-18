@@ -1,17 +1,18 @@
-package org.xenei.jena.entities.testing.bad;
+package org.xenei.jena.entities.testing.iface;
 
 import com.hp.hpl.jena.rdf.model.Resource;
 
 import org.xenei.jena.entities.annotations.Predicate;
 import org.xenei.jena.entities.annotations.Subject;
 
-/**
- * A class that is OK for testing
- */
 @Subject( namespace = "http://example.com/" )
-public interface A
+public interface SimpleInterface //extends Resource
 {
 	String getX();
+	
+	boolean hasX();
+	
+	void removeX();
 
 	@Predicate
 	void setX( String x );

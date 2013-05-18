@@ -1,4 +1,4 @@
-package org.xenei.jena.entities.bad;
+package org.xenei.jena.entities.testing.bad;
 
 import com.hp.hpl.jena.rdf.model.Model;
 
