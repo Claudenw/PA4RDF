@@ -6,10 +6,10 @@ import org.xenei.jena.entities.EntityManagerRequiredException;
 import org.xenei.jena.entities.annotations.Predicate;
 import org.xenei.jena.entities.testing.iface.SimpleInterface;
 
-public class ImplementedA implements SimpleInterface
+public class SimpleInterfaceImpl implements SimpleInterface
 {
 
-	public ImplementedA()
+	public SimpleInterfaceImpl()
 	{
 		// TODO Auto-generated constructor stub
 	}

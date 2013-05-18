@@ -25,7 +25,7 @@ public class ImplementedATest
 		model = ModelFactory.createDefaultModel();
 		resource = model.createResource("http://example.com/testResource");
 		em = EntityManagerFactory.getEntityManager();
-		wrap = em.read( resource, ImplementedA.class );
+		wrap = em.read( resource, SimpleInterfaceImpl.class );
 	}
 	
 	@After

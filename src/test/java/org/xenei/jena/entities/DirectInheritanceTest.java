@@ -9,15 +9,15 @@ import org.apache.log4j.PropertyConfigurator;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.xenei.jena.entities.testing.bad.B;
-import org.xenei.jena.entities.testing.iface.A;
+import org.xenei.jena.entities.testing.bad.UnannotatedInterface;
+import org.xenei.jena.entities.testing.iface.TwoValueSimpleInterface;
 
 public class DirectInheritanceTest
 {
 	private Model m;
 	private final EntityManager manager = EntityManagerFactory
 			.getEntityManager();
-	private A theInstance;
+	private TwoValueSimpleInterface theInstance;
 	private Resource r;
 
 	@Before
@@ -26,7 +26,7 @@ public class DirectInheritanceTest
 		PropertyConfigurator.configure("./src/test/resources/log4j.properties");
 		m = ModelFactory.createDefaultModel();
 		r = m.createResource("http://localhost/DirectInheritanceTest");
-		theInstance = manager.read(r, A.class);
+		theInstance = manager.read(r, TwoValueSimpleInterface.class);
 	}
 
 	@Test
@@ -46,7 +46,7 @@ public class DirectInheritanceTest
 	{
 		try
 		{
-			manager.read(r, B.class);
+			manager.read(r, UnannotatedInterface.class);
 			Assert.fail("Should have thrown InvokerException");
 		}
 		catch (final InvokerException e)

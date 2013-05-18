@@ -31,7 +31,7 @@ import org.xenei.jena.entities.annotations.URI;
  * 
  * @see {@link org.xenei.jena.entity.annotations.Precicate}
  */
-class EffectivePredicate
+public class EffectivePredicate
 {
 	boolean upcase = false;
 	String name = "";
