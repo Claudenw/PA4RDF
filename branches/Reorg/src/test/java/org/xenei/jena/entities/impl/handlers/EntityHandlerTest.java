@@ -6,9 +6,9 @@ import com.hp.hpl.jena.rdf.model.ResourceFactory;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.xenei.jena.entities.A;
 import org.xenei.jena.entities.EntityManager;
 import org.xenei.jena.entities.EntityManagerFactory;
+import org.xenei.jena.entities.testing.iface.A;
 
 public class EntityHandlerTest implements HandlerTestInterface
 {
