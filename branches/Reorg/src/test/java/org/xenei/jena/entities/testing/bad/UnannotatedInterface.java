@@ -12,13 +12,13 @@ import org.xenei.jena.entities.annotations.Subject;
  * Resource
  */
 @Subject( namespace = "http://example.com/" )
-public interface B
+public interface UnannotatedInterface
 {
 	Model getModel();
 
-	String getX();
+	String getZ();
 
 	@Predicate
-	void setX( String x );
+	void setZ( String z );
 
 }
