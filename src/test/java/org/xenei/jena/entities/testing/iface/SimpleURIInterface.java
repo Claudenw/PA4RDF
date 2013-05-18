@@ -8,7 +8,7 @@ import org.xenei.jena.entities.annotations.Subject;
 import org.xenei.jena.entities.annotations.URI;
 
 @Subject( namespace = "http://example.com/" )
-public interface SimpleURIInterface extends Resource
+public interface SimpleURIInterface 
 {
 	public RDFNode getU();
 	

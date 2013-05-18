@@ -26,7 +26,7 @@ public abstract class AbstractCollectionURITest extends BaseAbstractParserTest
 	public void testStandardGetter() throws Exception
 	{
 		final Method m = classUnderTest.getMethod("getU");
-		final PredicateInfo pi = parser.parse(m, new EffectivePredicate(m));
+		final PredicateInfoImpl pi = (PredicateInfoImpl)parser.parse(m, new EffectivePredicate(m));
 		Assert.assertNotNull("getU not parsed", pi);
 		Assert.assertEquals(ActionType.GETTER, pi.getActionType());
 		Assert.assertEquals("getU", pi.getMethodName());
@@ -39,10 +39,9 @@ public abstract class AbstractCollectionURITest extends BaseAbstractParserTest
 	public void testStandardGetter2() throws Exception
 	{
 		final Method m = classUnderTest.getMethod("getU2");
-		final PredicateInfo pi = parser.parse(m, new EffectivePredicate(m));
+		final PredicateInfoImpl pi = (PredicateInfoImpl)parser.parse(m, new EffectivePredicate(m));
 		Assert.assertNotNull("getU2 not parsed", pi);
-		Assert.assertEquals(ResourceHandler.class, ((PredicateInfoImpl) pi)
-				.getObjectHandler().getClass());
+		Assert.assertEquals(ResourceHandler.class, pi.getObjectHandler().getClass());
 		Assert.assertEquals(ActionType.GETTER, pi.getActionType());
 		Assert.assertEquals("getU2", pi.getMethodName());
 		Assert.assertEquals("http://example.com/", pi.getNamespace());
@@ -54,7 +53,7 @@ public abstract class AbstractCollectionURITest extends BaseAbstractParserTest
 	public void testStandardHas() throws Exception
 	{
 		final Method m = classUnderTest.getMethod("hasU");
-		final PredicateInfo pi = parser.parse(m, new EffectivePredicate(m));
+		final PredicateInfoImpl pi = (PredicateInfoImpl)parser.parse(m, new EffectivePredicate(m));
 		Assert.assertNotNull("hasU not parsed", pi);
 		Assert.assertEquals(ActionType.EXISTENTIAL, pi.getActionType());
 		Assert.assertEquals("hasU", pi.getMethodName());
@@ -68,7 +67,7 @@ public abstract class AbstractCollectionURITest extends BaseAbstractParserTest
 	public void testStandardHas2() throws Exception
 	{
 		final Method m = classUnderTest.getMethod("hasU2", String.class);
-		final PredicateInfo pi = parser.parse(m, new EffectivePredicate(m));
+		final PredicateInfoImpl pi = (PredicateInfoImpl)parser.parse(m, new EffectivePredicate(m));
 		Assert.assertNotNull("hasU2 not parsed", pi);
 		Assert.assertEquals(ActionType.EXISTENTIAL, pi.getActionType());
 		Assert.assertEquals("hasU2", pi.getMethodName());
@@ -82,7 +81,7 @@ public abstract class AbstractCollectionURITest extends BaseAbstractParserTest
 	public void testStandardRemove() throws Exception
 	{
 		final Method m = classUnderTest.getMethod("removeU");
-		final PredicateInfo pi = parser.parse(m, new EffectivePredicate(m));
+		final PredicateInfoImpl pi = (PredicateInfoImpl)parser.parse(m, new EffectivePredicate(m));
 		Assert.assertNotNull("removeU not parsed", pi);
 		Assert.assertEquals(ActionType.REMOVER, pi.getActionType());
 		Assert.assertEquals("removeU", pi.getMethodName());
@@ -96,7 +95,7 @@ public abstract class AbstractCollectionURITest extends BaseAbstractParserTest
 	public void testStandardRemove2() throws Exception
 	{
 		final Method m = classUnderTest.getMethod("removeU2");
-		final PredicateInfo pi = parser.parse(m, new EffectivePredicate(m));
+		final PredicateInfoImpl pi = (PredicateInfoImpl)parser.parse(m, new EffectivePredicate(m));
 		Assert.assertNotNull("removeU2 not parsed", pi);
 		Assert.assertEquals(ActionType.REMOVER, pi.getActionType());
 		Assert.assertEquals("removeU2", pi.getMethodName());
@@ -110,14 +109,13 @@ public abstract class AbstractCollectionURITest extends BaseAbstractParserTest
 	public void testStandardSetter() throws Exception
 	{
 		final Method m = classUnderTest.getMethod("addU", String.class);
-		PredicateInfo pi = parser.parse(m, new EffectivePredicate(m));
+		PredicateInfoImpl pi = (PredicateInfoImpl)parser.parse(m, new EffectivePredicate(m));;
 		Assert.assertNotNull("addU( String ) not parsed", pi);
 		Assert.assertEquals(ActionType.SETTER, pi.getActionType());
 		Assert.assertEquals("addU", pi.getMethodName());
 		Assert.assertEquals("http://example.com/", pi.getNamespace());
 		Assert.assertEquals("http://example.com/u", pi.getUriString());
-		Assert.assertEquals(UriHandler.class, ((PredicateInfoImpl) pi)
-				.getObjectHandler().getClass());
+		Assert.assertEquals(UriHandler.class, pi.getObjectHandler().getClass());
 		Assert.assertEquals(String.class, pi.getValueClass());
 		/*
 		 * pi = subjectInfo.getPredicateInfo( classUnderTest.getMethod( "setU",
@@ -129,7 +127,7 @@ public abstract class AbstractCollectionURITest extends BaseAbstractParserTest
 		 * assertEquals( "http://example.com/u", pi.getUriString());
 		 * assertEquals( RDFNode.class, pi.getValueClass());
 		 */
-		pi = subjectInfo.getPredicateInfo(classUnderTest.getMethod("getU"));
+		pi = (PredicateInfoImpl)subjectInfo.getPredicateInfo(classUnderTest.getMethod("getU"));
 		Assert.assertNotNull("getU not parsed", pi);
 		Assert.assertEquals(ActionType.GETTER, pi.getActionType());
 		Assert.assertEquals("getU", pi.getMethodName());
@@ -139,7 +137,7 @@ public abstract class AbstractCollectionURITest extends BaseAbstractParserTest
 				.getObjectHandler().getClass());
 		Assert.assertEquals(RDFNode.class, pi.getValueClass());
 
-		pi = subjectInfo.getPredicateInfo(classUnderTest.getMethod("hasU"));
+		pi = (PredicateInfoImpl)subjectInfo.getPredicateInfo(classUnderTest.getMethod("hasU"));
 		Assert.assertNotNull("hasU not parsed", pi);
 		Assert.assertEquals(ActionType.EXISTENTIAL, pi.getActionType());
 		Assert.assertEquals("hasU", pi.getMethodName());
@@ -147,7 +145,7 @@ public abstract class AbstractCollectionURITest extends BaseAbstractParserTest
 		Assert.assertEquals("http://example.com/u", pi.getUriString());
 		Assert.assertEquals(boolean.class, pi.getValueClass());
 
-		pi = subjectInfo.getPredicateInfo(classUnderTest.getMethod("removeU"));
+		pi = (PredicateInfoImpl)subjectInfo.getPredicateInfo(classUnderTest.getMethod("removeU"));
 		Assert.assertNotNull("removeU not parsed", pi);
 		Assert.assertEquals(ActionType.REMOVER, pi.getActionType());
 		Assert.assertEquals("removeU", pi.getMethodName());
@@ -160,7 +158,7 @@ public abstract class AbstractCollectionURITest extends BaseAbstractParserTest
 	public void testStandardSetter2() throws Exception
 	{
 		final Method m = classUnderTest.getMethod("addU2", String.class);
-		PredicateInfo pi = parser.parse(m, new EffectivePredicate(m));
+		PredicateInfoImpl pi = (PredicateInfoImpl)parser.parse(m, new EffectivePredicate(m));;
 		Assert.assertNotNull("addU2( String ) not parsed", pi);
 		Assert.assertEquals(ActionType.SETTER, pi.getActionType());
 		Assert.assertEquals("addU2", pi.getMethodName());
@@ -179,7 +177,7 @@ public abstract class AbstractCollectionURITest extends BaseAbstractParserTest
 		 * assertEquals( "http://example.com/u", pi.getUriString());
 		 * assertEquals( RDFNode.class, pi.getValueClass());
 		 */
-		pi = subjectInfo.getPredicateInfo(classUnderTest.getMethod("getU"));
+		pi = (PredicateInfoImpl)subjectInfo.getPredicateInfo(classUnderTest.getMethod("getU"));
 		Assert.assertNotNull("getU2 not parsed", pi);
 		Assert.assertEquals(ActionType.GETTER, pi.getActionType());
 		Assert.assertEquals("getU2", pi.getMethodName());
@@ -189,7 +187,7 @@ public abstract class AbstractCollectionURITest extends BaseAbstractParserTest
 				.getObjectHandler().getClass());
 		Assert.assertEquals(RDFNode.class, pi.getValueClass());
 
-		pi = subjectInfo.getPredicateInfo(classUnderTest.getMethod("hasU2"));
+		pi = (PredicateInfoImpl)subjectInfo.getPredicateInfo(classUnderTest.getMethod("hasU2"));
 		Assert.assertNotNull("hasU2 not parsed", pi);
 		Assert.assertEquals(ActionType.EXISTENTIAL, pi.getActionType());
 		Assert.assertEquals("hasU2", pi.getMethodName());
@@ -197,7 +195,7 @@ public abstract class AbstractCollectionURITest extends BaseAbstractParserTest
 		Assert.assertEquals("http://example.com/u", pi.getUriString());
 		Assert.assertEquals(boolean.class, pi.getValueClass());
 
-		pi = subjectInfo.getPredicateInfo(classUnderTest.getMethod("removeU2"));
+		pi = (PredicateInfoImpl)subjectInfo.getPredicateInfo(classUnderTest.getMethod("removeU2"));
 		Assert.assertNotNull("removeU2 not parsed", pi);
 		Assert.assertEquals(ActionType.REMOVER, pi.getActionType());
 		Assert.assertEquals("removeU2", pi.getMethodName());

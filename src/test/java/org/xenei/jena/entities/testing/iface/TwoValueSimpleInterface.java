@@ -6,7 +6,7 @@ import org.xenei.jena.entities.annotations.Predicate;
 import org.xenei.jena.entities.annotations.Subject;
 
 @Subject( namespace = "http://example.com/" )
-public interface TwoValueSimpleInterface extends Resource
+public interface TwoValueSimpleInterface 
 {
 	String getX();
 
