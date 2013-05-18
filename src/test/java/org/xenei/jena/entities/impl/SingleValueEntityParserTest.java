@@ -11,14 +11,14 @@ import org.junit.Before;
 import org.junit.Test;
 import org.xenei.jena.entities.EntityManager;
 import org.xenei.jena.entities.EntityManagerFactory;
-import org.xenei.jena.entities.SingleValueObjectTestClass;
 import org.xenei.jena.entities.SubjectInfo;
-import org.xenei.jena.entities.TestClass;
 import org.xenei.jena.entities.impl.handlers.EntityHandler;
 import org.xenei.jena.entities.impl.handlers.LiteralHandler;
 import org.xenei.jena.entities.impl.handlers.ResourceHandler;
 import org.xenei.jena.entities.impl.handlers.UriHandler;
 import org.xenei.jena.entities.impl.handlers.VoidHandler;
+import org.xenei.jena.entities.testing.abst.SingleValueObjectTestClass;
+import org.xenei.jena.entities.testing.abst.TestClass;
 
 public class SingleValueEntityParserTest
 {

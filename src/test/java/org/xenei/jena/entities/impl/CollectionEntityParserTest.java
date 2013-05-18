@@ -14,15 +14,15 @@ import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.xenei.jena.entities.CollectionValueObjectTestClass;
 import org.xenei.jena.entities.EntityManager;
 import org.xenei.jena.entities.MissingAnnotation;
 import org.xenei.jena.entities.SubjectInfo;
-import org.xenei.jena.entities.TestClass;
 import org.xenei.jena.entities.impl.handlers.EntityHandler;
 import org.xenei.jena.entities.impl.handlers.LiteralHandler;
 import org.xenei.jena.entities.impl.handlers.ResourceHandler;
 import org.xenei.jena.entities.impl.handlers.UriHandler;
+import org.xenei.jena.entities.testing.abst.CollectionValueObjectTestClass;
+import org.xenei.jena.entities.testing.abst.TestClass;
 
 public class CollectionEntityParserTest
 {
