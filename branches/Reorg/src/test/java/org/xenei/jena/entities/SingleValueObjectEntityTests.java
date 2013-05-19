@@ -24,14 +24,14 @@ import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.xenei.jena.entities.testing.abst.SingleValueObjectTestClass;
-import org.xenei.jena.entities.testing.abst.TestClass;
-import org.xenei.jena.entities.testing.abst.SingleValueObjectTestClass.SubPredicate;
+import org.xenei.jena.entities.testing.abst.SingleValueObjectAnnotatedAbst;
+import org.xenei.jena.entities.testing.abst.SingleValueObjectAnnotatedAbst.SubPredicate;
+import org.xenei.jena.entities.testing.iface.TestInterface;
 
 public class SingleValueObjectEntityTests
 {
 
-	private SingleValueObjectTestClass tc;
+	private SingleValueObjectAnnotatedAbst tc;
 	private Model model;
 	private EntityManager manager;
 
@@ -42,7 +42,7 @@ public class SingleValueObjectEntityTests
 		model = ModelFactory.createDefaultModel();
 		final Resource r = model
 				.createResource("http://localhost/SingleValueObjectEntityTests");
-		tc = manager.read(r, SingleValueObjectTestClass.class);
+		tc = manager.read(r, SingleValueObjectAnnotatedAbst.class);
 	}
 
 	@After
@@ -100,11 +100,11 @@ public class SingleValueObjectEntityTests
 	public void testEntity()
 	{
 		Resource r = model.createResource("testclass");
-		final TestClass c = manager.read(r, TestClass.class);
+		final TestInterface c = manager.read(r, TestInterface.class);
 		tc.setEnt(c);
 		Assert.assertEquals(c, tc.getEnt());
 		r = model.createResource("testclass2");
-		final TestClass cc = manager.read(r, TestClass.class);
+		final TestInterface cc = manager.read(r, TestInterface.class);
 		tc.setEnt(cc);
 		Assert.assertTrue(!c.equals(tc.getEnt()));
 		tc.removeEnt();

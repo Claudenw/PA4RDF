@@ -23,14 +23,14 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.xenei.jena.entities.impl.EntityManagerImpl;
-import org.xenei.jena.entities.testing.abst.CollectionValueObjectTestClass;
-import org.xenei.jena.entities.testing.abst.MultiValueObjectTestClass;
+import org.xenei.jena.entities.testing.abst.CollectionValueAnnoatedAbst;
+import org.xenei.jena.entities.testing.abst.MultiValueAnnotatedAbst;
 import org.xenei.jena.entities.testing.bad.UnannotatedInterface;
 
 public class EntityManagerTest
 {
 
-	private EntityManager manager = new EntityManagerImpl();
+	private final EntityManager manager = new EntityManagerImpl();
 
 	@Before
 	public void setup()
@@ -41,24 +41,22 @@ public class EntityManagerTest
 	@Test
 	public void testBasicParser() throws Exception
 	{
-		manager.getSubjectInfo(MultiValueObjectTestClass.class);
-		manager.getSubjectInfo(CollectionValueObjectTestClass.class);
+		manager.getSubjectInfo(MultiValueAnnotatedAbst.class);
+		manager.getSubjectInfo(CollectionValueAnnoatedAbst.class);
 	}
 
 	@Test
 	public void testClassParser() throws Exception
 	{
 		manager.parseClasses(new String[] {
-				MultiValueObjectTestClass.class.getName(),
-				CollectionValueObjectTestClass.class.getName() });
-		SubjectInfo ci = manager
-				.getSubjectInfo(MultiValueObjectTestClass.class);
+				MultiValueAnnotatedAbst.class.getName(),
+				CollectionValueAnnoatedAbst.class.getName() });
+		SubjectInfo ci = manager.getSubjectInfo(MultiValueAnnotatedAbst.class);
+		Assert.assertNotNull(ci.getPredicateInfo(MultiValueAnnotatedAbst.class
+				.getMethod("getU")));
+		ci = manager.getSubjectInfo(CollectionValueAnnoatedAbst.class);
 		Assert.assertNotNull(ci
-				.getPredicateInfo(MultiValueObjectTestClass.class
-						.getMethod("getU")));
-		ci = manager.getSubjectInfo(CollectionValueObjectTestClass.class);
-		Assert.assertNotNull(ci
-				.getPredicateInfo(CollectionValueObjectTestClass.class
+				.getPredicateInfo(CollectionValueAnnoatedAbst.class
 						.getMethod("getU")));
 	}
 
@@ -66,25 +64,26 @@ public class EntityManagerTest
 	public void testPathParser() throws Exception
 	{
 		manager.parseClasses(new String[] { "org.xenei.jena.entities" });
-		SubjectInfo ci = manager
-				.getSubjectInfo(MultiValueObjectTestClass.class);
+		SubjectInfo ci = manager.getSubjectInfo(MultiValueAnnotatedAbst.class);
+		Assert.assertNotNull(ci.getPredicateInfo(MultiValueAnnotatedAbst.class
+				.getMethod("getU")));
+		ci = manager.getSubjectInfo(CollectionValueAnnoatedAbst.class);
 		Assert.assertNotNull(ci
-				.getPredicateInfo(MultiValueObjectTestClass.class
-						.getMethod("getU")));
-		ci = manager.getSubjectInfo(CollectionValueObjectTestClass.class);
-		Assert.assertNotNull(ci
-				.getPredicateInfo(CollectionValueObjectTestClass.class
+				.getPredicateInfo(CollectionValueAnnoatedAbst.class
 						.getMethod("getU")));
 	}
 
 	@Test
 	public void testPathParserWithBadClasses() throws Exception
 	{
-		Model model = ModelFactory.createDefaultModel();
+		final Model model = ModelFactory.createDefaultModel();
 		try
 		{
 			manager.parseClasses(new String[] { "org.xenei.jena.entities.bad" });
-			manager.read( model.createResource(), org.xenei.jena.entities.testing.iface.SimpleInterface.class, UnannotatedInterface.class);
+			manager.read(
+					model.createResource(),
+					org.xenei.jena.entities.testing.iface.SimpleInterface.class,
+					UnannotatedInterface.class);
 			Assert.fail("Should have thrown InvokerException");
 		}
 		catch (final InvokerException e)

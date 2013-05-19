@@ -14,34 +14,17 @@
  */
 package org.xenei.jena.entities.testing.abst;
 
-import com.hp.hpl.jena.util.iterator.ExtendedIterator;
-
-import org.xenei.jena.entities.annotations.Predicate;
 import org.xenei.jena.entities.annotations.Subject;
+import org.xenei.jena.entities.testing.iface.CollectionValueInterface;
 
 @Subject( namespace = "http://localhost/test#" )
-public abstract class TestClass
+public abstract class CollectionValueIntfAbst implements
+		CollectionValueInterface
 {
 
-	@Predicate
-	abstract public void addBaz( String str );
-
-	abstract public String getBar();
-
-	abstract public ExtendedIterator<String> getBaz();
-
-	abstract public Boolean isFlag();
-
-	abstract public void removeBar();
-
-	abstract public void removeBaz( String str );
-
-	abstract public void removeFlag();
-
-	@Predicate
-	abstract public void setBar( String value );
-
-	@Predicate
-	abstract public void setFlag( Boolean state );
+	public String getSomething()
+	{
+		return "Something";
+	}
 
 }

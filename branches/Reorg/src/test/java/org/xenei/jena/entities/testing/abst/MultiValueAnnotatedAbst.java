@@ -15,17 +15,15 @@
 package org.xenei.jena.entities.testing.abst;
 
 import com.hp.hpl.jena.rdf.model.RDFNode;
-
-import java.util.List;
-import java.util.Queue;
-import java.util.Set;
+import com.hp.hpl.jena.util.iterator.ExtendedIterator;
 
 import org.xenei.jena.entities.annotations.Predicate;
 import org.xenei.jena.entities.annotations.Subject;
 import org.xenei.jena.entities.annotations.URI;
+import org.xenei.jena.entities.testing.iface.TestInterface;
 
 @Subject( namespace = "http://localhost/test#" )
-public abstract class CollectionValueObjectTestClass
+public abstract class MultiValueAnnotatedAbst
 {
 
 	@Predicate
@@ -38,7 +36,7 @@ public abstract class CollectionValueObjectTestClass
 	public abstract void addDbl( Double b );
 
 	@Predicate
-	public abstract void addEnt( TestClass b );
+	public abstract void addEnt( TestInterface b );
 
 	@Predicate
 	public abstract void addFlt( Float b );
@@ -65,35 +63,35 @@ public abstract class CollectionValueObjectTestClass
 
 	public abstract void addU3( @URI String b );
 
-	public abstract Set<Boolean> getBool();
+	public abstract ExtendedIterator<Boolean> getBool();
 
-	public abstract List<Character> getChar();
+	public abstract ExtendedIterator<Character> getChar();
 
-	public abstract Queue<Double> getDbl();
+	public abstract ExtendedIterator<Double> getDbl();
 
-	public abstract Queue<TestClass> getEnt();
+	public abstract ExtendedIterator<TestInterface> getEnt();
 
-	public abstract Set<Float> getFlt();
+	public abstract ExtendedIterator<Float> getFlt();
 
-	public abstract Queue<Integer> getInt();
+	public abstract ExtendedIterator<Integer> getInt();
 
-	public abstract List<Long> getLng();
+	public abstract ExtendedIterator<Long> getLng();
 
-	public abstract List<RDFNode> getRDF();
+	public abstract ExtendedIterator<RDFNode> getRDF();
 
-	public abstract Set<String> getStr();
+	public abstract ExtendedIterator<String> getStr();
 
 	@Predicate( type = RDFNode.class )
-	public abstract Set<RDFNode> getU();
+	public abstract ExtendedIterator<RDFNode> getU();
 
 	@Predicate( type = URI.class, name = "u" )
-	public abstract List<String> getU2();
+	public abstract ExtendedIterator<String> getU2();
 
 	@Predicate( type = RDFNode.class )
-	public abstract Queue<RDFNode> getU3();
+	public abstract ExtendedIterator<RDFNode> getU3();
 
 	@Predicate( type = URI.class, name = "u3" )
-	public abstract Set<String> getU4();
+	public abstract ExtendedIterator<String> getU4();
 
 	public abstract Boolean hasBool( Boolean b );
 
@@ -101,7 +99,7 @@ public abstract class CollectionValueObjectTestClass
 
 	public abstract Boolean hasDbl( Double b );
 
-	public abstract Boolean hasEnt( TestClass b );
+	public abstract Boolean hasEnt( TestInterface b );
 
 	public abstract Boolean hasFlt( Float b );
 
@@ -127,7 +125,7 @@ public abstract class CollectionValueObjectTestClass
 
 	public abstract void removeDbl( Double b );
 
-	public abstract void removeEnt( TestClass b );
+	public abstract void removeEnt( TestInterface b );
 
 	public abstract void removeFlt( Float b );
 

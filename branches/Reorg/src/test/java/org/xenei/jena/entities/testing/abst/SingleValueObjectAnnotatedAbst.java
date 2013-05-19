@@ -19,9 +19,10 @@ import com.hp.hpl.jena.rdf.model.RDFNode;
 import org.xenei.jena.entities.annotations.Predicate;
 import org.xenei.jena.entities.annotations.Subject;
 import org.xenei.jena.entities.annotations.URI;
+import org.xenei.jena.entities.testing.iface.TestInterface;
 
 @Subject( namespace = "http://localhost/test#" )
-public abstract class SingleValueObjectTestClass
+public abstract class SingleValueObjectAnnotatedAbst
 {
 
 	@Subject( namespace = "http://localhost/test#" )
@@ -37,15 +38,11 @@ public abstract class SingleValueObjectTestClass
 		public abstract void setName( String name );
 	};
 
-	public SingleValueObjectTestClass()
-	{
-	}
-
 	public abstract Character getChar();
 
 	public abstract Double getDbl();
 
-	public abstract TestClass getEnt();
+	public abstract TestInterface getEnt();
 
 	public abstract Float getFlt();
 
@@ -98,7 +95,7 @@ public abstract class SingleValueObjectTestClass
 	public abstract void setDbl( Double b );
 
 	@Predicate
-	public abstract void setEnt( TestClass b );
+	public abstract void setEnt( TestInterface b );
 
 	@Predicate
 	public abstract void setFlt( Float b );

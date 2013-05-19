@@ -24,8 +24,8 @@ import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.xenei.jena.entities.testing.abst.CollectionValueObjectTestClass;
-import org.xenei.jena.entities.testing.abst.TestClass;
+import org.xenei.jena.entities.testing.abst.CollectionValueAnnoatedAbst;
+import org.xenei.jena.entities.testing.iface.TestInterface;
 
 public class CollectionValueEntityTests
 {
@@ -33,7 +33,7 @@ public class CollectionValueEntityTests
 	// BOOLEAN, CHAR, DOUBLE, FLOAT, LONG, INTEGER, STRING, RDFNODE, ENTITY,
 	// URI, VOID
 
-	private CollectionValueObjectTestClass tc;
+	private CollectionValueAnnoatedAbst tc;
 	private Model m;
 	private final EntityManager manager = EntityManagerFactory
 			.getEntityManager();
@@ -44,7 +44,7 @@ public class CollectionValueEntityTests
 		m = ModelFactory.createDefaultModel();
 		final Resource r = m
 				.createResource("http://localhost/CollectionValueEntityTests");
-		tc = manager.read(r, CollectionValueObjectTestClass.class);
+		tc = manager.read(r, CollectionValueAnnoatedAbst.class);
 	}
 
 	@After
@@ -157,9 +157,9 @@ public class CollectionValueEntityTests
 	public void testEntity() throws MissingAnnotation
 	{
 		Resource r = m.createResource("cc");
-		final TestClass cc = manager.read(r, TestClass.class);
+		final TestInterface cc = manager.read(r, TestInterface.class);
 		r = m.createResource("dd");
-		final TestClass dd = manager.read(r, TestClass.class);
+		final TestInterface dd = manager.read(r, TestInterface.class);
 
 		tc.addEnt(cc);
 		Assert.assertTrue(tc.hasEnt(cc));
