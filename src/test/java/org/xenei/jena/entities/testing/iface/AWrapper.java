@@ -1,7 +1,5 @@
 package org.xenei.jena.entities.testing.iface;
 
-import com.hp.hpl.jena.rdf.model.Resource;
-
 import org.xenei.jena.entities.ResourceWrapper;
 import org.xenei.jena.entities.annotations.Predicate;
 import org.xenei.jena.entities.annotations.Subject;

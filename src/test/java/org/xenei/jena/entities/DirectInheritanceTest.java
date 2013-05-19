@@ -56,18 +56,19 @@ public class DirectInheritanceTest
 
 	}
 
-	@Test
-	public void testResourceAncestorMethods()
-	{
-
-		Assert.assertEquals(r.getModel(), theInstance.getModel());
-
-	}
-
-	@Test
-	public void testResourceMethods()
-	{
-		Assert.assertEquals(r.getURI(), theInstance.getURI());
-	}
-
+	/*
+	 * @Test
+	 * public void testResourceAncestorMethods()
+	 * {
+	 * 
+	 * Assert.assertEquals(r.getModel(), theInstance.getModel());
+	 * 
+	 * }
+	 * 
+	 * @Test
+	 * public void testResourceMethods()
+	 * {
+	 * Assert.assertEquals(r.getURI(), theInstance.getURI());
+	 * }
+	 */
 }

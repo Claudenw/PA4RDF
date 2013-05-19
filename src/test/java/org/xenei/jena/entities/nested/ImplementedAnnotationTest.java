@@ -99,23 +99,6 @@ public class ImplementedAnnotationTest
 			Assert.assertEquals("NOT A VALID METHOD", e.getMessage());
 		}
 	}
-	
-	@Test
-	public void testUseNoReadNoAnnotation()
-	{
-		try
-		{
-			final NoAnnotationImplementation nai = new NoAnnotationImplementation();
-			final String name = nai.getName();
-			Assert.assertEquals("name", name);
-			nai.getValue();
-			Assert.fail("Should have thrown an IllegalArgumentException");
-		}
-		catch (final IllegalArgumentException e)
-		{
-			Assert.assertEquals("NOT A VALID METHOD", e.getMessage());
-		}
-	}
 
 	@Test
 	public void testReadWithAnnotation()
@@ -128,13 +111,30 @@ public class ImplementedAnnotationTest
 		Assert.assertEquals("modelValue", value);
 
 	}
-	
+
 	@Test
 	public void testUseNoReadAnnotation()
 	{
 		try
 		{
 			final AnnotationImplementation nai = new AnnotationImplementation();
+			final String name = nai.getName();
+			Assert.assertEquals("name", name);
+			nai.getValue();
+			Assert.fail("Should have thrown an IllegalArgumentException");
+		}
+		catch (final IllegalArgumentException e)
+		{
+			Assert.assertEquals("NOT A VALID METHOD", e.getMessage());
+		}
+	}
+
+	@Test
+	public void testUseNoReadNoAnnotation()
+	{
+		try
+		{
+			final NoAnnotationImplementation nai = new NoAnnotationImplementation();
 			final String name = nai.getName();
 			Assert.assertEquals("name", name);
 			nai.getValue();

@@ -1,7 +1,5 @@
 package org.xenei.jena.entities.testing.impl;
 
-import com.hp.hpl.jena.rdf.model.Resource;
-
 import org.xenei.jena.entities.EntityManagerRequiredException;
 import org.xenei.jena.entities.annotations.Predicate;
 import org.xenei.jena.entities.testing.iface.SimpleInterface;
@@ -20,15 +18,6 @@ public class SimpleInterfaceImpl implements SimpleInterface
 		throw new EntityManagerRequiredException();
 	}
 
-
-	@Override
-	@Predicate
-	public void setX( final String x )
-	{
-		throw new EntityManagerRequiredException();
-	}
-
-
 	@Override
 	public boolean hasX()
 	{
@@ -37,6 +26,13 @@ public class SimpleInterfaceImpl implements SimpleInterface
 
 	@Override
 	public void removeX()
+	{
+		throw new EntityManagerRequiredException();
+	}
+
+	@Override
+	@Predicate
+	public void setX( final String x )
 	{
 		throw new EntityManagerRequiredException();
 	}

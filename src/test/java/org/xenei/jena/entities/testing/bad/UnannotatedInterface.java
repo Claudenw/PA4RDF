@@ -8,7 +8,8 @@ import org.xenei.jena.entities.annotations.Subject;
 /**
  * A class that will fail.
  * 
- * This should fail because getModel() does not have an implementation and this does not extend
+ * This should fail because getModel() does not have an implementation and this
+ * does not extend
  * Resource
  */
 @Subject( namespace = "http://example.com/" )
