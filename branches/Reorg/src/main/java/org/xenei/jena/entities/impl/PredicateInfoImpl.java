@@ -201,8 +201,7 @@ public class PredicateInfoImpl implements PredicateInfo
 	 * @throws MissingAnnotation
 	 *             If an annotation was required but not provided.
 	 */
-	public PredicateInfoImpl( 
-			final EntityManager entityManager,
+	public PredicateInfoImpl( final EntityManager entityManager,
 			final EffectivePredicate predicate, final String methodName,
 			final Class<?> valueClass ) throws MissingAnnotation
 	{
@@ -250,6 +249,10 @@ public class PredicateInfoImpl implements PredicateInfo
 				concreteType, predicate);
 	}
 
+	public EffectivePredicate getEffectivePredicate() {
+		return predicate;
+	}
+	
 	private Property createResourceProperty( final Resource resource )
 	{
 		return (resource.getModel() == null) ? ResourceFactory
@@ -375,7 +378,7 @@ public class PredicateInfoImpl implements PredicateInfo
 			}
 			else if (Queue.class.isAssignableFrom(valueClass))
 			{
-				return new LinkedList(oIter.toList());
+				return new LinkedList<Object>(oIter.toList());
 			}
 			else
 			{

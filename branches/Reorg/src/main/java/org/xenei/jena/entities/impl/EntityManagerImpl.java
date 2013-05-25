@@ -14,30 +14,22 @@
  */
 package org.xenei.jena.entities.impl;
 
-import com.hp.hpl.jena.graph.Node;
 import com.hp.hpl.jena.rdf.model.Model;
-import com.hp.hpl.jena.rdf.model.RDFNode;
 import com.hp.hpl.jena.rdf.model.Resource;
 import com.hp.hpl.jena.rdf.model.ResourceFactory;
-import com.hp.hpl.jena.rdf.model.impl.Util;
-import com.hp.hpl.jena.util.iterator.ExtendedIterator;
 import com.hp.hpl.jena.vocabulary.RDF;
 
 import java.io.File;
 import java.io.IOException;
-import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -47,16 +39,13 @@ import java.util.zip.ZipInputStream;
 import net.sf.cglib.proxy.Enhancer;
 import net.sf.cglib.proxy.MethodInterceptor;
 
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xenei.jena.entities.EntityManager;
 import org.xenei.jena.entities.MissingAnnotation;
 import org.xenei.jena.entities.ResourceWrapper;
 import org.xenei.jena.entities.SubjectInfo;
-import org.xenei.jena.entities.annotations.Predicate;
 import org.xenei.jena.entities.annotations.Subject;
-import org.xenei.jena.entities.annotations.URI;
 
 /**
  * An implementation of the EntityManager interface.
@@ -385,13 +374,13 @@ public class EntityManagerImpl implements EntityManager
 		{
 			EntityManagerImpl.LOG.info("Parsing {}", clazz);
 			subjectInfo = new SubjectInfoImpl(clazz);
-			
-			MethodParser parser = new MethodParser( this, subjectInfo, countAdders( clazz.getMethods()));
-			
-			
+
+			final MethodParser parser = new MethodParser(this, subjectInfo,
+					countAdders(clazz.getMethods()));
+
 			for (final Method method : clazz.getMethods())
 			{
-				parser.parse( method, new EffectivePredicate( method ));
+				parser.parse(method, new EffectivePredicate(method));
 			}
 			classInfo.put(clazz, subjectInfo);
 		}

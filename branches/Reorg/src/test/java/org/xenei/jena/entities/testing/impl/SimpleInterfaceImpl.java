@@ -9,29 +9,31 @@ public class SimpleInterfaceImpl implements SimpleInterface
 
 	public SimpleInterfaceImpl()
 	{
-		// TODO Auto-generated constructor stub
 	}
 
 	@Override
+	@Predicate( impl = true )
 	public String getX()
 	{
 		throw new EntityManagerRequiredException();
 	}
 
 	@Override
+	@Predicate( impl = true )
 	public boolean hasX()
 	{
 		throw new EntityManagerRequiredException();
 	}
 
 	@Override
+	@Predicate( impl = true )
 	public void removeX()
 	{
 		throw new EntityManagerRequiredException();
 	}
 
 	@Override
-	@Predicate
+	@Predicate( impl = true )
 	public void setX( final String x )
 	{
 		throw new EntityManagerRequiredException();
