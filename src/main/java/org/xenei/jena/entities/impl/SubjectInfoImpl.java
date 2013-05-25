@@ -41,14 +41,6 @@ public class SubjectInfoImpl implements SubjectInfo
 		this.implementedClass = implementedClass;
 		this.validated = false;
 	}
-	
-	/**
-	 * Get the subject annotation for this class.
-	 * @return
-	 */
-	public Subject getSubject() {
-		return implementedClass.getAnnotation(Subject.class);
-	}
 
 	/**
 	 * Add a predicate info to this subject.
@@ -228,6 +220,17 @@ public class SubjectInfoImpl implements SubjectInfo
 	public String getPredicateUriStr( final String function )
 	{
 		return getPredicateInfo(function).getUriString();
+	}
+
+	/**
+	 * Get the subject annotation for this class.
+	 * 
+	 * @return
+	 */
+	@Override
+	public Subject getSubject()
+	{
+		return implementedClass.getAnnotation(Subject.class);
 	}
 
 	/**

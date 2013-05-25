@@ -221,11 +221,11 @@ public abstract class AbstractCollectionURITest extends BaseAbstractParserTest
 		Assert.assertEquals("hasU2", pi.getMethodName());
 		Assert.assertEquals("http://example.com/", pi.getNamespace());
 		Assert.assertEquals("http://example.com/u2", pi.getUriString());
-		Assert.assertEquals(RDFNode.class, pi.getValueClass());
+		Assert.assertEquals(String.class, pi.getValueClass());
 
 		pi = (PredicateInfoImpl) subjectInfo.getPredicateInfo(classUnderTest
-				.getMethod("removeU2"));
-		Assert.assertNotNull("removeU2 not parsed", pi);
+				.getMethod("removeU2", RDFNode.class));
+		Assert.assertNotNull("removeU2( RDFNode ) not parsed", pi);
 		Assert.assertEquals(ResourceHandler.class, pi.getObjectHandler()
 				.getClass());
 		Assert.assertEquals(ActionType.REMOVER, pi.getActionType());
@@ -233,5 +233,16 @@ public abstract class AbstractCollectionURITest extends BaseAbstractParserTest
 		Assert.assertEquals("http://example.com/", pi.getNamespace());
 		Assert.assertEquals("http://example.com/u2", pi.getUriString());
 		Assert.assertEquals(RDFNode.class, pi.getValueClass());
+		
+		pi = (PredicateInfoImpl) subjectInfo.getPredicateInfo(classUnderTest
+				.getMethod("removeU2", String.class));
+		Assert.assertNotNull("removeU2( String ) not parsed", pi);
+		Assert.assertEquals(UriHandler.class, pi.getObjectHandler()
+				.getClass());
+		Assert.assertEquals(ActionType.REMOVER, pi.getActionType());
+		Assert.assertEquals("removeU2", pi.getMethodName());
+		Assert.assertEquals("http://example.com/", pi.getNamespace());
+		Assert.assertEquals("http://example.com/u2", pi.getUriString());
+		Assert.assertEquals(String.class, pi.getValueClass());
 	}
 }

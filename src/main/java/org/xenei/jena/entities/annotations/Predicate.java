@@ -58,6 +58,17 @@ public @interface Predicate
 	boolean emptyIsNull() default false;
 
 	/**
+	 * Indicates that a method is an implementation of an abstract method to
+	 * allow the
+	 * class to be concrete while not providing a concrete implementation of the
+	 * Predicate
+	 * annotated methods.
+	 * 
+	 * @return
+	 */
+	boolean impl() default false;
+
+	/**
 	 * The name of the literal type or an empty string if not is use.
 	 * If specified it is used in a call to typeMapper.getSafeTypeByName()
 	 * to get the RDFDatatype used to parse and unparse literal values.
@@ -104,12 +115,4 @@ public @interface Predicate
 	 * If true, the first character will be upper cased.
 	 */
 	boolean upcase() default false;
-	
-	/**
-	 * Indicates that a method is an implementation of an abstract method to allow the 
-	 * class to be concrete while not providing a concrete implementation of the Predicate
-	 * annotated methods.
-	 * @return
-	 */
-	boolean impl() default false;
 }

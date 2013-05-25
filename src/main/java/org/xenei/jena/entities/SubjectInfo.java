@@ -38,11 +38,6 @@ public interface SubjectInfo
 	public Class<?> getImplementedClass();
 
 	/**
-	 * Get the @Subject annotation object for this subject.
-	 * @return
-	 */
-	public Subject getSubject();
-	/**
 	 * Get the predicateInfo or return null if not found
 	 * 
 	 * @param method
@@ -98,12 +93,21 @@ public interface SubjectInfo
 	 * @return the URI string for the predicate property.
 	 */
 	public String getPredicateUriStr( String methodName );
-	
+
 	/**
-	 * Validate that this subject info implements all the methods for all the 
-	 * interfaces listed in iface.
-	 * @param iface The list of interfaces that this subjectInfo should implement.
+	 * Get the @Subject annotation object for this subject.
+	 * 
+	 * @return
 	 */
-	public void validate(final Collection<Class<?>> iface);
+	public Subject getSubject();
+
+	/**
+	 * Validate that this subject info implements all the methods for all the
+	 * interfaces listed in iface.
+	 * 
+	 * @param iface
+	 *            The list of interfaces that this subjectInfo should implement.
+	 */
+	public void validate( final Collection<Class<?>> iface );
 
 }

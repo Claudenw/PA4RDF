@@ -44,15 +44,21 @@ public class EffectivePredicate
 	public EffectivePredicate()
 	{
 	}
+
+	public EffectivePredicate( final Predicate p )
+	{
+		this();
+		merge( p );
+	}
 	
-	public EffectivePredicate( Method m )
+	public EffectivePredicate( final Method m )
 	{
 		if (m != null)
 		{
-			
+
 			if (m.getParameterTypes().length > 0)
 			{
-			
+
 				for (final Annotation a : m.getParameterAnnotations()[0])
 				{
 					if (a instanceof URI)
@@ -61,38 +67,25 @@ public class EffectivePredicate
 					}
 				}
 			}
-			
-			Subject s =m.getDeclaringClass().getAnnotation( Subject.class);
+
+			final Subject s = m.getDeclaringClass()
+					.getAnnotation(Subject.class);
 			if (s != null)
 			{
 				this.namespace = s.namespace();
 			}
-			merge( m.getAnnotation(Predicate.class));
-			if (StringUtils.isBlank( name ))
+			merge(m.getAnnotation(Predicate.class));
+			if (StringUtils.isBlank(name))
 			{
-				try {
-				ActionType actionType  = ActionType.parse(m.getName());
-				setName( actionType.extractName( m.getName() ));	
+				try
+				{
+					final ActionType actionType = ActionType.parse(m.getName());
+					setName(actionType.extractName(m.getName()));
 				}
-				catch (IllegalArgumentException e)
+				catch (final IllegalArgumentException e)
 				{
 					// expected when not an action method.
 				}
-			}
-		}
-	}
-	
-	public void setName(String name) {
-		if (StringUtils.isNotBlank(name))
-		{
-			final String s = name.substring(0, 1);
-			if (upcase())
-			{
-				this.name = name.replaceFirst(s, s.toUpperCase());
-			}
-			else
-			{
-				this.name = name.replaceFirst(s, s.toLowerCase());
 			}
 		}
 	}
@@ -100,6 +93,16 @@ public class EffectivePredicate
 	public boolean emptyIsNull()
 	{
 		return emptyIsNull;
+	}
+
+	public boolean impl()
+	{
+		return impl;
+	}
+
+	public boolean isTypeNotSet()
+	{
+		return type == null;
 	}
 
 	public String literalType()
@@ -112,14 +115,15 @@ public class EffectivePredicate
 		if (predicate != null)
 		{
 			upcase = predicate.upcase();
-			setName(  StringUtils.isBlank(predicate.name()) ? name : predicate
-					.name() );
+			setName(StringUtils.isBlank(predicate.name()) ? name : predicate
+					.name());
 			namespace = StringUtils.isBlank(predicate.namespace()) ? namespace
 					: predicate.namespace();
 			literalType = StringUtils.isBlank(predicate.literalType()) ? literalType
 					: predicate.literalType();
 			type = RDFNode.class.equals(predicate.type()) ? type : predicate
 					.type();
+			impl |= predicate.impl();
 		}
 		return this;
 	}
@@ -129,8 +133,8 @@ public class EffectivePredicate
 		if (predicate != null)
 		{
 			upcase = predicate.upcase();
-			setName( StringUtils.isBlank(predicate.name()) ? name : predicate
-					.name() );
+			setName(StringUtils.isBlank(predicate.name()) ? name : predicate
+					.name());
 			namespace = StringUtils.isBlank(predicate.namespace()) ? namespace
 					: predicate.namespace();
 			literalType = StringUtils.isBlank(predicate.literalType()) ? literalType
@@ -138,7 +142,7 @@ public class EffectivePredicate
 			type = RDFNode.class.equals(predicate.type()) ? type : predicate
 					.type();
 			emptyIsNull = predicate.emptyIsNull();
-			System.out.println( predicate.type() );
+			impl |= predicate.impl();
 		}
 		return this;
 	}
@@ -153,25 +157,30 @@ public class EffectivePredicate
 		return namespace;
 	}
 
+	public void setName( final String name )
+	{
+		if (StringUtils.isNotBlank(name))
+		{
+			final String s = name.substring(0, 1);
+			if (upcase())
+			{
+				this.name = name.replaceFirst(s, s.toUpperCase());
+			}
+			else
+			{
+				this.name = name.replaceFirst(s, s.toLowerCase());
+			}
+		}
+	}
+
 	public Class<?> type()
 	{
-		return type==null?RDFNode.class:type;
+		return type == null ? RDFNode.class : type;
 	}
 
-	public boolean isTypeNotSet()
-	{
-		return type == null;
-	}
-
-	
 	public boolean upcase()
 	{
 		return upcase;
-	}
-	
-	public boolean impl()
-	{
-		return impl;
 	}
 
 }
