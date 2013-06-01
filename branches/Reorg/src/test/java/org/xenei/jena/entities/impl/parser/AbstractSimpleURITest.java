@@ -24,7 +24,7 @@ public abstract class AbstractSimpleURITest extends BaseAbstractParserTest
 	public void testStandardGetter() throws Exception
 	{
 		final Method m = classUnderTest.getMethod("getU");
-		final PredicateInfo pi = parser.parse(m, new EffectivePredicate(m));
+		final PredicateInfo pi = parser.parse(m);
 		Assert.assertNotNull("getU not parsed", pi);
 		Assert.assertEquals(ActionType.GETTER, pi.getActionType());
 		Assert.assertEquals("getU", pi.getMethodName());
@@ -37,7 +37,7 @@ public abstract class AbstractSimpleURITest extends BaseAbstractParserTest
 	public void testStandardHas() throws Exception
 	{
 		final Method m = classUnderTest.getMethod("hasU");
-		final PredicateInfo pi = parser.parse(m, new EffectivePredicate(m));
+		final PredicateInfo pi = parser.parse(m);
 		Assert.assertNotNull("hasU not parsed", pi);
 		Assert.assertEquals(ActionType.EXISTENTIAL, pi.getActionType());
 		Assert.assertEquals("hasU", pi.getMethodName());
@@ -51,7 +51,7 @@ public abstract class AbstractSimpleURITest extends BaseAbstractParserTest
 	public void testStandardRemove() throws Exception
 	{
 		final Method m = classUnderTest.getMethod("removeU");
-		final PredicateInfo pi = parser.parse(m, new EffectivePredicate(m));
+		final PredicateInfo pi = parser.parse(m);
 		Assert.assertNotNull("removeU not parsed", pi);
 		Assert.assertEquals(ActionType.REMOVER, pi.getActionType());
 		Assert.assertEquals("removeU", pi.getMethodName());
@@ -65,7 +65,7 @@ public abstract class AbstractSimpleURITest extends BaseAbstractParserTest
 	public void testStandardSetter() throws Exception
 	{
 		final Method m = classUnderTest.getMethod("setU", String.class);
-		PredicateInfo pi = parser.parse(m, new EffectivePredicate(m));
+		PredicateInfo pi = parser.parse(m);
 		Assert.assertNotNull("setU( String ) not parsed", pi);
 		Assert.assertEquals(ActionType.SETTER, pi.getActionType());
 		Assert.assertEquals("setU", pi.getMethodName());

@@ -115,7 +115,7 @@ public class MethodParser
 		return interfaces;
 	}
 
-	private void findAssociatedMethod(  EffectivePredicate superPredicate, final Set<Class<?>> abstracts,
+	private void findAssociatedMethod(  final Set<Class<?>> abstracts,
 			final EffectivePredicate ep, final String name,
 			final Class<?> valueClass ) throws MissingAnnotation
 	{
@@ -124,10 +124,6 @@ public class MethodParser
 		final List<Method> lm = findMethod(abstracts, name, cAry);
 		if (lm.size() > 0)
 		{
-//			if (String.class.equals( valueClass ) && superPredicate.type == URI.class)
-//			{
-//				ep.type = URI.class;
-//			}
 			parse(lm.get(0), ep);
 		}
 	}
@@ -152,7 +148,7 @@ public class MethodParser
 	}
 
 	private void findExistential( final Set<Class<?>> abstracts,
-			final Method method, final EffectivePredicate superPredicate )
+			final Method method)
 			throws MissingAnnotation
 	{
 		for (final Method m : findMethod(abstracts, method))
@@ -175,7 +171,7 @@ public class MethodParser
 	}
 
 	private void findGetter( final Set<Class<?>> abstracts,
-			final Method method, final EffectivePredicate superPredicate )
+			final Method method)
 			throws MissingAnnotation
 	{
 		// predicate for getter method includes predicate infor for setter
@@ -183,8 +179,7 @@ public class MethodParser
 
 		for (final Method m : findMethod(abstracts, method))
 		{
-			final PredicateInfoImpl pi = (PredicateInfoImpl) parse(m,
-					superPredicate);
+			final PredicateInfoImpl pi = (PredicateInfoImpl) parse(m);
 			if (pi != null)
 			{
 				subjectInfo.add(pi);
@@ -236,12 +231,12 @@ public class MethodParser
 	}
 
 	private void findRemover( final Set<Class<?>> abstracts,
-			final Method method, final EffectivePredicate predicate )
+			final Method method)
 			throws MissingAnnotation
 	{
 		for (final Method m : findMethod(abstracts, method))
 		{
-			final PredicateInfoImpl pi = (PredicateInfoImpl) parse(m, predicate);
+			final PredicateInfoImpl pi = (PredicateInfoImpl) parse(m);
 			if (pi != null)
 			{
 				subjectInfo.add(pi);
@@ -259,7 +254,7 @@ public class MethodParser
 	 * @throws MissingAnnotation
 	 */
 	private void findSetter( final Set<Class<?>> abstracts,
-			final Method method, final EffectivePredicate superPredicate,
+			final Method method,
 			final boolean multiAdd ) throws MissingAnnotation
 	{
 		final String subName = ActionType.SETTER.extractName(method.getName());
@@ -275,13 +270,13 @@ public class MethodParser
 			
 			// add the sub types here
 			final boolean isMultiple = m.getName().startsWith("add");
-			findAssociatedMethod(superPredicate, abstracts, pi.getEffectivePredicate(), "get" + subName, null);
-			findAssociatedMethod(superPredicate, abstracts, pi.getEffectivePredicate(), "is" + subName, null);
+			findAssociatedMethod(abstracts, pi.getEffectivePredicate(), "get" + subName, null);
+			findAssociatedMethod(abstracts, pi.getEffectivePredicate(), "is" + subName, null);
 			if (isMultiple)
 			{
-				findAssociatedMethod(superPredicate, abstracts, pi.getEffectivePredicate(), "has" + subName,
+				findAssociatedMethod(abstracts, pi.getEffectivePredicate(), "has" + subName,
 						pi.getValueClass());
-				findAssociatedMethod(superPredicate, abstracts, pi.getEffectivePredicate(), "remove" + subName,
+				findAssociatedMethod(abstracts, pi.getEffectivePredicate(), "remove" + subName,
 						pi.getValueClass());
 
 				if (pi.getValueClass() == RDFNode.class)
@@ -294,8 +289,8 @@ public class MethodParser
 			}
 			else
 			{
-				findAssociatedMethod(superPredicate, abstracts, pi.getEffectivePredicate(), "has" + subName, null);
-				findAssociatedMethod(superPredicate, abstracts, pi.getEffectivePredicate(), "remove" + subName,
+				findAssociatedMethod(abstracts, pi.getEffectivePredicate(), "has" + subName, null);
+				findAssociatedMethod(abstracts, pi.getEffectivePredicate(), "remove" + subName,
 						null);
 			}
 			return;
@@ -336,7 +331,12 @@ public class MethodParser
 	 * @return The SubjectInfo for the class.
 	 * @throws MissingAnnotation
 	 */
-	public PredicateInfo parse( final Method method,
+	
+	public  PredicateInfo parse( final Method method ) throws MissingAnnotation {
+		return parse( method, null );
+	}
+	
+	private PredicateInfo parse( final Method method,
 			final EffectivePredicate predicate ) throws MissingAnnotation
 	{
 		PredicateInfo pi = subjectInfo.getPredicateInfo(method);
@@ -483,7 +483,7 @@ public class MethodParser
 		predicate.merge(method.getAnnotation(Predicate.class));
 		if (predicate.impl())
 		{
-			parseImplMethod(actionType, method, predicate);
+			parseImplMethod(actionType, method);
 		}
 		else
 		{
@@ -603,7 +603,7 @@ public class MethodParser
 	}
 
 	private void parseImplMethod( final ActionType actionType,
-			final Method method, final EffectivePredicate predicate )
+			final Method method )
 			throws MissingAnnotation
 	{
 		final Set<Class<?>> interfaces = findAbstractss(method
@@ -615,27 +615,27 @@ public class MethodParser
 				final Integer i = addCount.get(method.getName());
 				if (i != null)
 				{
-					findSetter(interfaces, method, predicate, (i > 1));
+					findSetter(interfaces, method, (i > 1));
 				}
 				break;
 
 			case EXISTENTIAL:
 				if (method.getParameterTypes().length <= 1)
 				{
-					findExistential(interfaces, method, predicate);
+					findExistential(interfaces, method);
 				}
 				break;
 
 			case GETTER:
 				if (method.getParameterTypes().length == 0)
 				{
-					findGetter(interfaces, method, predicate);
+					findGetter(interfaces, method);
 				}
 
 				break;
 
 			case REMOVER:
-				findRemover(interfaces, method, predicate);
+				findRemover(interfaces, method);
 				break;
 
 		}

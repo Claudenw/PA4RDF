@@ -21,7 +21,7 @@ public abstract class AbstractCollectionTest extends BaseAbstractParserTest
 	public void testCollectionGetter() throws Exception
 	{
 		final Method m = classUnderTest.getMethod("getX");
-		final PredicateInfo pi = parser.parse(m, new EffectivePredicate(m));
+		final PredicateInfo pi = parser.parse(m);
 		Assert.assertNotNull("getX not parsed", pi);
 		Assert.assertEquals(ActionType.GETTER, pi.getActionType());
 		Assert.assertEquals("getX", pi.getMethodName());
@@ -35,7 +35,7 @@ public abstract class AbstractCollectionTest extends BaseAbstractParserTest
 	public void testCollectionHas() throws Exception
 	{
 		final Method m = classUnderTest.getMethod("hasX", String.class);
-		final PredicateInfo pi = parser.parse(m, new EffectivePredicate(m));
+		final PredicateInfo pi = parser.parse(m);
 		Assert.assertNotNull("hasX not parsed", pi);
 		Assert.assertEquals(ActionType.EXISTENTIAL, pi.getActionType());
 		Assert.assertEquals("hasX", pi.getMethodName());
@@ -49,7 +49,7 @@ public abstract class AbstractCollectionTest extends BaseAbstractParserTest
 	public void testCollectionRemove() throws Exception
 	{
 		final Method m = classUnderTest.getMethod("removeX", String.class);
-		final PredicateInfo pi = parser.parse(m, new EffectivePredicate(m));
+		final PredicateInfo pi = parser.parse(m);
 		Assert.assertNotNull("removeX not parsed", pi);
 		Assert.assertEquals(ActionType.REMOVER, pi.getActionType());
 		Assert.assertEquals("removeX", pi.getMethodName());
@@ -63,7 +63,7 @@ public abstract class AbstractCollectionTest extends BaseAbstractParserTest
 	public void testCollectionSetter() throws Exception
 	{
 		final Method m = classUnderTest.getMethod("addX", String.class);
-		PredicateInfo pi = parser.parse(m, new EffectivePredicate(m));
+		PredicateInfo pi = parser.parse(m);
 		Assert.assertNotNull("addX not parsed", pi);
 		Assert.assertEquals(ActionType.SETTER, pi.getActionType());
 		Assert.assertEquals("addX", pi.getMethodName());
