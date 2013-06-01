@@ -19,7 +19,7 @@ public interface UnannotatedInterface
 
 	String getZ();
 
-	@Predicate
+	//@Predicate
 	void setZ( String z );
 
 }

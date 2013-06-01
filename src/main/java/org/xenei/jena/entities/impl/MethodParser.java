@@ -115,7 +115,7 @@ public class MethodParser
 		return interfaces;
 	}
 
-	private void findAssociatedMethod( final Set<Class<?>> abstracts,
+	private void findAssociatedMethod(  EffectivePredicate superPredicate, final Set<Class<?>> abstracts,
 			final EffectivePredicate ep, final String name,
 			final Class<?> valueClass ) throws MissingAnnotation
 	{
@@ -124,6 +124,10 @@ public class MethodParser
 		final List<Method> lm = findMethod(abstracts, name, cAry);
 		if (lm.size() > 0)
 		{
+//			if (String.class.equals( valueClass ) && superPredicate.type == URI.class)
+//			{
+//				ep.type = URI.class;
+//			}
 			parse(lm.get(0), ep);
 		}
 	}
@@ -218,10 +222,12 @@ public class MethodParser
 
 					final List<Class<?>> pl = Arrays.asList(m
 							.getParameterTypes());
-					if ((lParams.size() == pl.size())
-							&& (Collections.indexOfSubList(pl, lParams) == 0))
+					if (lParams.size() == pl.size())
 					{
-						lst.add(m);
+						if (pl.size()==0 || Collections.indexOfSubList(pl, lParams) == 0)
+						{
+							lst.add(m);
+						}
 					}
 				}
 			}
@@ -235,8 +241,7 @@ public class MethodParser
 	{
 		for (final Method m : findMethod(abstracts, method))
 		{
-			EffectivePredicate ep = new EffectivePredicate(m).merge( predicate );
-			final PredicateInfoImpl pi = (PredicateInfoImpl) parse(m, ep);
+			final PredicateInfoImpl pi = (PredicateInfoImpl) parse(m, predicate);
 			if (pi != null)
 			{
 				subjectInfo.add(pi);
@@ -258,45 +263,43 @@ public class MethodParser
 			final boolean multiAdd ) throws MissingAnnotation
 	{
 		final String subName = ActionType.SETTER.extractName(method.getName());
-		for (final Method m : findMethod(abstracts, method))
+		List<Method> lm = findMethod(abstracts, method);
+		for (final Method m : lm)
 		{
-			if (m.getAnnotation(Predicate.class) != null)
+			
+			final SubjectInfo si = entityManager.getSubjectInfo(m
+					.getDeclaringClass());
+			final PredicateInfoImpl pi = (PredicateInfoImpl) si
+					.getPredicateInfo(m);
+			subjectInfo.add(pi);
+			
+			// add the sub types here
+			final boolean isMultiple = m.getName().startsWith("add");
+			findAssociatedMethod(superPredicate, abstracts, pi.getEffectivePredicate(), "get" + subName, null);
+			findAssociatedMethod(superPredicate, abstracts, pi.getEffectivePredicate(), "is" + subName, null);
+			if (isMultiple)
 			{
-				// found the predicate annotated instance
-				final SubjectInfo si = entityManager.getSubjectInfo(m
-						.getDeclaringClass());
-				final PredicateInfoImpl pi = (PredicateInfoImpl) si
-						.getPredicateInfo(m);
-				subjectInfo.add(pi);
-				
-				// add the sub types here
-				final boolean isMultiple = m.getName().startsWith("add");
-				findAssociatedMethod(abstracts, pi.getEffectivePredicate(), "get" + subName, null);
-				findAssociatedMethod(abstracts, pi.getEffectivePredicate(), "is" + subName, null);
-				if (isMultiple)
-				{
-					findAssociatedMethod(abstracts, pi.getEffectivePredicate(), "has" + subName,
-							pi.getValueClass());
-					findAssociatedMethod(abstracts, pi.getEffectivePredicate(), "remove" + subName,
-							pi.getValueClass());
+				findAssociatedMethod(superPredicate, abstracts, pi.getEffectivePredicate(), "has" + subName,
+						pi.getValueClass());
+				findAssociatedMethod(superPredicate, abstracts, pi.getEffectivePredicate(), "remove" + subName,
+						pi.getValueClass());
 
-					if (pi.getValueClass() == RDFNode.class)
-					{
-						// look for @URI annotated strings
-						findAssociatedURIMethod(abstracts, pi.getEffectivePredicate(), "has" + subName);
-						findAssociatedURIMethod(abstracts, pi.getEffectivePredicate(), "remove"
-								+ subName);
-					}
-				}
-				else
+				if (pi.getValueClass() == RDFNode.class)
 				{
-					findAssociatedMethod(abstracts, pi.getEffectivePredicate(), "has" + subName, null);
-					findAssociatedMethod(abstracts, pi.getEffectivePredicate(), "remove" + subName,
-							null);
+					// look for @URI annotated strings
+					findAssociatedURIMethod(abstracts, pi.getEffectivePredicate(), "has" + subName);
+					findAssociatedURIMethod(abstracts, pi.getEffectivePredicate(), "remove"
+							+ subName);
 				}
-				return;
-
 			}
+			else
+			{
+				findAssociatedMethod(superPredicate, abstracts, pi.getEffectivePredicate(), "has" + subName, null);
+				findAssociatedMethod(superPredicate, abstracts, pi.getEffectivePredicate(), "remove" + subName,
+						null);
+			}
+			return;
+	
 		}
 		throw new MissingAnnotation(String.format(
 				"Can not locate annotated %s from %s", method.getName(),
@@ -352,13 +355,14 @@ public class MethodParser
 					{
 						final ActionType actionType = ActionType.parse(method
 								.getName());
+						EffectivePredicate ep = new EffectivePredicate(method).merge( predicate);
 						if (Modifier.isAbstract(method.getModifiers()))
 						{
-							parseAbstractMethod(actionType, method, predicate);
+							parseAbstractMethod(actionType, method, ep);
 						}
 						else
 						{
-							parseConcreteMethod(actionType, method, predicate);
+							parseConcreteMethod(actionType, method, ep);
 						}
 						pi = subjectInfo.getPredicateInfo(method);
 
@@ -464,9 +468,7 @@ public class MethodParser
 				m = subjectInfo.getImplementedClass().getMethod(methodName,
 						argClass);
 			}
-			final EffectivePredicate predicate = new EffectivePredicate(m)
-					.merge(parentPredicate);
-			parse(m, predicate);
+			parse(m, parentPredicate);
 		}
 		catch (final NoSuchMethodException e)
 		{
@@ -644,23 +646,49 @@ public class MethodParser
 	{
 		throw new RuntimeException("Not IMPLEMENTED");
 	}
+	
+	private Class<?> getParameterType( Method m )
+	{
+		if (m.getParameterTypes().length == 1)
+		{
+			for (final Annotation a : m.getParameterAnnotations()[0])
+			{
+				if (a instanceof URI)
+				{
+					return RDFNode.class;
+				}
+			}
+			return m.getParameterTypes()[0];
+		}
+		return null;
+		
+	}
 
 	private void parseRemover( final Method m,
 			final EffectivePredicate predicate ) throws MissingAnnotation
 	{
 		final EffectivePredicate ep = new EffectivePredicate(m)
 				.merge(predicate);
-
+		Class<?> valueClass = null;
 		if (m.getParameterTypes().length == 1)
 		{
-			ep.type = m.getParameterTypes()[0];
+			valueClass = m.getParameterTypes()[0];
+			for (Annotation a : m.getParameterAnnotations()[0])
+			{
+				if (a instanceof URI )
+				{
+					ep.type = URI.class;
+				}
+				
+			}
 		}
 		else
 		{
 			ep.type = null;
 		}
-		subjectInfo.add(new PredicateInfoImpl(entityManager, predicate, m
-				.getName(), ep.type));
+		PredicateInfoImpl pii = new PredicateInfoImpl(entityManager, ep, m
+				.getName(), valueClass);
+		subjectInfo.add(pii);
 	}
 
 	/**

@@ -380,7 +380,7 @@ public class EntityManagerImpl implements EntityManager
 
 			for (final Method method : clazz.getMethods())
 			{
-				parser.parse(method, new EffectivePredicate(method));
+				parser.parse(method, null);
 			}
 			classInfo.put(clazz, subjectInfo);
 		}

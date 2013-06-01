@@ -122,9 +122,7 @@ public abstract class AbstractCollectionURITest extends BaseAbstractParserTest
 	public void testStandardSetter() throws Exception
 	{
 		final Method m = classUnderTest.getMethod("addU", String.class);
-		PredicateInfoImpl pi = (PredicateInfoImpl) parser.parse(m,
-				new EffectivePredicate(m));
-		;
+		PredicateInfoImpl pi = (PredicateInfoImpl) parser.parse(m,null);
 		Assert.assertNotNull("addU( String ) not parsed", pi);
 		Assert.assertEquals(UriHandler.class, pi.getObjectHandler().getClass());
 		Assert.assertEquals(ActionType.SETTER, pi.getActionType());
