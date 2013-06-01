@@ -45,6 +45,12 @@ public class EffectivePredicate
 	{
 	}
 
+	public EffectivePredicate( final EffectivePredicate ep)
+	{
+		this();
+		merge(ep);
+	}
+	
 	public EffectivePredicate( final Predicate p )
 	{
 		this();
