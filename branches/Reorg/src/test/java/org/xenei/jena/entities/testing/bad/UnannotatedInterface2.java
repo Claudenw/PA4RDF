@@ -12,8 +12,7 @@ import org.xenei.jena.entities.annotations.Subject;
  * does not extend
  * Resource
  */
-@Subject( namespace = "http://example.com/" )
-public interface UnannotatedInterface
+public interface UnannotatedInterface2
 {
 	Model getModel();
 

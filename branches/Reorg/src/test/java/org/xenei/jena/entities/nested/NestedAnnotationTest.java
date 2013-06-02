@@ -44,7 +44,7 @@ public class NestedAnnotationTest
 	}
 
 	@Test
-	public void testLoad()
+	public void testLoad() throws Exception
 	{
 		final EntityManager em = EntityManagerFactory.getEntityManager();
 		final Model m = ModelFactory.createDefaultModel();

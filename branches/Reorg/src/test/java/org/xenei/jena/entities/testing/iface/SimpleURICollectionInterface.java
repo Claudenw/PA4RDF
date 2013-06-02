@@ -14,9 +14,10 @@ public interface SimpleURICollectionInterface
 {
 	@Predicate
 	void addU( @URI String x );
+	void addU(RDFNode x );
 
 	void addU2( RDFNode b );
-
+	void addU2( @URI String x );
 	//
 	// List with URI annotations
 	//

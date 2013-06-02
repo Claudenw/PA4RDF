@@ -25,6 +25,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Enumeration;
@@ -39,12 +40,14 @@ import java.util.zip.ZipInputStream;
 import net.sf.cglib.proxy.Enhancer;
 import net.sf.cglib.proxy.MethodInterceptor;
 
+import org.apache.commons.proxy.exception.InvokerException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xenei.jena.entities.EntityManager;
 import org.xenei.jena.entities.MissingAnnotation;
 import org.xenei.jena.entities.ResourceWrapper;
 import org.xenei.jena.entities.SubjectInfo;
+import org.xenei.jena.entities.annotations.Predicate;
 import org.xenei.jena.entities.annotations.Subject;
 
 /**
@@ -378,7 +381,35 @@ public class EntityManagerImpl implements EntityManager
 			final MethodParser parser = new MethodParser(this, subjectInfo,
 					countAdders(clazz.getMethods()));
 
+			boolean foundAnnotation = false;
+			List<Method> annotated = new ArrayList<Method>();
 			for (final Method method : clazz.getMethods())
+			{
+				try {
+				ActionType actionType = ActionType.parse(method.getName());
+				if (method.getAnnotation(Predicate.class) != null)
+				{
+					foundAnnotation = true;
+					if (ActionType.GETTER == actionType)
+					{
+						parser.parse(method);	
+					}
+					else
+					{
+						annotated.add( method );
+					}
+				}
+				} catch (IllegalArgumentException expected)
+				{
+					// not an action type ignore method
+				}
+				
+			}
+			if (!foundAnnotation) {
+				throw new MissingAnnotation( "No annotated methods in "+clazz.getCanonicalName());
+			}
+			
+			for (final Method method : annotated)
 			{
 				parser.parse(method);
 			}
@@ -423,7 +454,7 @@ public class EntityManagerImpl implements EntityManager
 		{
 			throw new MissingAnnotation(String.format(
 					"Unable to parse all %s See log for more details",
-					(Object) packageNames));
+					Arrays.asList(packageNames)));
 		}
 	}
 
@@ -437,18 +468,12 @@ public class EntityManagerImpl implements EntityManager
 	@Override
 	@SuppressWarnings( "unchecked" )
 	public <T> T read( final Object source, final Class<T> primaryClass,
-			final Class<?>... secondaryClasses )
+			final Class<?>... secondaryClasses ) throws MissingAnnotation
 	{
 		final List<Class<?>> classes = new ArrayList<Class<?>>();
 		SubjectInfoImpl subjectInfo;
-		try
-		{
-			subjectInfo = parse(primaryClass);
-		}
-		catch (final MissingAnnotation e)
-		{
-			throw new RuntimeException(e);
-		}
+		subjectInfo = parse(primaryClass);
+		
 		if (primaryClass.isInterface())
 		{
 			classes.add(primaryClass);
@@ -456,17 +481,9 @@ public class EntityManagerImpl implements EntityManager
 		for (final Class<?> cla : secondaryClasses)
 		{
 			if (!classes.contains(cla))
-			{
-				try
-				{
+			{				
 					parse(cla);
 					classes.add(cla);
-				}
-				catch (final MissingAnnotation e)
-				{
-					throw new RuntimeException(e);
-				}
-
 			}
 		}
 		if (!classes.contains(ResourceWrapper.class))

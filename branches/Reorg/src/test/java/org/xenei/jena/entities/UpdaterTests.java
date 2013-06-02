@@ -196,7 +196,7 @@ public class UpdaterTests
 	EntityManager manager = new EntityManagerImpl();
 
 	@Test
-	public void DataSourceModelTest()
+	public void DataSourceModelTest() throws Exception
 	{
 		final DataSource ds1 = new DataSource();
 		ds1.setIntValue(1);
@@ -221,7 +221,7 @@ public class UpdaterTests
 	}
 
 	@Test
-	public void DataSourceModelTest2()
+	public void DataSourceModelTest2() throws Exception
 	{
 		final Model m = ModelFactory.createDefaultModel();
 		final Resource r = m.createResource("http://example.com/test/resource");

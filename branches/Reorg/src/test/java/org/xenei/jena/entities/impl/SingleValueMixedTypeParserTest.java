@@ -26,7 +26,7 @@ public class SingleValueMixedTypeParserTest
 	private static String namespaceStr = "http://localhost/test#";
 
 	@Before
-	public void setup()
+	public void setup() throws Exception
 	{
 		model = ModelFactory.createDefaultModel();
 		final EntityManager manager = EntityManagerFactory.getEntityManager();

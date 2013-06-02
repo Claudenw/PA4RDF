@@ -17,6 +17,7 @@ package org.xenei.jena.entities.impl.handlers;
 import com.hp.hpl.jena.rdf.model.RDFNode;
 
 import org.xenei.jena.entities.EntityManager;
+import org.xenei.jena.entities.MissingAnnotation;
 import org.xenei.jena.entities.ResourceWrapper;
 import org.xenei.jena.entities.impl.ObjectHandler;
 
@@ -82,9 +83,16 @@ public class EntityHandler implements ObjectHandler
 	 * @return the instance of the valueClass.
 	 */
 	@Override
-	public Object parseObject( final RDFNode node )
+	public Object parseObject( final RDFNode node ) 
 	{
-		return entityManager.read(node.asResource(), valueClass);
+		try
+		{
+			return entityManager.read(node.asResource(), valueClass);
+		}
+		catch (MissingAnnotation e)
+		{
+			throw new RuntimeException( e );
+		}
 	}
 
 	@Override

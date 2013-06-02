@@ -116,7 +116,7 @@ public interface EntityManager
 	 *             if source implements neither Resource nor ResourceWrapper.
 	 */
 	public <T> T read( Object source, Class<T> primaryClass,
-			Class<?>... secondaryClasses );
+			Class<?>... secondaryClasses ) throws MissingAnnotation;
 
 	/**
 	 * Calls the target.setX predicate methods with the results of the

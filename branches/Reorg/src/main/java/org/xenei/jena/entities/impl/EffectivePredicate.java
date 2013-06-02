@@ -145,8 +145,8 @@ public class EffectivePredicate
 					: predicate.namespace();
 			literalType = StringUtils.isBlank(predicate.literalType()) ? literalType
 					: predicate.literalType();
-			type = RDFNode.class.equals(predicate.type()) ? type : predicate
-					.type();
+			type = RDFNode.class.equals(predicate.type()) ? type : predicate.type();
+			//type = type!=null ? type : predicate.type();
 			emptyIsNull = predicate.emptyIsNull();
 			impl |= predicate.impl();
 		}

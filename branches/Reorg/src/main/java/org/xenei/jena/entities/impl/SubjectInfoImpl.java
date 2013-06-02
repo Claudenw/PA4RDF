@@ -50,6 +50,10 @@ public class SubjectInfoImpl implements SubjectInfo
 	 */
 	public void add( final PredicateInfoImpl pi )
 	{
+		if (pi == null)
+		{
+			throw new IllegalArgumentException( "PredicateInfo may not be null");
+		}
 		Map<ObjectHandler, PredicateInfo> map = predicateInfo.get(pi
 				.getMethodName());
 		if (map == null)

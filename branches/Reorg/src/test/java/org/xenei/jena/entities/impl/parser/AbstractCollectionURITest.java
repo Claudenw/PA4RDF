@@ -9,7 +9,6 @@ import java.util.List;
 import org.junit.Assert;
 import org.junit.Test;
 import org.xenei.jena.entities.impl.ActionType;
-import org.xenei.jena.entities.impl.EffectivePredicate;
 import org.xenei.jena.entities.impl.PredicateInfoImpl;
 import org.xenei.jena.entities.impl.handlers.ResourceHandler;
 import org.xenei.jena.entities.impl.handlers.UriHandler;
@@ -125,16 +124,16 @@ public abstract class AbstractCollectionURITest extends BaseAbstractParserTest
 		Assert.assertEquals("http://example.com/u", pi.getUriString());
 		Assert.assertEquals(UriHandler.class, pi.getObjectHandler().getClass());
 		Assert.assertEquals(String.class, pi.getValueClass());
-		/*
-		 * pi = subjectInfo.getPredicateInfo( classUnderTest.getMethod( "setU",
-		 * RDFNode.class ) );
-		 * assertNotNull( "setU( RDFNode ) not parsed", pi );
-		 * assertEquals( ActionType.SETTER, pi.getActionType());
-		 * assertEquals( "setU", pi.getMethodName());
-		 * assertEquals( "http://example.com/", pi.getNamespace());
-		 * assertEquals( "http://example.com/u", pi.getUriString());
-		 * assertEquals( RDFNode.class, pi.getValueClass());
-		 */
+
+		pi = (PredicateInfoImpl) subjectInfo.getPredicateInfo(classUnderTest
+				.getMethod("addU", RDFNode.class));
+		Assert.assertNotNull("addU( RDFNode ) not parsed", pi);
+		Assert.assertEquals(ActionType.SETTER, pi.getActionType());
+		Assert.assertEquals("addU", pi.getMethodName());
+		Assert.assertEquals("http://example.com/", pi.getNamespace());
+		Assert.assertEquals("http://example.com/u", pi.getUriString());
+		Assert.assertEquals(RDFNode.class, pi.getValueClass());
+
 		pi = (PredicateInfoImpl) subjectInfo.getPredicateInfo(classUnderTest
 				.getMethod("getU"));
 		Assert.assertNotNull("getU not parsed", pi);
@@ -172,25 +171,29 @@ public abstract class AbstractCollectionURITest extends BaseAbstractParserTest
 	{
 		final Method m = classUnderTest.getMethod("addU2", RDFNode.class);
 		PredicateInfoImpl pi = (PredicateInfoImpl) parser.parse(m);
-		;
-		Assert.assertNotNull("addU2( String ) not parsed", pi);
+
+		Assert.assertNotNull("addU2( RDFNode ) not parsed", pi);
 		Assert.assertEquals(ResourceHandler.class, pi.getObjectHandler()
 				.getClass());
 		Assert.assertEquals(ActionType.SETTER, pi.getActionType());
 		Assert.assertEquals("addU2", pi.getMethodName());
 		Assert.assertEquals("http://example.com/", pi.getNamespace());
 		Assert.assertEquals("http://example.com/u2", pi.getUriString());
+		Assert.assertEquals(ResourceHandler.class, pi.getObjectHandler()
+				.getClass());
 		Assert.assertEquals(RDFNode.class, pi.getValueClass());
-		/*
-		 * pi = subjectInfo.getPredicateInfo( classUnderTest.getMethod( "setU",
-		 * RDFNode.class ) );
-		 * assertNotNull( "setU( RDFNode ) not parsed", pi );
-		 * assertEquals( ActionType.SETTER, pi.getActionType());
-		 * assertEquals( "setU", pi.getMethodName());
-		 * assertEquals( "http://example.com/", pi.getNamespace());
-		 * assertEquals( "http://example.com/u", pi.getUriString());
-		 * assertEquals( RDFNode.class, pi.getValueClass());
-		 */
+
+		pi = (PredicateInfoImpl) subjectInfo.getPredicateInfo(classUnderTest
+				.getMethod("addU2", String.class));
+		Assert.assertNotNull("addU2( String ) not parsed", pi);
+		Assert.assertEquals(ActionType.SETTER, pi.getActionType());
+		Assert.assertEquals("addU2", pi.getMethodName());
+		Assert.assertEquals("http://example.com/", pi.getNamespace());
+		Assert.assertEquals("http://example.com/u2", pi.getUriString());
+		Assert.assertEquals(UriHandler.class, pi.getObjectHandler()
+				.getClass());
+		Assert.assertEquals(String.class, pi.getValueClass());
+
 		pi = (PredicateInfoImpl) subjectInfo.getPredicateInfo(classUnderTest
 				.getMethod("getU2"));
 		Assert.assertNotNull("getU2 not parsed", pi);
@@ -224,12 +227,11 @@ public abstract class AbstractCollectionURITest extends BaseAbstractParserTest
 		Assert.assertEquals("http://example.com/", pi.getNamespace());
 		Assert.assertEquals("http://example.com/u2", pi.getUriString());
 		Assert.assertEquals(RDFNode.class, pi.getValueClass());
-		
+
 		pi = (PredicateInfoImpl) subjectInfo.getPredicateInfo(classUnderTest
 				.getMethod("removeU2", String.class));
 		Assert.assertNotNull("removeU2( String ) not parsed", pi);
-		Assert.assertEquals(UriHandler.class, pi.getObjectHandler()
-				.getClass());
+		Assert.assertEquals(UriHandler.class, pi.getObjectHandler().getClass());
 		Assert.assertEquals(ActionType.REMOVER, pi.getActionType());
 		Assert.assertEquals("removeU2", pi.getMethodName());
 		Assert.assertEquals("http://example.com/", pi.getNamespace());

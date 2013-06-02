@@ -10,6 +10,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.xenei.jena.entities.EntityManager;
 import org.xenei.jena.entities.EntityManagerFactory;
+import org.xenei.jena.entities.MissingAnnotation;
 import org.xenei.jena.entities.annotations.Predicate;
 import org.xenei.jena.entities.annotations.Subject;
 
@@ -83,33 +84,34 @@ public class ImplementedAnnotationTest
 	}
 
 	@Test
-	public void testReadNoAnnotation()
+	public void testReadNoAnnotation() 
 	{
 		try
 		{
 			final NoAnnotationImplementation nai = em.read(resource,
 					NoAnnotationImplementation.class);
-			final String name = nai.getName();
-			Assert.assertEquals("name", name);
-			nai.getValue();
-			Assert.fail("Should have thrown an IllegalArgumentException");
 		}
-		catch (final IllegalArgumentException e)
+		catch (final MissingAnnotation e)
 		{
-			Assert.assertEquals("NOT A VALID METHOD", e.getMessage());
+			// expected
 		}
 	}
 
 	@Test
-	public void testReadWithAnnotation()
+	public void testReadWithAnnotation() throws Exception 
 	{
+		try {
 		final AnnotationImplementation ai = em.read(resource,
 				AnnotationImplementation.class);
 		final String name = ai.getName();
 		Assert.assertEquals("name", name);
 		final String value = ai.getValue();
 		Assert.assertEquals("modelValue", value);
-
+		}
+		catch (RuntimeException e)
+		{
+			Assert.assertEquals( "Not IMPLEMENTED", e.getMessage() );
+		}
 	}
 
 	@Test

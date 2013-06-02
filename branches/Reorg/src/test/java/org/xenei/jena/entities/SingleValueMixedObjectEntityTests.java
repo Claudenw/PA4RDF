@@ -31,7 +31,7 @@ public class SingleValueMixedObjectEntityTests
 	private Model model;
 
 	@Before
-	public void setup()
+	public void setup() throws Exception
 	{
 		final EntityManager manager = EntityManagerFactory.getEntityManager();
 		model = ModelFactory.createDefaultModel();
