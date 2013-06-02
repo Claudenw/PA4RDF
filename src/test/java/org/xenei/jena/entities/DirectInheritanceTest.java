@@ -47,9 +47,9 @@ public class DirectInheritanceTest
 		try
 		{
 			manager.read(r, UnannotatedInterface.class);
-			Assert.fail("Should have thrown InvokerException");
+			Assert.fail("Should have thrown MissingAnnotation");
 		}
-		catch (final InvokerException e)
+		catch (final MissingAnnotation e)
 		{
 			// expected
 		}

@@ -42,7 +42,7 @@ public class ResourceEntityProxyTest
 	}
 
 	@Test
-	public void testEquality()
+	public void testEquality() throws MissingAnnotation
 	{
 		final Resource r = model.createResource("http://localhost/foo");
 		final TestInterface ti1 = manager.read(r, TestInterface.class);
@@ -54,7 +54,7 @@ public class ResourceEntityProxyTest
 	}
 
 	@Test
-	public void testParsing() throws SecurityException, NoSuchMethodException
+	public void testParsing() throws Exception
 	{
 		final Resource r = model.createResource("http://localhost/foo");
 		manager.read(r, TestInterface.class);
@@ -225,7 +225,7 @@ public class ResourceEntityProxyTest
 	}
 
 	@Test
-	public void testSingleGetSetRemove()
+	public void testSingleGetSetRemove() throws Exception
 	{
 		final Resource r = model.createResource("http://localhost/foo");
 		final TestInterface ti1 = manager.read(r, TestInterface.class);

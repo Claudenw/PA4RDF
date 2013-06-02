@@ -14,6 +14,10 @@
  */
 package org.xenei.jena.entities.impl;
 
+import java.lang.reflect.Method;
+import java.util.Collection;
+import java.util.Iterator;
+
 /**
  * An enumeration of Action types.
  */
@@ -93,6 +97,25 @@ public enum ActionType
 		throw new IllegalArgumentException(String.format(
 				"%s is not an action type function", functionName));
 
+	}
+	
+	public static boolean isMultiple( Method m )
+	{
+		ActionType at = ActionType.parse(m.getName());
+		switch (at)
+		{
+			case GETTER:
+				return Iterator.class.isAssignableFrom(m.getReturnType()) || Collection.class.isAssignableFrom( m.getReturnType() );
+
+			case SETTER:
+				return m.getName().startsWith( "set" );
+				
+			case EXISTENTIAL:
+			case REMOVER:
+				return m.getParameterTypes().length > 0;
+		}
+		throw new IllegalArgumentException(String.format(
+				"%s is not an action type function", m));
 	}
 
 	/**

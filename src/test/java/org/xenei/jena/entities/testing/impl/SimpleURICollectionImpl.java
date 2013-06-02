@@ -20,6 +20,19 @@ public class SimpleURICollectionImpl implements SimpleURICollectionInterface
 		throw new EntityManagerRequiredException();
 	}
 
+	@Override	
+	@Predicate( impl = true )
+	public void addU( RDFNode x )
+	{
+		throw new EntityManagerRequiredException();
+	}
+	
+	@Override	
+	@Predicate( impl = true )
+	public void addU2( @URI String x )
+	{
+		throw new EntityManagerRequiredException();
+	}
 	@Override
 	@Predicate( impl = true )
 	public void addU2( RDFNode b )

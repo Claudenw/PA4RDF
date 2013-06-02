@@ -31,7 +31,7 @@ public class SingleValuePrimitiveEntityTests
 	private Model model;
 
 	@Before
-	public void setup()
+	public void setup() throws Exception
 	{
 		model = ModelFactory.createDefaultModel();
 		final Resource r = model

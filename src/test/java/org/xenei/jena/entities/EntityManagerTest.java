@@ -63,7 +63,7 @@ public class EntityManagerTest
 	@Test
 	public void testPathParser() throws Exception
 	{
-		manager.parseClasses(new String[] { "org.xenei.jena.entities" });
+		manager.parseClasses(new String[] { "org.xenei.jena.entities.testing.abst" });
 		SubjectInfo ci = manager.getSubjectInfo(MultiValueAnnotatedAbst.class);
 		Assert.assertNotNull(ci.getPredicateInfo(MultiValueAnnotatedAbst.class
 				.getMethod("getU")));
@@ -74,19 +74,18 @@ public class EntityManagerTest
 	}
 
 	@Test
-	public void testPathParserWithBadClasses() throws Exception
+	public void testPathParserWithBadClasses() 
 	{
 		final Model model = ModelFactory.createDefaultModel();
 		try
 		{
-			manager.parseClasses(new String[] { "org.xenei.jena.entities.bad" });
 			manager.read(
 					model.createResource(),
 					org.xenei.jena.entities.testing.iface.SimpleInterface.class,
 					UnannotatedInterface.class);
 			Assert.fail("Should have thrown InvokerException");
 		}
-		catch (final InvokerException e)
+		catch (final MissingAnnotation e)
 		{
 			// expected
 		}

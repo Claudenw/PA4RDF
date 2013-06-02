@@ -8,7 +8,6 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.xenei.jena.entities.PredicateInfo;
 import org.xenei.jena.entities.impl.ActionType;
-import org.xenei.jena.entities.impl.EffectivePredicate;
 import org.xenei.jena.entities.impl.PredicateInfoImpl;
 import org.xenei.jena.entities.impl.handlers.ResourceHandler;
 import org.xenei.jena.entities.impl.handlers.UriHandler;
@@ -74,16 +73,16 @@ public abstract class AbstractSimpleURITest extends BaseAbstractParserTest
 		Assert.assertEquals(UriHandler.class, ((PredicateInfoImpl) pi)
 				.getObjectHandler().getClass());
 		Assert.assertEquals(String.class, pi.getValueClass());
-		/*
-		 * pi = subjectInfo.getPredicateInfo( classUnderTest.getMethod( "setU",
-		 * RDFNode.class ) );
-		 * assertNotNull( "setU( RDFNode ) not parsed", pi );
-		 * assertEquals( ActionType.SETTER, pi.getActionType());
-		 * assertEquals( "setU", pi.getMethodName());
-		 * assertEquals( "http://example.com/", pi.getNamespace());
-		 * assertEquals( "http://example.com/u", pi.getUriString());
-		 * assertEquals( RDFNode.class, pi.getValueClass());
-		 */
+
+		pi = subjectInfo.getPredicateInfo(classUnderTest.getMethod("setU",
+				RDFNode.class));
+		Assert.assertNotNull("setU( RDFNode ) not parsed", pi);
+		Assert.assertEquals(ActionType.SETTER, pi.getActionType());
+		Assert.assertEquals("setU", pi.getMethodName());
+		Assert.assertEquals("http://example.com/", pi.getNamespace());
+		Assert.assertEquals("http://example.com/u", pi.getUriString());
+		Assert.assertEquals(RDFNode.class, pi.getValueClass());
+
 		pi = subjectInfo.getPredicateInfo(classUnderTest.getMethod("getU"));
 		Assert.assertNotNull("getU not parsed", pi);
 		Assert.assertEquals(ActionType.GETTER, pi.getActionType());

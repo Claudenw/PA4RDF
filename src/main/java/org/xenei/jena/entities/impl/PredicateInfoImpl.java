@@ -203,7 +203,7 @@ public class PredicateInfoImpl implements PredicateInfo
 	 */
 	public PredicateInfoImpl( final EntityManager entityManager,
 			final EffectivePredicate predicate, final String methodName,
-			final Class<?> valueClass ) throws MissingAnnotation
+			final Class<?> valueClass ) 
 	{
 		this.methodName = methodName;
 		this.actionType = ActionType.parse(methodName);

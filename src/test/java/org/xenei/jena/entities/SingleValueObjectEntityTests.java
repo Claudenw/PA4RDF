@@ -36,7 +36,7 @@ public class SingleValueObjectEntityTests
 	private EntityManager manager;
 
 	@Before
-	public void setup()
+	public void setup() throws Exception
 	{
 		manager = EntityManagerFactory.getEntityManager();
 		model = ModelFactory.createDefaultModel();
@@ -97,7 +97,7 @@ public class SingleValueObjectEntityTests
 	}
 
 	@Test
-	public void testEntity()
+	public void testEntity() throws Exception
 	{
 		Resource r = model.createResource("testclass");
 		final TestInterface c = manager.read(r, TestInterface.class);
@@ -185,7 +185,7 @@ public class SingleValueObjectEntityTests
 	}
 
 	@Test
-	public void testSubPredicate()
+	public void testSubPredicate() throws Exception
 	{
 		Resource r = model.createResource("http://localhost/SubPredicateTest1");
 		final SubPredicate sp = manager.read(r, SubPredicate.class);

@@ -18,7 +18,7 @@ public class EntityHandlerTest implements HandlerTestInterface
 	TwoValueSimpleInterface instance;
 
 	@Before
-	public void setup()
+	public void setup() throws Exception
 	{
 		em = EntityManagerFactory.getEntityManager();
 		handler = new EntityHandler(em, TwoValueSimpleInterface.class);
