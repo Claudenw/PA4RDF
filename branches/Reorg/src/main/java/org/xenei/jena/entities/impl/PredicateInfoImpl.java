@@ -203,7 +203,7 @@ public class PredicateInfoImpl implements PredicateInfo
 	 */
 	public PredicateInfoImpl( final EntityManager entityManager,
 			final EffectivePredicate predicate, final String methodName,
-			final Class<?> valueClass ) 
+			final Class<?> valueClass )
 	{
 		this.methodName = methodName;
 		this.actionType = ActionType.parse(methodName);
@@ -249,10 +249,6 @@ public class PredicateInfoImpl implements PredicateInfo
 				concreteType, predicate);
 	}
 
-	public EffectivePredicate getEffectivePredicate() {
-		return predicate;
-	}
-	
 	private Property createResourceProperty( final Resource resource )
 	{
 		return (resource.getModel() == null) ? ResourceFactory
@@ -521,6 +517,11 @@ public class PredicateInfoImpl implements PredicateInfo
 	public ActionType getActionType()
 	{
 		return actionType;
+	}
+
+	public EffectivePredicate getEffectivePredicate()
+	{
+		return predicate;
 	}
 
 	/*

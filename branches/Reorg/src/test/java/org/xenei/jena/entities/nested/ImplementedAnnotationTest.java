@@ -84,12 +84,11 @@ public class ImplementedAnnotationTest
 	}
 
 	@Test
-	public void testReadNoAnnotation() 
+	public void testReadNoAnnotation()
 	{
 		try
 		{
-			final NoAnnotationImplementation nai = em.read(resource,
-					NoAnnotationImplementation.class);
+			em.read(resource, NoAnnotationImplementation.class);
 		}
 		catch (final MissingAnnotation e)
 		{
@@ -98,19 +97,20 @@ public class ImplementedAnnotationTest
 	}
 
 	@Test
-	public void testReadWithAnnotation() throws Exception 
+	public void testReadWithAnnotation() throws Exception
 	{
-		try {
-		final AnnotationImplementation ai = em.read(resource,
-				AnnotationImplementation.class);
-		final String name = ai.getName();
-		Assert.assertEquals("name", name);
-		final String value = ai.getValue();
-		Assert.assertEquals("modelValue", value);
-		}
-		catch (RuntimeException e)
+		try
 		{
-			Assert.assertEquals( "Not IMPLEMENTED", e.getMessage() );
+			final AnnotationImplementation ai = em.read(resource,
+					AnnotationImplementation.class);
+			final String name = ai.getName();
+			Assert.assertEquals("name", name);
+			final String value = ai.getValue();
+			Assert.assertEquals("modelValue", value);
+		}
+		catch (final RuntimeException e)
+		{
+			Assert.assertEquals("Not IMPLEMENTED", e.getMessage());
 		}
 	}
 

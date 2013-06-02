@@ -2,7 +2,6 @@ package org.xenei.jena.entities.testing.bad;
 
 import com.hp.hpl.jena.rdf.model.Model;
 
-import org.xenei.jena.entities.annotations.Predicate;
 import org.xenei.jena.entities.annotations.Subject;
 
 /**

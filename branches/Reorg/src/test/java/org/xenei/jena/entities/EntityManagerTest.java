@@ -17,7 +17,6 @@ package org.xenei.jena.entities;
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
 
-import org.apache.commons.proxy.exception.InvokerException;
 import org.apache.log4j.PropertyConfigurator;
 import org.junit.Assert;
 import org.junit.Before;
@@ -74,7 +73,7 @@ public class EntityManagerTest
 	}
 
 	@Test
-	public void testPathParserWithBadClasses() 
+	public void testPathParserWithBadClasses()
 	{
 		final Model model = ModelFactory.createDefaultModel();
 		try

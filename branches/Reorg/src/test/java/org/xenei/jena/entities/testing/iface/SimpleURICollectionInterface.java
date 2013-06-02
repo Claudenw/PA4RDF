@@ -12,12 +12,15 @@ import org.xenei.jena.entities.annotations.URI;
 @Subject( namespace = "http://example.com/" )
 public interface SimpleURICollectionInterface
 {
+	void addU( RDFNode x );
+
 	@Predicate
 	void addU( @URI String x );
-	void addU(RDFNode x );
 
 	void addU2( RDFNode b );
+
 	void addU2( @URI String x );
+
 	//
 	// List with URI annotations
 	//
