@@ -174,84 +174,84 @@ public class SingleValueObjectImpl implements SingleValueObjectInterface
 
 	@Override
 	@Predicate( impl = true )
-	public void setBool( Boolean b )
+	public void setBool( final Boolean b )
 	{
 		throw new EntityManagerRequiredException();
 	}
 
 	@Override
 	@Predicate( impl = true )
-	public void setChar( Character b )
+	public void setChar( final Character b )
 	{
 		throw new EntityManagerRequiredException();
 	}
 
 	@Override
 	@Predicate( impl = true )
-	public void setDbl( Double b )
+	public void setDbl( final Double b )
 	{
 		throw new EntityManagerRequiredException();
 	}
 
 	@Override
 	@Predicate( impl = true )
-	public void setEnt( TestInterface b )
+	public void setEnt( final TestInterface b )
 	{
 		throw new EntityManagerRequiredException();
 	}
 
 	@Override
 	@Predicate( impl = true )
-	public void setFlt( Float b )
+	public void setFlt( final Float b )
 	{
 		throw new EntityManagerRequiredException();
 	}
 
 	@Override
 	@Predicate( impl = true )
-	public void setInt( Integer b )
+	public void setInt( final Integer b )
 	{
 		throw new EntityManagerRequiredException();
 	}
 
 	@Override
 	@Predicate( impl = true )
-	public void setLng( Long b )
+	public void setLng( final Long b )
 	{
 		throw new EntityManagerRequiredException();
 	}
 
 	@Override
 	@Predicate( impl = true )
-	public void setRDF( RDFNode b )
+	public void setRDF( final RDFNode b )
 	{
 		throw new EntityManagerRequiredException();
 	}
 
 	@Override
 	@Predicate( impl = true )
-	public void setStr( String b )
+	public void setStr( final String b )
 	{
 		throw new EntityManagerRequiredException();
 	}
 
 	@Override
 	@Predicate( impl = true )
-	public void setSubPredicate( SubPredicate subPredicate )
+	public void setSubPredicate( final SubPredicate subPredicate )
 	{
 		throw new EntityManagerRequiredException();
 	}
 
 	@Override
 	@Predicate( impl = true )
-	public void setU( RDFNode b )
+	public void setU( final RDFNode b )
 	{
 		throw new EntityManagerRequiredException();
 	}
 
 	@Override
 	@Predicate( impl = true )
-	public void setU( @URI String b )
+	public void setU( @URI final String b )
 	{
 		throw new EntityManagerRequiredException();
 	}

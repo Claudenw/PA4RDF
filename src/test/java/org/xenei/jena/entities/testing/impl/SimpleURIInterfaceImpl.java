@@ -33,14 +33,14 @@ public class SimpleURIInterfaceImpl implements SimpleURIInterface
 
 	@Override
 	@Predicate( impl = true )
-	public void setU( RDFNode b )
+	public void setU( final RDFNode b )
 	{
 		throw new EntityManagerRequiredException();
 	}
 
 	@Override
 	@Predicate( impl = true )
-	public void setU( @URI String b )
+	public void setU( @URI final String b )
 	{
 		throw new EntityManagerRequiredException();
 	}

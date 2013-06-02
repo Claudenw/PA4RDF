@@ -190,8 +190,7 @@ public abstract class AbstractCollectionURITest extends BaseAbstractParserTest
 		Assert.assertEquals("addU2", pi.getMethodName());
 		Assert.assertEquals("http://example.com/", pi.getNamespace());
 		Assert.assertEquals("http://example.com/u2", pi.getUriString());
-		Assert.assertEquals(UriHandler.class, pi.getObjectHandler()
-				.getClass());
+		Assert.assertEquals(UriHandler.class, pi.getObjectHandler().getClass());
 		Assert.assertEquals(String.class, pi.getValueClass());
 
 		pi = (PredicateInfoImpl) subjectInfo.getPredicateInfo(classUnderTest

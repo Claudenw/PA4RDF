@@ -7,7 +7,6 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.xenei.jena.entities.PredicateInfo;
 import org.xenei.jena.entities.impl.ActionType;
-import org.xenei.jena.entities.impl.EffectivePredicate;
 
 public abstract class AbstractCollectionTest extends BaseAbstractParserTest
 {

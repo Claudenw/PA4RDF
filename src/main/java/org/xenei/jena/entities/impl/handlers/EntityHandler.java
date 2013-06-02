@@ -83,15 +83,15 @@ public class EntityHandler implements ObjectHandler
 	 * @return the instance of the valueClass.
 	 */
 	@Override
-	public Object parseObject( final RDFNode node ) 
+	public Object parseObject( final RDFNode node )
 	{
 		try
 		{
 			return entityManager.read(node.asResource(), valueClass);
 		}
-		catch (MissingAnnotation e)
+		catch (final MissingAnnotation e)
 		{
-			throw new RuntimeException( e );
+			throw new RuntimeException(e);
 		}
 	}
 

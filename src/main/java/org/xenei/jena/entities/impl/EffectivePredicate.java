@@ -45,18 +45,12 @@ public class EffectivePredicate
 	{
 	}
 
-	public EffectivePredicate( final EffectivePredicate ep)
+	public EffectivePredicate( final EffectivePredicate ep )
 	{
 		this();
 		merge(ep);
 	}
-	
-	public EffectivePredicate( final Predicate p )
-	{
-		this();
-		merge( p );
-	}
-	
+
 	public EffectivePredicate( final Method m )
 	{
 		if (m != null)
@@ -94,6 +88,12 @@ public class EffectivePredicate
 				}
 			}
 		}
+	}
+
+	public EffectivePredicate( final Predicate p )
+	{
+		this();
+		merge(p);
 	}
 
 	public boolean emptyIsNull()
@@ -145,8 +145,9 @@ public class EffectivePredicate
 					: predicate.namespace();
 			literalType = StringUtils.isBlank(predicate.literalType()) ? literalType
 					: predicate.literalType();
-			type = RDFNode.class.equals(predicate.type()) ? type : predicate.type();
-			//type = type!=null ? type : predicate.type();
+			type = RDFNode.class.equals(predicate.type()) ? type : predicate
+					.type();
+			// type = type!=null ? type : predicate.type();
 			emptyIsNull = predicate.emptyIsNull();
 			impl |= predicate.impl();
 		}

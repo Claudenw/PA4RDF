@@ -52,7 +52,7 @@ public class SubjectInfoImpl implements SubjectInfo
 	{
 		if (pi == null)
 		{
-			throw new IllegalArgumentException( "PredicateInfo may not be null");
+			throw new IllegalArgumentException("PredicateInfo may not be null");
 		}
 		Map<ObjectHandler, PredicateInfo> map = predicateInfo.get(pi
 				.getMethodName());

@@ -11,7 +11,7 @@ public class CollectionInterfaceImpl implements CollectionInterface
 
 	@Override
 	@Predicate( impl = true )
-	public void addX( String x )
+	public void addX( final String x )
 	{
 		throw new EntityManagerRequiredException();
 	}
@@ -25,14 +25,14 @@ public class CollectionInterfaceImpl implements CollectionInterface
 
 	@Override
 	@Predicate( impl = true )
-	public boolean hasX( String x )
+	public boolean hasX( final String x )
 	{
 		throw new EntityManagerRequiredException();
 	}
 
 	@Override
 	@Predicate( impl = true )
-	public void removeX( String x )
+	public void removeX( final String x )
 	{
 		throw new EntityManagerRequiredException();
 	}

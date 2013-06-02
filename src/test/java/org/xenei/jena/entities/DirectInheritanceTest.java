@@ -4,7 +4,6 @@ import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
 import com.hp.hpl.jena.rdf.model.Resource;
 
-import org.apache.commons.proxy.exception.InvokerException;
 import org.apache.log4j.PropertyConfigurator;
 import org.junit.Assert;
 import org.junit.Before;

@@ -14,7 +14,7 @@ public class MultiValueImpl implements MultiValueInterface
 
 	@Override
 	@Predicate( impl = true )
-	public void addBool( Boolean b )
+	public void addBool( final Boolean b )
 	{
 		throw new EntityManagerRequiredException();
 
@@ -22,7 +22,7 @@ public class MultiValueImpl implements MultiValueInterface
 
 	@Override
 	@Predicate( impl = true )
-	public void addChar( Character b )
+	public void addChar( final Character b )
 	{
 		throw new EntityManagerRequiredException();
 
@@ -30,7 +30,7 @@ public class MultiValueImpl implements MultiValueInterface
 
 	@Override
 	@Predicate( impl = true )
-	public void addDbl( Double b )
+	public void addDbl( final Double b )
 	{
 		throw new EntityManagerRequiredException();
 
@@ -38,7 +38,7 @@ public class MultiValueImpl implements MultiValueInterface
 
 	@Override
 	@Predicate( impl = true )
-	public void addEnt( TestInterface b )
+	public void addEnt( final TestInterface b )
 	{
 		throw new EntityManagerRequiredException();
 
@@ -46,7 +46,7 @@ public class MultiValueImpl implements MultiValueInterface
 
 	@Override
 	@Predicate( impl = true )
-	public void addFlt( Float b )
+	public void addFlt( final Float b )
 	{
 		throw new EntityManagerRequiredException();
 
@@ -54,7 +54,7 @@ public class MultiValueImpl implements MultiValueInterface
 
 	@Override
 	@Predicate( impl = true )
-	public void addInt( Integer b )
+	public void addInt( final Integer b )
 	{
 		throw new EntityManagerRequiredException();
 
@@ -62,7 +62,7 @@ public class MultiValueImpl implements MultiValueInterface
 
 	@Override
 	@Predicate( impl = true )
-	public void addLng( Long b )
+	public void addLng( final Long b )
 	{
 		throw new EntityManagerRequiredException();
 
@@ -70,22 +70,14 @@ public class MultiValueImpl implements MultiValueInterface
 
 	@Override
 	@Predicate( impl = true )
-	public void addRDF( RDFNode b )
+	public void addRDF( final RDFNode b )
 	{
 		throw new EntityManagerRequiredException();
 	}
 
 	@Override
 	@Predicate( impl = true )
-	public void addStr( String b )
-	{
-		throw new EntityManagerRequiredException();
-
-	}
-
-	@Override
-	@Predicate( impl = true )
-	public void addU( RDFNode b )
+	public void addStr( final String b )
 	{
 		throw new EntityManagerRequiredException();
 
@@ -93,7 +85,7 @@ public class MultiValueImpl implements MultiValueInterface
 
 	@Override
 	@Predicate( impl = true )
-	public void addU( @URI String b )
+	public void addU( final RDFNode b )
 	{
 		throw new EntityManagerRequiredException();
 
@@ -101,7 +93,7 @@ public class MultiValueImpl implements MultiValueInterface
 
 	@Override
 	@Predicate( impl = true )
-	public void addU3( RDFNode b )
+	public void addU( @URI final String b )
 	{
 		throw new EntityManagerRequiredException();
 
@@ -109,7 +101,15 @@ public class MultiValueImpl implements MultiValueInterface
 
 	@Override
 	@Predicate( impl = true )
-	public void addU3( @URI String b )
+	public void addU3( final RDFNode b )
+	{
+		throw new EntityManagerRequiredException();
+
+	}
+
+	@Override
+	@Predicate( impl = true )
+	public void addU3( @URI final String b )
 	{
 		throw new EntityManagerRequiredException();
 
@@ -180,134 +180,126 @@ public class MultiValueImpl implements MultiValueInterface
 
 	@Override
 	@Predicate( impl = true )
-	public ExtendedIterator <RDFNode> getU()
+	public ExtendedIterator<RDFNode> getU()
 	{
 		throw new EntityManagerRequiredException();
 	}
 
 	@Override
 	@Predicate( impl = true )
-	public ExtendedIterator <String> getU2()
+	public ExtendedIterator<String> getU2()
 	{
 		throw new EntityManagerRequiredException();
 	}
 
 	@Override
 	@Predicate( impl = true )
-	public ExtendedIterator <RDFNode> getU3()
+	public ExtendedIterator<RDFNode> getU3()
 	{
 		throw new EntityManagerRequiredException();
 	}
 
 	@Override
 	@Predicate( impl = true )
-	public ExtendedIterator <String> getU4()
+	public ExtendedIterator<String> getU4()
 	{
 		throw new EntityManagerRequiredException();
 	}
 
 	@Override
 	@Predicate( impl = true )
-	public Boolean hasBool( Boolean b )
+	public Boolean hasBool( final Boolean b )
 	{
 		throw new EntityManagerRequiredException();
 	}
 
 	@Override
 	@Predicate( impl = true )
-	public Boolean hasChar( Character b )
+	public Boolean hasChar( final Character b )
 	{
 		throw new EntityManagerRequiredException();
 	}
 
 	@Override
 	@Predicate( impl = true )
-	public Boolean hasDbl( Double b )
+	public Boolean hasDbl( final Double b )
 	{
 		throw new EntityManagerRequiredException();
 	}
 
 	@Override
 	@Predicate( impl = true )
-	public Boolean hasEnt( TestInterface b )
+	public Boolean hasEnt( final TestInterface b )
 	{
 		throw new EntityManagerRequiredException();
 	}
 
 	@Override
 	@Predicate( impl = true )
-	public Boolean hasFlt( Float b )
+	public Boolean hasFlt( final Float b )
 	{
 		throw new EntityManagerRequiredException();
 	}
 
 	@Override
 	@Predicate( impl = true )
-	public Boolean hasInt( Integer b )
+	public Boolean hasInt( final Integer b )
 	{
 		throw new EntityManagerRequiredException();
 	}
 
 	@Override
 	@Predicate( impl = true )
-	public Boolean hasLng( Long b )
+	public Boolean hasLng( final Long b )
 	{
 		throw new EntityManagerRequiredException();
 	}
 
 	@Override
 	@Predicate( impl = true )
-	public Boolean hasRDF( RDFNode b )
+	public Boolean hasRDF( final RDFNode b )
 	{
 		throw new EntityManagerRequiredException();
 	}
 
 	@Override
 	@Predicate( impl = true )
-	public Boolean hasStr( String b )
+	public Boolean hasStr( final String b )
 	{
 		throw new EntityManagerRequiredException();
 	}
 
 	@Override
 	@Predicate( impl = true )
-	public Boolean hasU( RDFNode b )
+	public Boolean hasU( final RDFNode b )
 	{
 		throw new EntityManagerRequiredException();
 	}
 
 	@Override
 	@Predicate( impl = true )
-	public Boolean hasU( @URI String b )
+	public Boolean hasU( @URI final String b )
 	{
 		throw new EntityManagerRequiredException();
 	}
 
 	@Override
 	@Predicate( impl = true )
-	public Boolean hasU3( RDFNode b )
+	public Boolean hasU3( final RDFNode b )
 	{
 		throw new EntityManagerRequiredException();
 	}
 
 	@Override
 	@Predicate( impl = true )
-	public Boolean hasU3( @URI String b )
+	public Boolean hasU3( @URI final String b )
 	{
 		throw new EntityManagerRequiredException();
 	}
 
 	@Override
 	@Predicate( impl = true )
-	public void removeBool( Boolean b )
-	{
-		throw new EntityManagerRequiredException();
-
-	}
-
-	@Override
-	@Predicate( impl = true )
-	public void removeChar( Character b )
+	public void removeBool( final Boolean b )
 	{
 		throw new EntityManagerRequiredException();
 
@@ -315,7 +307,7 @@ public class MultiValueImpl implements MultiValueInterface
 
 	@Override
 	@Predicate( impl = true )
-	public void removeDbl( Double b )
+	public void removeChar( final Character b )
 	{
 		throw new EntityManagerRequiredException();
 
@@ -323,7 +315,7 @@ public class MultiValueImpl implements MultiValueInterface
 
 	@Override
 	@Predicate( impl = true )
-	public void removeEnt( TestInterface b )
+	public void removeDbl( final Double b )
 	{
 		throw new EntityManagerRequiredException();
 
@@ -331,7 +323,7 @@ public class MultiValueImpl implements MultiValueInterface
 
 	@Override
 	@Predicate( impl = true )
-	public void removeFlt( Float b )
+	public void removeEnt( final TestInterface b )
 	{
 		throw new EntityManagerRequiredException();
 
@@ -339,7 +331,7 @@ public class MultiValueImpl implements MultiValueInterface
 
 	@Override
 	@Predicate( impl = true )
-	public void removeInt( Integer b )
+	public void removeFlt( final Float b )
 	{
 		throw new EntityManagerRequiredException();
 
@@ -347,7 +339,7 @@ public class MultiValueImpl implements MultiValueInterface
 
 	@Override
 	@Predicate( impl = true )
-	public void removeLng( Long b )
+	public void removeInt( final Integer b )
 	{
 		throw new EntityManagerRequiredException();
 
@@ -355,7 +347,7 @@ public class MultiValueImpl implements MultiValueInterface
 
 	@Override
 	@Predicate( impl = true )
-	public void removeRDF( RDFNode b )
+	public void removeLng( final Long b )
 	{
 		throw new EntityManagerRequiredException();
 
@@ -363,7 +355,7 @@ public class MultiValueImpl implements MultiValueInterface
 
 	@Override
 	@Predicate( impl = true )
-	public void removeStr( String b )
+	public void removeRDF( final RDFNode b )
 	{
 		throw new EntityManagerRequiredException();
 
@@ -371,7 +363,7 @@ public class MultiValueImpl implements MultiValueInterface
 
 	@Override
 	@Predicate( impl = true )
-	public void removeU( RDFNode b )
+	public void removeStr( final String b )
 	{
 		throw new EntityManagerRequiredException();
 
@@ -379,7 +371,7 @@ public class MultiValueImpl implements MultiValueInterface
 
 	@Override
 	@Predicate( impl = true )
-	public void removeU( @URI String b )
+	public void removeU( final RDFNode b )
 	{
 		throw new EntityManagerRequiredException();
 
@@ -387,7 +379,7 @@ public class MultiValueImpl implements MultiValueInterface
 
 	@Override
 	@Predicate( impl = true )
-	public void removeU3( RDFNode b )
+	public void removeU( @URI final String b )
 	{
 		throw new EntityManagerRequiredException();
 
@@ -395,7 +387,15 @@ public class MultiValueImpl implements MultiValueInterface
 
 	@Override
 	@Predicate( impl = true )
-	public void removeU3( @URI String b )
+	public void removeU3( final RDFNode b )
+	{
+		throw new EntityManagerRequiredException();
+
+	}
+
+	@Override
+	@Predicate( impl = true )
+	public void removeU3( @URI final String b )
 	{
 		throw new EntityManagerRequiredException();
 

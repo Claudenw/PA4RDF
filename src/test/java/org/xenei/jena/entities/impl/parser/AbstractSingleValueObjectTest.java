@@ -8,7 +8,6 @@ import java.lang.reflect.Method;
 import org.junit.Assert;
 import org.junit.Test;
 import org.xenei.jena.entities.EntityManagerFactory;
-import org.xenei.jena.entities.impl.EffectivePredicate;
 import org.xenei.jena.entities.impl.ObjectHandler;
 import org.xenei.jena.entities.impl.PredicateInfoImpl;
 import org.xenei.jena.entities.impl.handlers.EntityHandler;
