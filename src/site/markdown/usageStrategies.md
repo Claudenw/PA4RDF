@@ -22,15 +22,15 @@ the interface/class is to be handled by the PA4RDF entity manager.
 
 Any method that should be handled by the EntityManger should be annotated with a @Predicate annotation with the following exceptions:
 
-# Annotating a getter (e.g. getX or isX) method will automatically include the setters (i.e. setX or addX, and removeX) and the existential method hasX.
+* Annotating a getter (e.g. getX or isX) method will automatically include the setters (i.e. setX or addX, and removeX) and the existential method hasX.
 
-# Annotating a getter that return an RDFNode type will automatically include the setters, and existential methods that have @URI annotated parameters.
+* Annotating a getter that return an RDFNode type will automatically include the setters, and existential methods that have @URI annotated parameters.
 
-# Annotating a setter (e.g. addX or setX) method will automatically include the getter (i.e. getX), removeX and the existential method hasX.
+* Annotating a setter (e.g. addX or setX) method will automatically include the getter (i.e. getX), removeX and the existential method hasX.
 
-# Annotating a setter that accepts an RDFNode type will automatically include the setters, getters, and existential methods that have @URI annotated parameters.
+* Annotating a setter that accepts an RDFNode type will automatically include the setters, getters, and existential methods that have @URI annotated parameters.
 
-# Annotating a setter that accepts a String parameter that is annotated with @URI will automatically include the setters, getters, and existential methods that have RDFNode parameters.
+* Annotating a setter that accepts a String parameter that is annotated with @URI will automatically include the setters, getters, and existential methods that have RDFNode parameters.
 
 Methods are processed in groups based on whether methods are single or multiValue.
 
