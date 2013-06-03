@@ -42,8 +42,8 @@ Single value methods are:
 * void removeX()
 
 Multivalue methods are:
-* ExtendedIterator<valueClass> getX()
-* Colllection<valueClass> getX()
+* ExtendedIterator&lt;valueClass&gt; getX()
+* Colllection&lt;valueClass&gt; getX()
 * void addX( valueClass )
 * boolean hasX( valueClass )
 * void removeX( valueClass )
