@@ -9,6 +9,10 @@ import org.xenei.jena.entities.annotations.Predicate;
 import org.xenei.jena.entities.annotations.Subject;
 import org.xenei.jena.entities.annotations.URI;
 
+/**
+ * __U() shows add annotation
+ * __U2() shows get annotation
+ */
 @Subject( namespace = "http://example.com/" )
 public interface SimpleURICollectionInterface
 {

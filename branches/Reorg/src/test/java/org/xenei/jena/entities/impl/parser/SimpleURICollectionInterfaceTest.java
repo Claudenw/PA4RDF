@@ -2,9 +2,9 @@ package org.xenei.jena.entities.impl.parser;
 
 import org.xenei.jena.entities.testing.iface.SimpleURICollectionInterface;
 
-public class CollectionURIInterfaceTest extends AbstractCollectionURITest
+public class SimpleURICollectionInterfaceTest extends AbstractCollectionURITest
 {
-	public CollectionURIInterfaceTest()
+	public SimpleURICollectionInterfaceTest()
 	{
 		super(SimpleURICollectionInterface.class);
 	}

@@ -31,6 +31,7 @@ import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -279,6 +280,32 @@ public class EntityManagerImpl implements EntityManager
 		throw new IllegalArgumentException(String.format(
 				"%s implements neither Resource nor ResourceWrapper",
 				target.getClass()));
+	}
+
+	@Override
+	public Subject getSubject( final Class<?> clazz )
+	{
+		final Set<Class<?>> interfaces = new LinkedHashSet<Class<?>>();
+		for (Class<?> cls = clazz; cls != Object.class && cls != null; cls = cls
+				.getSuperclass())
+		{
+			final Subject retval = cls.getAnnotation(Subject.class);
+			if (retval != null)
+			{
+				return retval;
+			}
+			interfaces.addAll(Arrays.asList(cls.getInterfaces()));
+		}
+
+		for (final Class<?> cls : interfaces)
+		{
+			final Subject retval = cls.getAnnotation(Subject.class);
+			if (retval != null)
+			{
+				return retval;
+			}
+		}
+		return null;
 	}
 
 	/*

@@ -24,12 +24,11 @@ When used on a non abstract class (as opposed to an abstract class or interface)
 ** @URI
 @URI denotes a string method parameter that should be treated as a URI as opposed to a normal string value.  May be used as an annotation on a parameter or as a type in an @Predicate annotation to indicate that the returned string must be a URI value.
 
-
-
 Methods Processed
 ===
 
-In addition to the standard setX(), getX(), and isX() methods PA4RDF introduces four (4) more that exploit the RDF storage model.  The complete set of annotatable methods are: 
+In addition to the standard setX(), getX(), and isX() methods PA4RDF introduces four (4) more that exploit the RDF storage model.  There is no requirement to use getter/setter pairs.  Programmers may 
+elect to annotate any or all of the methods.  However, in some cases annotated methods automatically apply annotations to other methods if they exist. (See [Usage Strategies](./usageStrategies.html) for a discussion)  The complete set of annotatable methods are: 
 
 Setters
 ---
