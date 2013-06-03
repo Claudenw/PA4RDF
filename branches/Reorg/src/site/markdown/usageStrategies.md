@@ -35,17 +35,27 @@ Any method that should be handled by the EntityManger should be annotated with a
 Methods are processed in groups based on whether methods are single or multiValue.
 
 Single value methods are:
+
 * valueClass getX() -- where the valueClass is not an ExtendedIterator or Collection class.
+
 * boolean isX() -- where the valueClass is a boolean.
+
 * void setX( valueClass )
+
 * boolean hasX()
+
 * void removeX()
 
 Multivalue methods are:
+
 * ExtendedIterator&lt;valueClass&gt; getX()
+
 * Colllection&lt;valueClass&gt; getX()
+
 * void addX( valueClass )
+
 * boolean hasX( valueClass )
+
 * void removeX( valueClass )
  
 If a getter or setter for a group is annotated with @Predicate all other members of the group will be 
