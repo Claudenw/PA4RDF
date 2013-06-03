@@ -39,22 +39,24 @@ abstract public class BaseAbstractManagerTest
 	{
 		model.close();
 	}
-	
+
 	@Test
 	public void testGetResource() throws Exception
 	{
-		Resource r = model.createResource();
-		Object o = manager.read(r, classUnderTest );
+		final Resource r = model.createResource();
+		final Object o = manager.read(r, classUnderTest);
 		Resource r2 = r;
 		if (o instanceof ResourceWrapper)
 		{
-			ResourceWrapper rw = (ResourceWrapper) o;
+			final ResourceWrapper rw = (ResourceWrapper) o;
 			r2 = rw.getResource();
-			
-		} else {
+
+		}
+		else
+		{
 			r2 = (Resource) o;
 		}
-		Assert.assertEquals( r, r2 );
+		Assert.assertEquals(r, r2);
 	}
 
 }

@@ -39,6 +39,7 @@ import org.xenei.jena.entities.MissingAnnotation;
 import org.xenei.jena.entities.PredicateInfo;
 import org.xenei.jena.entities.SubjectInfo;
 import org.xenei.jena.entities.annotations.Predicate;
+import org.xenei.jena.entities.annotations.Subject;
 import org.xenei.jena.entities.annotations.URI;
 import org.xenei.jena.entities.impl.handlers.UriHandler;
 
@@ -351,9 +352,16 @@ public class MethodParser
 		private void parse( final ActionType actionType, final Method method )
 				throws MissingAnnotation
 		{
-			final Set<Class<?>> interfaces = findAbstractss(method
+			if (method.getDeclaringClass().isAnnotationPresent(Subject.class))
+			{
+				MethodParser.this.abstractMethodParser.parse(actionType,
+						method, null);
+				return;
+			}
+
+			final Set<Class<?>> interfaces = findAbstracts(method
 					.getDeclaringClass());
-			// process "set" if only one arg and not varargs
+
 			switch (actionType)
 			{
 				case SETTER:
@@ -376,7 +384,6 @@ public class MethodParser
 					{
 						parseGetter(interfaces, method);
 					}
-
 					break;
 
 				case REMOVER:
@@ -493,6 +500,7 @@ public class MethodParser
 						.getDeclaringClass());
 				final PredicateInfoImpl pi = (PredicateInfoImpl) si
 						.getPredicateInfo(m);
+
 				subjectInfo.add(pi);
 
 				if (multiAdd)
@@ -584,7 +592,7 @@ public class MethodParser
 	 * @param clazz
 	 * @return The ordered Set.
 	 */
-	public Set<Class<?>> findAbstractss( final Class<?> clazz )
+	public Set<Class<?>> findAbstracts( final Class<?> clazz )
 	{
 		if (clazz.equals(Object.class))
 		{

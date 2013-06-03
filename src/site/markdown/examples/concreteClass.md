@@ -1,7 +1,8 @@
-Abstract Class Example
+Concrete Class Extending Annotated Interface Example
 ==========
 
-This example show how the annotations work on an abstract class.  Note that the entity manger creates an
+This example show how the annotations work on an concrete class that extends an annotated 
+interface.   Note that the entity manger creates an
 instance of the abstract class.  This class is the similar to the [interface example](./interface.html)
 except that it uses the List<String> return type for getAuthor() and with the addition of a cite() 
 method that produces a cite entry for the book.
@@ -12,87 +13,87 @@ Book Interface
     @Subject( namespace="http://example.com/PA4RDF#" )
     public interface BookI {
 
-    @Predicate
-    void setTitle( String title );
-    String getTitle();
-
-    @Predicate
-    void addAuthor( String author );
-    ExtendedIterator<String> getAuthor();
-
-    @Predicate
-    void setPageCount( Integer int );
-    boolean hasPageCount();
-    int getPageCount();
+	    @Predicate
+	    void setTitle( String title );
+	    String getTitle();
+	
+	    @Predicate
+	    void addAuthor( String author );
+	    List<String> getAuthor();
+	
+	    @Predicate
+	    void setPageCount( Integer int );
+	    boolean hasPageCount();
+	    int getPageCount();
     }
 
 Book Class
 ==========
 
-
     public class Book implements BookI {
 
-    @Override
-	@Predicate( impl = true )
-	public public void setTitle( String title)
-	{
-		throw new EntityManagerRequiredException();
-	}
-    
-    @Override
-	@Predicate( impl = true )
-	public String getTitle()
-	{
-		throw new EntityManagerRequiredException();
-	}
-    
-    @Override
-	@Predicate( impl = true )
-    public void addAuthor( String author )
-	{
-		throw new EntityManagerRequiredException();
-	}
-    
-    @Override
-	@Predicate( impl = true )
-    public ExtendedIterator<String> getAuthor()	{
-		throw new EntityManagerRequiredException();
-	}
-    
-    @Override
-	@Predicate( impl = true )
-    public void setPageCount( Integer int )
-    {
-		throw new EntityManagerRequiredException();
-	}
-    
-    @Override
-	@Predicate( impl = true )  
-    public boolean hasPageCount()
-    {
-		throw new EntityManagerRequiredException();
-	}
-    
-    @Override
-	@Predicate( impl = true )   
-    public int getPageCount()
-	{
-		throw new EntityManagerRequiredException();
-	}
-    
-    public String cite() {
-      StringBuilder sb = new StringBuilder();
-      for (String author : getAuthor() )
-      {
-      	sb.append( author ).append( ", " );
-      }
-      sb.append( getTitle() ).append( "." );
-      if (book.hasPageCount())
-      {
-        sb.append(" pgs: ").append( getPageCount() );
-      }
-      return sb.toString();
-    }
+	    @Override
+		@Predicate( impl = true )
+		public public void setTitle( String title)
+		{
+			throw new EntityManagerRequiredException();
+		}
+	    
+	    @Override
+		@Predicate( impl = true )
+		public String getTitle()
+		{
+			throw new EntityManagerRequiredException();
+		}
+	    
+	    @Override
+		@Predicate( impl = true )
+	    public void addAuthor( String author )
+		{
+			throw new EntityManagerRequiredException();
+		}
+	    
+	    @Override
+		@Predicate( impl = true )
+	    public List<String> getAuthor()	{
+			throw new EntityManagerRequiredException();
+		}
+	    
+	    @Override
+		@Predicate( impl = true )
+	    public void setPageCount( Integer int )
+	    {
+			throw new EntityManagerRequiredException();
+		}
+	    
+	    @Override
+		@Predicate( impl = true )  
+	    public boolean hasPageCount()
+	    {
+			throw new EntityManagerRequiredException();
+		}
+	    
+	    @Override
+		@Predicate( impl = true )   
+	    public int getPageCount()
+		{
+			throw new EntityManagerRequiredException();
+		}
+	    
+	    public String cite() 
+	    {
+	      StringBuilder sb = new StringBuilder();
+	      for (String author : getAuthor() )
+	      {
+	      	sb.append( author ).append( ", " );
+	      }
+	      sb.append( getTitle() ).append( "." );
+	      if (book.hasPageCount())
+	      {
+	        sb.append(" pgs: ").append( getPageCount() );
+	      }
+	      return sb.toString();
+	    }
     }
 
 Example code setting the Book class

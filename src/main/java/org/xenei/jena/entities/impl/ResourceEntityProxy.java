@@ -42,28 +42,6 @@ public class ResourceEntityProxy implements MethodInterceptor // Invoker
 	private final EntityManager entityManager;
 
 	/**
-	 * The getResource method from the ResourceWrapper class.
-	 */
-	private static Method GET_RESOURCE;
-
-	static
-	{
-		try
-		{
-			ResourceEntityProxy.GET_RESOURCE = ResourceWrapper.class
-					.getDeclaredMethod("getResource");
-		}
-		catch (final SecurityException e)
-		{
-			throw new RuntimeException(e);
-		}
-		catch (final NoSuchMethodException e)
-		{
-			throw new RuntimeException(e);
-		}
-	}
-
-	/**
 	 * The constructor
 	 * 
 	 * @param entityManager
@@ -104,7 +82,10 @@ public class ResourceEntityProxy implements MethodInterceptor // Invoker
 	{
 
 		// handle the resource wrapper method call.
-		if (ResourceEntityProxy.GET_RESOURCE.equals(m))
+		// if (ResourceEntityProxy.GET_RESOURCE.equals(m))
+		if (m.getName().equals("getResource")
+				&& (m.getParameterTypes().length == 0)
+				&& (m.getReturnType() == Resource.class))
 		{
 			return resource;
 		}

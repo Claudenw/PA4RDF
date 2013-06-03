@@ -54,9 +54,10 @@ processed as if they were annotated as well.
 Concrete Class Annotations
 ===
 
-A concrete class that extends an annotated interface or abstract class may annotate the overridden methods with @Predicate( impl=true ) annotations.  This annotation triggers the entity manager to 
-intercept the request and return the result from the overridden method.  Methods that are annotated
-in this way should be written as follows:
+A concrete class may extend an annotated interface or abstract class, these classes must not have
+the @Subject annotation.  The overridden methods must be annotated with @Predicate( impl=true ) annotations.  Methods that are annotated
+in this way should be written as follows so that if the class is used without being loaded by the 
+entity manager an exception will be thrown:
 
 	@Override
 	@Predicate( impl = true )
@@ -65,7 +66,18 @@ in this way should be written as follows:
 		throw new EntityManagerRequiredException();
 	}
 
-This strategy allows for the creation of concrete classes that still retrieve data from the graph as expected for interface and abstract classes.
+This strategy allows for the creation of concrete classes that still retrieve data from the graph as expected for interface and abstract classes.  
+
+A concrete class be annotated with @Subject.  In this case all methods that are to be intercepted must be annotated with full @Predicate annotations as would be used in an interface and must include the 
+impl=true setting as shown below:
+
+	@Predicate( impl = true )
+	public String getX()
+	{
+		throw new EntityManagerRequiredException();
+	}  
+
+As with the above, this strategy will throw an exception if the method is not used within a entity manager. 
 
 Future Directions
 ===

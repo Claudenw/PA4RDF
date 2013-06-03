@@ -10,18 +10,18 @@ Book Interface
     @Subject( namespace="http://example.com/PA4RDF#" )
     public interface Book {
 
-    @Predicate
-    void setTitle( String title );
-    String getTitle();
-
-    @Predicate
-    void addAuthor( String author );
-    ExtendedIterator<String> getAuthor();
-
-    @Predicate
-    void setPageCount( Integer int );
-    boolean hasPageCount();
-    int getPageCount();
+	    @Predicate
+	    void setTitle( String title );
+	    String getTitle();
+	
+	    @Predicate
+	    void addAuthor( String author );
+	    ExtendedIterator<String> getAuthor();
+	
+	    @Predicate
+	    void setPageCount( Integer int );
+	    boolean hasPageCount();
+	    int getPageCount();
     }
 
 

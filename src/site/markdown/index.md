@@ -11,7 +11,7 @@ persistence frameworks.
 However as larger projects were developed, using interfaces became unwieldly and additions were made 
 to allow concrete implementations to be overridden by the PA4RDF functionality.  For a complete
 discussion of the use of PA4RDF annotations against interface, abstract and concrete classes see
-the [Usage Strategies](./UsageStrategies.html) page.
+the [Usage Strategies](./usageStrategies.html) page.
 
 The interface is defined in generic terms but the only extant implementation is for the Apache Jena RDF implementation.
 

@@ -1,29 +1,61 @@
-Abstract Class Example
+Concrete Class Example
 ==========
 
-This example show how the annotations work on an abstract class.  Note that the entity manger creates an
-instance of the abstract class.  This class is the similar to the [interface example](./interface.html)
-except that it uses the List<String> return type for getAuthor() and with the addition of a cite() 
-method that produces a cite entry for the book.
+This example show how the annotations work on a concrete class.  Note that the entity manger creates an
+instance of the class.  This class is the similar to the [concrete class extending annotated interface 
+example](./concreteClass.html) except that it directly annotates the methods.
 
 Book Class
 ==========
 
-    @Subject( namespace="http://example.com/PA4RDF#" )
-    public abstract class Book {
-
-	    @Predicate
-	    abstract void setTitle( String title );
-	    abstract String getTitle();
-	
-	    @Predicate
-	    abstract void addAuthor( String author );
-	    abstract List<String> getAuthor();
-	
-	    @Predicate
-	    abstract void setPageCount( Integer int );
-	    abstract boolean hasPageCount();
-	    abstract int getPageCount();
+	@Subject( namespace="http://example.com/PA4RDF#" )
+    public class Book {
+    
+		public public void setTitle( String title)
+		{
+			throw new EntityManagerRequiredException();
+		}
+	    
+	    @Override
+		@Predicate( impl = true )
+		public String getTitle()
+		{
+			throw new EntityManagerRequiredException();
+		}
+	    
+	    @Override
+		@Predicate( impl = true )
+	    public void addAuthor( String author )
+		{
+			throw new EntityManagerRequiredException();
+		}
+	    
+	    @Override
+		@Predicate( impl = true, type=String.class )
+	    public List<String> getAuthor()	{
+			throw new EntityManagerRequiredException();
+		}
+	    
+	    @Override
+		@Predicate( impl = true )
+	    public void setPageCount( Integer int )
+	    {
+			throw new EntityManagerRequiredException();
+		}
+	    
+	    @Override
+		@Predicate( impl = true )  
+	    public boolean hasPageCount()
+	    {
+			throw new EntityManagerRequiredException();
+		}
+	    
+	    @Override
+		@Predicate( impl = true )   
+	    public int getPageCount()
+		{
+			throw new EntityManagerRequiredException();
+		}
 	    
 	    public String cite() {
 	      StringBuilder sb = new StringBuilder();
@@ -48,11 +80,13 @@ Example code setting the Book class
     EntityManager entityManager = EntityManagerFactory.getEntityManager();
     Resource r = model.createResource( "http://example.com/mylibrary/book1" );
 
+
     Book book = EntityManager.read( r, Book.class );
     book.setTitle( "Java Generics and Collections" );
     book.addAuthor( "Maurice Naftalin" );
     book.addAuthor( "Philip Wadler" );
     book.setPageCount( 286 );
+
 
 Result of example code
 ======================
@@ -66,27 +100,27 @@ The above code will result in the following graph:
         <http://example.com/PA4RDF#pageCount> "286"^^<xsd:integer> ;
     .
 
-
 Example code reading the Book class
 ===================================
 
 Assuming the book object has been constructed as in the first example.
 
     System.out.println( "Title: "+book.getTitle() );
-    for (String author : book.getAuthor() )
+    Iterator<String> authors = book.getAuthors();
+    while (authors.hasNext())
     {
-        System.out.println( "  Author: "+author );
+        System.out.println( "  Author: "+authors.next() );
     }
     if (book.hasPageCount())
     {
         System.out.println( "  Pages: "+book.getPageCount() );
     }
     System.out.println( book.cite() );
-
+ 
 This will result in the following output:
 
     Title: Java Generics and Collections
       Author: Maurice Naftalin
       Author: Philip Wadler
-      Pages: 286
+      Pages: 286      
     Maurice Naftalin, Philip Wadler, Java Generics and Collections. pgs: 286

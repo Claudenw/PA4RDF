@@ -15,6 +15,8 @@
 
 package org.xenei.jena.entities;
 
+import org.xenei.jena.entities.annotations.Subject;
+
 /**
  * An Entity Manager to manage instances of entities annotated with the Subject
  * annotation
@@ -28,6 +30,20 @@ package org.xenei.jena.entities;
  */
 public interface EntityManager
 {
+
+	/**
+	 * Get the subject annotation for the class.
+	 * 
+	 * Returns the Subject annotation if it exists for the class.
+	 * Searches the super classes for the subject annotation.
+	 * If no annotation is found in the super classes all the interfaces are
+	 * searched and the first interface that contains the annotation is
+	 * returned.
+	 * 
+	 * @param clazz
+	 * @return the Subject annotation or null if no annotation is found.
+	 */
+	public Subject getSubject( final Class<?> clazz );
 
 	/**
 	 * Get the SubjectInfo for the class.
