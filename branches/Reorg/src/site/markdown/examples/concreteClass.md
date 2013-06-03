@@ -1,10 +1,12 @@
+ [Examples](./index.html) -> this
+ 
 Concrete Class Extending Annotated Interface Example
 ==========
 
 This example show how the annotations work on an concrete class that extends an annotated 
 interface.   Note that the entity manger creates an
 instance of the abstract class.  This class is the similar to the [interface example](./interface.html)
-except that it uses the List<String> return type for getAuthor() and with the addition of a cite() 
+except that it uses the List&lt;String&gt; return type for getAuthor() and with the addition of a cite() 
 method that produces a cite entry for the book.
 
 Book Interface
