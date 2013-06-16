@@ -450,6 +450,7 @@ public class MethodParser
 		{
 			// predicate for getter method includes predicate infor for setter
 			// method.
+			EffectivePredicate ep = new EffectivePredicate( method );
 
 			for (final Method m : findMethod(abstracts, method))
 			{
@@ -457,7 +458,13 @@ public class MethodParser
 						.parse(m);
 				if (pi != null)
 				{
-					subjectInfo.add(pi);
+					PredicateInfoImpl newPi = new PredicateInfoImpl( pi );
+					
+					if (ep.postExec != null)
+					{
+						newPi.getEffectivePredicate().addPostExec( ep.postExec );
+					}
+					subjectInfo.add(newPi);
 					return;
 				}
 			}

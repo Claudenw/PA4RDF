@@ -126,7 +126,12 @@ public class ResourceEntityProxy implements MethodInterceptor // Invoker
 
 		if (pi instanceof PredicateInfoImpl)
 		{
-			return ((PredicateInfoImpl) pi).exec(m, resource, args);
+			Object o = ((PredicateInfoImpl) pi).exec(m, resource, args);
+			for (Method peMethod : subjectInfo.getPredicateInfo( m ).getPostExec())
+			{
+				o = peMethod.invoke(obj, o);
+			}
+			return o;
 		}
 
 		throw new RuntimeException(String.format(

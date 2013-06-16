@@ -115,4 +115,10 @@ public @interface Predicate
 	 * If true, the first character will be upper cased.
 	 */
 	boolean upcase() default false;
+	
+	/**
+	 * Method on object to call after the method is executed.
+	 * @return the name of the method to call.
+	 */
+	String postExec() default "";
 }
