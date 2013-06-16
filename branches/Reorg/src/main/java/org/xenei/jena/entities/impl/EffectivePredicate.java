@@ -19,6 +19,9 @@ import com.hp.hpl.jena.rdf.model.RDFNode;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.xenei.jena.entities.annotations.Predicate;
@@ -40,6 +43,7 @@ public class EffectivePredicate
 	Class<?> type = null;
 	boolean emptyIsNull = true;
 	boolean impl = false;
+	List<Method> postExec = null;
 
 	public EffectivePredicate()
 	{
@@ -74,7 +78,57 @@ public class EffectivePredicate
 			{
 				this.namespace = s.namespace();
 			}
-			merge(m.getAnnotation(Predicate.class));
+			Predicate p = m.getAnnotation(Predicate.class); 
+			merge(p);
+			if (p != null)
+			{
+				if (StringUtils.isNotBlank(p.postExec()))
+				{
+					String mName = p.postExec().trim();
+					try
+					{
+						Method peMethod = null;
+						Class<?> argType = null;
+						final ActionType actionType = ActionType.parse(m.getName());
+						switch (actionType)
+						{
+							case GETTER:
+								argType = m.getReturnType();
+								break;
+								
+							case SETTER:
+							case EXISTENTIAL:
+							case REMOVER:
+								if (m.getParameterTypes().length != 1)
+								{
+									throw new RuntimeException( String.format( "%s does not have a single parameter", peMethod ));
+								}
+								argType = m.getParameterTypes()[0];
+								break;
+						}
+						peMethod = m.getDeclaringClass().getMethod(mName, argType);
+						if ( argType.equals( peMethod.getReturnType()))
+						{
+							addPostExec( peMethod );
+						}
+						else {
+							throw new RuntimeException( String.format( "%s does not return its parameter type", peMethod ));
+						}
+					}
+					catch (NoSuchMethodException e)
+					{
+						throw new RuntimeException( "Error parsing predicate annotation", e );
+					}
+					catch (SecurityException e)
+					{
+						throw new RuntimeException( "Error parsing predicate annotation", e );
+					}
+					catch (IllegalArgumentException e)
+					{
+						throw new RuntimeException( "Error parsing predicate annotation action type", e );
+					}
+				}
+			}
 			if (StringUtils.isBlank(name))
 			{
 				try
@@ -94,6 +148,26 @@ public class EffectivePredicate
 	{
 		this();
 		merge(p);
+	}
+	
+	public void addPostExec( Collection<Method> peMethods)
+	{
+		for (Method m : peMethods)
+		{
+			addPostExec( m );
+		}
+	}
+	
+	public void addPostExec( Method peMethod )
+	{
+		if (postExec == null)
+		{
+			postExec = new ArrayList<Method>();
+		}
+		if (! postExec.contains(peMethod))
+		{
+			postExec.add( peMethod );
+		}
 	}
 
 	public boolean emptyIsNull()
@@ -130,6 +204,14 @@ public class EffectivePredicate
 			type = RDFNode.class.equals(predicate.type()) ? type : predicate
 					.type();
 			impl |= predicate.impl();
+			if (predicate.postExec != null)
+			{
+				for (Method m : predicate.postExec)
+				{
+					addPostExec( m );
+				}
+			}
+			
 		}
 		return this;
 	}

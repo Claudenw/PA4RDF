@@ -248,6 +248,17 @@ public class PredicateInfoImpl implements PredicateInfo
 		objectHandler = PredicateInfoImpl.getHandler(entityManager,
 				concreteType, predicate);
 	}
+	
+	public PredicateInfoImpl( PredicateInfoImpl pi )
+	{
+		this.actionType = pi.actionType;
+		this.concreteType = pi.concreteType;
+		this.methodName = pi.methodName;
+		this.objectHandler = pi.objectHandler;
+		this.predicate = new EffectivePredicate( pi.predicate );
+		this.property = pi.property;
+		this.valueClass = pi.valueClass;
+	}
 
 	private Property createResourceProperty( final Resource resource )
 	{
@@ -592,5 +603,15 @@ public class PredicateInfoImpl implements PredicateInfo
 	public String toString()
 	{
 		return String.format("%s(%s)", methodName, valueClass);
+	}
+
+	@Override
+	public List<Method> getPostExec()
+	{
+		if (predicate.postExec == null)
+		{
+			return Collections.emptyList();
+		}
+		return Collections.unmodifiableList( predicate.postExec );
 	}
 }

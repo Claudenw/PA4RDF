@@ -6,18 +6,24 @@ import org.xenei.jena.entities.testing.iface.SimpleInterface;
 
 public class SimpleInterfaceImpl implements SimpleInterface
 {
-
+	public String lastGetX;
 	public SimpleInterfaceImpl()
 	{
 	}
 
 	@Override
-	@Predicate( impl = true )
+	@Predicate( impl = true, postExec="postGetX" )
 	public String getX()
 	{
 		throw new EntityManagerRequiredException();
 	}
-
+	
+	public String postGetX(String s)
+	{
+		lastGetX = s;
+		return s;
+	}
+	
 	@Override
 	@Predicate( impl = true )
 	public boolean hasX()
