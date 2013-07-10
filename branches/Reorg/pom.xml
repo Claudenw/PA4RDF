@@ -9,6 +9,13 @@
 		<url>http://svn.code.sf.net/p/pa4rdf/code</url>
 	</scm>
 	<distributionManagement>
+	<repository>
+      <id>sonatype-nexus-staging</id>
+    </repository>
+    <snapshotRepository>
+      <id>sonatype-nexus-snapshot</id>
+      <name>Propellors Snapshots</name>
+    </snapshotRepository>
 		<site>
 			<id>SourceForge web site</id>
 			<name>pa4rdf.sf.net</name>
