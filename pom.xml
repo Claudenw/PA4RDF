@@ -3,13 +3,13 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.xenei</groupId>
 	<artifactId>PA4RDF</artifactId>
-	<version>1.2-SNAPSHOT</version>
+	<version>1.1-SNAPSHOT</version>
 	<scm>
 		<connection>scm:svn:svn://svn.code.sf.net/p/pa4rdf/code/tags/PA4RDF-1.1</connection>
 		<developerConnection>scm:svn:https://svn.code.sf.net/p/pa4rdf/code/tags/PA4RDF-1.1</developerConnection>
 		<url>http://svn.code.sf.net/p/pa4rdf/code/tags/PA4RDF-1.1</url>
 	</scm>
-	<distributionManagement>
+	<!-- 	<distributionManagement>
 		<site>
 			<id>SourceForge web site</id>
 			<name>pa4rdf.sf.net</name>
@@ -28,7 +28,7 @@ https://oss.sonatype.org/service/local/staging/deploy/maven2/
 </url>
 		</repository>
 
-	</distributionManagement>
+	</distributionManagement> -->
 	<name>Persistence Annotations 4 RDF</name>
 	<url>http://pa4rdf.sourceforge.net/</url>
 	<inceptionYear>2012</inceptionYear>
