@@ -1,16 +1,20 @@
 Annotations
-=====
+====
 
 Persistence Annotation for RDF introduces three (3) annotations:
 
-** @Subject
+@Subject
+----
+
 @Subject denotes a class or interface as mapping to an RDF Subject.  Any subject in the triple store can be so mapped.  This annotation takes two (2) arguments:
 * namespace (required) defines the default namespace for the @Predicate annotations.
 * types (optional) a list of uri strings that define types that the RDF Property underlying the Subject must have to be considered.
 
-** @Predicate
- 
+@Predicate
+----
+
 @Predicate denotes a method of an @Subject annotated class or interface as mapping to an RDF Predicate.  The values of @Predicate annotated methods are the objects in the resulting triples.
+
 * emptyIsNull (optional) a boolean that, if true, indicates that empty strings should be treated as nulls.  Empty string values will not be inserted into the graph and, if read from the graph, will be returned as nulls.
 * impl (optional) a boolean that indicates that an implemented method is only a wrapper for an annotated method of the same signature in an abstract class.
 * literalType (optional) a string representation of the URI for the RDF (XML) Type of the literal.  If both literalType and type are specified the literalType takes precedence.  See [Data Types](./dataTypes.html) for more information.  
@@ -22,7 +26,8 @@ Persistence Annotation for RDF introduces three (3) annotations:
 
 When used on a non abstract class (as opposed to an abstract class or interface), the @Predicate annotation indicates that the method is implementing a predicate annotated abstract method.
 
-** @URI
+@URI
+----
 @URI denotes a string method parameter that should be treated as a URI as opposed to a normal string value.  May be used as an annotation on a parameter or as a type in an @Predicate annotation to indicate that the returned string must be a URI value.
 
 Methods Processed
