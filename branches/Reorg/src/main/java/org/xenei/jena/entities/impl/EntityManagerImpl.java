@@ -238,10 +238,6 @@ public class EntityManagerImpl implements EntityManager
 						{
 							EntityManagerImpl.LOG.warn(e.toString());
 						}
-						catch (final ExceptionInInitializerError e)
-						{
-							System.out.println("WHAT?");
-						}
 					}
 				}
 				catch (final IOException e)
