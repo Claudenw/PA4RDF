@@ -2,11 +2,11 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.xenei</groupId>
 	<artifactId>PA4RDF</artifactId>
-	<version>1.1-SNAPSHOT</version>
+	<version>1.1</version>
 	<scm>
-		<connection>scm:svn:svn://svn.code.sf.net/p/pa4rdf/code/trunk</connection>
-		<developerConnection>scm:svn:https://svn.code.sf.net/p/pa4rdf/code/trunk</developerConnection>
-		<url>http://svn.code.sf.net/p/pa4rdf/code</url>
+		<connection>scm:svn:svn://svn.code.sf.net/p/pa4rdf/code/tags/PA4RDF-1.1</connection>
+		<developerConnection>scm:svn:https://svn.code.sf.net/p/pa4rdf/code/tags/PA4RDF-1.1</developerConnection>
+		<url>http://svn.code.sf.net/p/pa4rdf/code/tags/PA4RDF-1.1</url>
 	</scm>
 	<distributionManagement>
 		<site>
