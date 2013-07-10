@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/DECORATION/1.3.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/DECORATION/1.3.0 http://maven.apache.org/xsd/decoration-1.3.0.xsd"
+    >
+  <body>
+    <menu name="Overview">
+      <item name="Introduction" href="index.html"/>
+      <item name="Annotations" href="annotations.html" />
+      <item name="Data Types" href="dataTypes.html" />
+      <item name="Code Example" href="example.html"/>
+      <item name="Project Info" href="project-info.html" />
+    </menu>
+    <menu name="Java Docs">
+      <item name="Source" href="apidocs/index.html"/>
+      <item name="Test Code" href="testapidocs/index.html"/>
+    </menu>
+  </body>
+</project>
