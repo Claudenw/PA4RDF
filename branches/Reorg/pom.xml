@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.xenei</groupId>
 	<artifactId>PA4RDF</artifactId>
-	<version>1.2-SNAPSHOT</version>
+	<version>1.1-SNAPSHOT</version>
 	<scm>
 		<connection>scm:svn:svn://svn.code.sf.net/p/pa4rdf/code/tags/PA4RDF-1.1</connection>
 		<developerConnection>scm:svn:https://svn.code.sf.net/p/pa4rdf/code/tags/PA4RDF-1.1</developerConnection>
@@ -167,8 +167,7 @@ https://oss.sonatype.org/service/local/staging/deploy/maven2/
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-release-plugin</artifactId>
-				<version>2.4</version>
-			</plugin>
+				</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-repository-plugin</artifactId>
