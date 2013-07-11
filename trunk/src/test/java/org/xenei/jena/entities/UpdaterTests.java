@@ -196,7 +196,7 @@ public class UpdaterTests
 	EntityManager manager = new EntityManagerImpl();
 
 	@Test
-	public void DataSourceModelTest()
+	public void DataSourceModelTest() throws Exception
 	{
 		final DataSource ds1 = new DataSource();
 		ds1.setIntValue(1);
@@ -211,8 +211,6 @@ public class UpdaterTests
 				DataSourceModelIface.class);
 		manager.update(ds1, ds2);
 
-		m.write(System.out, "TURTLE");
-
 		Assert.assertEquals(1, ds2.getIntValue());
 		Assert.assertEquals(2.1, ds2.getDblValue());
 		Assert.assertEquals(3.2F, ds2.getFltValue());
@@ -221,7 +219,7 @@ public class UpdaterTests
 	}
 
 	@Test
-	public void DataSourceModelTest2()
+	public void DataSourceModelTest2() throws Exception
 	{
 		final Model m = ModelFactory.createDefaultModel();
 		final Resource r = m.createResource("http://example.com/test/resource");

@@ -8,6 +8,7 @@ import org.apache.log4j.PropertyConfigurator;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.xenei.jena.entities.testing.abst.AbstractEntity;
 
 public class AbstractEntityTest
 {

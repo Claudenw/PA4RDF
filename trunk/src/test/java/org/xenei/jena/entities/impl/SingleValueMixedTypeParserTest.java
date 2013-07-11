@@ -11,11 +11,11 @@ import org.junit.Before;
 import org.junit.Test;
 import org.xenei.jena.entities.EntityManager;
 import org.xenei.jena.entities.EntityManagerFactory;
-import org.xenei.jena.entities.SingleValueMixedTypeTestClass;
 import org.xenei.jena.entities.SubjectInfo;
 import org.xenei.jena.entities.impl.handlers.LiteralHandler;
 import org.xenei.jena.entities.impl.handlers.ResourceHandler;
 import org.xenei.jena.entities.impl.handlers.UriHandler;
+import org.xenei.jena.entities.testing.abst.SingleValueMixedTypeTestClass;
 
 public class SingleValueMixedTypeParserTest
 {
@@ -26,7 +26,7 @@ public class SingleValueMixedTypeParserTest
 	private static String namespaceStr = "http://localhost/test#";
 
 	@Before
-	public void setup()
+	public void setup() throws Exception
 	{
 		model = ModelFactory.createDefaultModel();
 		final EntityManager manager = EntityManagerFactory.getEntityManager();

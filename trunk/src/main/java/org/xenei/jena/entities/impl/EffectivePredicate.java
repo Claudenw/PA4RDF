@@ -17,8 +17,16 @@ package org.xenei.jena.entities.impl;
 
 import com.hp.hpl.jena.rdf.model.RDFNode;
 
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
 import org.apache.commons.lang.StringUtils;
 import org.xenei.jena.entities.annotations.Predicate;
+import org.xenei.jena.entities.annotations.Subject;
+import org.xenei.jena.entities.annotations.URI;
 
 /**
  * An class that mimics the Predicate annotation but allows processing to modify
@@ -26,22 +34,155 @@ import org.xenei.jena.entities.annotations.Predicate;
  * 
  * @see {@link org.xenei.jena.entity.annotations.Precicate}
  */
-class EffectivePredicate
+public class EffectivePredicate
 {
 	boolean upcase = false;
 	String name = "";
 	String namespace = "";
 	String literalType = "";
-	Class<?> type = RDFNode.class;
+	Class<?> type = null;
 	boolean emptyIsNull = true;
+	boolean impl = false;
+	List<Method> postExec = null;
 
 	public EffectivePredicate()
 	{
 	}
 
+	public EffectivePredicate( final EffectivePredicate ep )
+	{
+		this();
+		merge(ep);
+	}
+
+	public EffectivePredicate( final Method m )
+	{
+		if (m != null)
+		{
+
+			if (m.getParameterTypes().length > 0)
+			{
+
+				for (final Annotation a : m.getParameterAnnotations()[0])
+				{
+					if (a instanceof URI)
+					{
+						this.type = URI.class;
+					}
+				}
+			}
+
+			final Subject s = m.getDeclaringClass()
+					.getAnnotation(Subject.class);
+			if (s != null)
+			{
+				this.namespace = s.namespace();
+			}
+			Predicate p = m.getAnnotation(Predicate.class); 
+			merge(p);
+			if (p != null)
+			{
+				if (StringUtils.isNotBlank(p.postExec()))
+				{
+					String mName = p.postExec().trim();
+					try
+					{
+						Method peMethod = null;
+						Class<?> argType = null;
+						final ActionType actionType = ActionType.parse(m.getName());
+						switch (actionType)
+						{
+							case GETTER:
+								argType = m.getReturnType();
+								break;
+								
+							case SETTER:
+							case EXISTENTIAL:
+							case REMOVER:
+								if (m.getParameterTypes().length != 1)
+								{
+									throw new RuntimeException( String.format( "%s does not have a single parameter", peMethod ));
+								}
+								argType = m.getParameterTypes()[0];
+								break;
+						}
+						peMethod = m.getDeclaringClass().getMethod(mName, argType);
+						if ( argType.equals( peMethod.getReturnType()))
+						{
+							addPostExec( peMethod );
+						}
+						else {
+							throw new RuntimeException( String.format( "%s does not return its parameter type", peMethod ));
+						}
+					}
+					catch (NoSuchMethodException e)
+					{
+						throw new RuntimeException( "Error parsing predicate annotation", e );
+					}
+					catch (SecurityException e)
+					{
+						throw new RuntimeException( "Error parsing predicate annotation", e );
+					}
+					catch (IllegalArgumentException e)
+					{
+						throw new RuntimeException( "Error parsing predicate annotation action type", e );
+					}
+				}
+			}
+			if (StringUtils.isBlank(name))
+			{
+				try
+				{
+					final ActionType actionType = ActionType.parse(m.getName());
+					setName(actionType.extractName(m.getName()));
+				}
+				catch (final IllegalArgumentException e)
+				{
+					// expected when not an action method.
+				}
+			}
+		}
+	}
+
+	public EffectivePredicate( final Predicate p )
+	{
+		this();
+		merge(p);
+	}
+	
+	public void addPostExec( Collection<Method> peMethods)
+	{
+		for (Method m : peMethods)
+		{
+			addPostExec( m );
+		}
+	}
+	
+	public void addPostExec( Method peMethod )
+	{
+		if (postExec == null)
+		{
+			postExec = new ArrayList<Method>();
+		}
+		if (! postExec.contains(peMethod))
+		{
+			postExec.add( peMethod );
+		}
+	}
+
 	public boolean emptyIsNull()
 	{
 		return emptyIsNull;
+	}
+
+	public boolean impl()
+	{
+		return impl;
+	}
+
+	public boolean isTypeNotSet()
+	{
+		return type == null;
 	}
 
 	public String literalType()
@@ -54,14 +195,23 @@ class EffectivePredicate
 		if (predicate != null)
 		{
 			upcase = predicate.upcase();
-			name = StringUtils.isBlank(predicate.name()) ? name : predicate
-					.name();
+			setName(StringUtils.isBlank(predicate.name()) ? name : predicate
+					.name());
 			namespace = StringUtils.isBlank(predicate.namespace()) ? namespace
 					: predicate.namespace();
 			literalType = StringUtils.isBlank(predicate.literalType()) ? literalType
 					: predicate.literalType();
 			type = RDFNode.class.equals(predicate.type()) ? type : predicate
 					.type();
+			impl |= predicate.impl();
+			if (predicate.postExec != null)
+			{
+				for (Method m : predicate.postExec)
+				{
+					addPostExec( m );
+				}
+			}
+			
 		}
 		return this;
 	}
@@ -71,15 +221,17 @@ class EffectivePredicate
 		if (predicate != null)
 		{
 			upcase = predicate.upcase();
-			name = StringUtils.isBlank(predicate.name()) ? name : predicate
-					.name();
+			setName(StringUtils.isBlank(predicate.name()) ? name : predicate
+					.name());
 			namespace = StringUtils.isBlank(predicate.namespace()) ? namespace
 					: predicate.namespace();
 			literalType = StringUtils.isBlank(predicate.literalType()) ? literalType
 					: predicate.literalType();
 			type = RDFNode.class.equals(predicate.type()) ? type : predicate
 					.type();
+			// type = type!=null ? type : predicate.type();
 			emptyIsNull = predicate.emptyIsNull();
+			impl |= predicate.impl();
 		}
 		return this;
 	}
@@ -94,9 +246,25 @@ class EffectivePredicate
 		return namespace;
 	}
 
+	public void setName( final String name )
+	{
+		if (StringUtils.isNotBlank(name))
+		{
+			final String s = name.substring(0, 1);
+			if (upcase())
+			{
+				this.name = name.replaceFirst(s, s.toUpperCase());
+			}
+			else
+			{
+				this.name = name.replaceFirst(s, s.toLowerCase());
+			}
+		}
+	}
+
 	public Class<?> type()
 	{
-		return type;
+		return type == null ? RDFNode.class : type;
 	}
 
 	public boolean upcase()

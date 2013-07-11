@@ -22,6 +22,7 @@ import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.xenei.jena.entities.testing.abst.SingleValuePrimitiveTestClass;
 
 public class SingleValuePrimitiveEntityTests
 {
@@ -30,7 +31,7 @@ public class SingleValuePrimitiveEntityTests
 	private Model model;
 
 	@Before
-	public void setup()
+	public void setup() throws Exception
 	{
 		model = ModelFactory.createDefaultModel();
 		final Resource r = model

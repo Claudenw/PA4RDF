@@ -1,10 +1,9 @@
-[TOC]
 
 # Data Types #
 
-PAR will convert to/from any registered typed literal including the standard Java primitives and wrapped primitive types.
+PA4RDF will convert to/from any registered typed literal including the standard Java primitives and wrapped primitive types.
 
-If the return type or parameter of an @Predicate annotated is another @Subject annotated class PAR will automatically create and map the class as appropriate.
+If the return type or parameter of an @Predicate annotated is another @Subject annotated class PA4RDF will automatically create and map the class as appropriate.
 
 ## Data Type Mapping ##
 

@@ -14,21 +14,15 @@
  */
 package org.xenei.jena.entities.impl;
 
-import com.hp.hpl.jena.graph.Node;
 import com.hp.hpl.jena.rdf.model.Model;
-import com.hp.hpl.jena.rdf.model.RDFNode;
 import com.hp.hpl.jena.rdf.model.Resource;
 import com.hp.hpl.jena.rdf.model.ResourceFactory;
-import com.hp.hpl.jena.rdf.model.impl.Util;
-import com.hp.hpl.jena.util.iterator.ExtendedIterator;
 import com.hp.hpl.jena.vocabulary.RDF;
 
 import java.io.File;
 import java.io.IOException;
-import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -47,8 +41,6 @@ import java.util.zip.ZipInputStream;
 import net.sf.cglib.proxy.Enhancer;
 import net.sf.cglib.proxy.MethodInterceptor;
 
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.proxy.exception.InvokerException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xenei.jena.entities.EntityManager;
@@ -57,7 +49,6 @@ import org.xenei.jena.entities.ResourceWrapper;
 import org.xenei.jena.entities.SubjectInfo;
 import org.xenei.jena.entities.annotations.Predicate;
 import org.xenei.jena.entities.annotations.Subject;
-import org.xenei.jena.entities.annotations.URI;
 
 /**
  * An implementation of the EntityManager interface.
@@ -84,139 +75,6 @@ public class EntityManagerImpl implements EntityManager
 		{
 			throw new RuntimeException(e);
 		}
-	}
-
-	private Method addGetterMethods( final String methodName,
-			final SubjectInfoImpl subjectInfo, final Class<?> setterValueType,
-			final EffectivePredicate parentPredicate, final boolean multiAdd,
-			final Subject subject ) throws MissingAnnotation
-	{
-		Method m = null;
-		try
-		{
-			// only get methods without arguments
-			m = subjectInfo.getImplementedClass().getMethod(methodName,
-					(Class<?>[]) null);
-
-			if (shouldProcess(m))
-			{
-				final EffectivePredicate predicate = getEffectivePredicate(m,
-						null, null, parentPredicate, subject);
-
-				// ExtendedIterator or Collection return type
-				if (m.getReturnType().equals(ExtendedIterator.class)
-						|| Collection.class.isAssignableFrom(m.getReturnType()))
-				{
-
-					final Predicate declaredPredicate = m
-							.getAnnotation(Predicate.class);
-					if (declaredPredicate == null)
-					{
-						if (multiAdd)
-						{
-
-							throw new MissingAnnotation(
-									String.format(
-											"%s.%s must have a Predicate annotation to define type",
-											subjectInfo.getImplementedClass(),
-											methodName));
-						}
-						// return type is setter type after accounting for URI
-						// type
-						if (predicate.type.equals(URI.class))
-						{
-							predicate.type = RDFNode.class;
-						}
-					}
-					else
-					{
-						predicate.type = declaredPredicate.type();
-					}
-
-				}
-
-				boolean okToProcess = TypeChecker.canBeSetFrom(
-						predicate.type(), setterValueType);
-				if (!okToProcess)
-				{
-					// handle URI from RDFNode
-					okToProcess = predicate.type().equals(URI.class)
-							&& (setterValueType.equals(RDFNode.class));
-				}
-				if (!okToProcess)
-				{
-					// handle RDFNode from URI
-					okToProcess = predicate.type().equals(URI.class)
-							&& (setterValueType.equals(String.class));
-					if (okToProcess)
-					{
-						if (m.getReturnType().equals(RDFNode.class))
-						{
-							predicate.type = RDFNode.class;
-						}
-					}
-				}
-
-				if (okToProcess)
-				{
-					subjectInfo.add(new PredicateInfoImpl(this, predicate,
-							methodName, m.getReturnType()));
-				}
-				else
-				{
-					m = null;
-				}
-			}
-			else
-			{
-				m = null;
-			}
-		}
-		catch (final SecurityException e)
-		{
-			// acceptable response
-		}
-		catch (final NoSuchMethodException e)
-		{
-			// acceptable response
-		}
-		return m;
-	}
-
-	private Method addHasMethods( final String methodName,
-			final SubjectInfoImpl subjectInfo, final Class<?> valueType,
-			final EffectivePredicate parentPredicate, final Subject subject )
-	{
-		Method m = null;
-		try
-		{
-			m = subjectInfo.getImplementedClass().getMethod(methodName,
-					new Class<?>[] { valueType });
-			if (shouldProcess(m))
-			{
-				subjectInfo.add(new PredicateInfoImpl(this,
-						getEffectivePredicate(m, getParameterAnnotation(m),
-								valueType, parentPredicate, subject),
-						methodName, valueType));
-			}
-			else
-			{
-				m = null;
-			}
-		}
-		catch (final SecurityException e)
-		{
-			// acceptable response
-		}
-		catch (final NoSuchMethodException e)
-		{
-			// acceptable response
-		}
-		catch (final MissingAnnotation e)
-		{
-			EntityManagerImpl.LOG.error(e.toString());
-		}
-		return m;
 	}
 
 	/**
@@ -248,52 +106,6 @@ public class EntityManagerImpl implements EntityManager
 			}
 		}
 		return r;
-	}
-
-	private Method addRemoverMethod( final Class<?> argType, final String name,
-			final SubjectInfoImpl subjectInfo,
-			final EffectivePredicate parentPredicate, final Subject subject )
-			throws MissingAnnotation
-	{
-		Method m = null;
-		try
-		{
-			if (argType == null)
-			{
-				m = subjectInfo.getImplementedClass().getMethod(name);
-			}
-			else
-			{
-				m = subjectInfo.getImplementedClass().getMethod(name,
-						new Class<?>[] { argType });
-			}
-			if (shouldProcess(m))
-			{
-				final EffectivePredicate predicate = getEffectivePredicate(m,
-						getParameterAnnotation(m), argType, parentPredicate,
-						subject);
-				if (argType == null)
-				{
-					predicate.type = null;
-				}
-				subjectInfo.add(new PredicateInfoImpl(this, predicate, m
-						.getName(), argType));
-			}
-			else
-			{
-				m = null;
-			}
-
-		}
-		catch (final SecurityException e)
-		{
-			// acceptable error
-		}
-		catch (final NoSuchMethodException e)
-		{
-			// acceptable error
-		}
-		return m;
 	}
 
 	private Map<String, Integer> countAdders( final Method[] methods )
@@ -379,29 +191,6 @@ public class EntityManagerImpl implements EntityManager
 	}
 
 	/**
-	 * Returns the list of annotations if this method has the Predicate
-	 * annotation
-	 * 
-	 * @param subjectInfo
-	 * @param m
-	 * @return
-	 */
-	private Annotation[] getAnnotationsIfProcessable(
-			final SubjectInfo subjectInfo, final Method m )
-	{
-		final Annotation[] annotations = m.getAnnotations();
-		boolean process = false;
-		for (final Annotation a : annotations)
-		{
-			if (a instanceof org.xenei.jena.entities.annotations.Predicate)
-			{
-				process = subjectInfo.getPredicateInfo(m) == null;
-			}
-		}
-		return process ? annotations : null;
-	}
-
-	/**
 	 * Scans all classes accessible from the context class loader which belong
 	 * to the given package and subpackages.
 	 * Adapted from http://snippets.dzone.com/posts/show/4831 and extended to
@@ -449,10 +238,6 @@ public class EntityManagerImpl implements EntityManager
 						{
 							EntityManagerImpl.LOG.warn(e.toString());
 						}
-						catch (final ExceptionInInitializerError e)
-						{
-							System.out.println("WHAT?");
-						}
 					}
 				}
 				catch (final IOException e)
@@ -478,192 +263,6 @@ public class EntityManagerImpl implements EntityManager
 		return classes;
 	}
 
-	private EffectivePredicate getEffectivePredicate( final Method m )
-			throws MissingAnnotation
-	{
-		return getEffectivePredicate(m, null, null, null, null);
-	}
-
-	private EffectivePredicate getEffectivePredicate( final Method m,
-			final Annotation[] paramAnnotations, final Class<?> returnType,
-			final EffectivePredicate dflt, final Subject subject )
-			throws MissingAnnotation
-	{
-		boolean typeSet = false;
-
-		final EffectivePredicate retval = new EffectivePredicate().merge(
-				m.getAnnotation(Predicate.class)).merge(dflt);
-		if (StringUtils.isBlank(retval.namespace()) && (subject != null))
-		{
-			retval.namespace = subject.namespace();
-		}
-		if (StringUtils.isBlank(retval.namespace()))
-		{
-			retval.namespace = getMethodNamespace(m);
-
-		}
-		if (paramAnnotations != null)
-		{
-			for (final Annotation a : paramAnnotations)
-			{
-				if (a instanceof URI)
-				{
-					retval.type = URI.class;
-					typeSet = true;
-				}
-			}
-		}
-		if (!typeSet && (returnType != null))
-		{
-			retval.type = returnType;
-		}
-		if (retval.namespace().length() == 0)
-		{
-			retval.namespace = getNamespace(m.getDeclaringClass());
-		}
-		if (retval.name().length() == 0)
-		{
-			final ActionType actionType = ActionType.parse(m.getName());
-			retval.name = actionType.extractName(m.getName());
-		}
-
-		// check to see if local name includes namespace
-		final Node n = Node.createURI(retval.name);
-		final String localNamespace = n.getNameSpace();
-		// Node.getNameSpace() always returns part of the name as the
-		// namespace (i.e. it is never 0 length)
-		if (Util.notNameChar(localNamespace.charAt(localNamespace.length() - 1)))
-		{
-			retval.namespace = localNamespace;
-			retval.name = n.getLocalName();
-		}
-
-		if (retval.namespace().length() == 0)
-		{
-			throw new MissingAnnotation(
-					String.format(
-							"Namespace is not defined in property, entity or uriString for %s",
-							m.toString()));
-		}
-		if (!Util.notNameChar(retval.namespace().charAt(
-				retval.namespace().length() - 1)))
-		{
-			throw new MissingAnnotation(String.format(
-					"Namespace (%s) ends with invalid character",
-					retval.namespace()));
-		}
-		final String s = retval.name.substring(0, 1);
-		if (retval.upcase())
-		{
-			retval.name = retval.name.replaceFirst(s, s.toUpperCase());
-		}
-		else
-		{
-			retval.name = retval.name.replaceFirst(s, s.toLowerCase());
-		}
-
-		final int split = Util.splitNamespace(retval.namespace()
-				+ retval.name());
-		if (split != retval.namespace().length())
-		{
-			throw new MissingAnnotation(
-					String.format(
-							"uriString (%s) has invalid characters in the localname part (%s)",
-							retval.namespace() + retval.name(),
-							retval.namespace() + retval.name().substring(split)));
-		}
-		return retval;
-	}
-
-	private EffectivePredicate getEffectivePredicate( final Method m,
-			final Annotation[] paramAnnotations, final Class<?> returnType,
-			final Subject subject ) throws MissingAnnotation
-	{
-		return getEffectivePredicate(m, paramAnnotations, returnType, null,
-				subject);
-	}
-
-	/**
-	 * Get the namespace from annotations on the methods that method overrides.
-	 * 
-	 * @param method
-	 *            the method that overrides other methods.
-	 * @return the namespace string or an empty string.
-	 */
-	private String getMethodNamespace( final Method method )
-	{
-
-		if (method.getDeclaringClass().equals(Object.class))
-		{
-			return "";
-		}
-		final Set<Class<?>> interfaces = new LinkedHashSet<Class<?>>();
-		interfaces.addAll(Arrays.asList(method.getDeclaringClass()
-				.getInterfaces()));
-
-		for (Class<?> superClass = method.getDeclaringClass().getSuperclass(); superClass != Object.class && superClass != null; superClass = superClass
-				.getSuperclass())
-		{
-			interfaces.addAll(Arrays.asList(superClass.getInterfaces()));
-			try
-			{
-				final Method m = superClass.getMethod(method.getName(),
-						method.getParameterTypes());
-				final Predicate p = m.getAnnotation(Predicate.class);
-				if ((p != null) && StringUtils.isNotBlank(p.namespace()))
-				{
-					return p.namespace();
-				}
-				final Subject s = superClass.getAnnotation(Subject.class);
-				if ((s != null) && StringUtils.isNotBlank(s.namespace()))
-				{
-					return s.namespace();
-				}
-			}
-			catch (final NoSuchMethodException e)
-			{
-				// do nothing
-			}
-		}
-
-		for (final Class<?> iface : interfaces)
-		{
-			try
-			{
-				final Method m = iface.getMethod(method.getName(),
-						method.getParameterTypes());
-				final Predicate p = m.getAnnotation(Predicate.class);
-				if ((p != null) && StringUtils.isNotBlank(p.namespace()))
-				{
-					return p.namespace();
-				}
-				final Subject s = iface.getAnnotation(Subject.class);
-				if ((s != null) && StringUtils.isNotBlank(s.namespace()))
-				{
-					return s.namespace();
-				}
-			}
-			catch (final NoSuchMethodException ignored)
-			{
-				// do nothing
-			}
-		}
-		return "";
-
-	}
-
-	private String getNamespace( final Class<?> clazz )
-	{
-		final Subject e = clazz.getAnnotation(Subject.class);
-		return e != null ? e.namespace() : "";
-	}
-
-	private Annotation[] getParameterAnnotation( final Method m )
-	{
-		return (m.getParameterAnnotations().length > 0) ? m
-				.getParameterAnnotations()[0] : null;
-	}
-
 	private Resource getResource( final Object target )
 	{
 		if (target instanceof ResourceWrapper)
@@ -677,6 +276,32 @@ public class EntityManagerImpl implements EntityManager
 		throw new IllegalArgumentException(String.format(
 				"%s implements neither Resource nor ResourceWrapper",
 				target.getClass()));
+	}
+
+	@Override
+	public Subject getSubject( final Class<?> clazz )
+	{
+		final Set<Class<?>> interfaces = new LinkedHashSet<Class<?>>();
+		for (Class<?> cls = clazz; cls != Object.class && cls != null; cls = cls
+				.getSuperclass())
+		{
+			final Subject retval = cls.getAnnotation(Subject.class);
+			if (retval != null)
+			{
+				return retval;
+			}
+			interfaces.addAll(Arrays.asList(cls.getInterfaces()));
+		}
+
+		for (final Class<?> cls : interfaces)
+		{
+			final Subject retval = cls.getAnnotation(Subject.class);
+			if (retval != null)
+			{
+				return retval;
+			}
+		}
+		return null;
 	}
 
 	/*
@@ -755,6 +380,16 @@ public class EntityManagerImpl implements EntityManager
 		return true;
 	}
 
+	/**
+	 * Parse the class if necessary.
+	 * 
+	 * The first time the class is seen it is parsed, after that a cached
+	 * version is returned.
+	 * 
+	 * @param clazz
+	 * @return The SubjectInfo for the class.
+	 * @throws MissingAnnotation
+	 */
 	private SubjectInfoImpl parse( final Class<?> clazz )
 			throws MissingAnnotation
 	{
@@ -764,75 +399,46 @@ public class EntityManagerImpl implements EntityManager
 		{
 			EntityManagerImpl.LOG.info("Parsing {}", clazz);
 			subjectInfo = new SubjectInfoImpl(clazz);
-			final Subject subject = clazz.getAnnotation(Subject.class);
-			final Map<String, Integer> addCount = countAdders(clazz
-					.getMethods());
-			Annotation[] annotations;
-			for (final Method m : clazz.getMethods())
+
+			final MethodParser parser = new MethodParser(this, subjectInfo,
+					countAdders(clazz.getMethods()));
+
+			boolean foundAnnotation = false;
+			final List<Method> annotated = new ArrayList<Method>();
+			for (final Method method : clazz.getMethods())
 			{
-
-				// only process abstract methods and does not have var args
-				if (shouldProcess(m))
+				try
 				{
-					try
+					final ActionType actionType = ActionType.parse(method
+							.getName());
+					if (method.getAnnotation(Predicate.class) != null)
 					{
-						final ActionType actionType = ActionType.parse(m
-								.getName());
-						// process "set" if only one arg and not varargs
-						switch (actionType)
+						foundAnnotation = true;
+						if (ActionType.GETTER == actionType)
 						{
-							case SETTER:
-								final Integer i = addCount.get(m.getName());
-								if (i != null)
-								{
-									parseSetter(subjectInfo, m, (i > 1),
-											subject);
-								}
-								break;
-
-							case EXISTENTIAL:
-								annotations = getAnnotationsIfProcessable(
-										subjectInfo, m);
-								if (annotations != null)
-								{
-									parseExistential(subjectInfo, m, subject);
-								}
-								break;
-
-							case GETTER:
-								annotations = getAnnotationsIfProcessable(
-										subjectInfo, m);
-								if (annotations != null)
-								{
-									if (m.getParameterTypes().length == 0)
-									{
-										addGetterMethods(
-												m.getName(),
-												subjectInfo,
-												m.getAnnotation(Predicate.class)
-														.type(), null, false,
-												subject);
-									}
-								}
-								break;
-
-							case REMOVER:
-								annotations = getAnnotationsIfProcessable(
-										subjectInfo, m);
-								if (annotations != null)
-								{
-									parseRemover(subjectInfo, m, subject);
-								}
-								break;
-
+							parser.parse(method);
+						}
+						else
+						{
+							annotated.add(method);
 						}
 					}
-					catch (final IllegalArgumentException e)
-					{
-						// expected when method is not an action method.
-					}
+				}
+				catch (final IllegalArgumentException expected)
+				{
+					// not an action type ignore method
 				}
 
+			}
+			if (!foundAnnotation)
+			{
+				throw new MissingAnnotation("No annotated methods in "
+						+ clazz.getCanonicalName());
+			}
+
+			for (final Method method : annotated)
+			{
+				parser.parse(method);
 			}
 			classInfo.put(clazz, subjectInfo);
 		}
@@ -875,109 +481,7 @@ public class EntityManagerImpl implements EntityManager
 		{
 			throw new MissingAnnotation(String.format(
 					"Unable to parse all %s See log for more details",
-					(Object) packageNames));
-		}
-	}
-
-	private void parseExistential( final SubjectInfoImpl subjectInfo,
-			final Method m, final Subject subject ) throws MissingAnnotation
-	{
-		Method m2 = null;
-		if (m.getName().startsWith("has"))
-		{
-			if (m.getParameterTypes().length == 1)
-			{
-				m2 = addHasMethods(m.getName(), subjectInfo,
-						m.getParameterTypes()[0], getEffectivePredicate(m),
-						subject);
-			}
-		}
-		else if (m.getName().startsWith("is"))
-		{
-			if (m.getParameterTypes().length == 0)
-			{
-				m2 = addGetterMethods(m.getName(), subjectInfo, Boolean.class,
-						getEffectivePredicate(m), false, subject);
-			}
-		}
-		if ((m2 != null) && !Boolean.class.equals(m2.getReturnType()))
-		{
-			subjectInfo.removePredicateInfo(m2);
-		}
-
-	}
-
-	private void parseRemover( final SubjectInfoImpl subjectInfo,
-			final Method m, final Subject subject ) throws MissingAnnotation
-	{
-		if (m.getParameterTypes().length == 1)
-		{
-			addRemoverMethod(
-					m.getParameterTypes()[0],
-					m.getName(),
-					subjectInfo,
-					getEffectivePredicate(m, m.getParameterAnnotations()[0],
-							m.getParameterTypes()[0], subject), subject);
-		}
-		else
-		{
-			addRemoverMethod(null, m.getName(), subjectInfo,
-					getEffectivePredicate(m), subject);
-		}
-	}
-
-	/**
-	 * Processes "setX" and "addX" functions.
-	 * 
-	 * @param subjectInfo
-	 * @param m
-	 * @param multiAdd
-	 * @throws MissingAnnotation
-	 */
-	private void parseSetter( final SubjectInfoImpl subjectInfo,
-			final Method m, final boolean multiAdd, final Subject subject )
-			throws MissingAnnotation
-	{
-
-		final Class<?> parms[] = m.getParameterTypes();
-		if (parms.length == 1)
-		{
-			final Class<?> valueType = parms[0];
-			final String subName = ActionType.SETTER.extractName(m.getName()); // remove
-																				// "set"
-																				// or
-																				// "add"
-			final EffectivePredicate predicate = getEffectivePredicate(m,
-					m.getParameterAnnotations()[0], parms[0], subject);
-			final PredicateInfoImpl pi = new PredicateInfoImpl(this, predicate,
-					m.getName(), valueType);
-			subjectInfo.add(pi);
-			Method isMethod = null;
-			if (m.getName().startsWith("set"))
-			{
-				addGetterMethods("get" + subName, subjectInfo, valueType,
-						predicate, false, subject);
-				isMethod = addGetterMethods("is" + subName, subjectInfo,
-						valueType, predicate, false, subject);
-				addRemoverMethod(null, "remove" + subName, subjectInfo,
-						predicate, subject);
-			}
-			else
-			// if (m.getName().startsWith("add"))
-			{
-				addGetterMethods("get" + subName, subjectInfo, valueType,
-						predicate, multiAdd, subject);
-				isMethod = addHasMethods("has" + subName, subjectInfo,
-						valueType, predicate, subject);
-
-				addRemoverMethod(parms[0], "remove" + subName, subjectInfo,
-						predicate, subject);
-			}
-			if ((isMethod != null)
-					&& !Boolean.class.equals(isMethod.getReturnType()))
-			{
-				subjectInfo.removePredicateInfo(isMethod);
-			}
+					Arrays.asList(packageNames)));
 		}
 	}
 
@@ -991,18 +495,12 @@ public class EntityManagerImpl implements EntityManager
 	@Override
 	@SuppressWarnings( "unchecked" )
 	public <T> T read( final Object source, final Class<T> primaryClass,
-			final Class<?>... secondaryClasses )
+			final Class<?>... secondaryClasses ) throws MissingAnnotation
 	{
 		final List<Class<?>> classes = new ArrayList<Class<?>>();
 		SubjectInfoImpl subjectInfo;
-		try
-		{
-			subjectInfo = parse(primaryClass);
-		}
-		catch (final MissingAnnotation e)
-		{
-			throw new RuntimeException(e);
-		}
+		subjectInfo = parse(primaryClass);
+
 		if (primaryClass.isInterface())
 		{
 			classes.add(primaryClass);
@@ -1011,16 +509,8 @@ public class EntityManagerImpl implements EntityManager
 		{
 			if (!classes.contains(cla))
 			{
-				try
-				{
-					parse(cla);
-					classes.add(cla);
-				}
-				catch (final MissingAnnotation e)
-				{
-					throw new RuntimeException(e);
-				}
-
+				parse(cla);
+				classes.add(cla);
 			}
 		}
 		if (!classes.contains(ResourceWrapper.class))
@@ -1040,24 +530,6 @@ public class EntityManagerImpl implements EntityManager
 		e.setInterfaces(classes.toArray(classArray));
 		e.setCallback(interceptor);
 		return (T) e.create();
-	}
-
-	/**
-	 * Only process abstract methods or methods with Predicate annotations
-	 * and only when either of those is not varArgs.
-	 * 
-	 * @param m
-	 * @return
-	 */
-	private boolean shouldProcess( final Method m )
-	{
-		boolean retval = !m.isVarArgs();
-		if (retval)
-		{
-			retval = Modifier.isAbstract(m.getModifiers())
-					|| (m.getAnnotation(Predicate.class) != null);
-		}
-		return retval;
 	}
 
 	/**
@@ -1154,5 +626,4 @@ public class EntityManagerImpl implements EntityManager
 		return target;
 	}
 
-	
 }

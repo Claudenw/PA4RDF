@@ -24,23 +24,25 @@ import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.xenei.jena.entities.SingleValueObjectTestClass.SubPredicate;
+import org.xenei.jena.entities.testing.abst.SingleValueObjectAnnotatedAbst;
+import org.xenei.jena.entities.testing.abst.SingleValueObjectAnnotatedAbst.SubPredicate;
+import org.xenei.jena.entities.testing.iface.TestInterface;
 
 public class SingleValueObjectEntityTests
 {
 
-	private SingleValueObjectTestClass tc;
+	private SingleValueObjectAnnotatedAbst tc;
 	private Model model;
 	private EntityManager manager;
 
 	@Before
-	public void setup()
+	public void setup() throws Exception
 	{
 		manager = EntityManagerFactory.getEntityManager();
 		model = ModelFactory.createDefaultModel();
 		final Resource r = model
 				.createResource("http://localhost/SingleValueObjectEntityTests");
-		tc = manager.read(r, SingleValueObjectTestClass.class);
+		tc = manager.read(r, SingleValueObjectAnnotatedAbst.class);
 	}
 
 	@After
@@ -95,14 +97,14 @@ public class SingleValueObjectEntityTests
 	}
 
 	@Test
-	public void testEntity()
+	public void testEntity() throws Exception
 	{
 		Resource r = model.createResource("testclass");
-		final TestClass c = manager.read(r, TestClass.class);
+		final TestInterface c = manager.read(r, TestInterface.class);
 		tc.setEnt(c);
 		Assert.assertEquals(c, tc.getEnt());
 		r = model.createResource("testclass2");
-		final TestClass cc = manager.read(r, TestClass.class);
+		final TestInterface cc = manager.read(r, TestInterface.class);
 		tc.setEnt(cc);
 		Assert.assertTrue(!c.equals(tc.getEnt()));
 		tc.removeEnt();
@@ -183,7 +185,7 @@ public class SingleValueObjectEntityTests
 	}
 
 	@Test
-	public void testSubPredicate()
+	public void testSubPredicate() throws Exception
 	{
 		Resource r = model.createResource("http://localhost/SubPredicateTest1");
 		final SubPredicate sp = manager.read(r, SubPredicate.class);

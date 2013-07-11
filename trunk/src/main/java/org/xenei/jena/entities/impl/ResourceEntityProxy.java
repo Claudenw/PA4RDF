@@ -42,28 +42,6 @@ public class ResourceEntityProxy implements MethodInterceptor // Invoker
 	private final EntityManager entityManager;
 
 	/**
-	 * The getResource method from the ResourceWrapper class.
-	 */
-	private static Method GET_RESOURCE;
-
-	static
-	{
-		try
-		{
-			ResourceEntityProxy.GET_RESOURCE = ResourceWrapper.class
-					.getDeclaredMethod("getResource");
-		}
-		catch (final SecurityException e)
-		{
-			throw new RuntimeException(e);
-		}
-		catch (final NoSuchMethodException e)
-		{
-			throw new RuntimeException(e);
-		}
-	}
-
-	/**
 	 * The constructor
 	 * 
 	 * @param entityManager
@@ -91,60 +69,27 @@ public class ResourceEntityProxy implements MethodInterceptor // Invoker
 		// handle the cases where the method is not abstract
 		if (!Modifier.isAbstract(m.getModifiers()))
 		{
-			return interceptNonAbstract( obj, m, args, proxy );
-		} else {
-			return interceptAnnotated( obj, m, args, proxy );
+			return interceptNonAbstract(obj, m, args, proxy);
 		}
-	}
-
-	// handle the cases where the method is not abstract
-	private Object interceptNonAbstract( final Object obj, final Method m,
-			final Object[] args, final MethodProxy proxy ) throws Throwable
-	{	
-		// handle the special case methods
-		if (m.getName().equals("toString") && !m.isVarArgs()
-				&& (m.getParameterTypes().length == 0))
+		else
 		{
-			return String
-					.format("%s[%s]", subjectInfo.getClass(), resource);
+			return interceptAnnotated(obj, m, args, proxy);
 		}
-		if (m.getName().equals("hashCode"))
-		{
-			return resource.hashCode();
-		}
-		if (m.getName().equals("equals"))
-		{
-			if (args[0] instanceof ResourceWrapper)
-			{
-				return resource.equals(((ResourceWrapper) args[0])
-						.getResource());
-			}
-			if (args[0] instanceof Resource)
-			{
-				return resource.equals(args[0]);
-			}
-			return false;
-		}
-
-		Predicate p = m.getAnnotation( Predicate.class );
-		if (p != null)
-		{
-			return interceptAnnotatedNonAbstract( obj, m, args, proxy, p );
-		}
-		return proxy.invokeSuper(obj, args);
 	}
 
 	private Object interceptAnnotated( final Object obj, final Method m,
 			final Object[] args, final MethodProxy proxy ) throws Throwable
 	{
-		
+
 		// handle the resource wrapper method call.
-		if (ResourceEntityProxy.GET_RESOURCE.equals(m))
+		// if (ResourceEntityProxy.GET_RESOURCE.equals(m))
+		if (m.getName().equals("getResource")
+				&& (m.getParameterTypes().length == 0)
+				&& (m.getReturnType() == Resource.class))
 		{
 			return resource;
 		}
 
-		
 		SubjectInfo workingInfo = subjectInfo;
 		if (m.getDeclaringClass() != subjectInfo.getImplementedClass())
 		{
@@ -181,7 +126,12 @@ public class ResourceEntityProxy implements MethodInterceptor // Invoker
 
 		if (pi instanceof PredicateInfoImpl)
 		{
-			return ((PredicateInfoImpl) pi).exec(m, resource, args);
+			Object o = ((PredicateInfoImpl) pi).exec(m, resource, args);
+			for (Method peMethod : subjectInfo.getPredicateInfo( m ).getPostExec())
+			{
+				o = peMethod.invoke(obj, o);
+			}
+			return o;
 		}
 
 		throw new RuntimeException(String.format(
@@ -189,12 +139,49 @@ public class ResourceEntityProxy implements MethodInterceptor // Invoker
 				PredicateInfoImpl.class));
 	}
 
-	// non abstract annotated methods 
-	// override the implementation unless annotatation includes the 
+	// non abstract annotated methods
+	// override the implementation unless annotatation includes the
 	// update=true value -- not implemented
-	private Object interceptAnnotatedNonAbstract( final Object obj, final Method m,
-			final Object[] args, final MethodProxy proxy, Predicate p ) throws Throwable
+	private Object interceptAnnotatedNonAbstract( final Object obj,
+			final Method m, final Object[] args, final MethodProxy proxy,
+			final Predicate p ) throws Throwable
 	{
-		return interceptAnnotated( obj, m, args, proxy );
+		return interceptAnnotated(obj, m, args, proxy);
+	}
+
+	// handle the cases where the method is not abstract
+	private Object interceptNonAbstract( final Object obj, final Method m,
+			final Object[] args, final MethodProxy proxy ) throws Throwable
+	{
+		// handle the special case methods
+		if (m.getName().equals("toString") && !m.isVarArgs()
+				&& (m.getParameterTypes().length == 0))
+		{
+			return String.format("%s[%s]", subjectInfo.getClass(), resource);
+		}
+		if (m.getName().equals("hashCode"))
+		{
+			return resource.hashCode();
+		}
+		if (m.getName().equals("equals"))
+		{
+			if (args[0] instanceof ResourceWrapper)
+			{
+				return resource.equals(((ResourceWrapper) args[0])
+						.getResource());
+			}
+			if (args[0] instanceof Resource)
+			{
+				return resource.equals(args[0]);
+			}
+			return false;
+		}
+
+		final Predicate p = m.getAnnotation(Predicate.class);
+		if (p != null)
+		{
+			return interceptAnnotatedNonAbstract(obj, m, args, proxy, p);
+		}
+		return proxy.invokeSuper(obj, args);
 	}
 }

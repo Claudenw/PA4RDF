@@ -17,6 +17,9 @@ package org.xenei.jena.entities;
 
 import com.hp.hpl.jena.rdf.model.Property;
 
+import java.lang.reflect.Method;
+import java.util.List;
+
 import org.xenei.jena.entities.impl.ActionType;
 
 /**
@@ -72,5 +75,11 @@ public interface PredicateInfo
 	 * @return The class
 	 */
 	public Class<?> getValueClass();
+	
+	/**
+	 * List of methods to execute after the exec
+	 * @return
+	 */
+	public List<Method> getPostExec();
 
 }
