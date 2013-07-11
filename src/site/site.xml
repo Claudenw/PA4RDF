@@ -7,8 +7,9 @@
     <menu name="Overview">
       <item name="Introduction" href="index.html"/>
       <item name="Annotations" href="annotations.html" />
+      <item name="Usage Strategies" href="usageStrategies.html" />
       <item name="Data Types" href="dataTypes.html" />
-      <item name="Code Example" href="example.html"/>
+      <item name="Code Example" href="examples/index.html"/>
       <item name="Project Info" href="project-info.html" />
     </menu>
     <menu name="Java Docs">

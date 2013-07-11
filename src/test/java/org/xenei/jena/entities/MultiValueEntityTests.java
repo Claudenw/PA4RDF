@@ -24,6 +24,8 @@ import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.xenei.jena.entities.testing.abst.MultiValueAnnotatedAbst;
+import org.xenei.jena.entities.testing.iface.TestInterface;
 
 public class MultiValueEntityTests
 {
@@ -31,7 +33,7 @@ public class MultiValueEntityTests
 	// BOOLEAN, CHAR, DOUBLE, FLOAT, LONG, INTEGER, STRING, RDFNODE, ENTITY,
 	// URI, VOID
 
-	private MultiValueObjectTestClass tc;
+	private MultiValueAnnotatedAbst tc;
 	private Model m;
 	private final EntityManager manager = EntityManagerFactory
 			.getEntityManager();
@@ -42,7 +44,7 @@ public class MultiValueEntityTests
 		m = ModelFactory.createDefaultModel();
 		final Resource r = m
 				.createResource("http://localhost/MultiValueEntityTests");
-		tc = manager.read(r, MultiValueObjectTestClass.class);
+		tc = manager.read(r, MultiValueAnnotatedAbst.class);
 	}
 
 	@After
@@ -156,9 +158,9 @@ public class MultiValueEntityTests
 	public void testEntity() throws MissingAnnotation
 	{
 		Resource r = m.createResource("cc");
-		final TestClass cc = manager.read(r, TestClass.class);
+		final TestInterface cc = manager.read(r, TestInterface.class);
 		r = m.createResource("dd");
-		final TestClass dd = manager.read(r, TestClass.class);
+		final TestInterface dd = manager.read(r, TestInterface.class);
 
 		tc.addEnt(cc);
 		Assert.assertTrue(tc.hasEnt(cc));

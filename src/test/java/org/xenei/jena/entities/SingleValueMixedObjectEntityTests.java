@@ -22,6 +22,7 @@ import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.xenei.jena.entities.testing.abst.SingleValueMixedTypeTestClass;
 
 public class SingleValueMixedObjectEntityTests
 {
@@ -30,7 +31,7 @@ public class SingleValueMixedObjectEntityTests
 	private Model model;
 
 	@Before
-	public void setup()
+	public void setup() throws Exception
 	{
 		final EntityManager manager = EntityManagerFactory.getEntityManager();
 		model = ModelFactory.createDefaultModel();

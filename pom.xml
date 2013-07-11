@@ -1,23 +1,36 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.xenei</groupId>
 	<artifactId>PA4RDF</artifactId>
-	<version>1.1-SNAPSHOT</version>
+	<version>1.1</version>
 	<scm>
-		<connection>scm:svn:svn://svn.code.sf.net/p/pa4rdf/code/trunk</connection>
-		<developerConnection>scm:svn:https://svn.code.sf.net/p/pa4rdf/code/trunk</developerConnection>
-		<url>http://svn.code.sf.net/p/pa4rdf/code</url>
+		<connection>scm:svn:svn://svn.code.sf.net/p/pa4rdf/code/tags/PA4RDF-1.1</connection>
+		<developerConnection>scm:svn:https://svn.code.sf.net/p/pa4rdf/code/tags/PA4RDF-1.1</developerConnection>
+		<url>http://svn.code.sf.net/p/pa4rdf/code/tags/PA4RDF-1.1</url>
 	</scm>
-	<distributionManagement>
+	<!-- 	<distributionManagement>
 		<site>
 			<id>SourceForge web site</id>
 			<name>pa4rdf.sf.net</name>
 			<url>scp://shell.sourceforge.net/home/project-web/pa4rdf/htdocs</url>
 		</site>
-	</distributionManagement>
+		<snapshotRepository>
+			<id>sonatype-nexus-snapshots</id>
+			<name>Sonatype Nexus Snapshots</name>
+			<url>${sonatypeOssDistMgmtSnapshotsUrl}</url>
+		</snapshotRepository>
+		<repository>
+			<id>sonatype-nexus-staging</id>
+			<name>Nexus Release Repository</name>
+			<url>
+https://oss.sonatype.org/service/local/staging/deploy/maven2/
+</url>
+		</repository>
+
+	</distributionManagement> -->
 	<name>Persistence Annotations 4 RDF</name>
-	<url>http://sourceforge.net/p/pa4rdf/wiki/Home/</url>
+	<url>http://pa4rdf.sourceforge.net/</url>
 	<inceptionYear>2012</inceptionYear>
 	<organization>
 		<name>XENEI.com</name>
@@ -46,13 +59,9 @@
 	</issueManagement>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-	</properties>
-	<repositories>
-		<repository>
-			<id>apache-repo-snapshot</id>
-			<url>https://repository.apache.org/content/repositories/snapshots</url>
-		</repository>
-	</repositories>
+	</properties><!-- <repositories> <repository> <id>apache-repo-snapshot</id> 
+		<url>https://repository.apache.org/content/repositories/snapshots</url> </repository> 
+		</repositories> -->
 	<profiles>
 		<profile>
 			<id>release-sign-artifacts</id>
@@ -90,8 +99,8 @@
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-javadoc-plugin</artifactId>
 				<version>2.8.1</version>
-				<configuration>
-				</configuration>
+				<configuration />
+
 			</plugin>
 		</plugins>
 	</reporting>
@@ -158,8 +167,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-release-plugin</artifactId>
-				<version>2.4</version>
-			</plugin>
+				</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-repository-plugin</artifactId>

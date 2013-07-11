@@ -6,24 +6,24 @@ import com.hp.hpl.jena.rdf.model.ResourceFactory;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.xenei.jena.entities.A;
 import org.xenei.jena.entities.EntityManager;
 import org.xenei.jena.entities.EntityManagerFactory;
+import org.xenei.jena.entities.testing.iface.TwoValueSimpleInterface;
 
 public class EntityHandlerTest implements HandlerTestInterface
 {
 	EntityHandler handler;
 	EntityManager em;
 	RDFNode node;
-	A instance;
+	TwoValueSimpleInterface instance;
 
 	@Before
-	public void setup()
+	public void setup() throws Exception
 	{
 		em = EntityManagerFactory.getEntityManager();
-		handler = new EntityHandler(em, A.class);
+		handler = new EntityHandler(em, TwoValueSimpleInterface.class);
 		node = ResourceFactory.createResource();
-		instance = em.read(node, A.class);
+		instance = em.read(node, TwoValueSimpleInterface.class);
 	}
 
 	@Override
@@ -49,8 +49,8 @@ public class EntityHandlerTest implements HandlerTestInterface
 	{
 		final Object o = handler.parseObject(node);
 		Assert.assertNotNull(o);
-		Assert.assertTrue(o instanceof A);
-		final A a2 = (A) o;
+		Assert.assertTrue(o instanceof TwoValueSimpleInterface);
+		final TwoValueSimpleInterface a2 = (TwoValueSimpleInterface) o;
 		Assert.assertEquals(instance, a2);
 
 	}

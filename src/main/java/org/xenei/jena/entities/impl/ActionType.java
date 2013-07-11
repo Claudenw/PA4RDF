@@ -14,6 +14,10 @@
  */
 package org.xenei.jena.entities.impl;
 
+import java.lang.reflect.Method;
+import java.util.Collection;
+import java.util.Iterator;
+
 /**
  * An enumeration of Action types.
  */
@@ -35,6 +39,26 @@ public enum ActionType
 	 * Indicates a method that checks for the existance of a value
 	 */
 	EXISTENTIAL();
+
+	public static boolean isMultiple( final Method m )
+	{
+		final ActionType at = ActionType.parse(m.getName());
+		switch (at)
+		{
+			case GETTER:
+				return Iterator.class.isAssignableFrom(m.getReturnType())
+						|| Collection.class.isAssignableFrom(m.getReturnType());
+
+			case SETTER:
+				return m.getName().startsWith("set");
+
+			case EXISTENTIAL:
+			case REMOVER:
+				return m.getParameterTypes().length > 0;
+		}
+		throw new IllegalArgumentException(String.format(
+				"%s is not an action type function", m));
+	}
 
 	/**
 	 * Parse the action type from the function name.

@@ -203,7 +203,7 @@ public class PredicateInfoImpl implements PredicateInfo
 	 */
 	public PredicateInfoImpl( final EntityManager entityManager,
 			final EffectivePredicate predicate, final String methodName,
-			final Class<?> valueClass ) throws MissingAnnotation
+			final Class<?> valueClass )
 	{
 		this.methodName = methodName;
 		this.actionType = ActionType.parse(methodName);
@@ -247,6 +247,17 @@ public class PredicateInfoImpl implements PredicateInfo
 		}
 		objectHandler = PredicateInfoImpl.getHandler(entityManager,
 				concreteType, predicate);
+	}
+	
+	public PredicateInfoImpl( PredicateInfoImpl pi )
+	{
+		this.actionType = pi.actionType;
+		this.concreteType = pi.concreteType;
+		this.methodName = pi.methodName;
+		this.objectHandler = pi.objectHandler;
+		this.predicate = new EffectivePredicate( pi.predicate );
+		this.property = pi.property;
+		this.valueClass = pi.valueClass;
 	}
 
 	private Property createResourceProperty( final Resource resource )
@@ -374,7 +385,7 @@ public class PredicateInfoImpl implements PredicateInfo
 			}
 			else if (Queue.class.isAssignableFrom(valueClass))
 			{
-				return new LinkedList(oIter.toList());
+				return new LinkedList<Object>(oIter.toList());
 			}
 			else
 			{
@@ -519,6 +530,11 @@ public class PredicateInfoImpl implements PredicateInfo
 		return actionType;
 	}
 
+	public EffectivePredicate getEffectivePredicate()
+	{
+		return predicate;
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -587,5 +603,15 @@ public class PredicateInfoImpl implements PredicateInfo
 	public String toString()
 	{
 		return String.format("%s(%s)", methodName, valueClass);
+	}
+
+	@Override
+	public List<Method> getPostExec()
+	{
+		if (predicate.postExec == null)
+		{
+			return Collections.emptyList();
+		}
+		return Collections.unmodifiableList( predicate.postExec );
 	}
 }
