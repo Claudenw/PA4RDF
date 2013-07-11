@@ -18,9 +18,11 @@ The interface is defined in generic terms but the only extant implementation is 
 Maven
 ===
 
-Group Id: org.xenei
-
-Artifact Id: Jena-PA
+    <dependency>
+        <groupId>org.xenei</groupId>
+        <artifactId>PA4RDF</artifactId>
+        <version>1.1</version>
+	</dependency>
 
 
 Annotations
