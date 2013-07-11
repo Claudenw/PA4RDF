@@ -5,9 +5,9 @@
 	<artifactId>PA4RDF</artifactId>
 	<version>1.1-SNAPSHOT</version>
 	<scm>
-		<connection>scm:svn:svn://svn.code.sf.net/p/pa4rdf/code/trunk</connection>
-		<developerConnection>scm:svn:https://svn.code.sf.net/p/pa4rdf/code/trunk</developerConnection>
-		<url>http://svn.code.sf.net/p/pa4rdf/code/trunk</url>
+		<connection>scm:svn:svn://svn.code.sf.net/p/pa4rdf/code/tags/PA4RDF1.1-B</connection>
+		<developerConnection>scm:svn:https://svn.code.sf.net/p/pa4rdf/code/tags/PA4RDF1.1-B</developerConnection>
+		<url>http://svn.code.sf.net/p/pa4rdf/code/tags/PA4RDF1.1-B</url>
 	</scm>
 	<!-- 	<distributionManagement>
 		<site>
