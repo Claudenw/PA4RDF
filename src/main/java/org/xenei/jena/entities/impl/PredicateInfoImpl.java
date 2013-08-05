@@ -45,6 +45,9 @@ import org.xenei.jena.entities.MissingAnnotation;
 import org.xenei.jena.entities.PredicateInfo;
 import org.xenei.jena.entities.annotations.Subject;
 import org.xenei.jena.entities.annotations.URI;
+import org.xenei.jena.entities.impl.datatype.CharDatatype;
+import org.xenei.jena.entities.impl.datatype.CharacterDatatype;
+import org.xenei.jena.entities.impl.datatype.LongDatatype;
 import org.xenei.jena.entities.impl.handlers.EntityHandler;
 import org.xenei.jena.entities.impl.handlers.LiteralHandler;
 import org.xenei.jena.entities.impl.handlers.ResourceHandler;
@@ -68,6 +71,16 @@ public class PredicateInfoImpl implements PredicateInfo
 	private Property property;
 	private final ActionType actionType;
 	private final EffectivePredicate predicate;
+
+	static
+	{
+		RDFDatatype rtype = new CharacterDatatype();
+		TypeMapper.getInstance().registerDatatype(rtype);
+		rtype = new CharDatatype();
+		TypeMapper.getInstance().registerDatatype(rtype);
+		rtype = new LongDatatype();
+		TypeMapper.getInstance().registerDatatype(rtype);
+	}
 
 	/**
 	 * Create a sorted list of registered data types.

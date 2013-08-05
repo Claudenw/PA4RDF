@@ -3,11 +3,11 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.xenei</groupId>
 	<artifactId>PA4RDF</artifactId>
-	<version>1.2-SNAPSHOT</version>
+	<version>1.1</version>
 	<scm>
-		<connection>scm:svn:svn://svn.code.sf.net/p/pa4rdf/code/trunk</connection>
-		<developerConnection>scm:svn:https://svn.code.sf.net/p/pa4rdf/code/trunk</developerConnection>
-		<url>http://svn.code.sf.net/p/pa4rdf/code/trunk</url>
+		<connection>scm:svn:svn://svn.code.sf.net/p/pa4rdf/code/tags/PA4RDF-1.1</connection>
+		<developerConnection>scm:svn:https://svn.code.sf.net/p/pa4rdf/code/tags/PA4RDF-1.1</developerConnection>
+		<url>http://svn.code.sf.net/p/pa4rdf/code/tags/PA4RDF-1.1</url>
 	</scm>
 	<distributionManagement>
 		<site>
@@ -35,10 +35,10 @@ https://oss.sonatype.org/service/local/staging/deploy/maven2/
 	<organization>
 		<name>XENEI.com</name>
 	</organization>
-	<description>Persistence Annotation for RDF (PA4RDF) is a set of annotations and an entity 
+	<description>Persistence Annotation for RDF (PAR) is a set of annotations and an entity 
 	manager that provides JPA like functionality on top of an RDF store while accounting for 
 	and exploiting the fundamental differences between graph storage and relational storage. 
-	PA4RDF introduces three (3) annotations that map a RDF triple (subject, predicate, object) 
+	PAR introduces three (3) annotations that map a RDF triple (subject, predicate, object) 
 	to a Plain Old Java Object (POJO) using Java's dynamic proxy capabilities.</description>
 	<licenses>
 		<license>
@@ -148,9 +148,13 @@ https://oss.sonatype.org/service/local/staging/deploy/maven2/
 		</dependency>
 		<dependency>
 			<groupId>org.apache.jena</groupId>
-			<artifactId>apache-jena</artifactId>
-			<version>2.10.1</version>
-			<type>pom</type>
+			<artifactId>jena-core</artifactId>
+			<version>2.7.3</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.jena</groupId>
+			<artifactId>jena-arq</artifactId>
+			<version>2.9.3</version>
 		</dependency>
 	</dependencies>
 	<build>
