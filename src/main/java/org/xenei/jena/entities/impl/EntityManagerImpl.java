@@ -14,6 +14,8 @@
  */
 package org.xenei.jena.entities.impl;
 
+import com.hp.hpl.jena.datatypes.RDFDatatype;
+import com.hp.hpl.jena.datatypes.TypeMapper;
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.Resource;
 import com.hp.hpl.jena.rdf.model.ResourceFactory;
@@ -49,6 +51,9 @@ import org.xenei.jena.entities.ResourceWrapper;
 import org.xenei.jena.entities.SubjectInfo;
 import org.xenei.jena.entities.annotations.Predicate;
 import org.xenei.jena.entities.annotations.Subject;
+import org.xenei.jena.entities.impl.datatype.CharDatatype;
+import org.xenei.jena.entities.impl.datatype.CharacterDatatype;
+import org.xenei.jena.entities.impl.datatype.LongDatatype;
 
 /**
  * An implementation of the EntityManager interface.
@@ -56,11 +61,40 @@ import org.xenei.jena.entities.annotations.Subject;
  */
 public class EntityManagerImpl implements EntityManager
 {
-
 	private static Logger LOG = LoggerFactory
 			.getLogger(EntityManagerImpl.class);
 
 	private final Map<Class<?>, SubjectInfoImpl> classInfo = new HashMap<Class<?>, SubjectInfoImpl>();
+
+	static
+	{
+		registerTypes();
+	}
+	
+	/**
+	 * Register the datatypes used by the entity manger specifically
+	 * xsd:long  : java.util.Long
+	 * xsd:string : java.util.Character
+	 * xsd:string : java.lang.char
+	 * 
+	 *  and finally resetting xsd:string to java.lang.String
+	 */
+	public static void registerTypes() {
+		RDFDatatype rtype = null;
+		// handle the string types
+		// preserve string class and put it back later.
+		RDFDatatype stype = TypeMapper.getInstance().getTypeByClass(String.class);
+		rtype = new CharacterDatatype();
+		TypeMapper.getInstance().registerDatatype(rtype);
+		rtype = new CharDatatype();
+		TypeMapper.getInstance().registerDatatype(rtype);
+		// put the string type back so that it is the registered type for xsd:string
+		TypeMapper.getInstance().registerDatatype(stype);
+		
+		// change the long type.
+		rtype = new LongDatatype();
+		TypeMapper.getInstance().registerDatatype(rtype);
+	}
 
 	/**
 	 * Constructor.
