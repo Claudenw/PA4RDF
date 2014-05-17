@@ -112,7 +112,8 @@ public class EntityManagerImpl implements EntityManager
 	}
 
 	/**
-	 * Read an instance of clazz from Resource r. If r does not have the
+	 * Verify r has all the annotation specified properties of clazz.
+	 * If r does not have the
 	 * required types as defined in the Subject annotation they will be added.
 	 * 
 	 * @param r
@@ -121,9 +122,10 @@ public class EntityManagerImpl implements EntityManager
 	 *            The Subject annotated class to verify against.
 	 * @return r for chaining
 	 */
-	public Resource addInstanceProperties( final Resource r,
+	public <T> T addInstanceProperties( final T o,
 			final Class<?> clazz )
 	{
+		Resource r = getResource( o );
 		final Subject e = clazz.getAnnotation(Subject.class);
 		final Model model = r.getModel(); // may be null;
 		if (e != null)
@@ -139,7 +141,7 @@ public class EntityManagerImpl implements EntityManager
 				}
 			}
 		}
-		return r;
+		return o;
 	}
 
 	private Map<String, Integer> countAdders( final Method[] methods )
@@ -519,6 +521,17 @@ public class EntityManagerImpl implements EntityManager
 		}
 	}
 
+	@Override
+	public <T> T make( final Object source, final Class<T> primaryClass,
+			final Class<?>... secondaryClasses ) throws MissingAnnotation
+	{
+		Resource r = addInstanceProperties( getResource(source), primaryClass);
+		for (Class<?> c : secondaryClasses)
+		{
+			r = addInstanceProperties( r, c );
+		}
+		return read( r, primaryClass, secondaryClasses);
+	}
 	/*
 	 * (non-Javadoc)
 	 * 

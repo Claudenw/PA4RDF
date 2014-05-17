@@ -73,6 +73,21 @@ public interface EntityManager
 	 */
 	public boolean isInstance( Object target, Class<?> clazz );
 
+	
+	/**
+	 * Verify r has all the annotation specified properties of clazz.
+	 * If r does not have the
+	 * required types as defined in the Subject annotation they will be added.
+	 * 
+	 * @param r
+	 *            The Resource to verify.
+	 * @param clazz
+	 *            The Subject annotated class to verify against.
+	 * @return r for chaining
+	 */
+	public <T> T addInstanceProperties( final T r,
+			final Class<?> clazz );
+
 	/**
 	 * Parses the the classes in a package (and subpackages) looking for Subject
 	 * annotated classes.
@@ -113,6 +128,30 @@ public interface EntityManager
 	 */
 	public void parseClasses( String[] packageNames ) throws MissingAnnotation;
 
+	/**
+	 * Make an instance of clazz from source.
+	 * 
+	 * If source does not pass isInstance() check additional properties are added
+	 * as required.
+	 * 
+	 * 
+	 * @see #isInstance(Object, Class)
+	 * @param source
+	 *            Must either implement Resource or ResourceWrapper interfaces.
+	 * @param primaryClass
+	 *            The class of the object to be returned.
+	 * @param secondaryClasses
+	 *            A lost of other classes that are implemented.
+	 * @return primaryClass instance that also implements ResourceWrapper.
+	 * @throws MissingAnnotation
+	 *             if any of the classes do not have Subject annotations.
+	 * @throws IllegalArgumentException
+	 *             if source implements neither Resource nor ResourceWrapper.
+	 */
+	public <T> T make( Object source, Class<T> primaryClass,
+			Class<?>... secondaryClasses ) throws MissingAnnotation;
+
+	
 	/**
 	 * Read an instance of clazz from source.
 	 * 
