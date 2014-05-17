@@ -93,7 +93,17 @@ public class ResourceEntityProxy implements MethodInterceptor // Invoker
 		SubjectInfo workingInfo = subjectInfo;
 		if (m.getDeclaringClass() != subjectInfo.getImplementedClass())
 		{
-			workingInfo = entityManager.getSubjectInfo(m.getDeclaringClass());
+			// handle the case where T implements Resource and the method is 
+			// declared in the Resource interface.
+			if (m.getDeclaringClass().isAssignableFrom( Resource.class) &&
+					Resource.class.isAssignableFrom( subjectInfo.getImplementedClass() ))
+			{
+				return m.invoke(resource, args);
+			}
+			else
+			{
+				workingInfo = entityManager.getSubjectInfo(m.getDeclaringClass());
+			}
 		}
 		final PredicateInfo pi = workingInfo.getPredicateInfo(m);
 
