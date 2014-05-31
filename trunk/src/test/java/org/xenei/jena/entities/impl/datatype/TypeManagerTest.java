@@ -1,7 +1,5 @@
 package org.xenei.jena.entities.impl.datatype;
 
-import static org.junit.Assert.*;
-
 import com.hp.hpl.jena.datatypes.RDFDatatype;
 import com.hp.hpl.jena.datatypes.TypeMapper;
 
@@ -9,12 +7,9 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-import org.junit.After;
-import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.xenei.jena.entities.EntityManagerFactory;
 import org.xenei.jena.entities.impl.EntityManagerImpl;
 
 /**
