@@ -22,11 +22,11 @@ public class TypeChecker
 {
 
 	/**
-	 * True if "a" can be set from "b"
+	 * True if <code>a</code> can be set from <code>b</code>
 	 * 
-	 * @param a
-	 * @param b
-	 * @return true if an instance of a can be set with an instance of b
+	 * @param a The resulting class.
+	 * @param b The class to set from.
+	 * @return true if an instance of <code>a</code> can be set with an instance of <code>b</code>.
 	 */
 	public static boolean canBeSetFrom( final Class<?> a, final Class<?> b )
 	{

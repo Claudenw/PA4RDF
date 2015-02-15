@@ -27,7 +27,7 @@ public class ResourceHandler implements ObjectHandler
 	/**
 	 * Convert an object to an RDFNode.
 	 * 
-	 * @throws ClassCastExcepton
+	 * @throws IllegalArgumentException
 	 *             if obj is not an instance of RDFNode
 	 */
 	@Override

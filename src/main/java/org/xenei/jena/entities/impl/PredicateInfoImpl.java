@@ -185,8 +185,6 @@ public class PredicateInfoImpl implements PredicateInfo
 	 *            The name of the method that this predicate calls.
 	 * @param valueClass
 	 *            The class type for the return (getter) or parameter (setter)
-	 * @throws MissingAnnotation
-	 *             If an annotation was required but not provided.
 	 */
 	public PredicateInfoImpl( final EntityManager entityManager,
 			final EffectivePredicate predicate, final String methodName,

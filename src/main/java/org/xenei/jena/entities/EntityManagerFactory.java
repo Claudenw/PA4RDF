@@ -40,7 +40,7 @@ public class EntityManagerFactory
 	/**
 	 * Set the entity manager that the factory will return.
 	 * 
-	 * @param manager
+	 * @param manager The manager to be returned on subsequent getEntityManager() calls.
 	 */
 	public static void setEntityManager( final EntityManager manager )
 	{

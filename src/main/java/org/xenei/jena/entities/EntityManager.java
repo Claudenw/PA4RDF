@@ -17,6 +17,8 @@ package org.xenei.jena.entities;
 
 import org.xenei.jena.entities.annotations.Subject;
 
+import com.hp.hpl.jena.rdf.model.Resource;
+
 /**
  * An Entity Manager to manage instances of entities annotated with the Subject
  * annotation
@@ -40,7 +42,7 @@ public interface EntityManager
 	 * searched and the first interface that contains the annotation is
 	 * returned.
 	 * 
-	 * @param clazz
+	 * @param clazz The class to get the subject for.
 	 * @return the Subject annotation or null if no annotation is found.
 	 */
 	public Subject getSubject( final Class<?> clazz );
@@ -104,7 +106,7 @@ public interface EntityManager
 	 * 
 	 * @param packageName
 	 *            The name of the package to process
-	 * @throws MissingAnnotation
+	 * @throws MissingAnnotation if a subject annotated class has no predicate annotations.
 	 */
 	public void parseClasses( String packageName ) throws MissingAnnotation;
 
@@ -123,7 +125,7 @@ public interface EntityManager
 	 * 
 	 * @param packageNames
 	 *            The array of package names to process
-	 * @throws MissingAnnotation
+	 * @throws MissingAnnotation if a subject annotated class has not predicate annotations.
 	 * @see java.lang.ClassLoader#getResources(String)
 	 */
 	public void parseClasses( String[] packageNames ) throws MissingAnnotation;
@@ -164,6 +166,7 @@ public interface EntityManager
 	 *            The class of the object to be returned.
 	 * @param secondaryClasses
 	 *            A lost of other classes that are implemented.
+	 * @param <T> the instance type to return.
 	 * @return primaryClass instance that also implements ResourceWrapper.
 	 * @throws MissingAnnotation
 	 *             if any of the classes do not have Subject annotations.
@@ -171,8 +174,28 @@ public interface EntityManager
 	 *             if source implements neither Resource nor ResourceWrapper.
 	 */
 	public <T> T read( Object source, Class<T> primaryClass,
-			Class<?>... secondaryClasses ) throws MissingAnnotation;
+			Class<?>... secondaryClasses ) throws MissingAnnotation, IllegalArgumentException;
 
+	/**
+	 * Read an instance of clazz from Object source. If source does not have the
+	 * required types as defined in the Subject annotation of clazz they will be added.
+	 * <p>
+	 * This method may modify the graph and should be called within the scope of a transaction
+	 * if the underlying graph requires them.
+	 * </p>
+	 * 
+	 * @param source
+	 *            Must either implement Resource or ResourceWrapper interfaces.
+	 * @param clazz
+	 *            The class containing the Subject annotation.
+	 * @return source for chaining
+	 * @throws MissingAnnotation
+	 *             if clazz does not have Subject annotations.
+	 * @throws IllegalArgumentException
+	 *             if source implements neither Resource nor ResourceWrapper.
+	 */
+	public Resource addInstanceProperties( final Object source, final Class<?> clazz ) throws MissingAnnotation;
+			
 	/**
 	 * Calls the target.setX predicate methods with the results of the
 	 * source.getX predicate
@@ -183,9 +206,7 @@ public interface EntityManager
 	 * @param target
 	 *            The object to copy data to.
 	 * @return The target object for chaining.
-	 * @throws IllegalArgumentException
 	 */
-	public Object update( Object source, Object target )
-			throws IllegalArgumentException;
+	public Object update( Object source, Object target );
 
 }
