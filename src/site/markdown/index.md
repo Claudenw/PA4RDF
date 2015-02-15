@@ -21,9 +21,11 @@ Maven
     <dependency>
         <groupId>org.xenei</groupId>
         <artifactId>PA4RDF</artifactId>
-        <version>1.1</version>
 	</dependency>
 
+Snapshots: [https://oss.sonatype.org/content/repositories/snapshots/org/xenei/PA4RDF]
+
+Releases: [https://oss.sonatype.org/content/repositories/releases/org/xenei/PA4RDF]
 
 Annotations
 ===

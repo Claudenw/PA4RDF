@@ -54,7 +54,7 @@ https://oss.sonatype.org/service/local/staging/deploy/maven2/
 		<version>7</version>
 	</parent>
 	<issueManagement>
-		<system>Sourceforge Tickets</system>
+		<system>JIRA</system>
 		<url>https://sourceforge.net/p/pa4rdf/tickets/</url>
 	</issueManagement>
 	<properties>
