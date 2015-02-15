@@ -14,7 +14,7 @@
 			<id>SourceForge web site</id>
 			<name>pa4rdf.sf.net</name>
 			<url>scp://shell.sourceforge.net/home/project-web/pa4rdf/htdocs</url>
-		</site> <!-- 
+		</site>  
 		<snapshotRepository>
 			<id>sonatype-nexus-snapshots</id>
 			<name>Sonatype Nexus Snapshots</name>
@@ -27,7 +27,7 @@
 https://oss.sonatype.org/service/local/staging/deploy/maven2/
 </url>
 		</repository>
--->
+
 	</distributionManagement>
 	<name>Persistence Annotations 4 RDF</name>
 	<url>http://pa4rdf.sourceforge.net/</url>
