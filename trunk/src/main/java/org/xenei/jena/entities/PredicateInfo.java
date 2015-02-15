@@ -77,8 +77,8 @@ public interface PredicateInfo
 	public Class<?> getValueClass();
 	
 	/**
-	 * List of methods to execute after the exec
-	 * @return
+	 * List of methods to execute after the exec.
+	 * @return The list of methods to execute after exec.
 	 */
 	public List<Method> getPostExec();
 

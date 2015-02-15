@@ -112,21 +112,32 @@ public class EntityManagerImpl implements EntityManager
 	}
 
 	/**
-	 * Verify r has all the annotation specified properties of clazz.
-	 * If r does not have the
-	 * required types as defined in the Subject annotation they will be added.
+	 * Read an instance of clazz from Object source. If source does not have the
+	 * required types as defined in the Subject annotation of clazz they will be added.
+	 * <p>
+	 * This method may modify the graph and should be called within the scope of a transaction
+	 * if the underlying graph requires them.
+	 * </p>
 	 * 
-	 * @param r
-	 *            The Resource to verify.
+	 * @param source
+	 *            Must either implement Resource or ResourceWrapper interfaces.
 	 * @param clazz
-	 *            The Subject annotated class to verify against.
-	 * @return r for chaining
+	 *            The class containing the Subject annotation.
+	 * @return source for chaining
+	 * @throws MissingAnnotation
+	 *             if clazz does not have Subject annotations.
+	 * @throws IllegalArgumentException
+	 *             if source implements neither Resource nor ResourceWrapper.
 	 */
-	public <T> T addInstanceProperties( final T o,
-			final Class<?> clazz )
+	public Resource addInstanceProperties( final Object source,
+			final Class<?> clazz ) throws MissingAnnotation, IllegalArgumentException
 	{
-		Resource r = getResource( o );
+		final Resource r = getResource( source );
 		final Subject e = clazz.getAnnotation(Subject.class);
+		if (e == null){
+			throw new MissingAnnotation("No Subject annotationin "
+					+ clazz.getCanonicalName());
+		}
 		final Model model = r.getModel(); // may be null;
 		if (e != null)
 		{
@@ -299,7 +310,7 @@ public class EntityManagerImpl implements EntityManager
 		return classes;
 	}
 
-	private Resource getResource( final Object target )
+	private Resource getResource( final Object target ) throws IllegalArgumentException
 	{
 		if (target instanceof ResourceWrapper)
 		{
@@ -542,7 +553,7 @@ public class EntityManagerImpl implements EntityManager
 	@Override
 	@SuppressWarnings( "unchecked" )
 	public <T> T read( final Object source, final Class<T> primaryClass,
-			final Class<?>... secondaryClasses ) throws MissingAnnotation
+			final Class<?>... secondaryClasses ) throws MissingAnnotation, IllegalArgumentException
 	{
 		final List<Class<?>> classes = new ArrayList<Class<?>>();
 		SubjectInfoImpl subjectInfo;

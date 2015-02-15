@@ -68,7 +68,7 @@ public enum ActionType
 	 * remaining portion of the name will define the local name for the
 	 * predicate. @see @link{ org.xenei.jena.annotations.Predicate }
 	 * 
-	 * <table>
+	 * <table summary="List of function prefixes and ActionType mappings">
 	 * <tr>
 	 * <th>Function prefix</th>
 	 * <th>ActionType</th>
@@ -91,7 +91,7 @@ public enum ActionType
 	 * </tr>
 	 * </table>
 	 * 
-	 * @param functionName
+	 * @param functionName The name of the function being parsed.
 	 * @return ActionType
 	 * @throws IllegalArgumentException
 	 *             if the function does not have an action type prefix.

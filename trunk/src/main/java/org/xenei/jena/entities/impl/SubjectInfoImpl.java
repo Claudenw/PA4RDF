@@ -224,7 +224,7 @@ public class SubjectInfoImpl implements SubjectInfo
 	/**
 	 * Get the subject annotation for this class.
 	 * 
-	 * @return
+	 * @return The subject annotation.
 	 */
 	@Override
 	public Subject getSubject()

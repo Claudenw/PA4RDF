@@ -581,6 +581,9 @@ public class MethodParser
 
 	/**
 	 * Constructor.
+	 * @param entityManager The EntityManager we are working with.
+	 * @param subjectInfo The Subject Info that we are adding to.
+	 * @param addCount A maping of add types to counts.
 	 */
 	public MethodParser( final EntityManager entityManager,
 			final SubjectInfoImpl subjectInfo,
@@ -593,10 +596,10 @@ public class MethodParser
 	}
 
 	/**
-	 * Return the set of implemented abstract classes and interfacesin the order
+	 * Return the set of implemented abstract classes and interfaces in the order
 	 * they were declared.
 	 * 
-	 * @param clazz
+	 * @param clazz The class to find abstract base classes and interfaces for.
 	 * @return The ordered Set.
 	 */
 	public Set<Class<?>> findAbstracts( final Class<?> clazz )
@@ -642,9 +645,9 @@ public class MethodParser
 	/**
 	 * Find a method in the list of classes
 	 * 
-	 * @param classSet
-	 * @param methodName
-	 * @return
+	 * @param classSet The set of classes to scan.
+	 * @param method The method to locate.
+	 * @return The first method in the set of classes.
 	 */
 	public List<Method> findMethod( final Set<Class<?>> classSet,
 			final Method method )
@@ -726,16 +729,15 @@ public class MethodParser
 	}
 
 	/**
-	 * Parse the class if necessary.
+	 * Parse the method if necessary.
 	 * 
-	 * The first time the class is seen it is parsed, after that a cached
+	 * The first time the method is seen it is parsed, after that a cached
 	 * version is returned.
 	 * 
-	 * @param clazz
-	 * @return The SubjectInfo for the class.
-	 * @throws MissingAnnotation
+	 * @param method The method to parse
+	 * @return the PredicateInfo for the class.
+	 * @throws MissingAnnotation if the Method does not have an annotation.
 	 */
-
 	public PredicateInfo parse( final Method method ) throws MissingAnnotation
 	{
 		return parse(method, null);

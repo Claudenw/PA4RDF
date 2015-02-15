@@ -63,8 +63,6 @@ public class UriHandler implements ObjectHandler
 	 * @param node
 	 *            the RDFNode
 	 * @return the URI fo the RDF node
-	 * @throws Exception
-	 *             if the node is not a Resource.
 	 */
 	@Override
 	public Object parseObject( final RDFNode node )

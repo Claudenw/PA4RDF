@@ -42,7 +42,7 @@ import java.lang.annotation.RetentionPolicy;
  * <code>@Predicate( class='class', type=RDFNode.class )
  * Iterator&lt;RDFNode&gt; getClassType()</code>
  * 
- * NOTE: if <code>type<code> is set to <code>URI.class</code> the return value
+ * NOTE: if <code>type</code> is set to <code>URI.class</code> the return value
  * is interpreted as a URI string.
  * 
  * 
@@ -54,6 +54,7 @@ public @interface Predicate
 	 * If true empty strings are assumed to be null and are not inserted.
 	 * 
 	 * Default value = false
+	 * @return true if empty strings should be considered as nulls.
 	 */
 	boolean emptyIsNull() default false;
 
@@ -64,7 +65,7 @@ public @interface Predicate
 	 * Predicate
 	 * annotated methods.
 	 * 
-	 * @return
+	 * @return true if the implementation should be overridden.
 	 */
 	boolean impl() default false;
 
@@ -113,6 +114,7 @@ public @interface Predicate
 	 * determines if the local name should have the first character upper cased.
 	 * If false (the default) the first character will be lower cased.
 	 * If true, the first character will be upper cased.
+	 * @return true if the first character of the name should be upper cased.
 	 */
 	boolean upcase() default false;
 	

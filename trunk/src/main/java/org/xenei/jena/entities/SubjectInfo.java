@@ -97,7 +97,7 @@ public interface SubjectInfo
 	/**
 	 * Get the @Subject annotation object for this subject.
 	 * 
-	 * @return
+	 * @return the Subject annotation for this object.
 	 */
 	public Subject getSubject();
 

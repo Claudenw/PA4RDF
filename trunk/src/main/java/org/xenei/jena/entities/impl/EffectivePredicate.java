@@ -31,8 +31,8 @@ import org.xenei.jena.entities.annotations.URI;
 /**
  * An class that mimics the Predicate annotation but allows processing to modify
  * the values.
- * 
- * @see {@link org.xenei.jena.entity.annotations.Precicate}
+ *
+ * @see org.xenei.jena.entities.annotations.Predicate
  */
 public class EffectivePredicate
 {

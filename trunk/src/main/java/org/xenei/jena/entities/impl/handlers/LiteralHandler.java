@@ -14,6 +14,7 @@
  */
 package org.xenei.jena.entities.impl.handlers;
 
+import com.hp.hpl.jena.datatypes.DatatypeFormatException;
 import com.hp.hpl.jena.datatypes.RDFDatatype;
 import com.hp.hpl.jena.rdf.model.Literal;
 import com.hp.hpl.jena.rdf.model.RDFNode;
@@ -46,9 +47,7 @@ public class LiteralHandler implements ObjectHandler
 	 * 
 	 * @param obj
 	 *            the Object to convert.
-	 * @return The literal representation of the object
-	 * @throws An
-	 *             exception of object can not be parsed to a lexical form.
+	 * @return The literal representation of the object.
 	 */
 	@Override
 	public Literal createRDFNode( final Object obj )
@@ -89,12 +88,11 @@ public class LiteralHandler implements ObjectHandler
 	 * @param node
 	 *            The literal node.
 	 * @return The parsed object
-	 * @throws An
-	 *             exception if node is not a Liter that can be parsed by
+	 * @throws DatatypeFormatException if node is not a Liter that can be parsed by
 	 *             literalDatatype.
 	 */
 	@Override
-	public Object parseObject( final RDFNode node )
+	public Object parseObject( final RDFNode node ) throws DatatypeFormatException
 	{
 		return literalDatatype.parse(node.asLiteral().getLexicalForm());
 	}
