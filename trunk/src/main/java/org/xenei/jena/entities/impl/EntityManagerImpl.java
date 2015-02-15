@@ -129,7 +129,7 @@ public class EntityManagerImpl implements EntityManager
 	 * @throws IllegalArgumentException
 	 *             if source implements neither Resource nor ResourceWrapper.
 	 */
-	public Resource addInstanceProperties( final Object source,
+	public <T> T addInstanceProperties( final T source,
 			final Class<?> clazz ) throws MissingAnnotation, IllegalArgumentException
 	{
 		final Resource r = getResource( source );
@@ -152,7 +152,7 @@ public class EntityManagerImpl implements EntityManager
 				}
 			}
 		}
-		return o;
+		return source;
 	}
 
 	private Map<String, Integer> countAdders( final Method[] methods )
