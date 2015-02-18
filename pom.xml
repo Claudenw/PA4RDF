@@ -6,7 +6,7 @@
 	<version>1.3-SNAPSHOT</version>
 	<scm>
 		<connection>scm:git:git://github.com/Claudenw/PA4RDF.git</connection>
-		<developerConnection>scm:git:git://github.com/Claudenw/PA4RDF.git</developerConnection>
+		<developerConnection>scm:git:https://github.com/Claudenw/PA4RDF.git</developerConnection>
 		<url>https://github.com/Claudenw/PA4RDF.git</url>
 	</scm>
 	<distributionManagement>
