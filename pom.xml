@@ -265,7 +265,7 @@
 						<configuration>
 							<server>github</server>
 							<message>Generated site for ${project.version}</message>
-							<!--   <path>${project.version}</path> -->
+							<path>/</path> 
 							<merge>true</merge>
 						</configuration>
 					</execution>
