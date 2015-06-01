@@ -111,6 +111,20 @@ public class EntityManagerImpl implements EntityManager
 		}
 	}
 
+	@Override
+	public void reset()
+	{
+		classInfo.clear();
+		registerTypes();
+		try
+		{
+			parse(ResourceWrapper.class);
+		}
+		catch (final MissingAnnotation e)
+		{
+			throw new RuntimeException(e);
+		}
+	}
 	/**
 	 * Read an instance of clazz from Object source. If source does not have the
 	 * required types as defined in the Subject annotation of clazz they will be added.

@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -18,7 +19,8 @@ import org.xenei.jena.entities.impl.EntityManagerImpl;
 public class TypeManagerTest
 {
 
-	TypeMapper mapper;
+	private TypeMapper mapper;
+	
 	@Before
 	public void setUp() throws Exception
 	{

@@ -30,6 +30,7 @@ public class SingleValueMixedTypeParserTest
 	{
 		model = ModelFactory.createDefaultModel();
 		final EntityManager manager = EntityManagerFactory.getEntityManager();
+		manager.reset();
 		manager.read(
 				model.createResource("http://localhost/SingleValueEntityTests"),
 				SingleValueMixedTypeTestClass.class);

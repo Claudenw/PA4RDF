@@ -196,5 +196,10 @@ public interface EntityManager {
 	 * @return The target object for chaining.
 	 */
 	public Object update(Object source, Object target);
+	
+	/**
+	 * Reset the entity manager to its initial state.
+	 */
+	public void reset();
 
 }

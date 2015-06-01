@@ -14,32 +14,28 @@
  */
 package org.xenei.jena.entities.impl.datatype;
 
-import com.hp.hpl.jena.datatypes.DatatypeFormatException;
 import com.hp.hpl.jena.datatypes.xsd.impl.XSDBaseNumericType;
-
-import org.apache.xerces.impl.dv.ValidatedInfo;
 
 /**
  * A XSDBaseNumericType instance that converts a number into Long and visa
  * versa.
  * 
  * The standard Jena numeric data types covert longs to integer if they fall
- * below the
- * Integer.MAX_VALUE limit.
+ * below the Integer.MAX_VALUE limit.
  */
-public class LongDatatype extends XSDBaseNumericType
-{
+public class LongDatatype extends XSDBaseNumericType {
 
-	public LongDatatype()
-	{
+	public LongDatatype() {
 		super("long", Long.class);
 	}
 
+	/**
+	 * @param lexical
+	 * @return Number
+	 */
 	@Override
-	public Object convertValidatedDataValue( final ValidatedInfo validatedInfo )
-			throws DatatypeFormatException
-	{
-		return new Long(validatedInfo.normalizedValue);
+	protected Number suitableInteger(String lexical) {
+		return Long.parseLong(lexical);
 	}
 
 }
