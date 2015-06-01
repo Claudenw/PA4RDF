@@ -14,7 +14,7 @@
  */
 package org.xenei.jena.entities.testing.iface;
 
-import com.hp.hpl.jena.util.iterator.ExtendedIterator;
+import org.apache.jena.util.iterator.ExtendedIterator;
 
 import org.xenei.jena.entities.annotations.Predicate;
 import org.xenei.jena.entities.annotations.Subject;

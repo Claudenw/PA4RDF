@@ -15,11 +15,10 @@
 
 package org.xenei.jena.entities;
 
-import com.hp.hpl.jena.rdf.model.Property;
-
 import java.lang.reflect.Method;
 import java.util.List;
 
+import org.apache.jena.rdf.model.Property;
 import org.xenei.jena.entities.impl.ActionType;
 
 /**

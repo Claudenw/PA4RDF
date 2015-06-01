@@ -1,6 +1,6 @@
 package org.xenei.jena.entities.testing.bad;
 
-import com.hp.hpl.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.Model;
 
 import org.xenei.jena.entities.annotations.Subject;
 

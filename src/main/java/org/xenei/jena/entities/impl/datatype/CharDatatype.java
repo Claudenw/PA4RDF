@@ -14,8 +14,8 @@
  */
 package org.xenei.jena.entities.impl.datatype;
 
-import com.hp.hpl.jena.datatypes.DatatypeFormatException;
-import com.hp.hpl.jena.datatypes.xsd.impl.XSDBaseStringType;
+import org.apache.jena.datatypes.DatatypeFormatException;
+import org.apache.jena.datatypes.xsd.impl.XSDBaseStringType;
 
 /**
  * An instance of XSDBaseStringType that converts char.class objects into

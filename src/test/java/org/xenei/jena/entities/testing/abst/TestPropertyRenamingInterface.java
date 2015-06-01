@@ -14,8 +14,8 @@
  */
 package org.xenei.jena.entities.testing.abst;
 
-import com.hp.hpl.jena.rdf.model.Resource;
-import com.hp.hpl.jena.util.iterator.ExtendedIterator;
+import org.apache.jena.rdf.model.Resource;
+import org.apache.jena.util.iterator.ExtendedIterator;
 
 import org.xenei.jena.entities.annotations.Predicate;
 

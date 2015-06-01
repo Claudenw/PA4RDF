@@ -14,18 +14,17 @@
  */
 package org.xenei.jena.entities.impl;
 
-import com.hp.hpl.jena.datatypes.RDFDatatype;
-import com.hp.hpl.jena.datatypes.TypeMapper;
-import com.hp.hpl.jena.rdf.model.NodeIterator;
-import com.hp.hpl.jena.rdf.model.Property;
-import com.hp.hpl.jena.rdf.model.RDFNode;
-import com.hp.hpl.jena.rdf.model.Resource;
-import com.hp.hpl.jena.rdf.model.ResourceFactory;
-import com.hp.hpl.jena.rdf.model.Statement;
-import com.hp.hpl.jena.rdf.model.StmtIterator;
-import com.hp.hpl.jena.shared.Lock;
-import com.hp.hpl.jena.util.iterator.ExtendedIterator;
-import com.hp.hpl.jena.util.iterator.Map1;
+import org.apache.jena.datatypes.RDFDatatype;
+import org.apache.jena.datatypes.TypeMapper;
+import org.apache.jena.rdf.model.NodeIterator;
+import org.apache.jena.rdf.model.Property;
+import org.apache.jena.rdf.model.RDFNode;
+import org.apache.jena.rdf.model.Resource;
+import org.apache.jena.rdf.model.ResourceFactory;
+import org.apache.jena.rdf.model.Statement;
+import org.apache.jena.rdf.model.StmtIterator;
+import org.apache.jena.shared.Lock;
+import org.apache.jena.util.iterator.ExtendedIterator;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -36,6 +35,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
 import java.util.Set;
+import java.util.function.Function;
 
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -351,10 +351,10 @@ public class PredicateInfoImpl implements PredicateInfo
 					.listObjectsOfProperty(resource, p);
 
 			final ExtendedIterator<Object> oIter = iter
-					.mapWith(new Map1<RDFNode, Object>() {
+					.mapWith(new Function<RDFNode, Object>() {
 
 						@Override
-						public Object map1( final RDFNode rdfNode )
+						public Object apply( final RDFNode rdfNode )
 						{
 							return objectHandler.parseObject(rdfNode);
 						}
@@ -392,10 +392,10 @@ public class PredicateInfoImpl implements PredicateInfo
 			final NodeIterator iter = resource.getModel()
 					.listObjectsOfProperty(resource, p);
 
-			return iter.mapWith(new Map1<RDFNode, Object>() {
+			return iter.mapWith(new Function<RDFNode, Object>() {
 
 				@Override
-				public Object map1( final RDFNode rdfNode )
+				public Object apply( final RDFNode rdfNode )
 				{
 					return objectHandler.parseObject(rdfNode);
 				}

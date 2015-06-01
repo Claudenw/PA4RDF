@@ -14,7 +14,7 @@
  */
 package org.xenei.jena.entities.testing.iface;
 
-import com.hp.hpl.jena.rdf.model.RDFNode;
+import org.apache.jena.rdf.model.RDFNode;
 
 import java.util.List;
 import java.util.Queue;

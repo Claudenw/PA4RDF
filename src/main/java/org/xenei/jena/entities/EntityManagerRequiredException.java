@@ -8,6 +8,11 @@ package org.xenei.jena.entities;
 public class EntityManagerRequiredException extends RuntimeException
 {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -554457322254364401L;
+
 	public EntityManagerRequiredException()
 	{
 
