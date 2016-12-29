@@ -32,8 +32,6 @@ import java.util.Queue;
 import java.util.Set;
 import java.util.Stack;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xenei.jena.entities.EntityManager;
 import org.xenei.jena.entities.MissingAnnotation;
 import org.xenei.jena.entities.PredicateInfo;
@@ -566,7 +564,6 @@ public class MethodParser
 		}
 	}
 
-	private static Logger LOG = LoggerFactory.getLogger(MethodParser.class);
 	private final SubjectInfoImpl subjectInfo;
 
 	private final Map<String, Integer> addCount;

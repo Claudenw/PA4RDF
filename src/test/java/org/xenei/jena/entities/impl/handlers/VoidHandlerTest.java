@@ -2,7 +2,6 @@ package org.xenei.jena.entities.impl.handlers;
 
 import org.apache.jena.rdf.model.RDFNode;
 import org.apache.jena.rdf.model.ResourceFactory;
-
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -26,6 +25,12 @@ public class VoidHandlerTest implements HandlerTestInterface
 	public void testCreateRDFNode()
 	{
 		final RDFNode n = handler.createRDFNode(Integer.valueOf(5));
+		Assert.assertNull(n);
+	}
+	
+	@Override
+	public void testCreateRDFNode_Null() {
+		final RDFNode n = handler.createRDFNode( null );
 		Assert.assertNull(n);
 	}
 

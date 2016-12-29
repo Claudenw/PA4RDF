@@ -60,4 +60,10 @@ public class LiteralHandlerTest implements HandlerTestInterface
 		Assert.assertEquals(instance, a2);
 
 	}
+
+	@Override
+	public void testCreateRDFNode_Null() {
+		final RDFNode n = handler.createRDFNode( null );
+		Assert.assertNull(n);
+	}
 }
