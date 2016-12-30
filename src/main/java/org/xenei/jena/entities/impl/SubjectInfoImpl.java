@@ -183,7 +183,8 @@ public class SubjectInfoImpl implements SubjectInfo
 	@Override
 	public Property getPredicateProperty( final Method m )
 	{
-		return getPredicateInfo(m).getProperty();
+		PredicateInfo pi = getPredicateInfo(m);
+		return pi==null?null:pi.getProperty();
 	}
 
 	/**
@@ -195,7 +196,8 @@ public class SubjectInfoImpl implements SubjectInfo
 	@Override
 	public Property getPredicateProperty( final String methodName )
 	{
-		return getPredicateInfo(methodName).getProperty();
+		PredicateInfo pi =getPredicateInfo(methodName);
+		return pi==null?null:pi.getProperty();
 	}
 
 	/*
@@ -207,7 +209,8 @@ public class SubjectInfoImpl implements SubjectInfo
 	@Override
 	public String getPredicateUriStr( final Method m )
 	{
-		return getPredicateInfo(m).getUriString();
+		PredicateInfo pi = getPredicateInfo(m);
+		return pi==null?null:pi.getUriString();
 	}
 
 	/*
@@ -218,7 +221,8 @@ public class SubjectInfoImpl implements SubjectInfo
 	@Override
 	public String getPredicateUriStr( final String function )
 	{
-		return getPredicateInfo(function).getUriString();
+		PredicateInfo pi = getPredicateInfo(function);
+		return pi==null?null:pi.getUriString();
 	}
 
 	/**
