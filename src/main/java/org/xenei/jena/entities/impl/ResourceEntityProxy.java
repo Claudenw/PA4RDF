@@ -81,7 +81,7 @@ public class ResourceEntityProxy implements MethodInterceptor // Invoker
 			final Object[] args, final MethodProxy proxy ) throws Throwable
 	{
 
-		// handle the resource wrapper method call.
+		/* handle the resource wrapper method calls. */
 		// if (ResourceEntityProxy.GET_RESOURCE.equals(m))
 		if (m.getName().equals("getResource")
 				&& (m.getParameterTypes().length == 0)
@@ -90,6 +90,24 @@ public class ResourceEntityProxy implements MethodInterceptor // Invoker
 			return resource;
 		}
 
+		
+		// if (ResourceEntityProxy.GET_RESOURCE.equals(m))
+		if (m.getName().equals("getEntityManager")
+				&& (m.getParameterTypes().length == 0)
+				&& (m.getReturnType() == EntityManager.class))
+		{
+			return entityManager;
+		}
+		
+		if (m.getName().equals("getSubjectInfo")
+				&& (m.getParameterTypes().length == 0)
+				&& (m.getReturnType() == SubjectInfo.class))
+		{
+			return subjectInfo;
+		}
+		
+		
+		/* handle the normal annotations */
 		SubjectInfo workingInfo = subjectInfo;
 		if (m.getDeclaringClass() != subjectInfo.getImplementedClass())
 		{

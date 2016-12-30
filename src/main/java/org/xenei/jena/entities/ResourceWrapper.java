@@ -30,9 +30,22 @@ public interface ResourceWrapper
 	/**
 	 * Get the wrapped resource.
 	 * 
-	 * @return The jena model resource.
+	 * @return The Jena model resource.
 	 */
 	@Predicate
 	public Resource getResource();
+	
+	/**
+	 * Get the EntityManager that created or decorated this Object
+	 * @return The EntityManager that created this object.
+	 */
+	@Predicate
+	public EntityManager getEntityManager();
 
+	/**
+	 * Get the SubjectInfo for this object.
+	 * @return The SubjectInfo for this object.
+	 */
+	@Predicate
+	public SubjectInfo getSubjectInfo();
 }

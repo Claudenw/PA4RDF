@@ -40,7 +40,30 @@ public class ResourceEntityProxyTest
 		model = ModelFactory.createMemModelMaker().createDefaultModel();
 		manager = EntityManagerFactory.getEntityManager();
 	}
+	
+	@Test
+	public void testGetEntityManger() throws IllegalArgumentException, MissingAnnotation {
+		final Resource r = model.createResource("http://localhost/foo");
+		final ResourceWrapper ti1 = (ResourceWrapper) manager.read(r, TestInterface.class);
+		Assert.assertEquals( manager, ti1.getEntityManager());	
+	}
 
+	@Test
+	public void testGetResource() throws IllegalArgumentException, MissingAnnotation {
+		final Resource r = model.createResource("http://localhost/foo");
+		final ResourceWrapper ti1 = (ResourceWrapper) manager.read(r, TestInterface.class);
+		Assert.assertEquals( r, ti1.getResource());	
+	}
+	
+	@Test
+	public void testGetSubjectInfo() throws IllegalArgumentException, MissingAnnotation {
+		final Resource r = model.createResource("http://localhost/foo");
+		final ResourceWrapper ti1 = (ResourceWrapper) manager.read(r, TestInterface.class);
+		SubjectInfo info = ti1.getSubjectInfo();
+		Assert.assertEquals( TestInterface.class, info.getImplementedClass());
+	}
+	
+	
 	@Test
 	public void testEquality() throws MissingAnnotation
 	{
