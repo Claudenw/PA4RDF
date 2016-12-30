@@ -133,7 +133,7 @@ public class EntityManagerReasoner implements Reasoner, EntityManager.Listener
 				final MethodType mt = map.get(n);
 				if (mt != null && mt.equals( MethodType.SINGLE))
 				{
-					super.remove( t.getSubject(), t.getPredicate(), null);
+					super.remove( t.getSubject(), t.getPredicate(), Node.ANY);
 				}
 				super.performAdd(t);
 			}
