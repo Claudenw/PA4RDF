@@ -109,5 +109,11 @@ public interface SubjectInfo
 	 *            The list of interfaces that this subjectInfo should implement.
 	 */
 	public void validate( final Collection<Class<?>> iface );
+	
+	/**
+	 * Get a collection of all predicates for this subject.
+	 * @return the collection of predicate info objects.
+	 */
+	public Collection<PredicateInfo> getPredicates();
 
 }

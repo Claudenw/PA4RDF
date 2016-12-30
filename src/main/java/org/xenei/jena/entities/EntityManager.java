@@ -15,6 +15,8 @@
 
 package org.xenei.jena.entities;
 
+import java.util.Collection;
+
 import org.xenei.jena.entities.annotations.Subject;
 
 /**
@@ -148,7 +150,7 @@ public interface EntityManager {
 	 * @param primaryClass
 	 *            The class of the object to be returned.
 	 * @param secondaryClasses
-	 *            A lost of other classes that are implemented.
+	 *            AList lost of other classes that are implemented.
 	 * @param <T>
 	 *            the instance type to return.
 	 * @return primaryClass instance that also implements ResourceWrapper.
@@ -201,5 +203,32 @@ public interface EntityManager {
 	 * Reset the entity manager to its initial state.
 	 */
 	public void reset();
+	
+	/**
+	 * Get all known subjects.
+	 * @return The collection of SubjectInfo objects in this entitymanager
+	 */
+	public Collection<SubjectInfo> getSubjects();
+	
+	/**
+	 * Register a listener to this EntityManager.
+	 * 
+	 * Listeners are held with weak references so if the
+	 * listener can be garbage collected.
+	 * 
+	 * @param listener the listener to register.
+	 */
+	public void registerListener( Listener listener );
+	
+	/**
+	 * Unregister a listener from this EntityManager.
+	 * 
+	 * @param listener the listener to remove.
+	 */
+	public void unregisterListener( Listener listener );
+	
+	public static interface Listener {
+		void onParseClass( SubjectInfo info );
+	}
 
 }

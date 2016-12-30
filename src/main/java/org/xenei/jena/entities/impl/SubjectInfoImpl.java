@@ -19,7 +19,9 @@ import org.apache.jena.rdf.model.Property;
 import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import org.xenei.jena.entities.PredicateInfo;
 import org.xenei.jena.entities.SubjectInfo;
@@ -297,6 +299,17 @@ public class SubjectInfoImpl implements SubjectInfo
 		// // clazz.remove(Resource.class);
 		// verifyNoNullMethods(clazz);
 		validated = true;
+	}
+
+	@Override
+	public Collection<PredicateInfo> getPredicates()
+	{
+		Set<PredicateInfo> set = new HashSet<PredicateInfo>();
+		for ( Map<ObjectHandler,PredicateInfo> m : predicateInfo.values())
+		{
+			set.addAll( m.values() );
+		}
+		return set;
 	}
 
 }

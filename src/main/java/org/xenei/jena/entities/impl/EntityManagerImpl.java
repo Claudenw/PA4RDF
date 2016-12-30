@@ -23,6 +23,7 @@ import org.apache.jena.vocabulary.RDF;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.ref.WeakReference;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.URL;
@@ -33,6 +34,7 @@ import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -64,7 +66,9 @@ public class EntityManagerImpl implements EntityManager
 	private static Logger LOG = LoggerFactory
 			.getLogger(EntityManagerImpl.class);
 
-	private final Map<Class<?>, SubjectInfoImpl> classInfo = new HashMap<Class<?>, SubjectInfoImpl>();
+	private final Map<Class<?>, SubjectInfo> classInfo;
+	
+	private final List<WeakReference<Listener>> listeners;
 
 	static
 	{
@@ -101,6 +105,48 @@ public class EntityManagerImpl implements EntityManager
 	 */
 	public EntityManagerImpl()
 	{
+		listeners = Collections.synchronizedList(new ArrayList<WeakReference<Listener>>());
+		classInfo = new HashMap<Class<?>, SubjectInfo>(){
+
+			/**
+			 * 
+			 */
+			private static final long serialVersionUID = 8181650326448307726L;
+
+			private void notifyListeners(SubjectInfo value)
+			{
+				synchronized (listeners) {
+					Iterator<WeakReference<Listener>> iter = listeners.iterator();
+					while (iter.hasNext())
+					{
+						WeakReference<Listener> listener = iter.next();
+						Listener l = listener.get();
+						if (l == null)
+						{
+							iter.remove();
+						} else
+						{
+							l.onParseClass( value );
+						}
+					}
+				}
+			}
+			@Override
+			public SubjectInfo put(Class<?> key, SubjectInfo value)
+			{
+				notifyListeners( value );
+				return super.put(key, value);
+			}
+
+			@Override
+			public void putAll(Map<? extends Class<?>, ? extends SubjectInfo> m)
+			{
+				for (SubjectInfo si : m.values())
+				{
+					notifyListeners( si );
+				}				
+				super.putAll(m);
+			}};
 		try
 		{
 			parse(ResourceWrapper.class);
@@ -454,7 +500,7 @@ public class EntityManagerImpl implements EntityManager
 	private SubjectInfoImpl parse( final Class<?> clazz )
 			throws MissingAnnotation
 	{
-		SubjectInfoImpl subjectInfo = classInfo.get(clazz);
+		SubjectInfoImpl subjectInfo = (SubjectInfoImpl) classInfo.get(clazz);
 
 		if (subjectInfo == null)
 		{
@@ -696,6 +742,35 @@ public class EntityManagerImpl implements EntityManager
 			}
 		}
 		return target;
+	}
+
+	@Override
+	public Collection<SubjectInfo> getSubjects()
+	{
+		return classInfo.values();
+	}
+
+	@Override
+	public void registerListener(Listener listener)
+	{
+		listeners.add(new WeakReference<Listener>(listener));
+	}
+
+	@Override
+	public void unregisterListener(Listener listener)
+	{
+		synchronized (listeners) {
+			Iterator<WeakReference<Listener>> iter = listeners.iterator();
+			while (iter.hasNext())
+			{
+				WeakReference<Listener> wl = iter.next();
+				Listener l = wl.get();
+				if (l == null || l == listener)
+				{
+					iter.remove();
+				} 
+			}
+		}
 	}
 
 }
