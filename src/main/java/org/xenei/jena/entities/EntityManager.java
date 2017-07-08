@@ -17,7 +17,10 @@ package org.xenei.jena.entities;
 
 import java.util.Collection;
 
+import org.apache.jena.rdf.model.Resource;
+import org.apache.jena.rdfconnection.RDFConnection;
 import org.xenei.jena.entities.annotations.Subject;
+import org.xenei.jena.entities.cache.SubjectTable;
 
 /**
  * An Entity Manager to manage instances of entities annotated with the Subject
@@ -230,5 +233,21 @@ public interface EntityManager {
 	public static interface Listener {
 		void onParseClass( SubjectInfo info );
 	}
+	
+	/**
+	 * Get the SubjectTable for the resource.
+	 * 
+	 * If the table does not exist create it by querying the 
+	 * RDFConnection for the data.
+	 * 
+	 * @param subject the resource to locate.
+	 */
+	public SubjectTable getSubjectTable( Resource subject );
+	
+	/**
+	 * Get the connection to the underlying RDF datastore.
+	 * @return  the RDFConnection.
+	 */
+	public RDFConnection getConnection();
 
 }
