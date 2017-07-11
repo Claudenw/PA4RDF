@@ -1,18 +1,18 @@
 package org.xenei.jena.entities.cache;
 
-import java.util.List;
+import java.util.Set;
 
+import org.apache.jena.graph.FrontsNode;
+import org.apache.jena.graph.Graph;
+import org.apache.jena.graph.Node;
 import org.apache.jena.graph.Triple;
-import org.apache.jena.rdf.model.Property;
-import org.apache.jena.rdf.model.RDFNode;
-import org.apache.jena.rdf.model.Resource;
 
-public interface SubjectTable {
+public interface SubjectTable { 
 	/**
 	 * Get the resource this table is for.
 	 * @return the Resource
 	 */
-	public Resource getSubject();
+	public Node getSubject();
 	
 	/**
 	 * Get the list of values for a predicate.
@@ -22,22 +22,36 @@ public interface SubjectTable {
 	 * @param predicate the predicate to look for.
 	 * @return The list of RDFNodes for the property in this table.
 	 */
-	public List<RDFNode> getValues( Property predicate );
+	public Set<Node> getValues( FrontsNode predicate );
 	
 	/**
 	 * Add the value to the list
 	 * @param predicate the predicate for the value
 	 * @param value the value itself.
 	 */
-	public void addValue( Property predicate, RDFNode value );
+	public void addValue( FrontsNode predicate, FrontsNode value );
+
+	/**
+	 * Add the value to the list
+	 * @param predicate the predicate for the value
+	 * @param value the value itself.
+	 */
+	public void addValue( Node predicate, Node value );
 
 	/**
 	 * Remove the value from the list.
 	 * @param predicate the predicate to remove the value from.
 	 * @param value the value to remove.
 	 */
-	public void removeValue( Property predicate, RDFNode value );
+	public void removeValue( FrontsNode predicate, FrontsNode value );
 	
+	/**
+	 * Remove the value from the list.
+	 * @param predicate the predicate to remove the value from.
+	 * @param value the value to remove.
+	 */
+	public void removeValue( Node predicate, Node value );
+
 	/**
 	 * Return the list of all predicates with the specified value.
 	 * 
@@ -45,13 +59,29 @@ public interface SubjectTable {
 	 * @param value the value to locate.
 	 * @return the list of properties with the value.
 	 */
-	public List<Property> getPedicates(RDFNode value);
+	public Set<Node> getPedicates(FrontsNode value);
 
 	/**
-	 * Return the table as a list of triples.
-	 * @return
+	 * Return the list of all predicates with the specified value.
+	 * 
+	 * getPredicates( null ) should return a list of unique predicates.
+	 * @param value the value to locate.
+	 * @return the list of properties with the value.
 	 */
-	public List<Triple> asTriples();
+	public Set<Node> getPedicates(Node value);
+
+	
+	/**
+	 * Return the table as a list of triples.
+	 * @return the list of triples.
+	 */
+	public Set<Triple> asTriples();
+	
+	/**
+	 * Return the table as a graph.
+	 * @return a graph.
+	 */
+	public Graph asGraph();
 	
 	/**
 	 * Return true if the predicate and property exist in the table.
@@ -60,5 +90,20 @@ public interface SubjectTable {
 	 * @param value the value to locate
 	 * @return true if the predicate and value are in the table.
 	 */
-	public boolean has( Property predicate, RDFNode value );
+	public boolean has( FrontsNode predicate, FrontsNode value );
+	
+	/**
+	 * Return true if the predicate and property exist in the table.
+	 * Either value may be null for wild card.
+	 * @param predicate the predicate to locate
+	 * @param value the value to locate
+	 * @return true if the predicate and value are in the table.
+	 */
+	public boolean has( Node predicate, Node value );
+	
+	/**
+	 * Return the size of this table.
+	 * @return the number of triples in the table.
+	 */
+	public int size();
 }
