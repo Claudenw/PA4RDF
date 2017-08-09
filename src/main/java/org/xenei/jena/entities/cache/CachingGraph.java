@@ -1,6 +1,7 @@
 package org.xenei.jena.entities.cache;
 
 import java.lang.ref.SoftReference;
+import java.lang.reflect.Method;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -11,13 +12,19 @@ import java.util.Set;
 import org.apache.jena.graph.FrontsNode;
 import org.apache.jena.graph.Graph;
 import org.apache.jena.graph.Node;
+import org.apache.jena.graph.Node_URI;
 import org.apache.jena.graph.Triple;
 import org.apache.jena.graph.impl.CollectionGraph;
 import org.apache.jena.graph.impl.GraphBase;
 import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.Resource;
 import org.apache.jena.rdfconnection.RDFConnection;
 import org.apache.jena.util.iterator.ExtendedIterator;
 import org.apache.jena.util.iterator.NiceIterator;
+
+import net.sf.cglib.proxy.Enhancer;
+import net.sf.cglib.proxy.MethodInterceptor;
+import net.sf.cglib.proxy.MethodProxy;
 
 public class CachingGraph extends GraphBase implements Graph {
 	
@@ -38,20 +45,28 @@ public class CachingGraph extends GraphBase implements Graph {
 		return st;
 	}
 	
+	public SubjectTable getTable( Node subject )
+	{
+		SoftReference<SubjectTable> tblRef = map.get(subject);
+		SubjectTable tbl = null;
+		if (tblRef != null)
+		{
+			tbl = tblRef.get();
+		}
+		if (tbl == null)
+		{
+			tbl = loadTable( subject );
+		}
+		return tbl;
+	}
+	
 	@Override
 	protected ExtendedIterator<Triple> graphBaseFind(Triple triplePattern) {
 		if (triplePattern.getSubject().isConcrete())
 		{
 			SoftReference<SubjectTable> tblRef = map.get(triplePattern.getSubject());
-			SubjectTable tbl = null;
-			if (tblRef != null)
-			{
-				tbl = tblRef.get();
-			}
-			if (tbl == null)
-			{
-				tbl = loadTable( triplePattern.getSubject());
-			}
+			SubjectTable tbl = getTable( triplePattern.getSubject());
+			
 			Graph graph = tbl.asGraph();
 			return graph.find(triplePattern);
 		} else {
@@ -180,7 +195,16 @@ public class CachingGraph extends GraphBase implements Graph {
 				set = new HashSet<Node>();
 				map.put( predicate, set );
 			}
-			set.add( value );
+//			if (value instanceof Node_URI)
+//			{
+//				NodeInterceptor interceptor = new NodeInterceptor( (Node_URI)value);
+//				final Enhancer e = new Enhancer();	
+//				e.setInterfaces( new Class[] {Node_URI.class });
+//				e.setCallback(interceptor);
+//				set.add((Node_URI) e.create());
+//			} else {
+				set.add( value );
+//			}
 		}
 
 		@Override
@@ -255,6 +279,24 @@ public class CachingGraph extends GraphBase implements Graph {
 			return retval;
 		}
 		
+	}
+	
+	private class NodeInterceptor implements MethodInterceptor {
+		private SubjectTable tbl;
+		private Node_URI node;
+
+		public NodeInterceptor( Node_URI node )
+		{
+			this.tbl = getTable( node );
+			this.node = node;
+			
+		}
+		@Override
+		public Object intercept(Object obj, Method method, Object[] args,
+				MethodProxy proxy) throws Throwable
+		{
+			return method.invoke(node, args);
+		}
 	}
 
 }

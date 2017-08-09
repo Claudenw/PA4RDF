@@ -16,9 +16,14 @@ package org.xenei.jena.entities.impl;
 
 import org.apache.jena.datatypes.RDFDatatype;
 import org.apache.jena.datatypes.TypeMapper;
+import org.apache.jena.query.Dataset;
+import org.apache.jena.query.DatasetFactory;
 import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.rdf.model.Resource;
 import org.apache.jena.rdf.model.ResourceFactory;
+import org.apache.jena.rdfconnection.RDFConnection;
+import org.apache.jena.rdfconnection.RDFConnectionFactory;
 import org.apache.jena.vocabulary.RDF;
 
 import java.io.File;
@@ -44,6 +49,7 @@ import java.util.zip.ZipInputStream;
 
 import net.sf.cglib.proxy.Enhancer;
 import net.sf.cglib.proxy.MethodInterceptor;
+import net.sf.cglib.proxy.MethodProxy;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -53,6 +59,8 @@ import org.xenei.jena.entities.ResourceWrapper;
 import org.xenei.jena.entities.SubjectInfo;
 import org.xenei.jena.entities.annotations.Predicate;
 import org.xenei.jena.entities.annotations.Subject;
+import org.xenei.jena.entities.cache.CachingGraph;
+import org.xenei.jena.entities.cache.SubjectTable;
 import org.xenei.jena.entities.impl.datatype.CharDatatype;
 import org.xenei.jena.entities.impl.datatype.CharacterDatatype;
 import org.xenei.jena.entities.impl.datatype.LongDatatype;
@@ -69,6 +77,12 @@ public class EntityManagerImpl implements EntityManager
 	private final Map<Class<?>, SubjectInfo> classInfo;
 	
 	private final List<WeakReference<Listener>> listeners;
+	
+	private final RDFConnection connection;
+	
+	private final CachingGraph cachingGraph;
+	
+	private final Model cachingModel;
 
 	static
 	{
@@ -100,11 +114,26 @@ public class EntityManagerImpl implements EntityManager
 		TypeMapper.getInstance().registerDatatype(rtype);
 	}
 
+	public EntityManagerImpl( Model model)
+	{
+		this( DatasetFactory.create( model ));
+		 
+	}
+	
+	public EntityManagerImpl( Dataset dataset)
+	{
+		this( RDFConnectionFactory.connect( dataset));
+	}
+	
 	/**
 	 * Constructor.
 	 */
-	public EntityManagerImpl()
+	public EntityManagerImpl(RDFConnection connection)
 	{
+		this.connection = connection;
+		this.cachingGraph = new CachingGraph( connection );
+		this.cachingModel = ModelFactory.createModelForGraph( cachingGraph );
+		
 		listeners = Collections.synchronizedList(new ArrayList<WeakReference<Listener>>());
 		classInfo = new HashMap<Class<?>, SubjectInfo>(){
 
@@ -372,17 +401,31 @@ public class EntityManagerImpl implements EntityManager
 
 	private Resource getResource( final Object target ) throws IllegalArgumentException
 	{
+		Resource r = null;
 		if (target instanceof ResourceWrapper)
 		{
-			return ((ResourceWrapper) target).getResource();
+			r = ((ResourceWrapper) target).getResource();
 		}
-		if (target instanceof Resource)
+		else if (target instanceof Resource)
 		{
-			return (Resource) target;
+			r = (Resource) target;
 		}
-		throw new IllegalArgumentException(String.format(
-				"%s implements neither Resource nor ResourceWrapper",
-				target.getClass()));
+		else {
+			
+			throw new IllegalArgumentException(String.format(
+					"%s implements neither Resource nor ResourceWrapper",
+					target.getClass()));	
+		}
+		/* make sure the resource is loaded in the table
+		 make the resource point to the caching model.		
+		 bind the table to the resource to keep it from being garbage collected.
+		*/
+		ResourceInterceptor interceptor = new ResourceInterceptor( cachingModel.createResource( r.getURI() ));
+		final Enhancer e = new Enhancer();	
+		e.setInterfaces( new Class[] {Resource.class });
+		e.setCallback(interceptor);
+		return (Resource) e.create();
+
 	}
 
 	@Override
@@ -603,6 +646,7 @@ public class EntityManagerImpl implements EntityManager
 		}
 		return read( r, primaryClass, secondaryClasses);
 	}
+	
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -648,6 +692,18 @@ public class EntityManagerImpl implements EntityManager
 		e.setInterfaces(classes.toArray(classArray));
 		e.setCallback(interceptor);
 		return (T) e.create();
+	}
+
+	@Override
+	public SubjectTable getSubjectTable(Resource subject)
+	{
+		return cachingGraph.getTable( subject.asNode() );
+	}
+
+	@Override
+	public RDFConnection getConnection()
+	{
+		return connection;
 	}
 
 	/**
@@ -772,5 +828,24 @@ public class EntityManagerImpl implements EntityManager
 			}
 		}
 	}
+	
+	private class ResourceInterceptor implements MethodInterceptor {
+		private SubjectTable tbl;
+		private Resource res;
+
+		public ResourceInterceptor(  Resource res )
+		{
+			this.tbl = getSubjectTable( res);
+			this.res = res;
+		}
+		
+		@Override
+		public Object intercept(Object obj, Method method, Object[] args,
+				MethodProxy proxy) throws Throwable
+		{
+			return method.invoke(res, args);
+		}
+	}
+
 
 }

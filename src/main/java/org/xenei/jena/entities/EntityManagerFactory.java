@@ -15,6 +15,11 @@
 
 package org.xenei.jena.entities;
 
+import org.apache.jena.query.DatasetFactory;
+import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.ModelFactory;
+import org.apache.jena.rdfconnection.RDFConnection;
+import org.apache.jena.rdfconnection.RDFConnectionFactory;
 import org.xenei.jena.entities.impl.EntityManagerImpl;
 
 /**
@@ -32,7 +37,10 @@ public class EntityManagerFactory
 	{
 		if (EntityManagerFactory.manager == null)
 		{
-			EntityManagerFactory.manager = new EntityManagerImpl();
+			Model model = ModelFactory.createDefaultModel();
+			RDFConnection conn = RDFConnectionFactory.connect( 
+					DatasetFactory.create(model) );
+			EntityManagerFactory.manager = new EntityManagerImpl( conn );
 		}
 		return EntityManagerFactory.manager;
 	}

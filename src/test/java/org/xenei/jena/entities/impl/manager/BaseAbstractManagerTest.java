@@ -19,7 +19,7 @@ abstract public class BaseAbstractManagerTest
 	protected SubjectInfoImpl subjectInfo;
 	protected final Class<?> classUnderTest;
 	protected static String NS = "http://localhost/test#";
-	protected final EntityManager manager = new EntityManagerImpl();
+	protected EntityManager manager;
 	protected Model model;
 
 	protected BaseAbstractManagerTest( final Class<?> classUnderTest )
@@ -31,6 +31,7 @@ abstract public class BaseAbstractManagerTest
 	public void setup() throws MissingAnnotation
 	{
 		model = ModelFactory.createDefaultModel();
+		 manager = new EntityManagerImpl(model);
 		subjectInfo = (SubjectInfoImpl) manager.getSubjectInfo(classUnderTest);
 	}
 

@@ -29,12 +29,15 @@ import org.xenei.jena.entities.testing.bad.UnannotatedInterface;
 public class EntityManagerTest
 {
 
-	private final EntityManager manager = new EntityManagerImpl();
+	private final Model model = ModelFactory.createDefaultModel();
+	private EntityManager manager;
 
 	@Before
 	public void setup()
 	{
 		PropertyConfigurator.configure("./src/test/resources/log4j.properties");
+		model.removeAll();
+		manager = new EntityManagerImpl(model);
 	}
 
 	@Test

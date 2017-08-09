@@ -1,11 +1,15 @@
 package org.xenei.jena.entities;
 
+import org.apache.jena.query.DatasetFactory;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.rdf.model.Resource;
+import org.apache.jena.rdfconnection.RDFConnection;
+import org.apache.jena.rdfconnection.RDFConnectionFactory;
 
 import junit.framework.Assert;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.xenei.jena.entities.annotations.Predicate;
 import org.xenei.jena.entities.annotations.Subject;
@@ -13,6 +17,14 @@ import org.xenei.jena.entities.impl.EntityManagerImpl;
 
 public class UpdaterTests
 {
+	Model model;
+	EntityManager manager;
+
+	public UpdaterTests()
+	{
+		model = ModelFactory.createDefaultModel();
+	}
+
 	public class DataSource
 	{
 		private int intValue;
@@ -46,27 +58,27 @@ public class UpdaterTests
 			return strValue;
 		}
 
-		public void setDblValue( final double dblValue )
+		public void setDblValue(final double dblValue)
 		{
 			this.dblValue = dblValue;
 		}
 
-		public void setFltValue( final float fltValue )
+		public void setFltValue(final float fltValue)
 		{
 			this.fltValue = fltValue;
 		}
 
-		public void setIntValue( final int intValue )
+		public void setIntValue(final int intValue)
 		{
 			this.intValue = intValue;
 		}
 
-		public void setLngValue( final long lngValue )
+		public void setLngValue(final long lngValue)
 		{
 			this.lngValue = lngValue;
 		}
 
-		public void setStrValue( final String strValue )
+		public void setStrValue(final String strValue)
 		{
 			this.strValue = strValue;
 		}
@@ -84,15 +96,15 @@ public class UpdaterTests
 
 		public String getStrValue();
 
-		public void setDblValue( double dblValue );
+		public void setDblValue(double dblValue);
 
-		public void setFltValue( float fltValue );
+		public void setFltValue(float fltValue);
 
-		public void setIntValue( int intValue );
+		public void setIntValue(int intValue);
 
-		public void setLngValue( long lngValue );
+		public void setLngValue(long lngValue);
 
-		public void setStrValue( String strValue );
+		public void setStrValue(String strValue);
 	}
 
 	public class DataSourceIfaceImpl implements DataSourceIface
@@ -134,37 +146,37 @@ public class UpdaterTests
 		}
 
 		@Override
-		public void setDblValue( final double dblValue )
+		public void setDblValue(final double dblValue)
 		{
 			this.dblValue = dblValue;
 		}
 
 		@Override
-		public void setFltValue( final float fltValue )
+		public void setFltValue(final float fltValue)
 		{
 			this.fltValue = fltValue;
 		}
 
 		@Override
-		public void setIntValue( final int intValue )
+		public void setIntValue(final int intValue)
 		{
 			this.intValue = intValue;
 		}
 
 		@Override
-		public void setLngValue( final long lngValue )
+		public void setLngValue(final long lngValue)
 		{
 			this.lngValue = lngValue;
 		}
 
 		@Override
-		public void setStrValue( final String strValue )
+		public void setStrValue(final String strValue)
 		{
 			this.strValue = strValue;
 		}
 	}
 
-	@Subject( namespace = "http://example.com/test#" )
+	@Subject(namespace = "http://example.com/test#")
 	public interface DataSourceModelIface
 	{
 		@Predicate
@@ -182,18 +194,23 @@ public class UpdaterTests
 		@Predicate
 		public String getStrValue();
 
-		public void setDblValue( double dblValue );
+		public void setDblValue(double dblValue);
 
-		public void setFltValue( float fltValue );
+		public void setFltValue(float fltValue);
 
-		public void setIntValue( int intValue );
+		public void setIntValue(int intValue);
 
-		public void setLngValue( long lngValue );
+		public void setLngValue(long lngValue);
 
-		public void setStrValue( String strValue );
+		public void setStrValue(String strValue);
 	}
 
-	EntityManager manager = new EntityManagerImpl();
+	@Before
+	public void setup()
+	{
+		model.removeAll();
+		manager = new EntityManagerImpl(model);
+	}
 
 	@Test
 	public void DataSourceModelTest() throws Exception

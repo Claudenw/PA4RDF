@@ -17,14 +17,13 @@ import org.xenei.jena.entities.impl.handlers.ResourceHandler;
 import org.xenei.jena.entities.impl.handlers.UriHandler;
 import org.xenei.jena.entities.testing.iface.TestInterface;
 
-public abstract class AbstractCollectionValueTest extends
-		BaseAbstractManagerTest
+public abstract class AbstractCollectionValueTest
+		extends BaseAbstractManagerTest
 {
 
-	protected AbstractCollectionValueTest( final Class<?> classUnderTest )
+	protected AbstractCollectionValueTest(final Class<?> classUnderTest)
 	{
 		super(classUnderTest);
-		// TODO Auto-generated constructor stub
 	}
 
 	@Test
@@ -34,8 +33,8 @@ public abstract class AbstractCollectionValueTest extends
 
 		PredicateInfoImpl pi = (PredicateInfoImpl) subjectInfo
 				.getPredicateInfo("addBool", Boolean.class);
-		final ObjectHandler handler = new LiteralHandler(TypeMapper
-				.getInstance().getTypeByClass(Boolean.class));
+		final ObjectHandler handler = new LiteralHandler(
+				TypeMapper.getInstance().getTypeByClass(Boolean.class));
 		Assert.assertEquals(handler, pi.getObjectHandler());
 		Assert.assertEquals("addBool", pi.getMethodName());
 		Assert.assertEquals(Boolean.class, pi.getValueClass());
@@ -81,8 +80,8 @@ public abstract class AbstractCollectionValueTest extends
 	{
 		PredicateInfoImpl pi = (PredicateInfoImpl) subjectInfo
 				.getPredicateInfo("getChar", List.class);
-		final ObjectHandler handler = new LiteralHandler(TypeMapper
-				.getInstance().getTypeByClass(Character.class));
+		final ObjectHandler handler = new LiteralHandler(
+				TypeMapper.getInstance().getTypeByClass(Character.class));
 		Assert.assertEquals("getChar", pi.getMethodName());
 		Assert.assertEquals(handler, pi.getObjectHandler());
 		Assert.assertEquals(List.class, pi.getValueClass());
@@ -151,8 +150,8 @@ public abstract class AbstractCollectionValueTest extends
 	{
 		PredicateInfoImpl pi = (PredicateInfoImpl) subjectInfo
 				.getPredicateInfo("getDbl", Queue.class);
-		final ObjectHandler handler = new LiteralHandler(TypeMapper
-				.getInstance().getTypeByClass(Double.class));
+		final ObjectHandler handler = new LiteralHandler(
+				TypeMapper.getInstance().getTypeByClass(Double.class));
 		Assert.assertEquals("getDbl", pi.getMethodName());
 		Assert.assertEquals(handler, pi.getObjectHandler());
 		Assert.assertEquals(Queue.class, pi.getValueClass());
@@ -265,8 +264,8 @@ public abstract class AbstractCollectionValueTest extends
 
 		PredicateInfoImpl pi = (PredicateInfoImpl) subjectInfo
 				.getPredicateInfo("getFlt", Set.class);
-		final ObjectHandler handler = new LiteralHandler(TypeMapper
-				.getInstance().getTypeByClass(Float.class));
+		final ObjectHandler handler = new LiteralHandler(
+				TypeMapper.getInstance().getTypeByClass(Float.class));
 
 		Assert.assertEquals("getFlt", pi.getMethodName());
 		Assert.assertEquals(handler, pi.getObjectHandler());
@@ -336,8 +335,8 @@ public abstract class AbstractCollectionValueTest extends
 
 		PredicateInfoImpl pi = (PredicateInfoImpl) subjectInfo
 				.getPredicateInfo("getInt", Queue.class);
-		final ObjectHandler handler = new LiteralHandler(TypeMapper
-				.getInstance().getTypeByClass(Integer.class));
+		final ObjectHandler handler = new LiteralHandler(
+				TypeMapper.getInstance().getTypeByClass(Integer.class));
 
 		Assert.assertEquals("getInt", pi.getMethodName());
 		Assert.assertEquals(handler, pi.getObjectHandler());
@@ -407,8 +406,8 @@ public abstract class AbstractCollectionValueTest extends
 	{
 		PredicateInfoImpl pi = (PredicateInfoImpl) subjectInfo
 				.getPredicateInfo("getLng", List.class);
-		final ObjectHandler handler = new LiteralHandler(TypeMapper
-				.getInstance().getTypeByClass(Long.class));
+		final ObjectHandler handler = new LiteralHandler(
+				TypeMapper.getInstance().getTypeByClass(Long.class));
 
 		Assert.assertEquals("getLng", pi.getMethodName());
 		Assert.assertEquals(handler, pi.getObjectHandler());
@@ -519,8 +518,8 @@ public abstract class AbstractCollectionValueTest extends
 	{
 		PredicateInfoImpl pi = (PredicateInfoImpl) subjectInfo
 				.getPredicateInfo("getStr", Set.class);
-		final ObjectHandler handler = new LiteralHandler(TypeMapper
-				.getInstance().getTypeByClass(String.class));
+		final ObjectHandler handler = new LiteralHandler(
+				TypeMapper.getInstance().getTypeByClass(String.class));
 
 		Assert.assertEquals("getStr", pi.getMethodName());
 		Assert.assertEquals(handler, pi.getObjectHandler());
@@ -568,7 +567,8 @@ public abstract class AbstractCollectionValueTest extends
 		Assert.assertEquals("getU", pi.getMethodName());
 		Assert.assertEquals(resHandler, pi.getObjectHandler());
 		Assert.assertEquals(Set.class, pi.getValueClass());
-		Assert.assertEquals(BaseAbstractManagerTest.NS + "u", pi.getUriString());
+		Assert.assertEquals(BaseAbstractManagerTest.NS + "u",
+				pi.getUriString());
 		Assert.assertEquals(BaseAbstractManagerTest.NS, pi.getNamespace());
 
 		pi = (PredicateInfoImpl) subjectInfo.getPredicateInfo("addU",
@@ -576,7 +576,8 @@ public abstract class AbstractCollectionValueTest extends
 		Assert.assertEquals("addU", pi.getMethodName());
 		Assert.assertEquals(uriHandler, pi.getObjectHandler());
 		Assert.assertEquals(String.class, pi.getValueClass());
-		Assert.assertEquals(BaseAbstractManagerTest.NS + "u", pi.getUriString());
+		Assert.assertEquals(BaseAbstractManagerTest.NS + "u",
+				pi.getUriString());
 		Assert.assertEquals(BaseAbstractManagerTest.NS, pi.getNamespace());
 
 		pi = (PredicateInfoImpl) subjectInfo.getPredicateInfo("addU",
@@ -584,7 +585,8 @@ public abstract class AbstractCollectionValueTest extends
 		Assert.assertEquals("addU", pi.getMethodName());
 		Assert.assertEquals(resHandler, pi.getObjectHandler());
 		Assert.assertEquals(RDFNode.class, pi.getValueClass());
-		Assert.assertEquals(BaseAbstractManagerTest.NS + "u", pi.getUriString());
+		Assert.assertEquals(BaseAbstractManagerTest.NS + "u",
+				pi.getUriString());
 		Assert.assertEquals(BaseAbstractManagerTest.NS, pi.getNamespace());
 
 		pi = (PredicateInfoImpl) subjectInfo.getPredicateInfo("removeU",
@@ -592,7 +594,8 @@ public abstract class AbstractCollectionValueTest extends
 		Assert.assertEquals("removeU", pi.getMethodName());
 		Assert.assertEquals(resHandler, pi.getObjectHandler());
 		Assert.assertEquals(RDFNode.class, pi.getValueClass());
-		Assert.assertEquals(BaseAbstractManagerTest.NS + "u", pi.getUriString());
+		Assert.assertEquals(BaseAbstractManagerTest.NS + "u",
+				pi.getUriString());
 		Assert.assertEquals(BaseAbstractManagerTest.NS, pi.getNamespace());
 
 		pi = (PredicateInfoImpl) subjectInfo.getPredicateInfo("removeU",
@@ -600,7 +603,8 @@ public abstract class AbstractCollectionValueTest extends
 		Assert.assertEquals("removeU", pi.getMethodName());
 		Assert.assertEquals(uriHandler, pi.getObjectHandler());
 		Assert.assertEquals(String.class, pi.getValueClass());
-		Assert.assertEquals(BaseAbstractManagerTest.NS + "u", pi.getUriString());
+		Assert.assertEquals(BaseAbstractManagerTest.NS + "u",
+				pi.getUriString());
 		Assert.assertEquals(BaseAbstractManagerTest.NS, pi.getNamespace());
 
 		pi = (PredicateInfoImpl) subjectInfo.getPredicateInfo("hasU",
@@ -608,7 +612,8 @@ public abstract class AbstractCollectionValueTest extends
 		Assert.assertEquals("hasU", pi.getMethodName());
 		Assert.assertEquals(uriHandler, pi.getObjectHandler());
 		Assert.assertEquals(String.class, pi.getValueClass());
-		Assert.assertEquals(BaseAbstractManagerTest.NS + "u", pi.getUriString());
+		Assert.assertEquals(BaseAbstractManagerTest.NS + "u",
+				pi.getUriString());
 		Assert.assertEquals(BaseAbstractManagerTest.NS, pi.getNamespace());
 
 		pi = (PredicateInfoImpl) subjectInfo.getPredicateInfo("hasU",
@@ -616,7 +621,8 @@ public abstract class AbstractCollectionValueTest extends
 		Assert.assertEquals("hasU", pi.getMethodName());
 		Assert.assertEquals(resHandler, pi.getObjectHandler());
 		Assert.assertEquals(RDFNode.class, pi.getValueClass());
-		Assert.assertEquals(BaseAbstractManagerTest.NS + "u", pi.getUriString());
+		Assert.assertEquals(BaseAbstractManagerTest.NS + "u",
+				pi.getUriString());
 		Assert.assertEquals(BaseAbstractManagerTest.NS, pi.getNamespace());
 
 		pi = (PredicateInfoImpl) subjectInfo.getPredicateInfo("getU2",
@@ -624,7 +630,8 @@ public abstract class AbstractCollectionValueTest extends
 		Assert.assertEquals("getU2", pi.getMethodName());
 		Assert.assertEquals(uriHandler, pi.getObjectHandler());
 		Assert.assertEquals(List.class, pi.getValueClass());
-		Assert.assertEquals(BaseAbstractManagerTest.NS + "u", pi.getUriString());
+		Assert.assertEquals(BaseAbstractManagerTest.NS + "u",
+				pi.getUriString());
 		Assert.assertEquals(BaseAbstractManagerTest.NS, pi.getNamespace());
 	}
 
