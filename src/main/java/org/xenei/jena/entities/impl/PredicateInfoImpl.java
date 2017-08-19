@@ -14,27 +14,6 @@
  */
 package org.xenei.jena.entities.impl;
 
-import org.apache.jena.arq.querybuilder.SelectBuilder;
-import org.apache.jena.arq.querybuilder.UpdateBuilder;
-import org.apache.jena.atlas.logging.Log;
-import org.apache.jena.datatypes.RDFDatatype;
-import org.apache.jena.datatypes.TypeMapper;
-import org.apache.jena.query.ReadWrite;
-import org.apache.jena.rdf.model.NodeIterator;
-import org.apache.jena.rdf.model.Property;
-import org.apache.jena.rdf.model.RDFNode;
-import org.apache.jena.rdf.model.Resource;
-import org.apache.jena.rdf.model.ResourceFactory;
-import org.apache.jena.rdf.model.Statement;
-import org.apache.jena.rdf.model.StmtIterator;
-import org.apache.jena.rdfconnection.RDFConnection;
-import org.apache.jena.shared.Lock;
-import org.apache.jena.sparql.core.Var;
-import org.apache.jena.sparql.modify.request.UpdateDeleteWhere;
-import org.apache.jena.update.Update;
-import org.apache.jena.update.UpdateRequest;
-import org.apache.jena.util.iterator.ExtendedIterator;
-
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -47,6 +26,20 @@ import java.util.Set;
 import java.util.function.Function;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.jena.arq.querybuilder.UpdateBuilder;
+import org.apache.jena.datatypes.RDFDatatype;
+import org.apache.jena.datatypes.TypeMapper;
+import org.apache.jena.rdf.model.NodeIterator;
+import org.apache.jena.rdf.model.Property;
+import org.apache.jena.rdf.model.RDFNode;
+import org.apache.jena.rdf.model.Resource;
+import org.apache.jena.rdf.model.ResourceFactory;
+import org.apache.jena.rdf.model.Statement;
+import org.apache.jena.rdf.model.StmtIterator;
+import org.apache.jena.shared.Lock;
+import org.apache.jena.sparql.core.Var;
+import org.apache.jena.update.UpdateRequest;
+import org.apache.jena.util.iterator.ExtendedIterator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xenei.jena.entities.EntityManager;
@@ -243,7 +236,7 @@ public class PredicateInfoImpl implements PredicateInfo
 				concreteType, predicate);
 		this.entityManager = entityManager;
 	}
-	
+
 	public PredicateInfoImpl( PredicateInfoImpl pi )
 	{
 		this.actionType = pi.actionType;
@@ -282,7 +275,7 @@ public class PredicateInfoImpl implements PredicateInfo
 	{
 		final Property p = createResourceProperty(resource);
 		Object retval = null;
-		UpdateRequest updateReq = new UpdateRequest();
+		final UpdateRequest updateReq = new UpdateRequest();
 		switch (actionType)
 		{
 			case GETTER:
@@ -305,7 +298,7 @@ public class PredicateInfoImpl implements PredicateInfo
 				retval = execHas(resource, p, args);
 				break;
 		}
-		entityManager.doUpdate( updateReq );
+		entityManager.update( updateReq );
 		return retval;
 	}
 
@@ -315,8 +308,8 @@ public class PredicateInfoImpl implements PredicateInfo
 		final boolean empty = objectHandler.isEmpty(args[0]);
 		if (!empty || !predicate.emptyIsNull())
 		{
-			UpdateBuilder builder = new UpdateBuilder();
-			
+			final UpdateBuilder builder = new UpdateBuilder();
+
 			final RDFNode o = objectHandler.createRDFNode(args[0]);
 			if (o != null)
 			{
@@ -469,7 +462,7 @@ public class PredicateInfoImpl implements PredicateInfo
 	{
 		try
 		{
-			
+
 			resource.getModel().enterCriticalSection(Lock.WRITE);
 			if (valueClass == null)
 			{
@@ -478,7 +471,7 @@ public class PredicateInfoImpl implements PredicateInfo
 			}
 			else
 			{
-				RDFNode obj = objectHandler.createRDFNode(args[0]); 
+				final RDFNode obj = objectHandler.createRDFNode(args[0]); 
 				resource.getModel().remove(resource, p, obj );
 				updateReq.add( new UpdateBuilder()
 						.addDelete( resource, p, obj).build());
@@ -493,13 +486,13 @@ public class PredicateInfoImpl implements PredicateInfo
 
 	private void doRemove(UpdateRequest updateReq, Resource r, Property p )
 	{
-		Var v = Var.alloc( "o" );
+		final Var v = Var.alloc( "o" );
 		updateReq.add( new UpdateBuilder()
 				.addDelete( r, p, v )
 				.addWhere( r, p, v ).build());
 
 	}
-	
+
 	private Object execSet( final Resource resource, final Property p,
 			final Object[] args, UpdateRequest updateReq )
 	{
@@ -507,7 +500,7 @@ public class PredicateInfoImpl implements PredicateInfo
 		{
 			resource.getModel().enterCriticalSection(Lock.WRITE);
 			resource.removeAll(p); // just in case it get set by another thread
-									// first.
+			// first.
 			doRemove( updateReq, resource, p );
 			return execAdd(resource, p, args, updateReq);
 		}

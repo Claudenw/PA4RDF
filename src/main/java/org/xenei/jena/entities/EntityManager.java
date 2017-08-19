@@ -205,6 +205,8 @@ public interface EntityManager {
 	
 	/**
 	 * Reset the entity manager to its initial state.
+	 * any pending updates are discarded. internal structures are reset to
+	 * remote values.
 	 */
 	public void reset();
 	
@@ -231,10 +233,6 @@ public interface EntityManager {
 	 */
 	public void unregisterListener( Listener listener );
 	
-	public static interface Listener {
-		void onParseClass( SubjectInfo info );
-	}
-	
 	/**
 	 * Get the SubjectTable for the resource.
 	 * 
@@ -251,6 +249,35 @@ public interface EntityManager {
 	 */
 	public RDFConnection getConnection();
 	
-	public void doUpdate( UpdateRequest updateRequest );
+	/**
+	 * Do an update to the underlying system.
+	 * If writeThrough is enabled the update is performed 
+	 * immediately and the system is resynced.
+	 * If writeThrough is not enabled then the system will hold the changes
+	 * until sync() is called
+	 * @see #sync()
+	 * @param updateRequest the update to execute.
+	 */
+	public void update( UpdateRequest updateRequest );
+	
+	/**
+	 * Sync the system with the remote data store.
+	 * If there are pending updates they will be executed and then
+	 * the underlying graph synced.
+	 */
+	public void sync();
 
+	/**
+	 * The listener interface.
+	 *
+	 */
+	public static interface Listener {
+		/**
+		 * Called when a class is parsed.
+		 * @param info the SubjectInfo for the parsed class.
+		 */
+		void onParseClass( SubjectInfo info );
+	}
+	
+	
 }

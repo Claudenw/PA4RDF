@@ -1,57 +1,68 @@
 package org.xenei.jena.entities.cache;
 
 import java.lang.ref.SoftReference;
-import java.lang.reflect.Method;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import org.apache.jena.graph.FrontsNode;
 import org.apache.jena.graph.Graph;
-import org.apache.jena.graph.GraphListener;
 import org.apache.jena.graph.Node;
-import org.apache.jena.graph.Node_URI;
 import org.apache.jena.graph.Triple;
 import org.apache.jena.graph.impl.CollectionGraph;
 import org.apache.jena.graph.impl.GraphBase;
-import org.apache.jena.query.ReadWrite;
 import org.apache.jena.rdf.model.Model;
-import org.apache.jena.rdf.model.Resource;
 import org.apache.jena.rdfconnection.RDFConnection;
 import org.apache.jena.util.iterator.ExtendedIterator;
 import org.apache.jena.util.iterator.NiceIterator;
 
-import net.sf.cglib.proxy.Enhancer;
-import net.sf.cglib.proxy.MethodInterceptor;
-import net.sf.cglib.proxy.MethodProxy;
-
+/**
+ * A graph that caches remote data.
+ * 
+ * This implementation caches predicates and objects for each subject that is 
+ * retrieved from the remote system.  
+ *
+ */
 public class CachingGraph extends GraphBase implements Graph {
-	
-	private Map<Node,SoftReference<SubjectTable>> map;
+
+	private final Map<Node,SoftReference<SubjectTable>> map;
 	private final RDFConnection connection;
 
+	/**
+	 * Constructor.
+	 * @param connection the connection to the remote system.
+	 */
 	public CachingGraph(RDFConnection connection) {
 		this.connection = connection;
 		map = new HashMap<Node,SoftReference<SubjectTable>>();	
 	}
 
+	/**
+	 * Load the table from the remote system.
+	 * @param subject the subject of the table.
+	 * @return the SubjectTable for the subject.
+	 */
 	private SubjectTable loadTable( Node subject )
 	{
-		String queryStr = String.format( "CONSTRUCT { <%1$s> ?p ?o } WHERE { <%1$s> ?p ?o }", subject);
-		Model model = connection.queryConstruct( queryStr );
-		SubjectTable st = new SubjectTableImpl( subject, model );
+		final String queryStr = String.format( "CONSTRUCT { <%1$s> ?p ?o } WHERE { <%1$s> ?p ?o }", subject);
+		final Model model = connection.queryConstruct( queryStr );
+		final SubjectTable st = new SubjectTableImpl( subject, model );
 		map.put( subject, new SoftReference<SubjectTable>( st ));
 		return st;
 	}
-	
+
+	/**
+	 * Sync the caching graph with the remote graph.
+	 * predicates and objects for every subject is read from the 
+	 * remote graph.  Local changes are discarded.
+	 */
 	public void sync() {
-		for (Node subject : map.keySet())
+		for (final Node subject : map.keySet())
 		{
-			SoftReference<SubjectTable> sr = map.get(subject);
+			final SoftReference<SubjectTable> sr = map.get(subject);
 			if (sr.get() == null)
 			{
 				map.remove(subject);
@@ -62,10 +73,19 @@ public class CachingGraph extends GraphBase implements Graph {
 			}
 		}
 	}
-	
+
+	/**
+	 * Get the SubjectTable for the specified subject.
+	 * @param subject the subject to get the subject for.
+	 * 
+	 * If the subject table is already loaded it is returned otherwise
+	 * it is created by reading from the remote system.
+	 * 
+	 * @return the subject table.
+	 */
 	public SubjectTable getTable( Node subject )
 	{
-		SoftReference<SubjectTable> tblRef = map.get(subject);
+		final SoftReference<SubjectTable> tblRef = map.get(subject);
 		SubjectTable tbl = null;
 		if (tblRef != null)
 		{
@@ -77,22 +97,22 @@ public class CachingGraph extends GraphBase implements Graph {
 		}
 		return tbl;
 	}
-	
+
 	@Override
 	protected ExtendedIterator<Triple> graphBaseFind(Triple triplePattern) {
 		if (triplePattern.getSubject().isConcrete())
 		{
 			//SoftReference<SubjectTable> tblRef = map.get(triplePattern.getSubject());
-			SubjectTable tbl = getTable( triplePattern.getSubject());
-			
-			Graph graph = tbl.asGraph();
+			final SubjectTable tbl = getTable( triplePattern.getSubject());
+
+			final Graph graph = tbl.asGraph();
 			return graph.find(triplePattern);
 		} else {
 			ExtendedIterator<Triple> retval = NiceIterator.emptyIterator();
-			for (SoftReference<SubjectTable> ref : map.values())
+			for (final SoftReference<SubjectTable> ref : map.values())
 			{
-				SubjectTable tbl = ref.get();
-				
+				final SubjectTable tbl = ref.get();
+
 				if (tbl != null)
 				{
 					retval = retval.andThen( tbl.asGraph().find(triplePattern));
@@ -104,7 +124,7 @@ public class CachingGraph extends GraphBase implements Graph {
 
 	@Override
 	public void performAdd(Triple t) {
-		SoftReference<SubjectTable> tblRef = map.get(t.getSubject());
+		final SoftReference<SubjectTable> tblRef = map.get(t.getSubject());
 		SubjectTable tbl = null;
 		if (tblRef != null)
 		{
@@ -119,7 +139,7 @@ public class CachingGraph extends GraphBase implements Graph {
 
 	@Override
 	public void performDelete(Triple t) {
-		SoftReference<SubjectTable> tblRef = map.get(t.getSubject());
+		final SoftReference<SubjectTable> tblRef = map.get(t.getSubject());
 		SubjectTable tbl = null;
 		if (tblRef != null)
 		{
@@ -135,10 +155,10 @@ public class CachingGraph extends GraphBase implements Graph {
 	@Override
 	protected int graphBaseSize() {
 		int retval = 0;
-		for (SoftReference<SubjectTable> ref : map.values())
+		for (final SoftReference<SubjectTable> ref : map.values())
 		{
-			SubjectTable tbl = ref.get();
-			
+			final SubjectTable tbl = ref.get();
+
 			if (tbl != null)
 			{
 				retval += tbl.size();
@@ -146,20 +166,20 @@ public class CachingGraph extends GraphBase implements Graph {
 		}
 		return retval;
 	}
-	
+
 	private static class SubjectTableImpl implements SubjectTable {
 
-		private Node subject;
-		private Map<Node,Set<Node>> map;
-		
+		private final Node subject;
+		private final Map<Node,Set<Node>> map;
+
 		public SubjectTableImpl( Node subject, Model model )
 		{
 			this.subject = subject;
 			this.map = new HashMap<Node,Set<Node>>();
-			Iterator<Triple> iter =  model.getGraph().find(subject, Node.ANY, Node.ANY);
+			final Iterator<Triple> iter =  model.getGraph().find(subject, Node.ANY, Node.ANY);
 			while (iter.hasNext())
 			{
-				Triple t = iter.next();
+				final Triple t = iter.next();
 				Set<Node> set = map.get(t.getPredicate());
 				if (set == null)
 				{
@@ -169,7 +189,7 @@ public class CachingGraph extends GraphBase implements Graph {
 				set.add( t.getObject());
 			}			
 		}
-		
+
 		@Override
 		public Node getSubject() {
 			return subject;
@@ -179,20 +199,20 @@ public class CachingGraph extends GraphBase implements Graph {
 		public Set<Node> getValues(FrontsNode predicate) {
 			return getValues( predicate.asNode() );
 		}
-		
+
 		public Set<Node> getValues(Node predicate)
 		{
-			
+
 			if (Node.ANY.equals( predicate ))
 			{
-				Set<Node> retval = new HashSet<Node>();
-				for (Node p : map.keySet())
+				final Set<Node> retval = new HashSet<Node>();
+				for (final Node p : map.keySet())
 				{
 					retval.addAll( getValues( p ));
 				}
 				return retval;
 			}
-			Set<Node> nodes = map.get(predicate);
+			final Set<Node> nodes = map.get(predicate);
 			if (nodes == null)
 			{
 				return Collections.emptySet();
@@ -213,16 +233,7 @@ public class CachingGraph extends GraphBase implements Graph {
 				set = new HashSet<Node>();
 				map.put( predicate, set );
 			}
-//			if (value instanceof Node_URI)
-//			{
-//				NodeInterceptor interceptor = new NodeInterceptor( (Node_URI)value);
-//				final Enhancer e = new Enhancer();	
-//				e.setInterfaces( new Class[] {Node_URI.class });
-//				e.setCallback(interceptor);
-//				set.add((Node_URI) e.create());
-//			} else {
-				set.add( value );
-//			}
+			set.add( value );
 		}
 
 		@Override
@@ -232,7 +243,7 @@ public class CachingGraph extends GraphBase implements Graph {
 
 		@Override
 		public void removeValue(Node predicate, Node value) {
-			Set<Node> set = map.get(predicate);
+			final Set<Node> set = map.get(predicate);
 			if (set != null)
 			{
 				set.remove( value );		
@@ -246,10 +257,10 @@ public class CachingGraph extends GraphBase implements Graph {
 
 		@Override
 		public Set<Node> getPedicates(Node value) {
-			Set<Node> retval = new HashSet<Node>();
-			for (Node predicate : map.keySet())
+			final Set<Node> retval = new HashSet<Node>();
+			for (final Node predicate : map.keySet())
 			{
-				Set<Node> values = map.get(predicate);
+				final Set<Node> values = map.get(predicate);
 				if (values.contains(value))
 				{
 					retval.add( predicate );
@@ -260,10 +271,10 @@ public class CachingGraph extends GraphBase implements Graph {
 
 		@Override
 		public Set<Triple> asTriples() {
-			Set<Triple> retval = new HashSet<Triple>();
-			for (Node predicate : map.keySet())
+			final Set<Triple> retval = new HashSet<Triple>();
+			for (final Node predicate : map.keySet())
 			{
-				for (Node object : map.get(predicate))
+				for (final Node object : map.get(predicate))
 				{					
 					retval.add( new Triple( subject, predicate, object) );
 				}
@@ -280,41 +291,23 @@ public class CachingGraph extends GraphBase implements Graph {
 		public boolean has(FrontsNode predicate, FrontsNode value) {
 			return has( predicate.asNode(), value.asNode());
 		}
-		
+
 		@Override
 		public boolean has(Node predicate, Node value) {
-			Set<Node> set = map.get(predicate);
+			final Set<Node> set = map.get(predicate);
 			return set==null?false:set.contains(value);
 		}
 
 		@Override
 		public int size() {
 			int retval = 0;
-			for (Set<Node> s : map.values())
+			for (final Set<Node> s : map.values())
 			{
 				retval += s.size();
 			}
 			return retval;
 		}
-		
-	}
-	
-	private class NodeInterceptor implements MethodInterceptor {
-		private SubjectTable tbl;
-		private Node_URI node;
 
-		public NodeInterceptor( Node_URI node )
-		{
-			this.tbl = getTable( node );
-			this.node = node;
-			
-		}
-		@Override
-		public Object intercept(Object obj, Method method, Object[] args,
-				MethodProxy proxy) throws Throwable
-		{
-			return method.invoke(node, args);
-		}
 	}
-	
+
 }
