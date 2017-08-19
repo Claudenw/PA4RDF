@@ -14,22 +14,6 @@
  */
 package org.xenei.jena.entities.impl;
 
-import org.apache.jena.arq.querybuilder.UpdateBuilder;
-import org.apache.jena.datatypes.RDFDatatype;
-import org.apache.jena.datatypes.TypeMapper;
-import org.apache.jena.query.Dataset;
-import org.apache.jena.query.DatasetFactory;
-import org.apache.jena.query.ReadWrite;
-import org.apache.jena.rdf.model.Model;
-import org.apache.jena.rdf.model.ModelFactory;
-import org.apache.jena.rdf.model.Resource;
-import org.apache.jena.rdf.model.ResourceFactory;
-import org.apache.jena.rdfconnection.RDFConnection;
-import org.apache.jena.rdfconnection.RDFConnectionFactory;
-import org.apache.jena.update.Update;
-import org.apache.jena.update.UpdateRequest;
-import org.apache.jena.vocabulary.RDF;
-
 import java.io.File;
 import java.io.IOException;
 import java.lang.ref.WeakReference;
@@ -51,10 +35,20 @@ import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
-import net.sf.cglib.proxy.Enhancer;
-import net.sf.cglib.proxy.MethodInterceptor;
-import net.sf.cglib.proxy.MethodProxy;
-
+import org.apache.jena.datatypes.RDFDatatype;
+import org.apache.jena.datatypes.TypeMapper;
+import org.apache.jena.query.Dataset;
+import org.apache.jena.query.DatasetFactory;
+import org.apache.jena.query.ReadWrite;
+import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.ModelFactory;
+import org.apache.jena.rdf.model.Resource;
+import org.apache.jena.rdf.model.ResourceFactory;
+import org.apache.jena.rdfconnection.RDFConnection;
+import org.apache.jena.rdfconnection.RDFConnectionFactory;
+import org.apache.jena.update.Update;
+import org.apache.jena.update.UpdateRequest;
+import org.apache.jena.vocabulary.RDF;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xenei.jena.entities.EntityManager;
@@ -69,7 +63,9 @@ import org.xenei.jena.entities.impl.datatype.CharDatatype;
 import org.xenei.jena.entities.impl.datatype.CharacterDatatype;
 import org.xenei.jena.entities.impl.datatype.LongDatatype;
 
-import arq.update;
+import net.sf.cglib.proxy.Enhancer;
+import net.sf.cglib.proxy.MethodInterceptor;
+import net.sf.cglib.proxy.MethodProxy;
 
 /**
  * An implementation of the EntityManager interface.
@@ -81,24 +77,24 @@ public class EntityManagerImpl implements EntityManager
 			.getLogger(EntityManagerImpl.class);
 
 	private final Map<Class<?>, SubjectInfo> classInfo;
-	
+
 	private final List<WeakReference<Listener>> listeners;
-	
+
 	private final RDFConnection connection;
-	
+
 	private final CachingGraph cachingGraph;
-	
+
 	private final Model cachingModel;
-	
+
 	private final boolean writeThrough;
-	
+
 	private UpdateRequest updateReq;
 
 	static
 	{
 		registerTypes();
 	}
-	
+
 	/**
 	 * Register the datatypes used by the entity manger specifically
 	 * xsd:long  : java.util.Long
@@ -111,14 +107,14 @@ public class EntityManagerImpl implements EntityManager
 		RDFDatatype rtype = null;
 		// handle the string types
 		// preserve string class and put it back later.
-		RDFDatatype stype = TypeMapper.getInstance().getTypeByClass(String.class);
+		final RDFDatatype stype = TypeMapper.getInstance().getTypeByClass(String.class);
 		rtype = new CharacterDatatype();
 		TypeMapper.getInstance().registerDatatype(rtype);
 		rtype = new CharDatatype();
 		TypeMapper.getInstance().registerDatatype(rtype);
 		// put the string type back so that it is the registered type for xsd:string
 		TypeMapper.getInstance().registerDatatype(stype);
-		
+
 		// change the long type.
 		rtype = new LongDatatype();
 		TypeMapper.getInstance().registerDatatype(rtype);
@@ -127,14 +123,25 @@ public class EntityManagerImpl implements EntityManager
 	public EntityManagerImpl( Model model)
 	{
 		this( DatasetFactory.create( model ));
-		 
+
 	}
 	
+	public EntityManagerImpl( Model model, boolean writeThrough)
+	{
+		this( DatasetFactory.create( model ), writeThrough );
+
+	}
+
 	public EntityManagerImpl( Dataset dataset)
 	{
 		this( RDFConnectionFactory.connect( dataset));
 	}
-	
+
+	public EntityManagerImpl( Dataset dataset, boolean writeThrough)
+	{
+		this( RDFConnectionFactory.connect( dataset), writeThrough);
+	}
+
 	public EntityManagerImpl( RDFConnection connection)
 	{
 		this( connection, true);
@@ -143,12 +150,14 @@ public class EntityManagerImpl implements EntityManager
 	 * Constructor.
 	 */
 	public EntityManagerImpl(RDFConnection connection, boolean writeThrough)
-	{
-		this.updateReq = new UpdateRequest();
+	{		
 		this.connection = connection;
 		this.cachingGraph = new CachingGraph( connection );
 		this.cachingModel = ModelFactory.createModelForGraph( cachingGraph );
 		this.writeThrough = writeThrough;
+		if (writeThrough) {
+			this.updateReq = new UpdateRequest();
+		}
 		listeners = Collections.synchronizedList(new ArrayList<WeakReference<Listener>>());
 		classInfo = new HashMap<Class<?>, SubjectInfo>(){
 
@@ -160,11 +169,11 @@ public class EntityManagerImpl implements EntityManager
 			private void notifyListeners(SubjectInfo value)
 			{
 				synchronized (listeners) {
-					Iterator<WeakReference<Listener>> iter = listeners.iterator();
+					final Iterator<WeakReference<Listener>> iter = listeners.iterator();
 					while (iter.hasNext())
 					{
-						WeakReference<Listener> listener = iter.next();
-						Listener l = listener.get();
+						final WeakReference<Listener> listener = iter.next();
+						final Listener l = listener.get();
 						if (l == null)
 						{
 							iter.remove();
@@ -175,6 +184,7 @@ public class EntityManagerImpl implements EntityManager
 					}
 				}
 			}
+			
 			@Override
 			public SubjectInfo put(Class<?> key, SubjectInfo value)
 			{
@@ -185,25 +195,29 @@ public class EntityManagerImpl implements EntityManager
 			@Override
 			public void putAll(Map<? extends Class<?>, ? extends SubjectInfo> m)
 			{
-				for (SubjectInfo si : m.values())
+				for (final SubjectInfo si : m.values())
 				{
 					notifyListeners( si );
 				}				
 				super.putAll(m);
 			}};
-		try
-		{
-			parse(ResourceWrapper.class);
-		}
-		catch (final MissingAnnotation e)
-		{
-			throw new RuntimeException(e);
-		}
+			try
+			{
+				parse(ResourceWrapper.class);
+			}
+			catch (final MissingAnnotation e)
+			{
+				throw new RuntimeException(e);
+			}
 	}
 
 	@Override
 	public void reset()
 	{
+		if (!writeThrough)
+		{
+			updateReq = new UpdateRequest();
+		}
 		classInfo.clear();
 		registerTypes();
 		try
@@ -214,6 +228,7 @@ public class EntityManagerImpl implements EntityManager
 		{
 			throw new RuntimeException(e);
 		}
+
 	}
 	/**
 	 * Read an instance of clazz from Object source. If source does not have the
@@ -233,6 +248,7 @@ public class EntityManagerImpl implements EntityManager
 	 * @throws IllegalArgumentException
 	 *             if source implements neither Resource nor ResourceWrapper.
 	 */
+	@Override
 	public <T> T addInstanceProperties( final T source,
 			final Class<?> clazz ) throws MissingAnnotation, IllegalArgumentException
 	{
@@ -250,10 +266,10 @@ public class EntityManagerImpl implements EntityManager
 				final Resource object = (model != null) ? model
 						.createResource(type) : ResourceFactory
 						.createResource(type);
-				if (!r.hasProperty(RDF.type, object))
-				{
-					r.addProperty(RDF.type, object);
-				}
+						if (!r.hasProperty(RDF.type, object))
+						{
+							r.addProperty(RDF.type, object);
+						}
 			}
 		}
 		return source;
@@ -426,7 +442,7 @@ public class EntityManagerImpl implements EntityManager
 			r = (Resource) target;
 		}
 		else {
-			
+
 			throw new IllegalArgumentException(String.format(
 					"%s implements neither Resource nor ResourceWrapper",
 					target.getClass()));	
@@ -434,14 +450,14 @@ public class EntityManagerImpl implements EntityManager
 		/* make sure the resource is loaded in the table
 		 make the resource point to the caching model.		
 		 bind the table to the resource to keep it from being garbage collected.
-		*/
+		 */
 		if (r.isAnon())
 		{
 			r = cachingModel.createResource( r.getId() );
 		} else {
 			r = cachingModel.createResource( r.getURI() );
 		}
-		ResourceInterceptor interceptor = new ResourceInterceptor( r );
+		final ResourceInterceptor interceptor = new ResourceInterceptor( r );
 		final Enhancer e = new Enhancer();	
 		e.setInterfaces( new Class[] {Resource.class });
 		e.setCallback(interceptor);
@@ -661,13 +677,13 @@ public class EntityManagerImpl implements EntityManager
 			final Class<?>... secondaryClasses ) throws MissingAnnotation
 	{
 		Resource r = addInstanceProperties( getResource(source), primaryClass);
-		for (Class<?> c : secondaryClasses)
+		for (final Class<?> c : secondaryClasses)
 		{
 			r = addInstanceProperties( r, c );
 		}
 		return read( r, primaryClass, secondaryClasses);
 	}
-	
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -837,11 +853,11 @@ public class EntityManagerImpl implements EntityManager
 	public void unregisterListener(Listener listener)
 	{
 		synchronized (listeners) {
-			Iterator<WeakReference<Listener>> iter = listeners.iterator();
+			final Iterator<WeakReference<Listener>> iter = listeners.iterator();
 			while (iter.hasNext())
 			{
-				WeakReference<Listener> wl = iter.next();
-				Listener l = wl.get();
+				final WeakReference<Listener> wl = iter.next();
+				final Listener l = wl.get();
 				if (l == null || l == listener)
 				{
 					iter.remove();
@@ -849,60 +865,66 @@ public class EntityManagerImpl implements EntityManager
 			}
 		}
 	}
+
+	/**
+	 * update the remote system with the request.
+	 * @param updateReq the update request to execute.
+	 */
+	private void updateConnection( UpdateRequest updateReq )
+	{
+		if ( updateReq.iterator().hasNext())
+		{		
+			synchronized (connection) {
+				connection.begin( ReadWrite.WRITE );
+				try {
+					connection.update( updateReq);
+					connection.commit();
+				}
+				catch (final RuntimeException e)
+				{
+					connection.abort();
+					throw e;
+				}
+			}	
+		}
+	}
 	
-	public void doUpdate( UpdateRequest updateReq )
+	@Override
+	public void update( UpdateRequest updateReq )
 	{
 		if (writeThrough)
 		{
-		if ( updateReq.iterator().hasNext())
-		{			
-			connection.begin( ReadWrite.WRITE );
-			try {
-				connection.update( updateReq);
-				connection.commit();
-			}
-			catch (RuntimeException e)
-			{
-				connection.abort();
-				throw e;
-			}
-		}
+			updateConnection( updateReq );
 		}
 		else
 		{
-			Iterator<Update> iter = updateReq.iterator();
-			while (iter.hasNext())
+			final Iterator<Update> iter = updateReq.iterator();
+			synchronized (this.updateReq)
 			{
-				this.updateReq.add( iter.next() );
+				while (iter.hasNext())
+				{			
+					this.updateReq.add( iter.next() );
+				}
 			}
 		}
 	}
-	
-	
+
+	@Override
 	public void sync() {
-		connection.begin( ReadWrite.WRITE );
-		try {
-			connection.update( updateReq);
-			connection.commit();
-		}
-		catch (RuntimeException e)
-		{
-			connection.abort();
-			throw e;
-		}
+		updateConnection( updateReq );
 		cachingGraph.sync();
 	}
-	
+
 	private class ResourceInterceptor implements MethodInterceptor {
-		private SubjectTable tbl;
-		private Resource res;
+		private final SubjectTable tbl;
+		private final Resource res;
 
 		public ResourceInterceptor(  Resource res )
 		{
 			this.tbl = getSubjectTable( res);
 			this.res = res;
 		}
-		
+
 		@Override
 		public Object intercept(Object obj, Method method, Object[] args,
 				MethodProxy proxy) throws Throwable
