@@ -57,7 +57,7 @@
 	</issueManagement>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<jena_version>3.3.0</jena_version>
+		<jena_version>3.4.0</jena_version>
 	</properties>
 <!-- 	<repositories> -->
 <!-- 		<repository> -->
@@ -148,7 +148,7 @@
 		<dependency>
 			<groupId>org.apache.jena</groupId>
 			<artifactId>jena-querybuilder</artifactId>
-			<version>3.4.0</version>
+			<version>${jena_version}</version>
 		</dependency>
 	</dependencies>
 	<build>
