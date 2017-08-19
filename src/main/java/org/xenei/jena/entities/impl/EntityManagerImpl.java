@@ -915,11 +915,22 @@ public class EntityManagerImpl implements EntityManager
 		cachingGraph.sync();
 	}
 
+	/**
+	 * A class that ensures that there is a hard reference between the resource
+	 * and its subject table.
+	 */
 	private class ResourceInterceptor implements MethodInterceptor {
+		// we just need to hold a reference to the table.
+		@SuppressWarnings("unused")
 		private final SubjectTable tbl;
+		//
 		private final Resource res;
 
-		public ResourceInterceptor(  Resource res )
+		/**
+		 * Constructor.
+		 * @param res the resource 
+		 */
+		public ResourceInterceptor( Resource res )
 		{
 			this.tbl = getSubjectTable( res);
 			this.res = res;
