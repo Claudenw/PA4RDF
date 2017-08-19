@@ -6,16 +6,19 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import org.apache.jena.graph.FrontsNode;
 import org.apache.jena.graph.Graph;
+import org.apache.jena.graph.GraphListener;
 import org.apache.jena.graph.Node;
 import org.apache.jena.graph.Node_URI;
 import org.apache.jena.graph.Triple;
 import org.apache.jena.graph.impl.CollectionGraph;
 import org.apache.jena.graph.impl.GraphBase;
+import org.apache.jena.query.ReadWrite;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.Resource;
 import org.apache.jena.rdfconnection.RDFConnection;
@@ -33,7 +36,7 @@ public class CachingGraph extends GraphBase implements Graph {
 
 	public CachingGraph(RDFConnection connection) {
 		this.connection = connection;
-		map = new HashMap<Node,SoftReference<SubjectTable>>();		
+		map = new HashMap<Node,SoftReference<SubjectTable>>();	
 	}
 
 	private SubjectTable loadTable( Node subject )
@@ -43,6 +46,21 @@ public class CachingGraph extends GraphBase implements Graph {
 		SubjectTable st = new SubjectTableImpl( subject, model );
 		map.put( subject, new SoftReference<SubjectTable>( st ));
 		return st;
+	}
+	
+	public void sync() {
+		for (Node subject : map.keySet())
+		{
+			SoftReference<SubjectTable> sr = map.get(subject);
+			if (sr.get() == null)
+			{
+				map.remove(subject);
+			}
+			else
+			{
+				loadTable( subject );
+			}
+		}
 	}
 	
 	public SubjectTable getTable( Node subject )
@@ -64,7 +82,7 @@ public class CachingGraph extends GraphBase implements Graph {
 	protected ExtendedIterator<Triple> graphBaseFind(Triple triplePattern) {
 		if (triplePattern.getSubject().isConcrete())
 		{
-			SoftReference<SubjectTable> tblRef = map.get(triplePattern.getSubject());
+			//SoftReference<SubjectTable> tblRef = map.get(triplePattern.getSubject());
 			SubjectTable tbl = getTable( triplePattern.getSubject());
 			
 			Graph graph = tbl.asGraph();
@@ -96,7 +114,7 @@ public class CachingGraph extends GraphBase implements Graph {
 		{
 			tbl = loadTable( t.getSubject());
 		}
-		tbl.addValue(t.getPredicate(), t.getSubject());
+		tbl.addValue(t.getPredicate(), t.getObject());
 	}
 
 	@Override
@@ -111,7 +129,7 @@ public class CachingGraph extends GraphBase implements Graph {
 		{
 			tbl = loadTable( t.getSubject());
 		}
-		tbl.removeValue(t.getPredicate(), t.getSubject());
+		tbl.removeValue(t.getPredicate(), t.getObject());
 	}
 
 	@Override
@@ -298,5 +316,5 @@ public class CachingGraph extends GraphBase implements Graph {
 			return method.invoke(node, args);
 		}
 	}
-
+	
 }

@@ -14,16 +14,20 @@
  */
 package org.xenei.jena.entities.impl;
 
+import org.apache.jena.arq.querybuilder.UpdateBuilder;
 import org.apache.jena.datatypes.RDFDatatype;
 import org.apache.jena.datatypes.TypeMapper;
 import org.apache.jena.query.Dataset;
 import org.apache.jena.query.DatasetFactory;
+import org.apache.jena.query.ReadWrite;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.rdf.model.Resource;
 import org.apache.jena.rdf.model.ResourceFactory;
 import org.apache.jena.rdfconnection.RDFConnection;
 import org.apache.jena.rdfconnection.RDFConnectionFactory;
+import org.apache.jena.update.Update;
+import org.apache.jena.update.UpdateRequest;
 import org.apache.jena.vocabulary.RDF;
 
 import java.io.File;
@@ -65,6 +69,8 @@ import org.xenei.jena.entities.impl.datatype.CharDatatype;
 import org.xenei.jena.entities.impl.datatype.CharacterDatatype;
 import org.xenei.jena.entities.impl.datatype.LongDatatype;
 
+import arq.update;
+
 /**
  * An implementation of the EntityManager interface.
  * 
@@ -83,6 +89,10 @@ public class EntityManagerImpl implements EntityManager
 	private final CachingGraph cachingGraph;
 	
 	private final Model cachingModel;
+	
+	private final boolean writeThrough;
+	
+	private UpdateRequest updateReq;
 
 	static
 	{
@@ -125,15 +135,20 @@ public class EntityManagerImpl implements EntityManager
 		this( RDFConnectionFactory.connect( dataset));
 	}
 	
+	public EntityManagerImpl( RDFConnection connection)
+	{
+		this( connection, true);
+	}
 	/**
 	 * Constructor.
 	 */
-	public EntityManagerImpl(RDFConnection connection)
+	public EntityManagerImpl(RDFConnection connection, boolean writeThrough)
 	{
+		this.updateReq = new UpdateRequest();
 		this.connection = connection;
 		this.cachingGraph = new CachingGraph( connection );
 		this.cachingModel = ModelFactory.createModelForGraph( cachingGraph );
-		
+		this.writeThrough = writeThrough;
 		listeners = Collections.synchronizedList(new ArrayList<WeakReference<Listener>>());
 		classInfo = new HashMap<Class<?>, SubjectInfo>(){
 
@@ -420,7 +435,13 @@ public class EntityManagerImpl implements EntityManager
 		 make the resource point to the caching model.		
 		 bind the table to the resource to keep it from being garbage collected.
 		*/
-		ResourceInterceptor interceptor = new ResourceInterceptor( cachingModel.createResource( r.getURI() ));
+		if (r.isAnon())
+		{
+			r = cachingModel.createResource( r.getId() );
+		} else {
+			r = cachingModel.createResource( r.getURI() );
+		}
+		ResourceInterceptor interceptor = new ResourceInterceptor( r );
 		final Enhancer e = new Enhancer();	
 		e.setInterfaces( new Class[] {Resource.class });
 		e.setCallback(interceptor);
@@ -827,6 +848,49 @@ public class EntityManagerImpl implements EntityManager
 				} 
 			}
 		}
+	}
+	
+	public void doUpdate( UpdateRequest updateReq )
+	{
+		if (writeThrough)
+		{
+		if ( updateReq.iterator().hasNext())
+		{			
+			connection.begin( ReadWrite.WRITE );
+			try {
+				connection.update( updateReq);
+				connection.commit();
+			}
+			catch (RuntimeException e)
+			{
+				connection.abort();
+				throw e;
+			}
+		}
+		}
+		else
+		{
+			Iterator<Update> iter = updateReq.iterator();
+			while (iter.hasNext())
+			{
+				this.updateReq.add( iter.next() );
+			}
+		}
+	}
+	
+	
+	public void sync() {
+		connection.begin( ReadWrite.WRITE );
+		try {
+			connection.update( updateReq);
+			connection.commit();
+		}
+		catch (RuntimeException e)
+		{
+			connection.abort();
+			throw e;
+		}
+		cachingGraph.sync();
 	}
 	
 	private class ResourceInterceptor implements MethodInterceptor {

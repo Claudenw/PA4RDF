@@ -19,6 +19,7 @@ import java.util.Collection;
 
 import org.apache.jena.rdf.model.Resource;
 import org.apache.jena.rdfconnection.RDFConnection;
+import org.apache.jena.update.UpdateRequest;
 import org.xenei.jena.entities.annotations.Subject;
 import org.xenei.jena.entities.cache.SubjectTable;
 
@@ -249,5 +250,7 @@ public interface EntityManager {
 	 * @return  the RDFConnection.
 	 */
 	public RDFConnection getConnection();
+	
+	public void doUpdate( UpdateRequest updateRequest );
 
 }

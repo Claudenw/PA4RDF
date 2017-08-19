@@ -14,8 +14,12 @@
  */
 package org.xenei.jena.entities.impl;
 
+import org.apache.jena.arq.querybuilder.SelectBuilder;
+import org.apache.jena.arq.querybuilder.UpdateBuilder;
+import org.apache.jena.atlas.logging.Log;
 import org.apache.jena.datatypes.RDFDatatype;
 import org.apache.jena.datatypes.TypeMapper;
+import org.apache.jena.query.ReadWrite;
 import org.apache.jena.rdf.model.NodeIterator;
 import org.apache.jena.rdf.model.Property;
 import org.apache.jena.rdf.model.RDFNode;
@@ -23,7 +27,12 @@ import org.apache.jena.rdf.model.Resource;
 import org.apache.jena.rdf.model.ResourceFactory;
 import org.apache.jena.rdf.model.Statement;
 import org.apache.jena.rdf.model.StmtIterator;
+import org.apache.jena.rdfconnection.RDFConnection;
 import org.apache.jena.shared.Lock;
+import org.apache.jena.sparql.core.Var;
+import org.apache.jena.sparql.modify.request.UpdateDeleteWhere;
+import org.apache.jena.update.Update;
+import org.apache.jena.update.UpdateRequest;
 import org.apache.jena.util.iterator.ExtendedIterator;
 
 import java.lang.reflect.Method;
@@ -67,6 +76,7 @@ public class PredicateInfoImpl implements PredicateInfo
 	private Property property;
 	private final ActionType actionType;
 	private final EffectivePredicate predicate;
+	private final EntityManager entityManager;
 
 	/**
 	 * Create a sorted list of registered data types.
@@ -231,6 +241,7 @@ public class PredicateInfoImpl implements PredicateInfo
 		}
 		objectHandler = PredicateInfoImpl.getHandler(entityManager,
 				concreteType, predicate);
+		this.entityManager = entityManager;
 	}
 	
 	public PredicateInfoImpl( PredicateInfoImpl pi )
@@ -242,6 +253,7 @@ public class PredicateInfoImpl implements PredicateInfo
 		this.predicate = new EffectivePredicate( pi.predicate );
 		this.property = pi.property;
 		this.valueClass = pi.valueClass;
+		this.entityManager = pi.entityManager;
 	}
 
 	private Property createResourceProperty( final Resource resource )
@@ -270,6 +282,7 @@ public class PredicateInfoImpl implements PredicateInfo
 	{
 		final Property p = createResourceProperty(resource);
 		Object retval = null;
+		UpdateRequest updateReq = new UpdateRequest();
 		switch (actionType)
 		{
 			case GETTER:
@@ -278,34 +291,39 @@ public class PredicateInfoImpl implements PredicateInfo
 			case SETTER:
 				if (method.getName().startsWith("set"))
 				{
-					retval = execSet(resource, p, args);
+					retval = execSet(resource, p, args, updateReq);
 				}
 				else
 				{
-					retval = execAdd(resource, p, args);
+					retval = execAdd(resource, p, args, updateReq);
 				}
 				break;
 			case REMOVER:
-				retval = execRemove(resource, p, args);
+				retval = execRemove(resource, p, args, updateReq);
 				break;
 			case EXISTENTIAL:
 				retval = execHas(resource, p, args);
 				break;
 		}
+		entityManager.doUpdate( updateReq );
 		return retval;
 	}
 
 	private Object execAdd( final Resource resource, final Property p,
-			final Object[] args )
+			final Object[] args, UpdateRequest updateReq )
 	{
 		final boolean empty = objectHandler.isEmpty(args[0]);
 		if (!empty || !predicate.emptyIsNull())
 		{
+			UpdateBuilder builder = new UpdateBuilder();
+			
 			final RDFNode o = objectHandler.createRDFNode(args[0]);
 			if (o != null)
 			{
 				resource.addProperty(p, o);
+				builder.addInsert( resource, p, o);
 			}
+			updateReq.add( builder.build() );
 		}
 		return null;
 	}
@@ -447,19 +465,23 @@ public class PredicateInfoImpl implements PredicateInfo
 	}
 
 	private Object execRemove( final Resource resource, final Property p,
-			final Object[] args )
+			final Object[] args, UpdateRequest updateReq )
 	{
 		try
 		{
+			
 			resource.getModel().enterCriticalSection(Lock.WRITE);
 			if (valueClass == null)
 			{
 				resource.removeAll(p);
+				doRemove( updateReq, resource, p );
 			}
 			else
 			{
-				resource.getModel().remove(resource, p,
-						objectHandler.createRDFNode(args[0]));
+				RDFNode obj = objectHandler.createRDFNode(args[0]); 
+				resource.getModel().remove(resource, p, obj );
+				updateReq.add( new UpdateBuilder()
+						.addDelete( resource, p, obj).build());
 			}
 			return null;
 		}
@@ -469,15 +491,25 @@ public class PredicateInfoImpl implements PredicateInfo
 		}
 	}
 
+	private void doRemove(UpdateRequest updateReq, Resource r, Property p )
+	{
+		Var v = Var.alloc( "o" );
+		updateReq.add( new UpdateBuilder()
+				.addDelete( r, p, v )
+				.addWhere( r, p, v ).build());
+
+	}
+	
 	private Object execSet( final Resource resource, final Property p,
-			final Object[] args )
+			final Object[] args, UpdateRequest updateReq )
 	{
 		try
 		{
 			resource.getModel().enterCriticalSection(Lock.WRITE);
 			resource.removeAll(p); // just in case it get set by another thread
 									// first.
-			return execAdd(resource, p, args);
+			doRemove( updateReq, resource, p );
+			return execAdd(resource, p, args, updateReq);
 		}
 		finally
 		{
