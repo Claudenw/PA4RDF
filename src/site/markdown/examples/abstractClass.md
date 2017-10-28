@@ -47,7 +47,7 @@ Example code setting the Book class
 
     Model model = ModelFactory.createModel();
 
-    EntityManager entityManager = EntityManagerFactory.getEntityManager();
+    EntityManager entityManager = EntityManagerFactory.getEntityManager(model);
     Resource r = model.createResource( "http://example.com/mylibrary/book1" );
 
     Book book = EntityManager.read( r, Book.class );
