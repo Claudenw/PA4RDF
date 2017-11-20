@@ -5,6 +5,7 @@ import java.lang.reflect.Method;
 import org.junit.Assert;
 import org.junit.Test;
 import org.xenei.jena.entities.PredicateInfo;
+import org.xenei.jena.entities.annotations.Predicate;
 import org.xenei.jena.entities.impl.ActionType;
 import org.xenei.jena.entities.testing.impl.SimpleInterfaceImpl;
 
@@ -14,7 +15,7 @@ public class SimpleInterfaceImplTest extends AbstractSimpleTest
 	{
 		super(SimpleInterfaceImpl.class);
 	}
-	
+
 	@Test
 	public void testPostExec() throws Exception
 	{
@@ -26,7 +27,31 @@ public class SimpleInterfaceImplTest extends AbstractSimpleTest
 		Assert.assertEquals("http://example.com/", pi.getNamespace());
 		Assert.assertEquals("http://example.com/x", pi.getUriString());
 		Assert.assertEquals(String.class, pi.getValueClass());
-		Assert.assertFalse( pi.getPostExec().isEmpty());
+		Assert.assertFalse(pi.getPostExec().isEmpty());
 
+	}
+
+	@Override
+	protected Class<?>[] getGetAnnotations()
+	{
+		return new Class<?>[] { Predicate.class };
+	}
+
+	@Override
+	protected Class<?>[] getHasAnnotations()
+	{
+		return new Class<?>[] { Predicate.class };
+	}
+
+	@Override
+	protected Class<?>[] getRemoveAnnotations()
+	{
+		return new Class<?>[] { Predicate.class };
+	}
+
+	@Override
+	protected Class<?>[] getSetAnnotations()
+	{
+		return new Class<?>[] { Predicate.class };
 	}
 }

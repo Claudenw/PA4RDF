@@ -1,6 +1,9 @@
 package org.xenei.jena.entities.impl.parser;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
+import java.util.Collection;
+import java.util.Set;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -14,7 +17,29 @@ abstract public class AbstractSimpleTest extends BaseAbstractParserTest
 	{
 		super(classUnderTest);
 	}
+	
+	protected abstract Class<?>[] getGetAnnotations();
+	protected abstract Class<?>[] getHasAnnotations();
+	protected abstract Class<?>[] getRemoveAnnotations();
+	protected abstract Class<?>[] getSetAnnotations();
 
+	private void checkContains( Class<?>[] expected, Collection<Annotation> found)
+	{
+		Assert.assertEquals( expected.length, found.size());
+		for (Class<?> c : expected)
+		{
+			boolean foundClass = false;
+			for (Annotation a : found )
+			{
+				foundClass |= (a.annotationType().equals( c ));
+			}
+			if (!foundClass)
+			{
+				Assert.fail( String.format("Did not find %s annotation", c));
+			}
+		}
+	}
+	
 	@Test
 	public void testStandardGetter() throws Exception
 	{
@@ -26,7 +51,7 @@ abstract public class AbstractSimpleTest extends BaseAbstractParserTest
 		Assert.assertEquals("http://example.com/", pi.getNamespace());
 		Assert.assertEquals("http://example.com/x", pi.getUriString());
 		Assert.assertEquals(String.class, pi.getValueClass());
-
+		checkContains( getGetAnnotations(), pi.getAnnotations() );
 	}
 
 	@Test
@@ -40,6 +65,7 @@ abstract public class AbstractSimpleTest extends BaseAbstractParserTest
 		Assert.assertEquals("http://example.com/", pi.getNamespace());
 		Assert.assertEquals("http://example.com/x", pi.getUriString());
 		Assert.assertEquals(boolean.class, pi.getValueClass());
+		checkContains( getHasAnnotations(), pi.getAnnotations() );
 
 	}
 
@@ -54,6 +80,7 @@ abstract public class AbstractSimpleTest extends BaseAbstractParserTest
 		Assert.assertEquals("http://example.com/", pi.getNamespace());
 		Assert.assertEquals("http://example.com/x", pi.getUriString());
 		Assert.assertEquals(null, pi.getValueClass());
+		checkContains( getRemoveAnnotations(), pi.getAnnotations() );
 
 	}
 
@@ -68,6 +95,7 @@ abstract public class AbstractSimpleTest extends BaseAbstractParserTest
 		Assert.assertEquals("http://example.com/", pi.getNamespace());
 		Assert.assertEquals("http://example.com/x", pi.getUriString());
 		Assert.assertEquals(String.class, pi.getValueClass());
+		checkContains( getSetAnnotations(), pi.getAnnotations() );
 
 		pi = subjectInfo.getPredicateInfo(classUnderTest.getMethod("getX"));
 		Assert.assertNotNull("getX not parsed", pi);
@@ -76,6 +104,8 @@ abstract public class AbstractSimpleTest extends BaseAbstractParserTest
 		Assert.assertEquals("http://example.com/", pi.getNamespace());
 		Assert.assertEquals("http://example.com/x", pi.getUriString());
 		Assert.assertEquals(String.class, pi.getValueClass());
+		checkContains( getGetAnnotations(), pi.getAnnotations() );
+
 
 		pi = subjectInfo.getPredicateInfo(classUnderTest.getMethod("hasX"));
 		Assert.assertNotNull("hasX not parsed", pi);
@@ -84,6 +114,8 @@ abstract public class AbstractSimpleTest extends BaseAbstractParserTest
 		Assert.assertEquals("http://example.com/", pi.getNamespace());
 		Assert.assertEquals("http://example.com/x", pi.getUriString());
 		Assert.assertEquals(boolean.class, pi.getValueClass());
+		checkContains( getHasAnnotations(), pi.getAnnotations() );
+
 
 		pi = subjectInfo.getPredicateInfo(classUnderTest.getMethod("removeX"));
 		Assert.assertNotNull("removeX not parsed", pi);
@@ -92,5 +124,7 @@ abstract public class AbstractSimpleTest extends BaseAbstractParserTest
 		Assert.assertEquals("http://example.com/", pi.getNamespace());
 		Assert.assertEquals("http://example.com/x", pi.getUriString());
 		Assert.assertEquals(null, pi.getValueClass());
+		checkContains( getRemoveAnnotations(), pi.getAnnotations() );
+
 	}
 }

@@ -17,6 +17,7 @@ package org.xenei.jena.entities;
 
 import java.util.Collection;
 
+import org.apache.jena.rdf.model.AnonId;
 import org.apache.jena.rdf.model.Resource;
 import org.apache.jena.rdfconnection.RDFConnection;
 import org.apache.jena.update.UpdateRequest;
@@ -232,33 +233,23 @@ public interface EntityManager {
 	 * @param listener the listener to remove.
 	 */
 	public void unregisterListener( Listener listener );
-	
-	/**
-	 * Get the SubjectTable for the resource.
-	 * 
-	 * If the table does not exist create it by querying the 
-	 * RDFConnection for the data.
-	 * 
-	 * @param subject the resource to locate.
-	 */
-	public SubjectTable getSubjectTable( Resource subject );
-	
+		
 	/**
 	 * Get the connection to the underlying RDF datastore.
 	 * @return  the RDFConnection.
 	 */
 	public RDFConnection getConnection();
 	
-	/**
-	 * Do an update to the underlying system.
-	 * If writeThrough is enabled the update is performed 
-	 * immediately and the system is resynced.
-	 * If writeThrough is not enabled then the system will hold the changes
-	 * until sync() is called
-	 * @see #sync()
-	 * @param updateRequest the update to execute.
-	 */
-	public void update( UpdateRequest updateRequest );
+//	/**
+//	 * Do an update to the underlying system.
+//	 * If writeThrough is enabled the update is performed 
+//	 * immediately and the system is resynced.
+//	 * If writeThrough is not enabled then the system will hold the changes
+//	 * until sync() is called
+//	 * @see #sync()
+//	 * @param updateRequest the update to execute.
+//	 */
+//	public void update( UpdateRequest updateRequest );
 	
 	/**
 	 * Sync the system with the remote data store.
@@ -266,6 +257,27 @@ public interface EntityManager {
 	 * the underlying graph synced.
 	 */
 	public void sync();
+	
+	/**
+	 * Create resource with URI in the managed model.
+	 * @param uri the URI to create the resource with.
+	 * @return the resource in the managed model.
+	 */
+	public Resource createResource( String uri );
+	
+	/**
+	 * Create resource with specified anonymous ID in the managed model.
+	 * @param id the Anonymous ID to create the resource with.
+	 * @return the resource in the managed model.
+	 */
+	public Resource createResource( AnonId id );
+	
+	/**
+	 * Create an anonymous resource in the managed model.
+	 * @return an Anonymous resource.
+	 */
+	public Resource createResource();
+	
 
 	/**
 	 * The listener interface.

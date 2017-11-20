@@ -14,13 +14,18 @@
  */
 package org.xenei.jena.entities.impl;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
 import java.util.function.Function;
@@ -69,7 +74,8 @@ public class PredicateInfoImpl implements PredicateInfo
 	private Property property;
 	private final ActionType actionType;
 	private final EffectivePredicate predicate;
-	private final EntityManager entityManager;
+	private final EntityManagerImpl entityManager;
+	private final Map<Class<?>,Annotation> annotations;
 
 	/**
 	 * Create a sorted list of registered data types.
@@ -188,18 +194,20 @@ public class PredicateInfoImpl implements PredicateInfo
 	 * @param valueClass
 	 *            The class type for the return (getter) or parameter (setter)
 	 */
-	public PredicateInfoImpl( final EntityManager entityManager,
-			final EffectivePredicate predicate, final String methodName,
+	public PredicateInfoImpl( final EntityManagerImpl entityManager,
+			final EffectivePredicate predicate, final Method method,
 			final Class<?> valueClass )
 	{
-		this.methodName = methodName;
-		this.actionType = ActionType.parse(methodName);
-		this.valueClass = valueClass;
 		if (predicate == null)
 		{
 			throw new IllegalArgumentException("Predicate may not be null");
 		}
+		this.methodName = method.getName();
+		this.actionType = ActionType.parse(methodName);
+		this.valueClass = valueClass;
+		this.annotations = new HashMap<Class<?>,Annotation>();		
 		this.predicate = predicate;
+		addAnnotations( method );
 		if (URI.class.equals(predicate.type()))
 		{
 			concreteType = URI.class;
@@ -247,8 +255,17 @@ public class PredicateInfoImpl implements PredicateInfo
 		this.property = pi.property;
 		this.valueClass = pi.valueClass;
 		this.entityManager = pi.entityManager;
+		this.annotations = new HashMap<Class<?>,Annotation>(pi.annotations);		
 	}
 
+	/* package private*/ void addAnnotations( Method method)
+	{
+		for (Annotation a : method.getAnnotations())
+		{
+			annotations.put( a.annotationType(), a);
+		}
+	}
+	
 	private Property createResourceProperty( final Resource resource )
 	{
 		return (resource.getModel() == null) ? ResourceFactory
@@ -275,7 +292,6 @@ public class PredicateInfoImpl implements PredicateInfo
 	{
 		final Property p = createResourceProperty(resource);
 		Object retval = null;
-		final UpdateRequest updateReq = new UpdateRequest();
 		switch (actionType)
 		{
 			case GETTER:
@@ -284,39 +300,34 @@ public class PredicateInfoImpl implements PredicateInfo
 			case SETTER:
 				if (method.getName().startsWith("set"))
 				{
-					retval = execSet(resource, p, args, updateReq);
+					retval = execSet(resource, p, args);
 				}
 				else
 				{
-					retval = execAdd(resource, p, args, updateReq);
+					retval = execAdd(resource, p, args);
 				}
 				break;
 			case REMOVER:
-				retval = execRemove(resource, p, args, updateReq);
+				retval = execRemove(resource, p, args);
 				break;
 			case EXISTENTIAL:
 				retval = execHas(resource, p, args);
 				break;
 		}
-		entityManager.update( updateReq );
 		return retval;
 	}
 
 	private Object execAdd( final Resource resource, final Property p,
-			final Object[] args, UpdateRequest updateReq )
+			final Object[] args )
 	{
 		final boolean empty = objectHandler.isEmpty(args[0]);
 		if (!empty || !predicate.emptyIsNull())
 		{
-			final UpdateBuilder builder = new UpdateBuilder();
-
 			final RDFNode o = objectHandler.createRDFNode(args[0]);
 			if (o != null)
 			{
 				resource.addProperty(p, o);
-				builder.addInsert( resource, p, o);
 			}
-			updateReq.add( builder.build() );
 		}
 		return null;
 	}
@@ -458,7 +469,7 @@ public class PredicateInfoImpl implements PredicateInfo
 	}
 
 	private Object execRemove( final Resource resource, final Property p,
-			final Object[] args, UpdateRequest updateReq )
+			final Object[] args )
 	{
 		try
 		{
@@ -467,14 +478,12 @@ public class PredicateInfoImpl implements PredicateInfo
 			if (valueClass == null)
 			{
 				resource.removeAll(p);
-				doRemove( updateReq, resource, p );
+				doRemove( resource, p );
 			}
 			else
 			{
 				final RDFNode obj = objectHandler.createRDFNode(args[0]); 
-				resource.getModel().remove(resource, p, obj );
-				updateReq.add( new UpdateBuilder()
-						.addDelete( resource, p, obj).build());
+				resource.getModel().remove(resource, p, obj );				
 			}
 			return null;
 		}
@@ -484,25 +493,25 @@ public class PredicateInfoImpl implements PredicateInfo
 		}
 	}
 
-	private void doRemove(UpdateRequest updateReq, Resource r, Property p )
+	private void doRemove( Resource r, Property p )
 	{
 		final Var v = Var.alloc( "o" );
-		updateReq.add( new UpdateBuilder()
+		entityManager.getUpdateHandler().prepare( new UpdateBuilder()
 				.addDelete( r, p, v )
 				.addWhere( r, p, v ).build());
 
 	}
 
 	private Object execSet( final Resource resource, final Property p,
-			final Object[] args, UpdateRequest updateReq )
+			final Object[] args)
 	{
 		try
 		{
 			resource.getModel().enterCriticalSection(Lock.WRITE);
 			resource.removeAll(p); // just in case it get set by another thread
 			// first.
-			doRemove( updateReq, resource, p );
-			return execAdd(resource, p, args, updateReq);
+			doRemove( resource, p );
+			return execAdd(resource, p, args);
 		}
 		finally
 		{
@@ -622,5 +631,11 @@ public class PredicateInfoImpl implements PredicateInfo
 			return Collections.emptyList();
 		}
 		return Collections.unmodifiableList( predicate.postExec );
+	}
+
+	@Override
+	public Collection<Annotation> getAnnotations()
+	{
+		return Collections.unmodifiableCollection( annotations.values() );
 	}
 }

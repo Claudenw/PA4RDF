@@ -15,8 +15,11 @@
 
 package org.xenei.jena.entities;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
+import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.jena.rdf.model.Property;
 import org.xenei.jena.entities.impl.ActionType;
@@ -80,5 +83,11 @@ public interface PredicateInfo
 	 * @return The list of methods to execute after exec.
 	 */
 	public List<Method> getPostExec();
+	
+	/**
+	 * Get the annotations associated with the method 
+	 * @return The set of annotations.
+	 */
+	public Collection<Annotation> getAnnotations();
 
 }

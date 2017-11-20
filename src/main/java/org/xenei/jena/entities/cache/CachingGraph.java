@@ -5,11 +5,14 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.jena.arq.querybuilder.UpdateBuilder;
 import org.apache.jena.graph.FrontsNode;
 import org.apache.jena.graph.Graph;
+import org.apache.jena.graph.GraphListener;
 import org.apache.jena.graph.Node;
 import org.apache.jena.graph.Triple;
 import org.apache.jena.graph.impl.CollectionGraph;
@@ -18,6 +21,7 @@ import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdfconnection.RDFConnection;
 import org.apache.jena.util.iterator.ExtendedIterator;
 import org.apache.jena.util.iterator.NiceIterator;
+import org.xenei.jena.entities.impl.EntityManagerImpl;
 
 /**
  * A graph that caches remote data.
@@ -29,15 +33,15 @@ import org.apache.jena.util.iterator.NiceIterator;
 public class CachingGraph extends GraphBase implements Graph {
 
 	private final Map<Node,SoftReference<SubjectTable>> map;
-	private final RDFConnection connection;
-
+	private final EntityManagerImpl entityManager;
 	/**
 	 * Constructor.
 	 * @param connection the connection to the remote system.
 	 */
-	public CachingGraph(RDFConnection connection) {
-		this.connection = connection;
+	public CachingGraph(EntityManagerImpl entityManager) {
+		this.entityManager = entityManager;
 		map = new HashMap<Node,SoftReference<SubjectTable>>();	
+		this.getEventManager().register( new Listener());
 	}
 
 	/**
@@ -48,7 +52,7 @@ public class CachingGraph extends GraphBase implements Graph {
 	private SubjectTable loadTable( Node subject )
 	{
 		final String queryStr = String.format( "CONSTRUCT { <%1$s> ?p ?o } WHERE { <%1$s> ?p ?o }", subject);
-		final Model model = connection.queryConstruct( queryStr );
+		final Model model = entityManager.getConnection().queryConstruct( queryStr );
 		final SubjectTable st = new SubjectTableImpl( subject, model );
 		map.put( subject, new SoftReference<SubjectTable>( st ));
 		return st;
@@ -134,7 +138,7 @@ public class CachingGraph extends GraphBase implements Graph {
 		{
 			tbl = loadTable( t.getSubject());
 		}
-		tbl.addValue(t.getPredicate(), t.getObject());
+		tbl.addValue(t.getPredicate(), t.getObject());		
 	}
 
 	@Override
@@ -308,6 +312,98 @@ public class CachingGraph extends GraphBase implements Graph {
 			return retval;
 		}
 
+	}
+	
+	private class Listener implements GraphListener {
+		
+		@Override
+		public void notifyAddTriple(Graph g, Triple t)
+		{
+			 entityManager.getUpdateHandler().prepare(new UpdateBuilder().addInsert( t).build());
+		}
+
+		@Override
+		public void notifyAddArray(Graph g, Triple[] triples)
+		{
+			UpdateBuilder builder = new UpdateBuilder();
+			for (Triple t : triples)
+			{
+				builder.addInsert(t);
+			}
+			entityManager.getUpdateHandler().prepare( builder.build() );
+		}
+
+		@Override
+		public void notifyAddList(Graph g, List<Triple> triples)
+		{
+			UpdateBuilder builder = new UpdateBuilder();
+			triples.forEach( t -> builder.addInsert(t));
+			entityManager.getUpdateHandler().prepare( builder.build() );
+		}
+
+		@Override
+		public void notifyAddIterator(Graph g, Iterator<Triple> it)
+		{
+			UpdateBuilder builder = new UpdateBuilder();
+			it.forEachRemaining( t -> builder.addInsert(t));
+			entityManager.getUpdateHandler().prepare( builder.build() );
+		}
+
+		@Override
+		public void notifyAddGraph(Graph g, Graph added)
+		{
+			UpdateBuilder builder = new UpdateBuilder();
+			added.find().forEachRemaining( t -> builder.addInsert(t));
+			entityManager.getUpdateHandler().prepare( builder.build() );
+		}
+
+		@Override
+		public void notifyDeleteTriple(Graph g, Triple t)
+		{
+			entityManager.getUpdateHandler().prepare(new UpdateBuilder().addDelete( t).build());
+		}
+
+		@Override
+		public void notifyDeleteList(Graph g, List<Triple> L)
+		{
+			UpdateBuilder builder = new UpdateBuilder();
+			L.forEach( t -> builder.addDelete(t));
+			entityManager.getUpdateHandler().prepare( builder.build() );
+		}
+
+		@Override
+		public void notifyDeleteArray(Graph g, Triple[] triples)
+		{
+			UpdateBuilder builder = new UpdateBuilder();
+			for (Triple t : triples)
+			{
+				builder.addDelete(t);
+			}
+			entityManager.getUpdateHandler().prepare( builder.build() );
+		}
+
+		@Override
+		public void notifyDeleteIterator(Graph g, Iterator<Triple> it)
+		{
+			UpdateBuilder builder = new UpdateBuilder();
+			it.forEachRemaining( t -> builder.addDelete(t));
+			entityManager.getUpdateHandler().prepare( builder.build() );
+		}
+
+		@Override
+		public void notifyDeleteGraph(Graph g, Graph removed)
+		{
+			UpdateBuilder builder = new UpdateBuilder();
+			removed.find().forEachRemaining( t -> builder.addDelete(t));
+			entityManager.getUpdateHandler().prepare( builder.build() );
+		}
+
+		@Override
+		public void notifyEvent(Graph source, Object value)
+		{
+			// do nothing
+		}
+		
 	}
 
 }

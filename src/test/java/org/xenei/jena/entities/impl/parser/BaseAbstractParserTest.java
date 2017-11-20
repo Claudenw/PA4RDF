@@ -4,10 +4,12 @@ import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.jena.rdf.model.ModelFactory;
 import org.junit.After;
 import org.junit.Before;
 import org.xenei.jena.entities.EntityManagerFactory;
 import org.xenei.jena.entities.impl.ActionType;
+import org.xenei.jena.entities.impl.EntityManagerImpl;
 import org.xenei.jena.entities.impl.MethodParser;
 import org.xenei.jena.entities.impl.SubjectInfoImpl;
 
@@ -67,7 +69,8 @@ abstract public class BaseAbstractParserTest
 		subjectInfo = new SubjectInfoImpl(classUnderTest);
 		final Map<String, Integer> addCount = countAdders(classUnderTest
 				.getMethods());
-		parser = new MethodParser(EntityManagerFactory.getEntityManager(),
+		EntityManagerImpl entityManager = new EntityManagerImpl( ModelFactory.createDefaultModel());
+		parser = new MethodParser(entityManager,
 				subjectInfo, addCount);
 	}
 

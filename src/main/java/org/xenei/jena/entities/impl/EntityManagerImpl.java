@@ -35,11 +35,13 @@ import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
+import org.apache.jena.arq.querybuilder.UpdateBuilder;
 import org.apache.jena.datatypes.RDFDatatype;
 import org.apache.jena.datatypes.TypeMapper;
 import org.apache.jena.query.Dataset;
 import org.apache.jena.query.DatasetFactory;
 import org.apache.jena.query.ReadWrite;
+import org.apache.jena.rdf.model.AnonId;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.rdf.model.Resource;
@@ -86,9 +88,7 @@ public class EntityManagerImpl implements EntityManager
 
 	private final Model cachingModel;
 
-	private final boolean writeThrough;
-
-	private UpdateRequest updateReq;
+	private final UpdateHandler updateHandler;
 
 	static
 	{
@@ -152,11 +152,13 @@ public class EntityManagerImpl implements EntityManager
 	public EntityManagerImpl(RDFConnection connection, boolean writeThrough)
 	{		
 		this.connection = connection;
-		this.cachingGraph = new CachingGraph( connection );
+		this.cachingGraph = new CachingGraph( this );
 		this.cachingModel = ModelFactory.createModelForGraph( cachingGraph );
-		this.writeThrough = writeThrough;
+		
 		if (writeThrough) {
-			this.updateReq = new UpdateRequest();
+			this.updateHandler = new UpdateDirect();
+		} else {
+			this.updateHandler = new UpdateCached();
 		}
 		listeners = Collections.synchronizedList(new ArrayList<WeakReference<Listener>>());
 		classInfo = new HashMap<Class<?>, SubjectInfo>(){
@@ -214,10 +216,7 @@ public class EntityManagerImpl implements EntityManager
 	@Override
 	public void reset()
 	{
-		if (!writeThrough)
-		{
-			updateReq = new UpdateRequest();
-		}
+		updateHandler.reset();
 		classInfo.clear();
 		registerTypes();
 		try
@@ -430,6 +429,34 @@ public class EntityManagerImpl implements EntityManager
 		return classes;
 	}
 
+	private Resource register( Resource r )
+	{
+		final ResourceInterceptor interceptor = new ResourceInterceptor( r );
+		final Enhancer e = new Enhancer();	
+		e.setInterfaces( new Class[] {Resource.class });
+		e.setCallback(interceptor);
+		return (Resource) e.create();
+	}
+	
+	@Override
+	public Resource createResource(String uri)
+	{
+		return register( cachingModel.createResource( uri ));
+	}
+
+	@Override
+	public Resource createResource()
+	{
+		return register( cachingModel.createResource());
+	}
+	
+	@Override
+	public Resource createResource(AnonId id)
+	{
+		return register( cachingModel.createResource( id ));
+	}
+
+	
 	private Resource getResource( final Object target ) throws IllegalArgumentException
 	{
 		Resource r = null;
@@ -453,16 +480,11 @@ public class EntityManagerImpl implements EntityManager
 		 */
 		if (r.isAnon())
 		{
-			r = cachingModel.createResource( r.getId() );
+			return createResource( r.getId());
 		} else {
-			r = cachingModel.createResource( r.getURI() );
+			return createResource( r.getURI());
 		}
-		final ResourceInterceptor interceptor = new ResourceInterceptor( r );
-		final Enhancer e = new Enhancer();	
-		e.setInterfaces( new Class[] {Resource.class });
-		e.setCallback(interceptor);
-		return (Resource) e.create();
-
+		
 	}
 
 	@Override
@@ -731,8 +753,15 @@ public class EntityManagerImpl implements EntityManager
 		return (T) e.create();
 	}
 
-	@Override
-	public SubjectTable getSubjectTable(Resource subject)
+	/**
+	 * Get the SubjectTable for the resource.
+	 * 
+	 * If the table does not exist create it by querying the 
+	 * RDFConnection for the data.
+	 * 
+	 * @param subject the resource to locate.
+	 */
+	private SubjectTable getSubjectTable(Resource subject)
 	{
 		return cachingGraph.getTable( subject.asNode() );
 	}
@@ -796,9 +825,9 @@ public class EntityManagerImpl implements EntityManager
 							// configMethod will be null.
 						}
 					}
-					// verify that the config method was annotated as a
-					// predicate before
-					// we use it.
+					/* verify that the config method was annotated as a
+					 predicate before
+					 we use it. */
 
 					try
 					{
@@ -865,53 +894,18 @@ public class EntityManagerImpl implements EntityManager
 			}
 		}
 	}
-
-	/**
-	 * update the remote system with the request.
-	 * @param updateReq the update request to execute.
-	 */
-	private void updateConnection( UpdateRequest updateReq )
-	{
-		if ( updateReq.iterator().hasNext())
-		{		
-			synchronized (connection) {
-				connection.begin( ReadWrite.WRITE );
-				try {
-					connection.update( updateReq);
-					connection.commit();
-				}
-				catch (final RuntimeException e)
-				{
-					connection.abort();
-					throw e;
-				}
-			}	
-		}
-	}
 	
-	@Override
-	public void update( UpdateRequest updateReq )
-	{
-		if (writeThrough)
-		{
-			updateConnection( updateReq );
-		}
-		else
-		{
-			final Iterator<Update> iter = updateReq.iterator();
-			synchronized (this.updateReq)
-			{
-				while (iter.hasNext())
-				{			
-					this.updateReq.add( iter.next() );
-				}
-			}
-		}
+	/**
+	 * Get the Update Handler.
+	 * @return the update handler.
+	 */
+	public UpdateHandler getUpdateHandler() {
+		return updateHandler;
 	}
 
 	@Override
 	public void sync() {
-		updateConnection( updateReq );
+		updateHandler.execute();
 		cachingGraph.sync();
 	}
 
@@ -944,5 +938,115 @@ public class EntityManagerImpl implements EntityManager
 		}
 	}
 
+	public interface UpdateHandler {
+		void reset();
+		void execute();
+		void prepare( Update update );
+		void prepare( UpdateRequest updateReq);
+	}
+	
+	private class UpdateDirect implements UpdateHandler {
 
+		@Override
+		public synchronized void prepare(UpdateRequest updateReq)
+		{
+			if (updateReq.iterator().hasNext())
+			{
+				synchronized (connection) {
+					connection.begin( ReadWrite.WRITE );
+					try {
+						connection.update( updateReq );
+						connection.commit();
+					}
+					catch (final RuntimeException e)
+					{
+						connection.abort();
+						throw e;
+					}
+				}
+			}
+		}
+		
+		@Override
+		public synchronized void prepare(Update update)
+		{
+			synchronized (connection) {
+				connection.begin( ReadWrite.WRITE );
+				try {
+					connection.update( update );
+					connection.commit();
+				}
+				catch (final RuntimeException e)
+				{
+					connection.abort();
+					throw e;
+				}
+			}	
+		}
+		
+		public void execute() {}
+		
+		public void reset() {};
+	}
+	
+	private class UpdateCached implements UpdateHandler {
+		
+		private UpdateRequest updates = null;
+		
+
+		@Override
+		public synchronized void prepare(UpdateRequest updateReq)
+		{	
+			Iterator<Update> iter = updateReq.iterator();
+			if (iter.hasNext())
+			{
+				if (updates == null)
+				{
+					updates = updateReq;
+				} else {
+					while (iter.hasNext())
+					{
+						updates.add( iter.next() );
+					}
+				}
+			}
+		}
+		
+		@Override
+		public synchronized void prepare(Update update)
+		{		
+			if (updates == null)
+			{
+				updates = new UpdateRequest( update );
+			} else {
+				updates.add( update );
+			}
+		}
+		
+		public synchronized void execute()
+		{
+			if ( updates.iterator().hasNext())
+			{		
+				synchronized (connection) {
+					connection.begin( ReadWrite.WRITE );
+					try {
+						connection.update( updates );
+						connection.commit();
+					}
+					catch (final RuntimeException e)
+					{
+						connection.abort();
+						throw e;
+					}
+				}	
+			}
+			reset();
+		}
+		
+		public synchronized void reset()
+		{
+			updates = null;
+		}
+		
+	}
 }
