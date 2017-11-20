@@ -240,6 +240,20 @@ public interface EntityManager {
 	 */
 	public RDFConnection getConnection();
 	
+	/**
+	 * Get an Entity manager that executes on the specific named Model
+	 * @param modelName
+	 * @return the EntityManager for the specific model.
+	 */
+	public EntityManager getNamedManager( String modelName );
+	
+	/**
+	 * Get the Entity manager that executes on the default model.
+	 * @param modelName
+	 * @return the EntityManager for the specific model.
+	 */
+	public EntityManager getDefaultManager();
+	
 //	/**
 //	 * Do an update to the underlying system.
 //	 * If writeThrough is enabled the update is performed 
@@ -266,6 +280,14 @@ public interface EntityManager {
 	public Resource createResource( String uri );
 	
 	/**
+	 * Create resource with URI in the managed model.
+	 * @param uri the URI to create the resource with.
+	 * @param type the type for the resource.
+	 * @return the resource in the managed model.
+	 */
+	public Resource createResource( String uri, Resource type );
+	
+	/**
 	 * Create resource with specified anonymous ID in the managed model.
 	 * @param id the Anonymous ID to create the resource with.
 	 * @return the resource in the managed model.
@@ -278,6 +300,12 @@ public interface EntityManager {
 	 */
 	public Resource createResource();
 	
+	/**
+	 * Return true if the managed datastore has the the resource
+	 * @param uri the resource to check.
+	 * @return true if the resource exists in the data store.
+	 */
+	public boolean hasResource( String uri );
 
 	/**
 	 * The listener interface.

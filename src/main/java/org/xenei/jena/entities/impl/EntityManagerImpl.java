@@ -35,6 +35,7 @@ import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
+import org.apache.jena.arq.querybuilder.AskBuilder;
 import org.apache.jena.arq.querybuilder.UpdateBuilder;
 import org.apache.jena.datatypes.RDFDatatype;
 import org.apache.jena.datatypes.TypeMapper;
@@ -44,6 +45,7 @@ import org.apache.jena.query.ReadWrite;
 import org.apache.jena.rdf.model.AnonId;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
+import org.apache.jena.rdf.model.RDFNode;
 import org.apache.jena.rdf.model.Resource;
 import org.apache.jena.rdf.model.ResourceFactory;
 import org.apache.jena.rdfconnection.RDFConnection;
@@ -89,6 +91,8 @@ public class EntityManagerImpl implements EntityManager
 	private final Model cachingModel;
 
 	private final UpdateHandler updateHandler;
+	
+	private final String modelName;
 
 	static
 	{
@@ -150,7 +154,8 @@ public class EntityManagerImpl implements EntityManager
 	 * Constructor.
 	 */
 	public EntityManagerImpl(RDFConnection connection, boolean writeThrough)
-	{		
+	{	
+		this.modelName = null;
 		this.connection = connection;
 		this.cachingGraph = new CachingGraph( this );
 		this.cachingModel = ModelFactory.createModelForGraph( cachingGraph );
@@ -213,6 +218,37 @@ public class EntityManagerImpl implements EntityManager
 			}
 	}
 
+	/**
+	 * Constructor.
+	 */
+	private EntityManagerImpl(EntityManagerImpl base, String modelName)
+	{	
+		this.modelName = null;
+		this.connection = base.connection;
+		this.cachingGraph = new CachingGraph( this );
+		this.cachingModel = ModelFactory.createModelForGraph( cachingGraph );
+		this.updateHandler = base.updateHandler;
+		this.listeners = base.listeners;
+		this.classInfo = base.classInfo;
+	}
+	
+	@Override
+	public EntityManager getNamedManager(String modelName)
+	{
+		return new EntityManagerImpl( this, modelName );
+	}
+
+	@Override
+	public EntityManager getDefaultManager()
+	{
+		return getNamedManager( null );
+	}
+	
+	
+	public String getModelName() {
+		return modelName;
+	}
+	
 	@Override
 	public void reset()
 	{
@@ -443,6 +479,12 @@ public class EntityManagerImpl implements EntityManager
 	{
 		return register( cachingModel.createResource( uri ));
 	}
+	
+	@Override
+	public Resource createResource(String uri, Resource type)
+	{
+		return register( cachingModel.createResource( uri, type ));
+	}
 
 	@Override
 	public Resource createResource()
@@ -456,6 +498,18 @@ public class EntityManagerImpl implements EntityManager
 		return register( cachingModel.createResource( id ));
 	}
 
+	@Override
+	public boolean hasResource( String uri )
+	{
+		Resource r = ResourceFactory.createResource( uri );
+		if (cachingModel.contains( r, null, (RDFNode) null ))
+		{
+			return true;
+		}
+		AskBuilder builder = new AskBuilder().addWhere( r, null, null);
+		return connection.queryAsk( builder.build());
+	}
+	
 	
 	private Resource getResource( final Object target ) throws IllegalArgumentException
 	{
@@ -1049,4 +1103,6 @@ public class EntityManagerImpl implements EntityManager
 		}
 		
 	}
+
+	
 }
