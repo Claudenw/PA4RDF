@@ -241,9 +241,18 @@ public interface EntityManager {
 	public RDFConnection getConnection();
 	
 	/**
-	 * Get an Entity manager that executes on the specific named Model
-	 * @param modelName
-	 * @return the EntityManager for the specific model.
+	 * Get the model name this entity manager is working against.
+	 * @return
+	 */
+	public String getModelName();
+	
+	/**
+	 * Get an Entity manager that executes on the specific named Model.
+	 * 
+	 * If the model does not exist in the dataset it is created.
+	 * @param modelName the name to create.
+	 * 
+	 * @return the EntityManager for the specific model r null for default model.
 	 */
 	public EntityManager getNamedManager( String modelName );
 	

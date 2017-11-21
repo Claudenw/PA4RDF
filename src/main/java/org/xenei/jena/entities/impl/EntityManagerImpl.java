@@ -35,6 +35,7 @@ import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.jena.arq.querybuilder.AskBuilder;
 import org.apache.jena.arq.querybuilder.UpdateBuilder;
 import org.apache.jena.datatypes.RDFDatatype;
@@ -50,6 +51,7 @@ import org.apache.jena.rdf.model.Resource;
 import org.apache.jena.rdf.model.ResourceFactory;
 import org.apache.jena.rdfconnection.RDFConnection;
 import org.apache.jena.rdfconnection.RDFConnectionFactory;
+import org.apache.jena.sparql.core.Quad;
 import org.apache.jena.update.Update;
 import org.apache.jena.update.UpdateRequest;
 import org.apache.jena.vocabulary.RDF;
@@ -155,7 +157,7 @@ public class EntityManagerImpl implements EntityManager
 	 */
 	public EntityManagerImpl(RDFConnection connection, boolean writeThrough)
 	{	
-		this.modelName = null;
+		this.modelName = Quad.defaultGraphIRI.getURI();
 		this.connection = connection;
 		this.cachingGraph = new CachingGraph( this );
 		this.cachingModel = ModelFactory.createModelForGraph( cachingGraph );
@@ -223,7 +225,7 @@ public class EntityManagerImpl implements EntityManager
 	 */
 	private EntityManagerImpl(EntityManagerImpl base, String modelName)
 	{	
-		this.modelName = null;
+		this.modelName = StringUtils.defaultIfBlank(modelName, Quad.defaultGraphIRI.getURI());
 		this.connection = base.connection;
 		this.cachingGraph = new CachingGraph( this );
 		this.cachingModel = ModelFactory.createModelForGraph( cachingGraph );
@@ -235,6 +237,14 @@ public class EntityManagerImpl implements EntityManager
 	@Override
 	public EntityManager getNamedManager(String modelName)
 	{
+		if (modelName != null)
+		{
+			AskBuilder askBuilder = new AskBuilder().addGraph( modelName, new AskBuilder().addWhere( "?s", "?p", "?o" ));
+			if (! connection.queryAsk(askBuilder.build()))
+			{
+				connection.put( modelName, ModelFactory.createDefaultModel());
+			}
+		}
 		return new EntityManagerImpl( this, modelName );
 	}
 
@@ -244,7 +254,7 @@ public class EntityManagerImpl implements EntityManager
 		return getNamedManager( null );
 	}
 	
-	
+	@Override
 	public String getModelName() {
 		return modelName;
 	}
