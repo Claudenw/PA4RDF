@@ -40,18 +40,15 @@ public class CachingGraph extends GraphBase implements Graph {
 	private final Map<Node,SoftReference<SubjectTable>> map;
 	private final EntityManagerImpl entityManager;
 	private final Node graphNode;
+	private static final Var p = Var.alloc("p");
+	private static final Var o = Var.alloc("o");
 	/**
 	 * Constructor.
 	 * @param connection the connection to the remote system.
 	 */
 	public CachingGraph(EntityManagerImpl entityManager) {
 		this.entityManager = entityManager;
-		if (StringUtils.isEmpty( entityManager.getModelName()))
-		{
-			graphNode = Quad.defaultGraphIRI;
-		} else {
-			graphNode = NodeFactory.createURI( entityManager.getModelName() );
-		}
+		this.graphNode = entityManager.getModelName();
 		map = new HashMap<Node,SoftReference<SubjectTable>>();	
 		this.getEventManager().register( new Listener());
 	}
@@ -63,10 +60,8 @@ public class CachingGraph extends GraphBase implements Graph {
 	 */
 	private SubjectTable loadTable( Node subject )
 	{
-		Var p = Var.alloc("p");
-		Var o = Var.alloc("o");
-		ConstructBuilder cb = new ConstructBuilder().addConstruct(subject, p, o).addGraph( graphNode, 
-				new ConstructBuilder().addWhere( subject, p, o));		
+		ConstructBuilder cb = new ConstructBuilder().addConstruct(subject, p, o)
+				.addGraph( graphNode, new ConstructBuilder().addWhere( subject, p, o));		
 		final Model model = entityManager.getConnection().queryConstruct( cb.build() );
 		final SubjectTable st = new SubjectTableImpl( subject, model );
 		map.put( subject, new SoftReference<SubjectTable>( st ));

@@ -40,6 +40,8 @@ import org.apache.jena.arq.querybuilder.AskBuilder;
 import org.apache.jena.arq.querybuilder.UpdateBuilder;
 import org.apache.jena.datatypes.RDFDatatype;
 import org.apache.jena.datatypes.TypeMapper;
+import org.apache.jena.graph.Node;
+import org.apache.jena.graph.NodeFactory;
 import org.apache.jena.query.Dataset;
 import org.apache.jena.query.DatasetFactory;
 import org.apache.jena.query.ReadWrite;
@@ -94,7 +96,7 @@ public class EntityManagerImpl implements EntityManager
 
 	private final UpdateHandler updateHandler;
 	
-	private final String modelName;
+	private final Node modelName;
 
 	static
 	{
@@ -157,7 +159,7 @@ public class EntityManagerImpl implements EntityManager
 	 */
 	public EntityManagerImpl(RDFConnection connection, boolean writeThrough)
 	{	
-		this.modelName = Quad.defaultGraphIRI.getURI();
+		this.modelName = Quad.defaultGraphIRI;
 		this.connection = connection;
 		this.cachingGraph = new CachingGraph( this );
 		this.cachingModel = ModelFactory.createModelForGraph( cachingGraph );
@@ -223,9 +225,9 @@ public class EntityManagerImpl implements EntityManager
 	/**
 	 * Constructor.
 	 */
-	private EntityManagerImpl(EntityManagerImpl base, String modelName)
+	private EntityManagerImpl(EntityManagerImpl base, Node modelName)
 	{	
-		this.modelName = StringUtils.defaultIfBlank(modelName, Quad.defaultGraphIRI.getURI());
+		this.modelName = modelName == null?Quad.defaultGraphIRI:modelName;	
 		this.connection = base.connection;
 		this.cachingGraph = new CachingGraph( this );
 		this.cachingModel = ModelFactory.createModelForGraph( cachingGraph );
@@ -235,14 +237,14 @@ public class EntityManagerImpl implements EntityManager
 	}
 	
 	@Override
-	public EntityManager getNamedManager(String modelName)
+	public EntityManager getNamedManager(Node modelName)
 	{
 		if (modelName != null)
 		{
 			AskBuilder askBuilder = new AskBuilder().addGraph( modelName, new AskBuilder().addWhere( "?s", "?p", "?o" ));
 			if (! connection.queryAsk(askBuilder.build()))
 			{
-				connection.put( modelName, ModelFactory.createDefaultModel());
+				connection.put( modelName.getURI(), ModelFactory.createDefaultModel());
 			}
 		}
 		return new EntityManagerImpl( this, modelName );
@@ -251,11 +253,11 @@ public class EntityManagerImpl implements EntityManager
 	@Override
 	public EntityManager getDefaultManager()
 	{
-		return getNamedManager( null );
+		return getNamedManager( Quad.defaultGraphIRI );
 	}
 	
 	@Override
-	public String getModelName() {
+	public Node getModelName() {
 		return modelName;
 	}
 	

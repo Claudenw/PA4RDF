@@ -17,6 +17,7 @@ package org.xenei.jena.entities;
 
 import java.util.Collection;
 
+import org.apache.jena.graph.Node;
 import org.apache.jena.rdf.model.AnonId;
 import org.apache.jena.rdf.model.Resource;
 import org.apache.jena.rdfconnection.RDFConnection;
@@ -244,7 +245,7 @@ public interface EntityManager {
 	 * Get the model name this entity manager is working against.
 	 * @return
 	 */
-	public String getModelName();
+	public Node getModelName();
 	
 	/**
 	 * Get an Entity manager that executes on the specific named Model.
@@ -254,7 +255,7 @@ public interface EntityManager {
 	 * 
 	 * @return the EntityManager for the specific model r null for default model.
 	 */
-	public EntityManager getNamedManager( String modelName );
+	public EntityManager getNamedManager( Node modelName );
 	
 	/**
 	 * Get the Entity manager that executes on the default model.
