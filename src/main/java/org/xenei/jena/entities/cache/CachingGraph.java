@@ -260,7 +260,11 @@ public class CachingGraph extends GraphBase implements Graph {
 			final Set<Node> set = map.get(predicate);
 			if (set != null)
 			{
-				set.remove( value );		
+				set.remove( value );
+				if (set.isEmpty())
+				{
+					map.remove(predicate);
+				}
 			}
 		}
 
@@ -322,6 +326,10 @@ public class CachingGraph extends GraphBase implements Graph {
 			return retval;
 		}
 
+		@Override
+		public String toString() {
+			return String.format( "SubjectTable[%s %s]", subject, map);
+		}
 	}
 	
 	private class Listener implements GraphListener {
