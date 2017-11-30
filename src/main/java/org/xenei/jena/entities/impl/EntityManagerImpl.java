@@ -44,6 +44,8 @@ import org.apache.jena.graph.Node;
 import org.apache.jena.graph.NodeFactory;
 import org.apache.jena.query.Dataset;
 import org.apache.jena.query.DatasetFactory;
+import org.apache.jena.query.Query;
+import org.apache.jena.query.QueryExecution;
 import org.apache.jena.query.ReadWrite;
 import org.apache.jena.rdf.model.AnonId;
 import org.apache.jena.rdf.model.Model;
@@ -54,6 +56,7 @@ import org.apache.jena.rdf.model.ResourceFactory;
 import org.apache.jena.rdfconnection.RDFConnection;
 import org.apache.jena.rdfconnection.RDFConnectionFactory;
 import org.apache.jena.sparql.core.Quad;
+import org.apache.jena.sparql.syntax.ElementNamedGraph;
 import org.apache.jena.update.Update;
 import org.apache.jena.update.UpdateRequest;
 import org.apache.jena.vocabulary.RDF;
@@ -833,10 +836,13 @@ public class EntityManagerImpl implements EntityManager
 	}
 
 	@Override
-	public RDFConnection getConnection()
-	{
-		return connection;
+	public void close() {
+		connection.close();
 	}
+//	public RDFConnection getConnection()
+//	{
+//		return connection;
+//	}
 
 	/**
 	 * Since the EntityManger implements the manager as a live data read against
@@ -973,6 +979,15 @@ public class EntityManagerImpl implements EntityManager
 	public void sync() {
 		updateHandler.execute();
 		cachingGraph.sync();
+	}
+	
+	@Override
+	public QueryExecution execute( Query query )
+	{
+		Query q = query.cloneQuery();
+		ElementNamedGraph eng = new ElementNamedGraph( modelName, q.getQueryPattern());
+		q.setQueryPattern(eng);
+		return connection.query(query);
 	}
 
 	/**

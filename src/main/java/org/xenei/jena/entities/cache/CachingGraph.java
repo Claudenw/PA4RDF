@@ -60,9 +60,8 @@ public class CachingGraph extends GraphBase implements Graph {
 	 */
 	private SubjectTable loadTable( Node subject )
 	{
-		ConstructBuilder cb = new ConstructBuilder().addConstruct(subject, p, o)
-				.addGraph( graphNode, new ConstructBuilder().addWhere( subject, p, o));		
-		final Model model = entityManager.getConnection().queryConstruct( cb.build() );
+		ConstructBuilder cb = new ConstructBuilder().addConstruct(subject, p, o).addWhere( subject, p, o);			
+		final Model model = entityManager.execute( cb.build() ).execConstruct();
 		final SubjectTable st = new SubjectTableImpl( subject, model );
 		map.put( subject, new SoftReference<SubjectTable>( st ));
 		return st;
@@ -105,7 +104,7 @@ public class CachingGraph extends GraphBase implements Graph {
 		{
 			tbl = tblRef.get();
 		}
-		if (tbl == null)
+		if (tbl == null || tbl.isEmpty())
 		{
 			tbl = loadTable( subject );
 		}
@@ -164,6 +163,10 @@ public class CachingGraph extends GraphBase implements Graph {
 			tbl = loadTable( t.getSubject());
 		}
 		tbl.removeValue(t.getPredicate(), t.getObject());
+		if (tbl.isEmpty())
+		{
+			map.remove( t.getSubject() );
+		}
 	}
 
 	@Override
@@ -208,6 +211,11 @@ public class CachingGraph extends GraphBase implements Graph {
 		public Node getSubject() {
 			return subject;
 		}
+		
+		@Override
+		public boolean isEmpty() {
+			return map.isEmpty();
+		}
 
 		@Override
 		public Set<Node> getValues(FrontsNode predicate) {
@@ -216,7 +224,10 @@ public class CachingGraph extends GraphBase implements Graph {
 
 		public Set<Node> getValues(Node predicate)
 		{
-
+			if (isEmpty())
+			{
+				return Collections.emptySet();
+			}
 			if (Node.ANY.equals( predicate ))
 			{
 				final Set<Node> retval = new HashSet<Node>();

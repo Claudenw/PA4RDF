@@ -18,6 +18,8 @@ package org.xenei.jena.entities;
 import java.util.Collection;
 
 import org.apache.jena.graph.Node;
+import org.apache.jena.query.Query;
+import org.apache.jena.query.QueryExecution;
 import org.apache.jena.rdf.model.AnonId;
 import org.apache.jena.rdf.model.Resource;
 import org.apache.jena.rdfconnection.RDFConnection;
@@ -239,7 +241,8 @@ public interface EntityManager {
 	 * Get the connection to the underlying RDF datastore.
 	 * @return  the RDFConnection.
 	 */
-	public RDFConnection getConnection();
+	//public RDFConnection getConnection();
+	public void close();
 	
 	/**
 	 * Get the model name this entity manager is working against.
@@ -264,16 +267,14 @@ public interface EntityManager {
 	 */
 	public EntityManager getDefaultManager();
 	
-//	/**
-//	 * Do an update to the underlying system.
-//	 * If writeThrough is enabled the update is performed 
-//	 * immediately and the system is resynced.
-//	 * If writeThrough is not enabled then the system will hold the changes
-//	 * until sync() is called
-//	 * @see #sync()
-//	 * @param updateRequest the update to execute.
-//	 */
-//	public void update( UpdateRequest updateRequest );
+	/**
+	 * Execute a query.  The query will be modified to apply to the specific 
+	 * graph represented by theis EntityManager.
+	 * 
+	 * @param query The query to execute.
+	 * @return The query execution for the query
+	 */
+	public QueryExecution execute( Query query );
 	
 	/**
 	 * Sync the system with the remote data store.

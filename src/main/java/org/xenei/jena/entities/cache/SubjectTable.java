@@ -106,4 +106,9 @@ public interface SubjectTable {
 	 * @return the number of triples in the table.
 	 */
 	public int size();
+	
+	/**
+	 * @return true if the table has no data, false otherwise.
+	 */
+	public boolean isEmpty();
 }
