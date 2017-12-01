@@ -36,6 +36,7 @@ import org.apache.jena.rdf.model.impl.ResourceImpl;
 import org.apache.jena.rdfconnection.RDFConnection;
 import org.apache.jena.sparql.core.Quad;
 import org.apache.jena.sparql.core.Var;
+import org.apache.jena.sparql.lang.sparql_11.ParseException;
 import org.apache.jena.util.iterator.ExtendedIterator;
 import org.apache.jena.util.iterator.NiceIterator;
 import org.xenei.jena.entities.impl.EntityManagerImpl;
@@ -74,7 +75,21 @@ public class CachingGraph extends GraphBase implements Graph {
 	 */
 	private SubjectTable loadTable( Node subject )
 	{
-		ConstructBuilder cb = new ConstructBuilder().addConstruct(subject, p, o).addWhere( subject, p, o);			
+		ConstructBuilder cb = new ConstructBuilder();
+	
+		if (subject.isBlank())
+		{
+			try {
+				cb.addConstruct("?s", p, o).addBind( cb.quote(subject.getBlankNodeLabel()), "?s");
+			} catch (ParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}	
+		}
+		else
+		{
+			cb.addConstruct(subject, p, o).addWhere( subject, p, o);			
+		}
 		final Model model = entityManager.execute( cb.build() ).execConstruct();
 		final SubjectTable st = new SubjectTableImpl( subject, model );
 		map.put( subject, new SoftReference<SubjectTable>( st ));
