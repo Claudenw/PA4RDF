@@ -12,15 +12,27 @@ import java.util.Set;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.jena.arq.querybuilder.ConstructBuilder;
 import org.apache.jena.arq.querybuilder.UpdateBuilder;
+import org.apache.jena.graph.BlankNodeId;
 import org.apache.jena.graph.FrontsNode;
 import org.apache.jena.graph.Graph;
 import org.apache.jena.graph.GraphListener;
 import org.apache.jena.graph.Node;
 import org.apache.jena.graph.NodeFactory;
+import org.apache.jena.graph.NodeVisitor;
+import org.apache.jena.graph.Node_ANY;
+import org.apache.jena.graph.Node_Blank;
+import org.apache.jena.graph.Node_Literal;
+import org.apache.jena.graph.Node_URI;
+import org.apache.jena.graph.Node_Variable;
 import org.apache.jena.graph.Triple;
 import org.apache.jena.graph.impl.CollectionGraph;
 import org.apache.jena.graph.impl.GraphBase;
+import org.apache.jena.graph.impl.LiteralLabel;
 import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.RDFNode;
+import org.apache.jena.rdf.model.Resource;
+import org.apache.jena.rdf.model.ResourceFactory;
+import org.apache.jena.rdf.model.impl.ResourceImpl;
 import org.apache.jena.rdfconnection.RDFConnection;
 import org.apache.jena.sparql.core.Quad;
 import org.apache.jena.sparql.core.Var;
@@ -40,6 +52,7 @@ public class CachingGraph extends GraphBase implements Graph {
 	private final Map<Node,SoftReference<SubjectTable>> map;
 	private final EntityManagerImpl entityManager;
 	private final Node graphNode;
+	private final Node graphWriteNode;
 	private static final Var p = Var.alloc("p");
 	private static final Var o = Var.alloc("o");
 	/**
@@ -49,6 +62,7 @@ public class CachingGraph extends GraphBase implements Graph {
 	public CachingGraph(EntityManagerImpl entityManager) {
 		this.entityManager = entityManager;
 		this.graphNode = entityManager.getModelName();
+		this.graphWriteNode = (graphNode.equals( Quad.unionGraph))?Quad.defaultGraphIRI:graphNode;
 		map = new HashMap<Node,SoftReference<SubjectTable>>();	
 		this.getEventManager().register( new Listener());
 	}
@@ -187,24 +201,12 @@ public class CachingGraph extends GraphBase implements Graph {
 	private static class SubjectTableImpl implements SubjectTable {
 
 		private final Node subject;
-		private final Map<Node,Set<Node>> map;
+		private final Graph subGraph;
 
 		public SubjectTableImpl( Node subject, Model model )
 		{
 			this.subject = subject;
-			this.map = new HashMap<Node,Set<Node>>();
-			final Iterator<Triple> iter =  model.getGraph().find(subject, Node.ANY, Node.ANY);
-			while (iter.hasNext())
-			{
-				final Triple t = iter.next();
-				Set<Node> set = map.get(t.getPredicate());
-				if (set == null)
-				{
-					set = new HashSet<Node>();
-					map.put( t.getPredicate(), set);
-				}
-				set.add( t.getObject());
-			}			
+			this.subGraph = model.getGraph();
 		}
 
 		@Override
@@ -214,7 +216,7 @@ public class CachingGraph extends GraphBase implements Graph {
 		
 		@Override
 		public boolean isEmpty() {
-			return map.isEmpty();
+			return subGraph.isEmpty();
 		}
 
 		@Override
@@ -228,21 +230,7 @@ public class CachingGraph extends GraphBase implements Graph {
 			{
 				return Collections.emptySet();
 			}
-			if (Node.ANY.equals( predicate ))
-			{
-				final Set<Node> retval = new HashSet<Node>();
-				for (final Node p : map.keySet())
-				{
-					retval.addAll( getValues( p ));
-				}
-				return retval;
-			}
-			final Set<Node> nodes = map.get(predicate);
-			if (nodes == null)
-			{
-				return Collections.emptySet();
-			}
-			return Collections.unmodifiableSet( nodes );
+			return Collections.unmodifiableSet(subGraph.find(subject, predicate, Node.ANY).mapWith( tpl -> tpl.getObject()).toSet());
 		}
 
 		@Override
@@ -252,13 +240,7 @@ public class CachingGraph extends GraphBase implements Graph {
 
 		@Override
 		public void addValue(Node predicate, Node value) {
-			Set<Node> set = map.get(predicate);
-			if (set == null)
-			{
-				set = new HashSet<Node>();
-				map.put( predicate, set );
-			}
-			set.add( value );
+			subGraph.add( new Triple( subject, predicate, value ));
 		}
 
 		@Override
@@ -268,15 +250,7 @@ public class CachingGraph extends GraphBase implements Graph {
 
 		@Override
 		public void removeValue(Node predicate, Node value) {
-			final Set<Node> set = map.get(predicate);
-			if (set != null)
-			{
-				set.remove( value );
-				if (set.isEmpty())
-				{
-					map.remove(predicate);
-				}
-			}
+			subGraph.remove( subject, predicate, value );
 		}
 
 		@Override
@@ -286,34 +260,16 @@ public class CachingGraph extends GraphBase implements Graph {
 
 		@Override
 		public Set<Node> getPedicates(Node value) {
-			final Set<Node> retval = new HashSet<Node>();
-			for (final Node predicate : map.keySet())
+			if (isEmpty())
 			{
-				final Set<Node> values = map.get(predicate);
-				if (values.contains(value))
-				{
-					retval.add( predicate );
-				}
+				return Collections.emptySet();
 			}
-			return retval;
-		}
-
-		@Override
-		public Set<Triple> asTriples() {
-			final Set<Triple> retval = new HashSet<Triple>();
-			for (final Node predicate : map.keySet())
-			{
-				for (final Node object : map.get(predicate))
-				{					
-					retval.add( new Triple( subject, predicate, object) );
-				}
-			}
-			return retval;
+			return Collections.unmodifiableSet(subGraph.find(subject, Node.ANY, value).mapWith( tpl -> tpl.getPredicate()).toSet());
 		}
 
 		@Override
 		public Graph asGraph() {
-			return new CollectionGraph( asTriples() );
+			return subGraph;
 		}
 
 		@Override
@@ -323,23 +279,21 @@ public class CachingGraph extends GraphBase implements Graph {
 
 		@Override
 		public boolean has(Node predicate, Node value) {
-			final Set<Node> set = map.get(predicate);
-			return set==null?false:set.contains(value);
+			if (isEmpty())
+			{
+				return false;
+			}
+			return subGraph.find(subject, predicate, value).hasNext();
 		}
 
 		@Override
 		public int size() {
-			int retval = 0;
-			for (final Set<Node> s : map.values())
-			{
-				retval += s.size();
-			}
-			return retval;
+			return subGraph.size();
 		}
 
 		@Override
 		public String toString() {
-			return String.format( "SubjectTable[%s %s]", subject, map);
+			return String.format( "SubjectTable[%s %s]", subject, subGraph);
 		}
 	}
 	
@@ -348,7 +302,7 @@ public class CachingGraph extends GraphBase implements Graph {
 		@Override
 		public void notifyAddTriple(Graph g, Triple t)
 		{
-			 entityManager.getUpdateHandler().prepare(new UpdateBuilder().addInsert( graphNode, t).build());
+			 entityManager.getUpdateHandler().prepare(new UpdateBuilder().addInsert( graphWriteNode, t).build());
 		}
 
 		@Override
@@ -357,7 +311,7 @@ public class CachingGraph extends GraphBase implements Graph {
 			UpdateBuilder builder = new UpdateBuilder();
 			for (Triple t : triples)
 			{
-				builder.addInsert(graphNode,t);
+				builder.addInsert(graphWriteNode,t);
 			}
 			entityManager.getUpdateHandler().prepare( builder.build() );
 		}
@@ -366,7 +320,7 @@ public class CachingGraph extends GraphBase implements Graph {
 		public void notifyAddList(Graph g, List<Triple> triples)
 		{
 			UpdateBuilder builder = new UpdateBuilder();
-			triples.forEach( t -> builder.addInsert(graphNode,t));
+			triples.forEach( t -> builder.addInsert(graphWriteNode,t));
 			entityManager.getUpdateHandler().prepare( builder.build() );
 		}
 
@@ -374,7 +328,7 @@ public class CachingGraph extends GraphBase implements Graph {
 		public void notifyAddIterator(Graph g, Iterator<Triple> it)
 		{
 			UpdateBuilder builder = new UpdateBuilder();
-			it.forEachRemaining( t -> builder.addInsert(graphNode,t));
+			it.forEachRemaining( t -> builder.addInsert(graphWriteNode,t));
 			entityManager.getUpdateHandler().prepare( builder.build() );
 		}
 
@@ -382,21 +336,21 @@ public class CachingGraph extends GraphBase implements Graph {
 		public void notifyAddGraph(Graph g, Graph added)
 		{
 			UpdateBuilder builder = new UpdateBuilder();
-			added.find().forEachRemaining( t -> builder.addInsert(graphNode,t));
+			added.find().forEachRemaining( t -> builder.addInsert(graphWriteNode,t));
 			entityManager.getUpdateHandler().prepare( builder.build() );
 		}
 
 		@Override
 		public void notifyDeleteTriple(Graph g, Triple t)
 		{
-			entityManager.getUpdateHandler().prepare(new UpdateBuilder().addDelete(graphNode, t).build());
+			entityManager.getUpdateHandler().prepare(new UpdateBuilder().addDelete(graphWriteNode, t).build());
 		}
 
 		@Override
 		public void notifyDeleteList(Graph g, List<Triple> L)
 		{
 			UpdateBuilder builder = new UpdateBuilder();
-			L.forEach( t -> builder.addDelete(graphNode,t));
+			L.forEach( t -> builder.addDelete(graphWriteNode,t));
 			entityManager.getUpdateHandler().prepare( builder.build() );
 		}
 
@@ -406,7 +360,7 @@ public class CachingGraph extends GraphBase implements Graph {
 			UpdateBuilder builder = new UpdateBuilder();
 			for (Triple t : triples)
 			{
-				builder.addDelete(graphNode,t);
+				builder.addDelete(graphWriteNode,t);
 			}
 			entityManager.getUpdateHandler().prepare( builder.build() );
 		}
@@ -415,7 +369,7 @@ public class CachingGraph extends GraphBase implements Graph {
 		public void notifyDeleteIterator(Graph g, Iterator<Triple> it)
 		{
 			UpdateBuilder builder = new UpdateBuilder();
-			it.forEachRemaining( t -> builder.addDelete(graphNode,t));
+			it.forEachRemaining( t -> builder.addDelete(graphWriteNode,t));
 			entityManager.getUpdateHandler().prepare( builder.build() );
 		}
 
@@ -423,7 +377,7 @@ public class CachingGraph extends GraphBase implements Graph {
 		public void notifyDeleteGraph(Graph g, Graph removed)
 		{
 			UpdateBuilder builder = new UpdateBuilder();
-			removed.find().forEachRemaining( t -> builder.addDelete(graphNode,t));
+			removed.find().forEachRemaining( t -> builder.addDelete(graphWriteNode,t));
 			entityManager.getUpdateHandler().prepare( builder.build() );
 		}
 

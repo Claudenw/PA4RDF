@@ -16,6 +16,7 @@ package org.xenei.jena.entities.impl;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.ref.SoftReference;
 import java.lang.ref.WeakReference;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -40,6 +41,7 @@ import org.apache.jena.arq.querybuilder.AskBuilder;
 import org.apache.jena.arq.querybuilder.UpdateBuilder;
 import org.apache.jena.datatypes.RDFDatatype;
 import org.apache.jena.datatypes.TypeMapper;
+import org.apache.jena.enhanced.EnhGraph;
 import org.apache.jena.graph.Node;
 import org.apache.jena.graph.NodeFactory;
 import org.apache.jena.query.Dataset;
@@ -53,6 +55,7 @@ import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.rdf.model.RDFNode;
 import org.apache.jena.rdf.model.Resource;
 import org.apache.jena.rdf.model.ResourceFactory;
+import org.apache.jena.rdf.model.impl.ResourceImpl;
 import org.apache.jena.rdfconnection.RDFConnection;
 import org.apache.jena.rdfconnection.RDFConnectionFactory;
 import org.apache.jena.sparql.core.Quad;
@@ -87,6 +90,8 @@ public class EntityManagerImpl implements EntityManager
 	private static Logger LOG = LoggerFactory
 			.getLogger(EntityManagerImpl.class);
 
+	private final Map<Byte, List<SoftReference<Resource>>> resourceCache;
+	
 	private final Map<Class<?>, SubjectInfo> classInfo;
 
 	private final List<WeakReference<Listener>> listeners;
@@ -95,7 +100,7 @@ public class EntityManagerImpl implements EntityManager
 
 	private final CachingGraph cachingGraph;
 
-	private final Model cachingModel;
+	protected final Model cachingModel;
 
 	private final UpdateHandler updateHandler;
 	
@@ -166,6 +171,7 @@ public class EntityManagerImpl implements EntityManager
 		this.connection = connection;
 		this.cachingGraph = new CachingGraph( this );
 		this.cachingModel = ModelFactory.createModelForGraph( cachingGraph );
+		this.resourceCache = new HashMap<Byte, List<SoftReference<Resource>>>();
 		
 		if (writeThrough) {
 			this.updateHandler = new UpdateDirect();
@@ -237,20 +243,28 @@ public class EntityManagerImpl implements EntityManager
 		this.updateHandler = base.updateHandler;
 		this.listeners = base.listeners;
 		this.classInfo = base.classInfo;
+		this.resourceCache = new HashMap<Byte, List<SoftReference<Resource>>>();
 	}
 	
 	@Override
 	public EntityManager getNamedManager(Node modelName)
 	{
-		if (modelName != null)
+		// check for same name
+		String defaultName = Quad.defaultGraphIRI.getURI();
+		String newModelName = StringUtils.defaultIfBlank(modelName.getURI(), defaultName);
+		if (newModelName.equals( StringUtils.defaultIfBlank(getModelName().getURI(), defaultName)))
 		{
-			AskBuilder askBuilder = new AskBuilder().addGraph( modelName, new AskBuilder().addWhere( "?s", "?p", "?o" ));
+			return this;
+		}
+		if (! defaultName.equals(newModelName) && ! Quad.unionGraph.getURI().equals( newModelName ))
+		{
+			AskBuilder askBuilder = new AskBuilder().addGraph( newModelName, new AskBuilder().addWhere( "?s", "?p", "?o" ));
 			if (! connection.queryAsk(askBuilder.build()))
 			{
-				connection.put( modelName.getURI(), ModelFactory.createDefaultModel());
+				connection.put( newModelName, ModelFactory.createDefaultModel());
 			}
 		}
-		return new EntityManagerImpl( this, modelName );
+		return new EntityManagerImpl( this, NodeFactory.createURI(newModelName) );
 	}
 
 	@Override
@@ -492,31 +506,36 @@ public class EntityManagerImpl implements EntityManager
 	@Override
 	public Resource createResource(String uri)
 	{
-		return register( cachingModel.createResource( uri ));
+		Resource r = cachingModel.createResource(uri);
+		return getResourceFromCache( calcBloomFilter( r ), r );
 	}
 	
 	@Override
 	public Resource createResource(String uri, Resource type)
 	{
-		return register( cachingModel.createResource( uri, type ));
+		Resource r = createResource( uri );
+		r.addProperty( RDF.type, type);
+		return r;
 	}
 
 	@Override
 	public Resource createResource()
 	{
-		return register( cachingModel.createResource());
+		Resource r = cachingModel.createResource();
+		return getResourceFromCache( calcBloomFilter( r ), r );
 	}
 	
 	@Override
 	public Resource createResource(AnonId id)
 	{
-		return register( cachingModel.createResource( id ));
+		Resource r = cachingModel.createResource(id);		
+		return getResourceFromCache( calcBloomFilter( r ), r );
 	}
 
 	@Override
 	public boolean hasResource( String uri )
 	{
-		Resource r = ResourceFactory.createResource( uri );
+		Resource r = cachingModel.createResource( uri );
 		if (cachingModel.contains( r, null, (RDFNode) null ))
 		{
 			return true;
@@ -543,18 +562,75 @@ public class EntityManagerImpl implements EntityManager
 					"%s implements neither Resource nor ResourceWrapper",
 					target.getClass()));	
 		}
+		
+		
 		/* make sure the resource is loaded in the table
 		 make the resource point to the caching model.		
 		 bind the table to the resource to keep it from being garbage collected.
 		 */
-		if (r.isAnon())
-		{
-			return createResource( r.getId());
-		} else {
-			return createResource( r.getURI());
-		}
+		
+		return getResourceFromCache(calcBloomFilter(r), r);	
 		
 	}
+	
+	private Byte calcBloomFilter( Resource r )
+	{
+		String name = null;
+		if (r.isAnon())
+		{
+			name = r.getId().toString();
+		} else {
+			name = r.getURI();
+		}
+		
+		short first = (short) (name.hashCode() & 0xFFFF);
+		short second = (short) (((name.hashCode() & 0xFFFF0000) >> 16) & 0xFFFF);
+		byte b = 0;
+		for (int i=0;i<3; i++)
+		{
+			b |= (1 << Math.abs(first % (short)8));
+			first += second;
+		}
+		return Byte.valueOf(b);
+	}	
+	
+	private synchronized Resource getResourceFromCache( Byte b, Resource r )
+	{
+		List<SoftReference<Resource>> lst = resourceCache.get( b );
+		if (lst != null)
+		{	
+			Iterator<SoftReference<Resource>> iter = lst.iterator();
+			while (iter.hasNext())
+			{
+				SoftReference<Resource> wr = iter.next();				
+				Resource r2 = wr.get();
+				if (r2 == null)
+				{
+					iter.remove();
+				} else {
+					if (r2.equals( r ))
+					{
+						return r2;
+					}
+				}
+			}
+		}
+		else {
+			lst = new ArrayList<SoftReference<Resource>>();
+			resourceCache.put( b , lst);
+		}
+		
+		Resource retval = register( r );
+//		if (r.isAnon())
+//		{
+//			retval = createResource( r.getId());
+//		} else {
+//			retval =  createResource( r.getURI());
+//		}
+		lst.add( new SoftReference<Resource>( retval ));
+		return retval;
+	}
+	
 
 	@Override
 	public Subject getSubject( final Class<?> clazz )
@@ -839,10 +915,7 @@ public class EntityManagerImpl implements EntityManager
 	public void close() {
 		connection.close();
 	}
-//	public RDFConnection getConnection()
-//	{
-//		return connection;
-//	}
+
 
 	/**
 	 * Since the EntityManger implements the manager as a live data read against
@@ -987,7 +1060,7 @@ public class EntityManagerImpl implements EntityManager
 		Query q = query.cloneQuery();
 		ElementNamedGraph eng = new ElementNamedGraph( modelName, q.getQueryPattern());
 		q.setQueryPattern(eng);
-		return connection.query(query);
+		return connection.query(q);
 	}
 
 	/**
@@ -1005,16 +1078,16 @@ public class EntityManagerImpl implements EntityManager
 		 * Constructor.
 		 * @param res the resource 
 		 */
-		public ResourceInterceptor( Resource res )
+		private ResourceInterceptor( Resource res )
 		{
-			this.tbl = getSubjectTable( res);
+			this.tbl = getSubjectTable( res );
 			this.res = res;
 		}
 
 		@Override
 		public Object intercept(Object obj, Method method, Object[] args,
 				MethodProxy proxy) throws Throwable
-		{
+		{	
 			return method.invoke(res, args);
 		}
 	}

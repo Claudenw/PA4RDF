@@ -70,13 +70,6 @@ public interface SubjectTable {
 	 */
 	public Set<Node> getPedicates(Node value);
 
-	
-	/**
-	 * Return the table as a list of triples.
-	 * @return the list of triples.
-	 */
-	public Set<Triple> asTriples();
-	
 	/**
 	 * Return the table as a graph.
 	 * @return a graph.
