@@ -136,32 +136,7 @@ public class EntityManagerImpl implements EntityManager
 		TypeMapper.getInstance().registerDatatype(rtype);
 	}
 
-	public EntityManagerImpl( Model model)
-	{
-		this( DatasetFactory.create( model ));
-
-	}
 	
-	public EntityManagerImpl( Model model, boolean writeThrough)
-	{
-		this( DatasetFactory.create( model ), writeThrough );
-
-	}
-
-	public EntityManagerImpl( Dataset dataset)
-	{
-		this( RDFConnectionFactory.connect( dataset));
-	}
-
-	public EntityManagerImpl( Dataset dataset, boolean writeThrough)
-	{
-		this( RDFConnectionFactory.connect( dataset), writeThrough);
-	}
-
-	public EntityManagerImpl( RDFConnection connection)
-	{
-		this( connection, true);
-	}
 	/**
 	 * Constructor.
 	 */

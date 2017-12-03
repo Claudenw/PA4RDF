@@ -15,6 +15,7 @@
 
 package org.xenei.jena.entities;
 
+import org.apache.jena.query.Dataset;
 import org.apache.jena.query.DatasetFactory;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
@@ -28,31 +29,46 @@ import org.xenei.jena.entities.impl.EntityManagerImpl;
  */
 public class EntityManagerFactory
 {
-	private static EntityManager manager;
-
-	/**
-	 * @return the entity manager
-	 */
+	
 	public static EntityManager getEntityManager()
 	{
-		if (EntityManagerFactory.manager == null)
-		{
-			Model model = ModelFactory.createDefaultModel();
-			RDFConnection conn = RDFConnectionFactory.connect( 
-					DatasetFactory.create(model) );
-			EntityManagerFactory.manager = new EntityManagerImpl( conn );
-		}
-		return EntityManagerFactory.manager;
+		return getEntityManager( DatasetFactory.create());
 	}
 
-	/**
-	 * Set the entity manager that the factory will return.
-	 * 
-	 * @param manager The manager to be returned on subsequent getEntityManager() calls.
-	 */
-	public static void setEntityManager( final EntityManager manager )
+	public static EntityManager getEntityManager(boolean writeThrough)
 	{
-		EntityManagerFactory.manager = manager;
+		return getEntityManager( DatasetFactory.create(), true);
 	}
 
+	public static EntityManager getEntityManager( Model model)
+	{
+		return getEntityManager( DatasetFactory.create( model ));
+	}
+	
+	public static EntityManager getEntityManager( Model model, boolean writeThrough)
+	{
+		return getEntityManager( DatasetFactory.create( model ), writeThrough );
+	}
+
+	public static EntityManager getEntityManager( Dataset dataset)
+	{
+		return getEntityManager( RDFConnectionFactory.connect( dataset), true);
+	}
+
+	public static EntityManager getEntityManager( Dataset dataset, boolean writeThrough)
+	{
+		return new EntityManagerImpl( RDFConnectionFactory.connect( dataset), writeThrough);
+	}
+
+	public static EntityManager getEntityManager( RDFConnection connection)
+	{
+		return new EntityManagerImpl( connection, true);
+	}
+	
+	public static EntityManager getEntityManager( RDFConnection connection, boolean writeThrough)
+	{
+		return new EntityManagerImpl( connection, writeThrough);
+	}
+
+	
 }

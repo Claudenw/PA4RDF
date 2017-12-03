@@ -69,7 +69,7 @@ abstract public class BaseAbstractParserTest
 		subjectInfo = new SubjectInfoImpl(classUnderTest);
 		final Map<String, Integer> addCount = countAdders(classUnderTest
 				.getMethods());
-		EntityManagerImpl entityManager = new EntityManagerImpl( ModelFactory.createDefaultModel());
+		EntityManagerImpl entityManager = (EntityManagerImpl)EntityManagerFactory.getEntityManager();
 		parser = new MethodParser(entityManager,
 				subjectInfo, addCount);
 	}

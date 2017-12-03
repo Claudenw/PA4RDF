@@ -8,6 +8,7 @@ import org.apache.jena.query.DatasetFactory;
 import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.testing_framework.AbstractGraphProducer;
 import org.junit.runner.RunWith;
+import org.xenei.jena.entities.EntityManagerFactory;
 import org.xenei.jena.entities.impl.EntityManagerImpl;
 import org.xenei.junit.contract.Contract;
 import org.xenei.junit.contract.ContractImpl;
@@ -18,7 +19,7 @@ import org.xenei.junit.contract.IProducer;
 @ContractImpl(CachingGraph.class)
 public class CachingGraphContractSuite
 {
-	EntityManagerImpl entityManager = new EntityManagerImpl(DatasetFactory.create());
+	EntityManagerImpl entityManager = (EntityManagerImpl) EntityManagerFactory.getEntityManager();
 	int i = 0;
 
 	private AbstractGraphProducer<CachingGraph> producer = new AbstractGraphProducer<CachingGraph>()

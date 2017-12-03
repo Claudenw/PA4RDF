@@ -33,6 +33,7 @@ import org.apache.jena.vocabulary.OWL;
 import org.apache.jena.vocabulary.RDF;
 import org.junit.Before;
 import org.junit.Test;
+import org.xenei.jena.entities.EntityManagerFactory;
 import org.xenei.jena.entities.impl.EntityManagerImpl;
 import org.xenei.junit.contract.ContractTest;
 
@@ -47,7 +48,7 @@ public class CachingGraphTests
 	public void setup()
 	{
 		model = ModelFactory.createDefaultModel();
-		final EntityManagerImpl entityManager = new EntityManagerImpl( model );
+		final EntityManagerImpl entityManager = (EntityManagerImpl) EntityManagerFactory.getEntityManager( model );
 		graph = new CachingGraph( entityManager );
 	}
 

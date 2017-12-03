@@ -9,6 +9,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.xenei.jena.entities.EntityManager;
+import org.xenei.jena.entities.EntityManagerFactory;
 import org.xenei.jena.entities.MissingAnnotation;
 import org.xenei.jena.entities.ResourceWrapper;
 import org.xenei.jena.entities.impl.EntityManagerImpl;
@@ -31,7 +32,7 @@ abstract public class BaseAbstractManagerTest
 	public void setup() throws MissingAnnotation
 	{
 		model = ModelFactory.createDefaultModel();
-		 manager = new EntityManagerImpl(model);
+		 manager = EntityManagerFactory.getEntityManager(model);
 		subjectInfo = (SubjectInfoImpl) manager.getSubjectInfo(classUnderTest);
 	}
 
