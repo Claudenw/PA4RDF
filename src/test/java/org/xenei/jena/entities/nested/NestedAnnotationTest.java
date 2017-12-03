@@ -46,7 +46,7 @@ public class NestedAnnotationTest
 	@Test
 	public void testLoad() throws Exception
 	{
-		final EntityManager em = EntityManagerFactory.getEntityManager();
+		final EntityManager em = EntityManagerFactory.create();
 		final Model m = ModelFactory.createDefaultModel();
 		em.read(m.createResource("http://example.com/test"),
 				Implementation.class);

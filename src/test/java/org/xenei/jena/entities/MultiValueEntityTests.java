@@ -36,7 +36,7 @@ public class MultiValueEntityTests
 	private MultiValueAnnotatedAbst tc;
 	private Model m;
 	private final EntityManager manager = EntityManagerFactory
-			.getEntityManager();
+			.create();
 
 	@Before
 	public void setup() throws MissingAnnotation

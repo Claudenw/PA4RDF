@@ -140,7 +140,7 @@ public abstract class AbstractSingleValueObjectTest extends
 		PredicateInfoImpl pi = (PredicateInfoImpl) parser.parse(m);
 
 		final ObjectHandler handler = new EntityHandler(
-				EntityManagerFactory.getEntityManager(), TestInterface.class);
+				EntityManagerFactory.create(), TestInterface.class);
 
 		Assert.assertEquals("getEnt", pi.getMethodName());
 		Assert.assertEquals(handler, pi.getObjectHandler());

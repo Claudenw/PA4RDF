@@ -30,42 +30,42 @@ import org.xenei.jena.entities.impl.EntityManagerImpl;
 public class EntityManagerFactory
 {
 	
-	public static EntityManager getEntityManager()
+	public static EntityManager create()
 	{
-		return getEntityManager( DatasetFactory.create());
+		return create( DatasetFactory.create());
 	}
 
-	public static EntityManager getEntityManager(boolean writeThrough)
+	public static EntityManager create(boolean writeThrough)
 	{
-		return getEntityManager( DatasetFactory.create(), true);
+		return create( DatasetFactory.create(), true);
 	}
 
-	public static EntityManager getEntityManager( Model model)
+	public static EntityManager create( Model model)
 	{
-		return getEntityManager( DatasetFactory.create( model ));
+		return create( DatasetFactory.create( model ));
 	}
 	
-	public static EntityManager getEntityManager( Model model, boolean writeThrough)
+	public static EntityManager create( Model model, boolean writeThrough)
 	{
-		return getEntityManager( DatasetFactory.create( model ), writeThrough );
+		return create( DatasetFactory.create( model ), writeThrough );
 	}
 
-	public static EntityManager getEntityManager( Dataset dataset)
+	public static EntityManager create( Dataset dataset)
 	{
-		return getEntityManager( RDFConnectionFactory.connect( dataset), true);
+		return create( RDFConnectionFactory.connect( dataset), true);
 	}
 
-	public static EntityManager getEntityManager( Dataset dataset, boolean writeThrough)
+	public static EntityManager create( Dataset dataset, boolean writeThrough)
 	{
 		return new EntityManagerImpl( RDFConnectionFactory.connect( dataset), writeThrough);
 	}
 
-	public static EntityManager getEntityManager( RDFConnection connection)
+	public static EntityManager create( RDFConnection connection)
 	{
 		return new EntityManagerImpl( connection, true);
 	}
 	
-	public static EntityManager getEntityManager( RDFConnection connection, boolean writeThrough)
+	public static EntityManager create( RDFConnection connection, boolean writeThrough)
 	{
 		return new EntityManagerImpl( connection, writeThrough);
 	}

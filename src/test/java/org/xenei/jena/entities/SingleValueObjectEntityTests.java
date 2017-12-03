@@ -39,7 +39,7 @@ public class SingleValueObjectEntityTests
 	public void setup() throws Exception
 	{
 		model = ModelFactory.createDefaultModel();
-		manager = EntityManagerFactory.getEntityManager( model );
+		manager = EntityManagerFactory.create( model );
 		final Resource r = model
 				.createResource("http://localhost/SingleValueObjectEntityTests");
 		tc = manager.read(r, SingleValueObjectAnnotatedAbst.class);

@@ -68,7 +68,7 @@ public class ImplementedAnnotationTest
 
 	private Resource resource;
 
-	private final EntityManager em = EntityManagerFactory.getEntityManager();
+	private final EntityManager em = EntityManagerFactory.create();
 
 	@Before
 	public void setup()

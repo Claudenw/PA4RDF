@@ -36,7 +36,7 @@ public class SingleValuePrimitiveEntityTests
 		model = ModelFactory.createDefaultModel();
 		final Resource r = model
 				.createResource("http://localhost/SingleValuePrimitiveEntityTests");
-		final EntityManager manager = EntityManagerFactory.getEntityManager();
+		final EntityManager manager = EntityManagerFactory.create();
 		tc = manager.read(r, SingleValuePrimitiveTestClass.class);
 	}
 

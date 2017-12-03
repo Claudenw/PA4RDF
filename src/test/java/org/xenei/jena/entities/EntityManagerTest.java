@@ -37,7 +37,7 @@ public class EntityManagerTest
 	{
 		PropertyConfigurator.configure("./src/test/resources/log4j.properties");
 		model.removeAll();
-		manager = EntityManagerFactory.getEntityManager(model);
+		manager = EntityManagerFactory.create(model);
 	}
 
 	@Test

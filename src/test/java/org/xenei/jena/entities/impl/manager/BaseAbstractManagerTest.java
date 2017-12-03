@@ -32,7 +32,7 @@ abstract public class BaseAbstractManagerTest
 	public void setup() throws MissingAnnotation
 	{
 		model = ModelFactory.createDefaultModel();
-		 manager = EntityManagerFactory.getEntityManager(model);
+		 manager = EntityManagerFactory.create(model);
 		subjectInfo = (SubjectInfoImpl) manager.getSubjectInfo(classUnderTest);
 	}
 

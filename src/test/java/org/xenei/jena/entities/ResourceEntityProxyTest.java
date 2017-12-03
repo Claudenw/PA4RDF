@@ -38,7 +38,7 @@ public class ResourceEntityProxyTest
 	public void setup()
 	{
 		model = ModelFactory.createMemModelMaker().createDefaultModel();
-		manager = EntityManagerFactory.getEntityManager();
+		manager = EntityManagerFactory.create();
 	}
 	
 	@Test

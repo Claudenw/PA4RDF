@@ -19,7 +19,7 @@ import org.xenei.junit.contract.IProducer;
 @ContractImpl(CachingGraph.class)
 public class CachingGraphContractSuite
 {
-	EntityManagerImpl entityManager = (EntityManagerImpl) EntityManagerFactory.getEntityManager();
+	EntityManagerImpl entityManager = (EntityManagerImpl) EntityManagerFactory.create();
 	int i = 0;
 
 	private AbstractGraphProducer<CachingGraph> producer = new AbstractGraphProducer<CachingGraph>()

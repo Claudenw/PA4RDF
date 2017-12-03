@@ -155,7 +155,7 @@ public abstract class AbstractCollectionValueTest extends
 
 		Assert.assertEquals("getEnt", pi.getMethodName());
 		final ObjectHandler handler = new EntityHandler(
-				EntityManagerFactory.getEntityManager(), TestInterface.class);
+				EntityManagerFactory.create(), TestInterface.class);
 
 		Assert.assertEquals(handler, pi.getObjectHandler());
 		Assert.assertEquals(Queue.class, pi.getValueClass());

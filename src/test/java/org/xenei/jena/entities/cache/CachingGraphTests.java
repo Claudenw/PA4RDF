@@ -48,7 +48,7 @@ public class CachingGraphTests
 	public void setup()
 	{
 		model = ModelFactory.createDefaultModel();
-		final EntityManagerImpl entityManager = (EntityManagerImpl) EntityManagerFactory.getEntityManager( model );
+		final EntityManagerImpl entityManager = (EntityManagerImpl) EntityManagerFactory.create( model );
 		graph = new CachingGraph( entityManager );
 	}
 

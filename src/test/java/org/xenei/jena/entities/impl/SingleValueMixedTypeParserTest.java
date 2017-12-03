@@ -29,7 +29,7 @@ public class SingleValueMixedTypeParserTest
 	public void setup() throws Exception
 	{
 		model = ModelFactory.createDefaultModel();
-		final EntityManager manager = EntityManagerFactory.getEntityManager();
+		final EntityManager manager = EntityManagerFactory.create();
 		manager.reset();
 		manager.read(
 				model.createResource("http://localhost/SingleValueEntityTests"),

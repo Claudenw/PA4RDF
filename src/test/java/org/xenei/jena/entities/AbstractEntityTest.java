@@ -14,7 +14,7 @@ public class AbstractEntityTest
 {
 	private Model m;
 	private final EntityManager manager = EntityManagerFactory
-			.getEntityManager();
+			.create();
 	private AbstractEntity theInstance;
 	private Resource r;
 

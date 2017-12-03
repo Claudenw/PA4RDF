@@ -209,7 +209,7 @@ public class UpdaterTests
 	public void setup()
 	{
 		model.removeAll();
-		manager = EntityManagerFactory.getEntityManager(model);
+		manager = EntityManagerFactory.create(model);
 	}
 
 	@Test

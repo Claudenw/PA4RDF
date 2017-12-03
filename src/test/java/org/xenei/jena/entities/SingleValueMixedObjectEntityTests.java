@@ -33,7 +33,7 @@ public class SingleValueMixedObjectEntityTests
 	@Before
 	public void setup() throws Exception
 	{
-		final EntityManager manager = EntityManagerFactory.getEntityManager();
+		final EntityManager manager = EntityManagerFactory.create();
 		model = ModelFactory.createDefaultModel();
 		final Resource r = model
 				.createResource("http://localhost/SingleValueMixedTypeEntityTests");

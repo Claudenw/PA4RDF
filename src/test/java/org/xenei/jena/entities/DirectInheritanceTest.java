@@ -15,7 +15,7 @@ public class DirectInheritanceTest
 {
 	private Model m;
 	private final EntityManager manager = EntityManagerFactory
-			.getEntityManager();
+			.create();
 	private TwoValueSimpleInterface theInstance;
 	private Resource r;
 

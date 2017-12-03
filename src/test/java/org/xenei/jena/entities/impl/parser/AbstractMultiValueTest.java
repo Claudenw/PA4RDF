@@ -152,7 +152,7 @@ public abstract class AbstractMultiValueTest extends BaseAbstractParserTest
 
 		Assert.assertEquals("getEnt", pi.getMethodName());
 		final ObjectHandler handler = new EntityHandler(
-				EntityManagerFactory.getEntityManager(), TestInterface.class);
+				EntityManagerFactory.create(), TestInterface.class);
 
 		Assert.assertEquals(handler, pi.getObjectHandler());
 		Assert.assertEquals(ExtendedIterator.class, pi.getValueClass());
