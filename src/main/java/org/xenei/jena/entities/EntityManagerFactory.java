@@ -57,12 +57,12 @@ public class EntityManagerFactory
 
 	public static EntityManager create( Dataset dataset, boolean writeThrough)
 	{
-		return new EntityManagerImpl( RDFConnectionFactory.connect( dataset), writeThrough);
+		return EntityManagerFactory.create( RDFConnectionFactory.connect( dataset), writeThrough);
 	}
 
 	public static EntityManager create( RDFConnection connection)
 	{
-		return new EntityManagerImpl( connection, true);
+		return EntityManagerFactory.create( connection, true);
 	}
 	
 	public static EntityManager create( RDFConnection connection, boolean writeThrough)

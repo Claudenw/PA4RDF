@@ -66,6 +66,7 @@ import org.apache.jena.vocabulary.RDF;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xenei.jena.entities.EntityManager;
+import org.xenei.jena.entities.EntityManagerFactory;
 import org.xenei.jena.entities.MissingAnnotation;
 import org.xenei.jena.entities.ResourceWrapper;
 import org.xenei.jena.entities.SubjectInfo;
