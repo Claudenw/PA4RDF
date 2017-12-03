@@ -898,19 +898,6 @@ public class EntityManagerImpl implements EntityManager
 		return (T) e.create();
 	}
 
-	/**
-	 * Get the SubjectTable for the resource.
-	 * 
-	 * If the table does not exist create it by querying the 
-	 * RDFConnection for the data.
-	 * 
-	 * @param subject the resource to locate.
-	 */
-	private SubjectTable getSubjectTable(Resource subject)
-	{
-		return cachingGraph.getTable( subject.asNode() );
-	}
-
 	@Override
 	public void close() {
 		connection.close();
@@ -1080,7 +1067,7 @@ public class EntityManagerImpl implements EntityManager
 		 */
 		private ResourceInterceptor( Resource res )
 		{
-			this.tbl = getSubjectTable( res );
+			this.tbl = cachingGraph.getTable( res.asNode() );
 			this.res = res;
 		}
 

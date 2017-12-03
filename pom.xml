@@ -150,6 +150,19 @@
 			<artifactId>jena-querybuilder</artifactId>
 			<version>${jena_version}</version>
 		</dependency>
+		<dependency>
+			<groupId>org.xenei</groupId>
+			<artifactId>junit-contracts</artifactId>
+			<version>0.1.7</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.jena</groupId>
+			<artifactId>jena-core</artifactId>
+			<version>${jena_version}</version>
+			<scope>test</scope>
+			<type>test-jar</type>
+		</dependency>
 	</dependencies>
 	<build>
 <!-- 	<extensions> -->

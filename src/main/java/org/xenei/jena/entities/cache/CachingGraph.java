@@ -5,17 +5,29 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
+import java.util.Queue;
 import java.util.Set;
+import java.util.Stack;
+import java.util.function.Function;
+import java.util.function.Predicate;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.jena.arq.querybuilder.ConstructBuilder;
+import org.apache.jena.arq.querybuilder.ExprFactory;
+import org.apache.jena.arq.querybuilder.SelectBuilder;
 import org.apache.jena.arq.querybuilder.UpdateBuilder;
+import org.apache.jena.assembler.Mode;
 import org.apache.jena.graph.BlankNodeId;
+import org.apache.jena.graph.Capabilities;
 import org.apache.jena.graph.FrontsNode;
 import org.apache.jena.graph.Graph;
+import org.apache.jena.graph.GraphEventManager;
 import org.apache.jena.graph.GraphListener;
+import org.apache.jena.graph.GraphStatisticsHandler;
 import org.apache.jena.graph.Node;
 import org.apache.jena.graph.NodeFactory;
 import org.apache.jena.graph.NodeVisitor;
@@ -24,108 +36,132 @@ import org.apache.jena.graph.Node_Blank;
 import org.apache.jena.graph.Node_Literal;
 import org.apache.jena.graph.Node_URI;
 import org.apache.jena.graph.Node_Variable;
+import org.apache.jena.graph.TransactionHandler;
 import org.apache.jena.graph.Triple;
+import org.apache.jena.graph.impl.AllCapabilities;
 import org.apache.jena.graph.impl.CollectionGraph;
 import org.apache.jena.graph.impl.GraphBase;
 import org.apache.jena.graph.impl.LiteralLabel;
+import org.apache.jena.graph.impl.SimpleEventManager;
+import org.apache.jena.mem.TrackingTripleIterator;
+import org.apache.jena.query.QuerySolution;
+import org.apache.jena.query.ResultSet;
+import org.apache.jena.rdf.model.AnonId;
 import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.ModelFactory;
+import org.apache.jena.rdf.model.Property;
 import org.apache.jena.rdf.model.RDFNode;
 import org.apache.jena.rdf.model.Resource;
 import org.apache.jena.rdf.model.ResourceFactory;
 import org.apache.jena.rdf.model.impl.ResourceImpl;
 import org.apache.jena.rdfconnection.RDFConnection;
+import org.apache.jena.shared.AddDeniedException;
+import org.apache.jena.shared.DeleteDeniedException;
+import org.apache.jena.shared.PrefixMapping;
 import org.apache.jena.sparql.core.Quad;
 import org.apache.jena.sparql.core.Var;
+import org.apache.jena.sparql.expr.ExprNode;
 import org.apache.jena.sparql.lang.sparql_11.ParseException;
+import org.apache.jena.sparql.path.Path;
+import org.apache.jena.sparql.path.PathFactory;
 import org.apache.jena.util.iterator.ExtendedIterator;
+import org.apache.jena.util.iterator.IteratorIterator;
 import org.apache.jena.util.iterator.NiceIterator;
+import org.apache.jena.util.iterator.WrappedIterator;
 import org.xenei.jena.entities.impl.EntityManagerImpl;
 
 /**
  * A graph that caches remote data.
  * 
- * This implementation caches predicates and objects for each subject that is 
- * retrieved from the remote system.  
+ * This implementation caches predicates and objects for each subject that is
+ * retrieved from the remote system.
  *
  */
-public class CachingGraph extends GraphBase implements Graph {
+public class CachingGraph extends GraphBase implements Graph
+{
 
-	private final Map<Node,SoftReference<SubjectTable>> map;
+	private final Map<Node, SoftReference<SubjectTable>> map;
 	private final EntityManagerImpl entityManager;
 	private final Node graphNode;
 	private final Node graphWriteNode;
-	private static final Var p = Var.alloc("p");
-	private static final Var o = Var.alloc("o");
+	private static final Var S = Var.alloc("s");
+	private static final Var P = Var.alloc("p");
+	private static final Var O = Var.alloc("o");
+
 	/**
 	 * Constructor.
-	 * @param connection the connection to the remote system.
+	 * 
+	 * @param connection
+	 *            the connection to the remote system.
 	 */
-	public CachingGraph(EntityManagerImpl entityManager) {
+	public CachingGraph(EntityManagerImpl entityManager)
+	{
 		this.entityManager = entityManager;
 		this.graphNode = entityManager.getModelName();
-		this.graphWriteNode = (graphNode.equals( Quad.unionGraph))?Quad.defaultGraphIRI:graphNode;
-		map = new HashMap<Node,SoftReference<SubjectTable>>();	
-		this.getEventManager().register( new Listener());
+		this.graphWriteNode = (graphNode.equals(Quad.unionGraph))
+				? Quad.defaultGraphIRI : graphNode;
+		map = Collections.synchronizedMap(new HashMap<Node, SoftReference<SubjectTable>>());
 	}
 
-	/**
-	 * Load the table from the remote system.
-	 * @param subject the subject of the table.
-	 * @return the SubjectTable for the subject.
-	 */
-	private SubjectTable loadTable( Node subject )
-	{
-		ConstructBuilder cb = new ConstructBuilder();
 	
-		if (subject.isBlank())
+	@Override
+	public Capabilities getCapabilities()
+	{
 		{
-			try {
-				cb.addConstruct("?s", p, o).addBind( cb.quote(subject.getBlankNodeLabel()), "?s");
-			} catch (ParseException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}	
+			if (capabilities == null)
+				capabilities = new AllCapabilities()
+				{
+
+					@Override
+					public boolean sizeAccurate()
+					{
+						return false;
+					}
+				};
+			return capabilities;
 		}
-		else
-		{
-			cb.addConstruct(subject, p, o).addWhere( subject, p, o);			
-		}
-		final Model model = entityManager.execute( cb.build() ).execConstruct();
-		final SubjectTable st = new SubjectTableImpl( subject, model );
-		map.put( subject, new SoftReference<SubjectTable>( st ));
-		return st;
 	}
 
 	/**
-	 * Sync the caching graph with the remote graph.
-	 * predicates and objects for every subject is read from the 
-	 * remote graph.  Local changes are discarded.
+	 * Sync the caching graph with the remote graph. predicates and objects for
+	 * every subject is read from the remote graph. Local changes are discarded.
 	 */
-	public void sync() {
-		for (final Node subject : map.keySet())
+	public void sync()
+	{
+		HashSet<Node> keys = new HashSet<Node>();
+		synchronized (map)
 		{
-			final SoftReference<SubjectTable> sr = map.get(subject);
-			if (sr.get() == null)
-			{
-				map.remove(subject);
-			}
-			else
-			{
-				loadTable( subject );
-			}
+			keys.addAll( map.keySet() );
 		}
+		for (final Node subject : keys)
+			{
+				final SoftReference<SubjectTable> sr = map.get(subject);
+				SubjectTable st = sr.get();
+				if (st == null)
+				{
+					map.remove(subject);
+				} else
+				{
+					if (st.getSubject().equals(subject))
+					{
+						new TableLoader(subject);
+					}
+				}
+			}
 	}
 
 	/**
 	 * Get the SubjectTable for the specified subject.
-	 * @param subject the subject to get the subject for.
 	 * 
-	 * If the subject table is already loaded it is returned otherwise
-	 * it is created by reading from the remote system.
+	 * @param subject
+	 *            the subject to get the subject for.
+	 * 
+	 *            If the subject table is already loaded it is returned
+	 *            otherwise it is created by reading from the remote system.
 	 * 
 	 * @return the subject table.
 	 */
-	public SubjectTable getTable( Node subject )
+	public SubjectTable getTable(Node subject)
 	{
 		final SoftReference<SubjectTable> tblRef = map.get(subject);
 		SubjectTable tbl = null;
@@ -135,108 +171,127 @@ public class CachingGraph extends GraphBase implements Graph {
 		}
 		if (tbl == null || tbl.isEmpty())
 		{
-			tbl = loadTable( subject );
+			tbl = new TableLoader(subject).getTable();
 		}
 		return tbl;
 	}
 
 	@Override
-	protected ExtendedIterator<Triple> graphBaseFind(Triple triplePattern) {
+	protected ExtendedIterator<Triple> graphBaseFind(Triple triplePattern)
+	{
 		if (triplePattern.getSubject().isConcrete())
 		{
-			//SoftReference<SubjectTable> tblRef = map.get(triplePattern.getSubject());
-			final SubjectTable tbl = getTable( triplePattern.getSubject());
+			// SoftReference<SubjectTable> tblRef =
+			// map.get(triplePattern.getSubject());
+			final SubjectTable tbl = getTable(triplePattern.getSubject());
 
 			final Graph graph = tbl.asGraph();
 			return graph.find(triplePattern);
-		} else {
-			ExtendedIterator<Triple> retval = NiceIterator.emptyIterator();
+		} else
+		{
+			/*
+			 * we need to pull in all the subjects from the parent graph and add
+			 * them to our graph as we find them.
+			 * 
+			 * If we find one we already have we keep our copy and return it. We
+			 * do this becaue we may have deleted items that have not yet been
+			 * deleted in the remote system.
+			 */
+			BlockIterator blockIterator = new BlockIterator(triplePattern);
+
+			Iterator<Iterator<Triple>> iter = WrappedIterator
+					.create(blockIterator)
+					.mapWith(tbl -> tbl.asGraph().find(triplePattern));
+			return WrappedIterator.create(new IteratorIterator(iter));
+		}
+	}
+
+	@Override
+	public void performAdd(Triple t)
+	{
+		final SoftReference<SubjectTable> tblRef = map.get(t.getSubject());
+		SubjectTable tbl = null;
+		if (tblRef != null)
+		{
+			tbl = tblRef.get();
+		}
+		if (tbl == null)
+		{
+			tbl = new TableLoader(t.getSubject()).getTable();
+		}
+		tbl.addValue(t.getPredicate(), t.getObject());
+		entityManager.getUpdateHandler().prepare(
+				new UpdateBuilder().addInsert(graphWriteNode, t).build());
+	}
+
+	@Override
+	public void performDelete(Triple t)
+	{
+		final SoftReference<SubjectTable> tblRef = map.get(t.getSubject());
+		SubjectTable tbl = null;
+		if (tblRef != null)
+		{
+			tbl = tblRef.get();
+		}
+		if (tbl == null)
+		{
+			tbl = new TableLoader(t.getSubject()).getTable();
+		}
+		tbl.removeValue(t.getPredicate(), t.getObject());
+		entityManager.getUpdateHandler().prepare(
+				new UpdateBuilder().addDelete(graphWriteNode, t).build());
+		if (tbl.isEmpty())
+		{
+			map.remove(t.getSubject());
+		}
+	}
+
+	@Override
+	protected int graphBaseSize()
+	{
+		int retval = 0;
+		synchronized( map ) {
 			for (final SoftReference<SubjectTable> ref : map.values())
 			{
 				final SubjectTable tbl = ref.get();
-
+	
 				if (tbl != null)
 				{
-					retval = retval.andThen( tbl.asGraph().find(triplePattern));
-				}	
+					retval += tbl.size();
+				}
 			}
-			return retval;
 		}
+		return retval;		
 	}
 
-	@Override
-	public void performAdd(Triple t) {
-		final SoftReference<SubjectTable> tblRef = map.get(t.getSubject());
-		SubjectTable tbl = null;
-		if (tblRef != null)
-		{
-			tbl = tblRef.get();
-		}
-		if (tbl == null)
-		{
-			tbl = loadTable( t.getSubject());
-		}
-		tbl.addValue(t.getPredicate(), t.getObject());		
-	}
-
-	@Override
-	public void performDelete(Triple t) {
-		final SoftReference<SubjectTable> tblRef = map.get(t.getSubject());
-		SubjectTable tbl = null;
-		if (tblRef != null)
-		{
-			tbl = tblRef.get();
-		}
-		if (tbl == null)
-		{
-			tbl = loadTable( t.getSubject());
-		}
-		tbl.removeValue(t.getPredicate(), t.getObject());
-		if (tbl.isEmpty())
-		{
-			map.remove( t.getSubject() );
-		}
-	}
-
-	@Override
-	protected int graphBaseSize() {
-		int retval = 0;
-		for (final SoftReference<SubjectTable> ref : map.values())
-		{
-			final SubjectTable tbl = ref.get();
-
-			if (tbl != null)
-			{
-				retval += tbl.size();
-			}	
-		}
-		return retval;
-	}
-
-	private static class SubjectTableImpl implements SubjectTable {
+	private class SubjectTableImpl implements SubjectTable
+	{
 
 		private final Node subject;
 		private final Graph subGraph;
 
-		public SubjectTableImpl( Node subject, Model model )
+		public SubjectTableImpl(Node subject, Model model)
 		{
 			this.subject = subject;
 			this.subGraph = model.getGraph();
 		}
 
 		@Override
-		public Node getSubject() {
+		public Node getSubject()
+		{
 			return subject;
 		}
-		
+
 		@Override
-		public boolean isEmpty() {
+		public boolean isEmpty()
+		{
 			return subGraph.isEmpty();
 		}
 
 		@Override
-		public Set<Node> getValues(FrontsNode predicate) {
-			return getValues( predicate.asNode() );
+		public Set<Node> getValues(FrontsNode predicate)
+		{
+			return getValues(predicate.asNode());
 		}
 
 		public Set<Node> getValues(Node predicate)
@@ -245,55 +300,68 @@ public class CachingGraph extends GraphBase implements Graph {
 			{
 				return Collections.emptySet();
 			}
-			return Collections.unmodifiableSet(subGraph.find(subject, predicate, Node.ANY).mapWith( tpl -> tpl.getObject()).toSet());
+			return Collections
+					.unmodifiableSet(subGraph.find(subject, predicate, Node.ANY)
+							.mapWith(tpl -> tpl.getObject()).toSet());
 		}
 
 		@Override
-		public void addValue(FrontsNode predicate, FrontsNode value) {
-			addValue( predicate.asNode(), value.asNode() );
+		public void addValue(FrontsNode predicate, FrontsNode value)
+		{
+			addValue(predicate.asNode(), value.asNode());
 		}
 
 		@Override
-		public void addValue(Node predicate, Node value) {
-			subGraph.add( new Triple( subject, predicate, value ));
+		public void addValue(Node predicate, Node value)
+		{
+			subGraph.add(new Triple(subject, predicate, value));
 		}
 
 		@Override
-		public void removeValue(FrontsNode predicate, FrontsNode value) {
-			removeValue( predicate.asNode(), value.asNode());
+		public void removeValue(FrontsNode predicate, FrontsNode value)
+		{
+			removeValue(predicate.asNode(), value.asNode());
 		}
 
 		@Override
-		public void removeValue(Node predicate, Node value) {
-			subGraph.remove( subject, predicate, value );
+		public void removeValue(Node predicate, Node value)
+		{
+			subGraph.remove(subject, predicate, value);
 		}
 
 		@Override
-		public Set<Node> getPedicates(FrontsNode value) {
-			return getPedicates( value.asNode() );
+		public Set<Node> getPedicates(FrontsNode value)
+		{
+			return getPedicates(value.asNode());
 		}
 
 		@Override
-		public Set<Node> getPedicates(Node value) {
+		public Set<Node> getPedicates(Node value)
+		{
 			if (isEmpty())
 			{
 				return Collections.emptySet();
 			}
-			return Collections.unmodifiableSet(subGraph.find(subject, Node.ANY, value).mapWith( tpl -> tpl.getPredicate()).toSet());
+			return Collections
+					.unmodifiableSet(subGraph.find(subject, Node.ANY, value)
+							.mapWith(tpl -> tpl.getPredicate()).toSet());
 		}
 
 		@Override
-		public Graph asGraph() {
-			return subGraph;
+		public Graph asGraph()
+		{
+			return new WrappedGraph(subGraph);
 		}
 
 		@Override
-		public boolean has(FrontsNode predicate, FrontsNode value) {
-			return has( predicate.asNode(), value.asNode());
+		public boolean has(FrontsNode predicate, FrontsNode value)
+		{
+			return has(predicate.asNode(), value.asNode());
 		}
 
 		@Override
-		public boolean has(Node predicate, Node value) {
+		public boolean has(Node predicate, Node value)
+		{
 			if (isEmpty())
 			{
 				return false;
@@ -302,106 +370,352 @@ public class CachingGraph extends GraphBase implements Graph {
 		}
 
 		@Override
-		public int size() {
+		public int size()
+		{
 			return subGraph.size();
 		}
 
 		@Override
-		public String toString() {
-			return String.format( "SubjectTable[%s %s]", subject, subGraph);
+		public String toString()
+		{
+			return String.format("SubjectTable[%s %s]", subject, subGraph);
 		}
 	}
-	
-	private class Listener implements GraphListener {
-		
-		@Override
-		public void notifyAddTriple(Graph g, Triple t)
+
+	private class WrappedGraph implements Graph
+	{
+		private Graph subGraph;
+
+		private WrappedGraph(Graph subGraph)
 		{
-			 entityManager.getUpdateHandler().prepare(new UpdateBuilder().addInsert( graphWriteNode, t).build());
+			this.subGraph = subGraph;
+		}
+
+		public boolean dependsOn(Graph other)
+		{
+			return subGraph.dependsOn(other);
+		}
+
+		public TransactionHandler getTransactionHandler()
+		{
+			return subGraph.getTransactionHandler();
+		}
+
+		public Capabilities getCapabilities()
+		{
+			return subGraph.getCapabilities();
+		}
+
+		public GraphStatisticsHandler getStatisticsHandler()
+		{
+			return subGraph.getStatisticsHandler();
+		}
+
+		public PrefixMapping getPrefixMapping()
+		{
+			return subGraph.getPrefixMapping();
+		}
+
+		public void add(Triple t) throws AddDeniedException
+		{
+			subGraph.add(t);
+		}
+
+		public void delete(Triple t) throws DeleteDeniedException
+		{
+			subGraph.delete(t);
+		}
+
+		public ExtendedIterator<Triple> find(Triple m)
+		{
+			return new DeletingTripleIterator(subGraph.find(m));
+		}
+
+		public ExtendedIterator<Triple> find(Node s, Node p, Node o)
+		{
+			return new DeletingTripleIterator(subGraph.find(s, p, o));
+		}
+
+		public ExtendedIterator<Triple> find()
+		{
+			return new DeletingTripleIterator(subGraph.find());
+		}
+
+		public boolean isIsomorphicWith(Graph g)
+		{
+			return subGraph.isIsomorphicWith(g);
+		}
+
+		public boolean contains(Node s, Node p, Node o)
+		{
+			return subGraph.contains(s, p, o);
+		}
+
+		public boolean contains(Triple t)
+		{
+			return subGraph.contains(t);
+		}
+
+		public void clear()
+		{
+			subGraph.clear();
+		}
+
+		public void remove(Node s, Node p, Node o)
+		{
+			subGraph.remove(s, p, o);
+		}
+
+		public void close()
+		{
+			subGraph.close();
+		}
+
+		public boolean isEmpty()
+		{
+			return subGraph.isEmpty();
+		}
+
+		public int size()
+		{
+			return subGraph.size();
+		}
+
+		public boolean isClosed()
+		{
+			return subGraph.isClosed();
 		}
 
 		@Override
-		public void notifyAddArray(Graph g, Triple[] triples)
+		public GraphEventManager getEventManager()
 		{
-			UpdateBuilder builder = new UpdateBuilder();
-			for (Triple t : triples)
-			{
-				builder.addInsert(graphWriteNode,t);
-			}
-			entityManager.getUpdateHandler().prepare( builder.build() );
+			return subGraph.getEventManager();
 		}
 
-		@Override
-		public void notifyAddList(Graph g, List<Triple> triples)
-		{
-			UpdateBuilder builder = new UpdateBuilder();
-			triples.forEach( t -> builder.addInsert(graphWriteNode,t));
-			entityManager.getUpdateHandler().prepare( builder.build() );
-		}
-
-		@Override
-		public void notifyAddIterator(Graph g, Iterator<Triple> it)
-		{
-			UpdateBuilder builder = new UpdateBuilder();
-			it.forEachRemaining( t -> builder.addInsert(graphWriteNode,t));
-			entityManager.getUpdateHandler().prepare( builder.build() );
-		}
-
-		@Override
-		public void notifyAddGraph(Graph g, Graph added)
-		{
-			UpdateBuilder builder = new UpdateBuilder();
-			added.find().forEachRemaining( t -> builder.addInsert(graphWriteNode,t));
-			entityManager.getUpdateHandler().prepare( builder.build() );
-		}
-
-		@Override
-		public void notifyDeleteTriple(Graph g, Triple t)
-		{
-			entityManager.getUpdateHandler().prepare(new UpdateBuilder().addDelete(graphWriteNode, t).build());
-		}
-
-		@Override
-		public void notifyDeleteList(Graph g, List<Triple> L)
-		{
-			UpdateBuilder builder = new UpdateBuilder();
-			L.forEach( t -> builder.addDelete(graphWriteNode,t));
-			entityManager.getUpdateHandler().prepare( builder.build() );
-		}
-
-		@Override
-		public void notifyDeleteArray(Graph g, Triple[] triples)
-		{
-			UpdateBuilder builder = new UpdateBuilder();
-			for (Triple t : triples)
-			{
-				builder.addDelete(graphWriteNode,t);
-			}
-			entityManager.getUpdateHandler().prepare( builder.build() );
-		}
-
-		@Override
-		public void notifyDeleteIterator(Graph g, Iterator<Triple> it)
-		{
-			UpdateBuilder builder = new UpdateBuilder();
-			it.forEachRemaining( t -> builder.addDelete(graphWriteNode,t));
-			entityManager.getUpdateHandler().prepare( builder.build() );
-		}
-
-		@Override
-		public void notifyDeleteGraph(Graph g, Graph removed)
-		{
-			UpdateBuilder builder = new UpdateBuilder();
-			removed.find().forEachRemaining( t -> builder.addDelete(graphWriteNode,t));
-			entityManager.getUpdateHandler().prepare( builder.build() );
-		}
-
-		@Override
-		public void notifyEvent(Graph source, Object value)
-		{
-			// do nothing
-		}
-		
 	}
 
+	private class DeletingTripleIterator extends TrackingTripleIterator
+	{
+
+		private DeletingTripleIterator(Iterator<Triple> it)
+		{
+			super(it);
+		}
+
+		@Override
+		public void remove()
+		{
+			super.remove();
+			CachingGraph.this.getEventManager()
+					.notifyDeleteTriple(CachingGraph.this, current);
+			entityManager.getUpdateHandler().prepare(new UpdateBuilder()
+					.addDelete(graphWriteNode, current).build());
+		}
+	}
+
+	private class BlockIterator implements Iterator<SubjectTable>
+	{
+
+		private ResultSet rs;
+		private Resource subj;
+		private Triple triplePattern;
+
+		private BlockIterator(Triple triplePattern)
+		{
+			this.triplePattern = triplePattern;
+			SelectBuilder sb = getSelectQuery(triplePattern);
+
+			/*
+			 * we need to pull in all the subjects from the parent graph and add
+			 * them to our graph as we find them.
+			 * 
+			 * If we find one we already have we keep our copy and return it. We
+			 * do this becaue we may have deleted items that have not yet been
+			 * deleted in the remote system.
+			 */
+			rs = entityManager.execute(sb.build()).execSelect();
+			subj = null;
+		}
+
+		private SelectBuilder getSelectQuery(Triple triplePattern)
+		{
+			SelectBuilder sb = new SelectBuilder().setDistinct(true).addWhere(S, P, O).addOrderBy(S);
+
+			if (triplePattern.equals(Triple.ANY))
+			{
+				sb.addVar(S);
+			} else
+			{
+				Object s = triplePattern.getSubject().isConcrete()
+						? triplePattern.getSubject() : S;
+				Object p = triplePattern.getPredicate().isConcrete()
+						? triplePattern.getPredicate() : Var.alloc("p2");
+				Object o = triplePattern.getObject().isConcrete()
+						? triplePattern.getObject() : Var.alloc("o2");
+
+				// SelectBuilder inner = new SelectBuilder()
+				// .addWhere( s, p, o );
+
+				sb.addWhere(s, p, o);
+				if (!s.equals(S))
+				{
+					ExprFactory exprF = sb.getExprFactory();
+					sb.addVar(exprF.asExpr(s), S);
+				} else
+				{
+					sb.addVar(S);
+				}
+
+			}
+			return sb;
+		}
+
+		@Override
+		public boolean hasNext()
+		{
+			return rs.hasNext();
+		}
+
+		@Override
+		public SubjectTable next()
+		{
+			if (!hasNext())
+			{
+				throw new NoSuchElementException();
+			}
+			
+				// qs now has an answer
+				subj = rs.next().getResource("s");
+				SoftReference<SubjectTable> stbl = map.get(subj.asNode());
+				if (stbl != null)
+				{
+					SubjectTable tbl = stbl.get();
+					if (tbl != null)
+					{
+						System.out.println(tbl);
+						return tbl;
+					}
+				}
+
+				TableLoader loader = new TableLoader( subj.asNode() );
+				System.out.println(loader.getTable());
+				 return loader.getTable();				
+		}
+
+	}
+
+	private class TableLoader implements Runnable
+	{
+		private SubjectTableImpl subjectTable;
+		private Model model;
+		private Queue<Triple> queue;
+
+		private TableLoader(Node subject)
+		{
+			queue = new LinkedList<Triple>();
+			model = ModelFactory.createDefaultModel();
+			Resource r;
+			SelectBuilder sb = new SelectBuilder().addVar(P).addVar(O);
+			if (subject.isBlank())
+			{
+				r = model.createResource( new AnonId( subject.getBlankNodeId()));
+				ExprFactory exprF = sb.getExprFactory();
+				sb.addWhere( S, P, O ).addVar(S)
+				.addFilter( exprF.isBlank( S ));				
+			} else {
+				r= model.createResource( subject.getURI());
+				sb.addWhere( subject, P, O );
+			}
+			Iterator<QuerySolution> rs = entityManager.execute(sb.build()).execSelect();
+			if(subject.isBlank())
+			{
+				rs = WrappedIterator.create(rs).filterKeep( qs -> qs.getResource("s").getId().getBlankNodeId().equals( subject.getBlankNodeId()));
+			}
+			while (rs.hasNext())
+			{
+				QuerySolution qs = rs.next();
+				model.add( r, qs.getResource("p").as(Property.class), qs.get("o"));
+				if (!subject.isBlank() && qs.get("o").isAnon())
+				{
+					Triple t = new Triple(subject,
+							qs.getResource("p").asNode(), qs.get("o").asNode());
+					queue.add(t);
+				}
+			}
+
+			subjectTable = new SubjectTableImpl(subject, model);
+			map.put(subject, new SoftReference<SubjectTable>(subjectTable));
+			if (!queue.isEmpty())
+			{
+				// this should be in a thread
+				run();
+			}
+		}
+
+		public SubjectTable getTable()
+		{
+			return subjectTable;
+		}
+
+		@Override
+		public void run()
+		{
+			SelectBuilder sb = null;
+			Stack<Triple> stack = new Stack<Triple>();
+			while (!queue.isEmpty())
+			{
+				stack.clear();
+				stack.push(queue.poll());
+				process(stack);
+				stack.pop();
+				if (!stack.isEmpty())
+				{
+					throw new IllegalStateException("Stack was not clear");
+				}
+			}
+		}
+
+		private void process(Stack<Triple> triples)
+		{
+			Triple t = triples.peek();
+			int end = triples.size()-1;
+			if (!map.containsKey(t.getObject()))
+			{
+				SelectBuilder sb = new SelectBuilder().addVar(S).addVar(P)
+						.addVar(O).addWhere(S, P, O);
+
+				Path p = null;
+				Triple t2;
+				for (int i = 0; i < triples.size(); i++)
+				{
+					t2 = triples.get(i);
+					Path p2 = PathFactory.pathLink(t2.getPredicate());					
+					p = (p==null)?p2:PathFactory.pathSeq(p, p2);
+				}
+				t2 = triples.firstElement();
+				sb.addWhere(t2.getSubject(), p, S);
+
+				ResultSet rs = entityManager.execute(sb.build()).execSelect();
+				while (rs.hasNext())
+				{
+					QuerySolution qs = rs.next();
+					model.add(qs.getResource("s"),
+							qs.getResource("p").as(Property.class),
+							qs.get("o"));
+					map.put(qs.getResource("s").asNode(),
+							new SoftReference<SubjectTable>(subjectTable));
+					if (qs.get("o").isAnon())
+					{
+						Triple t3 = new Triple(qs.getResource("s").asNode(),
+								qs.getResource("p").asNode(),
+								qs.get("o").asNode());
+						triples.push(t3);
+						process(triples);
+						triples.pop();
+					}
+				}
+			}
+
+		}
+	}
 }
