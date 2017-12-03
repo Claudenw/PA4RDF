@@ -92,7 +92,7 @@ public class EntityManagerImpl implements EntityManager
 			.getLogger(EntityManagerImpl.class);
 
 	private final Map<Byte, List<SoftReference<Resource>>> resourceCache;
-	
+
 	private final Map<Class<?>, SubjectInfo> classInfo;
 
 	private final List<WeakReference<Listener>> listeners;
@@ -104,7 +104,7 @@ public class EntityManagerImpl implements EntityManager
 	protected final Model cachingModel;
 
 	private final UpdateHandler updateHandler;
-	
+
 	private final Node modelName;
 
 	static
@@ -113,23 +113,25 @@ public class EntityManagerImpl implements EntityManager
 	}
 
 	/**
-	 * Register the datatypes used by the entity manger specifically
-	 * xsd:long  : java.util.Long
-	 * xsd:string : java.util.Character
-	 * xsd:string : java.lang.char
+	 * Register the datatypes used by the entity manger specifically xsd:long :
+	 * java.util.Long xsd:string : java.util.Character xsd:string :
+	 * java.lang.char
 	 * 
-	 *  and finally resetting xsd:string to java.lang.String
+	 * and finally resetting xsd:string to java.lang.String
 	 */
-	public static void registerTypes() {
+	public static void registerTypes()
+	{
 		RDFDatatype rtype = null;
 		// handle the string types
 		// preserve string class and put it back later.
-		final RDFDatatype stype = TypeMapper.getInstance().getTypeByClass(String.class);
+		final RDFDatatype stype = TypeMapper.getInstance()
+				.getTypeByClass(String.class);
 		rtype = new CharacterDatatype();
 		TypeMapper.getInstance().registerDatatype(rtype);
 		rtype = new CharDatatype();
 		TypeMapper.getInstance().registerDatatype(rtype);
-		// put the string type back so that it is the registered type for xsd:string
+		// put the string type back so that it is the registered type for
+		// xsd:string
 		TypeMapper.getInstance().registerDatatype(stype);
 
 		// change the long type.
@@ -137,25 +139,28 @@ public class EntityManagerImpl implements EntityManager
 		TypeMapper.getInstance().registerDatatype(rtype);
 	}
 
-	
 	/**
 	 * Constructor.
 	 */
 	public EntityManagerImpl(RDFConnection connection, boolean writeThrough)
-	{	
+	{
 		this.modelName = Quad.defaultGraphIRI;
 		this.connection = connection;
-		this.cachingGraph = new CachingGraph( this );
-		this.cachingModel = ModelFactory.createModelForGraph( cachingGraph );
+		this.cachingGraph = new CachingGraph(this);
+		this.cachingModel = ModelFactory.createModelForGraph(cachingGraph);
 		this.resourceCache = new HashMap<Byte, List<SoftReference<Resource>>>();
-		
-		if (writeThrough) {
+
+		if (writeThrough)
+		{
 			this.updateHandler = new UpdateDirect();
-		} else {
+		} else
+		{
 			this.updateHandler = new UpdateCached();
 		}
-		listeners = Collections.synchronizedList(new ArrayList<WeakReference<Listener>>());
-		classInfo = new HashMap<Class<?>, SubjectInfo>(){
+		listeners = Collections
+				.synchronizedList(new ArrayList<WeakReference<Listener>>());
+		classInfo = new HashMap<Class<?>, SubjectInfo>()
+		{
 
 			/**
 			 * 
@@ -164,8 +169,10 @@ public class EntityManagerImpl implements EntityManager
 
 			private void notifyListeners(SubjectInfo value)
 			{
-				synchronized (listeners) {
-					final Iterator<WeakReference<Listener>> iter = listeners.iterator();
+				synchronized (listeners)
+				{
+					final Iterator<WeakReference<Listener>> iter = listeners
+							.iterator();
 					while (iter.hasNext())
 					{
 						final WeakReference<Listener> listener = iter.next();
@@ -175,16 +182,16 @@ public class EntityManagerImpl implements EntityManager
 							iter.remove();
 						} else
 						{
-							l.onParseClass( value );
+							l.onParseClass(value);
 						}
 					}
 				}
 			}
-			
+
 			@Override
 			public SubjectInfo put(Class<?> key, SubjectInfo value)
 			{
-				notifyListeners( value );
+				notifyListeners(value);
 				return super.put(key, value);
 			}
 
@@ -193,33 +200,37 @@ public class EntityManagerImpl implements EntityManager
 			{
 				for (final SubjectInfo si : m.values())
 				{
-					notifyListeners( si );
-				}				
+					notifyListeners(si);
+				}
 				super.putAll(m);
-			}};
-			try
-			{
-				parse(ResourceWrapper.class);
 			}
-			catch (final MissingAnnotation e)
-			{
-				throw new RuntimeException(e);
-			}
+		};
+		try
+		{
+			parse(ResourceWrapper.class);
+		} catch (final MissingAnnotation e)
+		{
+			throw new RuntimeException(e);
+		}
 	}
 
 	/**
 	 * Constructor.
 	 */
 	private EntityManagerImpl(EntityManagerImpl base, Node modelName)
-	{	
-		this.modelName = modelName == null?Quad.defaultGraphIRI:modelName;	
+	{
+		this.modelName = modelName == null ? Quad.defaultGraphIRI : modelName;
 		this.connection = base.connection;
-		this.cachingGraph = new CachingGraph( this );
-		this.cachingModel = ModelFactory.createModelForGraph( cachingGraph );
+		this.cachingGraph = new CachingGraph(this);
+		this.cachingModel = ModelFactory.createModelForGraph(cachingGraph);
 		this.updateHandler = base.updateHandler;
 		this.listeners = base.listeners;
 		this.classInfo = base.classInfo;
 		this.resourceCache = new HashMap<Byte, List<SoftReference<Resource>>>();
+	}
+
+	public RDFConnection getConnection() {
+		return connection;
 	}
 	
 	@Override
@@ -227,33 +238,38 @@ public class EntityManagerImpl implements EntityManager
 	{
 		// check for same name
 		String defaultName = Quad.defaultGraphIRI.getURI();
-		String newModelName = StringUtils.defaultIfBlank(modelName.getURI(), defaultName);
-		if (newModelName.equals( StringUtils.defaultIfBlank(getModelName().getURI(), defaultName)))
+		String newModelName = StringUtils.defaultIfBlank(modelName.getURI(),
+				defaultName);
+		if (newModelName.equals(StringUtils
+				.defaultIfBlank(getModelName().getURI(), defaultName)))
 		{
 			return this;
 		}
-		if (! defaultName.equals(newModelName) && ! Quad.unionGraph.getURI().equals( newModelName ))
+		if (!defaultName.equals(newModelName)
+				&& !Quad.unionGraph.getURI().equals(newModelName))
 		{
-			AskBuilder askBuilder = new AskBuilder().addGraph( newModelName, new AskBuilder().addWhere( "?s", "?p", "?o" ));
-			if (! connection.queryAsk(askBuilder.build()))
+			AskBuilder askBuilder = new AskBuilder().addGraph(newModelName,
+					new AskBuilder().addWhere("?s", "?p", "?o"));
+			if (!connection.queryAsk(askBuilder.build()))
 			{
-				connection.put( newModelName, ModelFactory.createDefaultModel());
+				connection.put(newModelName, ModelFactory.createDefaultModel());
 			}
 		}
-		return new EntityManagerImpl( this, NodeFactory.createURI(newModelName) );
+		return new EntityManagerImpl(this, NodeFactory.createURI(newModelName));
 	}
 
 	@Override
 	public EntityManager getDefaultManager()
 	{
-		return getNamedManager( Quad.defaultGraphIRI );
+		return getNamedManager(Quad.defaultGraphIRI);
 	}
-	
+
 	@Override
-	public Node getModelName() {
+	public Node getModelName()
+	{
 		return modelName;
 	}
-	
+
 	@Override
 	public void reset()
 	{
@@ -263,19 +279,20 @@ public class EntityManagerImpl implements EntityManager
 		try
 		{
 			parse(ResourceWrapper.class);
-		}
-		catch (final MissingAnnotation e)
+		} catch (final MissingAnnotation e)
 		{
 			throw new RuntimeException(e);
 		}
 
 	}
+
 	/**
 	 * Read an instance of clazz from Object source. If source does not have the
-	 * required types as defined in the Subject annotation of clazz they will be added.
+	 * required types as defined in the Subject annotation of clazz they will be
+	 * added.
 	 * <p>
-	 * This method may modify the graph and should be called within the scope of a transaction
-	 * if the underlying graph requires them.
+	 * This method may modify the graph and should be called within the scope of
+	 * a transaction if the underlying graph requires them.
 	 * </p>
 	 * 
 	 * @param source
@@ -289,33 +306,34 @@ public class EntityManagerImpl implements EntityManager
 	 *             if source implements neither Resource nor ResourceWrapper.
 	 */
 	@Override
-	public <T> T addInstanceProperties( final T source,
-			final Class<?> clazz ) throws MissingAnnotation, IllegalArgumentException
+	public <T> T addInstanceProperties(final T source, final Class<?> clazz)
+			throws MissingAnnotation, IllegalArgumentException
 	{
-		final Resource r = getResource( source );
+		final Resource r = getResource(source);
 		final Subject e = clazz.getAnnotation(Subject.class);
-		if (e == null){
-			throw new MissingAnnotation("No Subject annotationin "
-					+ clazz.getCanonicalName());
+		if (e == null)
+		{
+			throw new MissingAnnotation(
+					"No Subject annotationin " + clazz.getCanonicalName());
 		}
 		final Model model = r.getModel(); // may be null;
 		if (e != null)
 		{
 			for (final String type : e.types())
 			{
-				final Resource object = (model != null) ? model
-						.createResource(type) : ResourceFactory
-						.createResource(type);
-						if (!r.hasProperty(RDF.type, object))
-						{
-							r.addProperty(RDF.type, object);
-						}
+				final Resource object = (model != null)
+						? model.createResource(type)
+						: ResourceFactory.createResource(type);
+				if (!r.hasProperty(RDF.type, object))
+				{
+					r.addProperty(RDF.type, object);
+				}
 			}
 		}
 		return source;
 	}
 
-	private Map<String, Integer> countAdders( final Method[] methods )
+	private Map<String, Integer> countAdders(final Method[] methods)
 	{
 		final Map<String, Integer> addCount = new HashMap<String, Integer>();
 		for (final Method m : methods)
@@ -326,8 +344,7 @@ public class EntityManagerImpl implements EntityManager
 				if (i == null)
 				{
 					i = 1;
-				}
-				else
+				} else
 				{
 					i = i + 1;
 				}
@@ -339,9 +356,8 @@ public class EntityManagerImpl implements EntityManager
 
 	/**
 	 * Recursive method used to find all classes in a given directory and
-	 * subdirs.
-	 * Adapted from http://snippets.dzone.com/posts/show/4831 and extended to
-	 * support use of JAR files
+	 * subdirs. Adapted from http://snippets.dzone.com/posts/show/4831 and
+	 * extended to support use of JAR files
 	 * 
 	 * @param directory
 	 *            The base directory
@@ -351,8 +367,8 @@ public class EntityManagerImpl implements EntityManager
 	 * @throws IOException
 	 * @throws ClassNotFoundException
 	 */
-	private Set<String> findClasses( final String directory,
-			final String packageName ) throws IOException
+	private Set<String> findClasses(final String directory,
+			final String packageName) throws IOException
 	{
 		final Set<String> classes = new HashSet<String>();
 		if (directory.startsWith("file:") && directory.contains("!"))
@@ -383,15 +399,12 @@ public class EntityManagerImpl implements EntityManager
 			if (file.isDirectory())
 			{
 				assert !file.getName().contains(".");
-				classes.addAll(findClasses(file.getAbsolutePath(), packageName
-						+ "." + file.getName()));
-			}
-			else if (file.getName().endsWith(".class"))
+				classes.addAll(findClasses(file.getAbsolutePath(),
+						packageName + "." + file.getName()));
+			} else if (file.getName().endsWith(".class"))
 			{
-				classes.add(packageName
-						+ '.'
-						+ file.getName().substring(0,
-								file.getName().length() - 6));
+				classes.add(packageName + '.' + file.getName().substring(0,
+						file.getName().length() - 6));
 			}
 		}
 		return classes;
@@ -399,9 +412,9 @@ public class EntityManagerImpl implements EntityManager
 
 	/**
 	 * Scans all classes accessible from the context class loader which belong
-	 * to the given package and subpackages.
-	 * Adapted from http://snippets.dzone.com/posts/show/4831 and extended to
-	 * support use of JAR files
+	 * to the given package and subpackages. Adapted from
+	 * http://snippets.dzone.com/posts/show/4831 and extended to support use of
+	 * JAR files
 	 * 
 	 * @param packageName
 	 *            The base package or class name
@@ -409,7 +422,7 @@ public class EntityManagerImpl implements EntityManager
 	 * @throws ClassNotFoundException
 	 * @throws IOException
 	 */
-	private Collection<Class<?>> getClasses( final String packageName )
+	private Collection<Class<?>> getClasses(final String packageName)
 	{
 
 		final ClassLoader classLoader = Thread.currentThread()
@@ -420,8 +433,7 @@ public class EntityManagerImpl implements EntityManager
 		try
 		{
 			resources = classLoader.getResources(path);
-		}
-		catch (final IOException e1)
+		} catch (final IOException e1)
 		{
 			EntityManagerImpl.LOG.error(e1.toString());
 			return Collections.emptyList();
@@ -440,27 +452,23 @@ public class EntityManagerImpl implements EntityManager
 						try
 						{
 							classes.add(Class.forName(clazz));
-						}
-						catch (final ClassNotFoundException e)
+						} catch (final ClassNotFoundException e)
 						{
 							EntityManagerImpl.LOG.warn(e.toString());
 						}
 					}
-				}
-				catch (final IOException e)
+				} catch (final IOException e)
 				{
 					EntityManagerImpl.LOG.warn(e.toString());
 				}
 			}
-		}
-		else
+		} else
 		{
 			// there are no resources at that path so see if it is a class
 			try
 			{
 				classes.add(Class.forName(packageName));
-			}
-			catch (final ClassNotFoundException e)
+			} catch (final ClassNotFoundException e)
 			{
 				EntityManagerImpl.LOG.warn(
 						"{} was neither a package name nor a class name",
@@ -470,27 +478,27 @@ public class EntityManagerImpl implements EntityManager
 		return classes;
 	}
 
-	private Resource register( Resource r )
+	private Resource register(Resource r)
 	{
-		final ResourceInterceptor interceptor = new ResourceInterceptor( r );
-		final Enhancer e = new Enhancer();	
-		e.setInterfaces( new Class[] {Resource.class });
+		final ResourceInterceptor interceptor = new ResourceInterceptor(r);
+		final Enhancer e = new Enhancer();
+		e.setInterfaces(new Class[] { Resource.class });
 		e.setCallback(interceptor);
 		return (Resource) e.create();
 	}
-	
+
 	@Override
 	public Resource createResource(String uri)
 	{
 		Resource r = cachingModel.createResource(uri);
-		return getResourceFromCache( calcBloomFilter( r ), r );
+		return getResourceFromCache(calcBloomFilter(r), r);
 	}
-	
+
 	@Override
 	public Resource createResource(String uri, Resource type)
 	{
-		Resource r = createResource( uri );
-		r.addProperty( RDF.type, type);
+		Resource r = createResource(uri);
+		r.addProperty(RDF.type, type);
 		return r;
 	}
 
@@ -498,122 +506,123 @@ public class EntityManagerImpl implements EntityManager
 	public Resource createResource()
 	{
 		Resource r = cachingModel.createResource();
-		return getResourceFromCache( calcBloomFilter( r ), r );
-	}
-	
-	@Override
-	public Resource createResource(AnonId id)
-	{
-		Resource r = cachingModel.createResource(id);		
-		return getResourceFromCache( calcBloomFilter( r ), r );
+		return getResourceFromCache(calcBloomFilter(r), r);
 	}
 
 	@Override
-	public boolean hasResource( String uri )
+	public Resource createResource(AnonId id)
 	{
-		Resource r = cachingModel.createResource( uri );
-		if (cachingModel.contains( r, null, (RDFNode) null ))
+		Resource r = cachingModel.createResource(id);
+		return getResourceFromCache(calcBloomFilter(r), r);
+	}
+
+	@Override
+	public boolean hasResource(String uri)
+	{
+		Resource r = cachingModel.createResource(uri);
+		if (cachingModel.contains(r, null, (RDFNode) null))
 		{
 			return true;
 		}
-		AskBuilder builder = new AskBuilder().addWhere( r, null, null);
-		return connection.queryAsk( builder.build());
+		AskBuilder builder = new AskBuilder().addWhere(r, null, null);
+		return connection.queryAsk(builder.build());
 	}
-	
-	
-	private Resource getResource( final Object target ) throws IllegalArgumentException
+
+	private Resource getResource(final Object target)
+			throws IllegalArgumentException
 	{
 		Resource r = null;
 		if (target instanceof ResourceWrapper)
 		{
 			r = ((ResourceWrapper) target).getResource();
-		}
-		else if (target instanceof Resource)
+		} else if (target instanceof Resource)
 		{
 			r = (Resource) target;
-		}
-		else {
+		} else
+		{
 
 			throw new IllegalArgumentException(String.format(
 					"%s implements neither Resource nor ResourceWrapper",
-					target.getClass()));	
+					target.getClass()));
 		}
-		
-		
-		/* make sure the resource is loaded in the table
-		 make the resource point to the caching model.		
-		 bind the table to the resource to keep it from being garbage collected.
+
+		/*
+		 * make sure the resource is loaded in the table make the resource point
+		 * to the caching model. bind the table to the resource to keep it from
+		 * being garbage collected.
 		 */
-		
-		return getResourceFromCache(calcBloomFilter(r), r);	
-		
+
+		return getResourceFromCache(calcBloomFilter(r), r);
+
 	}
-	
-	private Byte calcBloomFilter( Resource r )
+
+	private Byte calcBloomFilter(Resource r)
 	{
 		String name = null;
 		if (r.isAnon())
 		{
 			name = r.getId().toString();
-		} else {
+		} else
+		{
 			name = r.getURI();
 		}
-		
+
 		short first = (short) (name.hashCode() & 0xFFFF);
-		short second = (short) (((name.hashCode() & 0xFFFF0000) >> 16) & 0xFFFF);
+		short second = (short) (((name.hashCode() & 0xFFFF0000) >> 16)
+				& 0xFFFF);
 		byte b = 0;
-		for (int i=0;i<3; i++)
+		for (int i = 0; i < 3; i++)
 		{
-			b |= (1 << Math.abs(first % (short)8));
+			b |= (1 << Math.abs(first % (short) 8));
 			first += second;
 		}
 		return Byte.valueOf(b);
-	}	
-	
-	private synchronized Resource getResourceFromCache( Byte b, Resource r )
+	}
+
+	private synchronized Resource getResourceFromCache(Byte b, Resource r)
 	{
-		List<SoftReference<Resource>> lst = resourceCache.get( b );
+		List<SoftReference<Resource>> lst = resourceCache.get(b);
 		if (lst != null)
-		{	
+		{
 			Iterator<SoftReference<Resource>> iter = lst.iterator();
 			while (iter.hasNext())
 			{
-				SoftReference<Resource> wr = iter.next();				
+				SoftReference<Resource> wr = iter.next();
 				Resource r2 = wr.get();
 				if (r2 == null)
 				{
 					iter.remove();
-				} else {
-					if (r2.equals( r ))
+				} else
+				{
+					if (r2.equals(r))
 					{
 						return r2;
 					}
 				}
 			}
-		}
-		else {
+		} else
+		{
 			lst = new ArrayList<SoftReference<Resource>>();
-			resourceCache.put( b , lst);
+			resourceCache.put(b, lst);
 		}
-		
-		Resource retval = register( r );
-//		if (r.isAnon())
-//		{
-//			retval = createResource( r.getId());
-//		} else {
-//			retval =  createResource( r.getURI());
-//		}
-		lst.add( new SoftReference<Resource>( retval ));
+
+		Resource retval = register(r);
+		// if (r.isAnon())
+		// {
+		// retval = createResource( r.getId());
+		// } else {
+		// retval = createResource( r.getURI());
+		// }
+		lst.add(new SoftReference<Resource>(retval));
 		return retval;
 	}
-	
 
 	@Override
-	public Subject getSubject( final Class<?> clazz )
+	public Subject getSubject(final Class<?> clazz)
 	{
 		final Set<Class<?>> interfaces = new LinkedHashSet<Class<?>>();
-		for (Class<?> cls = clazz; cls != Object.class && cls != null; cls = cls
-				.getSuperclass())
+		for (Class<?> cls = clazz; cls != Object.class
+				&& cls != null; cls = cls.getSuperclass())
 		{
 			final Subject retval = cls.getAnnotation(Subject.class);
 			if (retval != null)
@@ -642,19 +651,18 @@ public class EntityManagerImpl implements EntityManager
 	 * )
 	 */
 	@Override
-	public SubjectInfo getSubjectInfo( final Class<?> clazz )
+	public SubjectInfo getSubjectInfo(final Class<?> clazz)
 	{
 		try
 		{
 			return parse(clazz);
-		}
-		catch (final MissingAnnotation e)
+		} catch (final MissingAnnotation e)
 		{
 			throw new IllegalArgumentException(e);
 		}
 	}
 
-	private boolean isAdd( final Method m )
+	private boolean isAdd(final Method m)
 	{
 		try
 		{
@@ -663,8 +671,7 @@ public class EntityManagerImpl implements EntityManager
 				final Class<?> parms[] = m.getParameterTypes();
 				return (parms != null) && (parms.length == 1);
 			}
-		}
-		catch (final IllegalArgumentException expected)
+		} catch (final IllegalArgumentException expected)
 		{
 			// do nothing
 		}
@@ -679,7 +686,7 @@ public class EntityManagerImpl implements EntityManager
 	 * .rdf.model.Resource, java.lang.Class)
 	 */
 	@Override
-	public boolean isInstance( final Object target, final Class<?> clazz )
+	public boolean isInstance(final Object target, final Class<?> clazz)
 	{
 		final Subject subject = clazz.getAnnotation(Subject.class);
 		if (subject == null)
@@ -692,8 +699,7 @@ public class EntityManagerImpl implements EntityManager
 		try
 		{
 			r = getResource(target);
-		}
-		catch (final IllegalArgumentException e)
+		} catch (final IllegalArgumentException e)
 		{
 			return false;
 		}
@@ -720,8 +726,7 @@ public class EntityManagerImpl implements EntityManager
 	 * @return The SubjectInfo for the class.
 	 * @throws MissingAnnotation
 	 */
-	private SubjectInfoImpl parse( final Class<?> clazz )
-			throws MissingAnnotation
+	private SubjectInfoImpl parse(final Class<?> clazz) throws MissingAnnotation
 	{
 		SubjectInfoImpl subjectInfo = (SubjectInfoImpl) classInfo.get(clazz);
 
@@ -739,22 +744,20 @@ public class EntityManagerImpl implements EntityManager
 			{
 				try
 				{
-					final ActionType actionType = ActionType.parse(method
-							.getName());
+					final ActionType actionType = ActionType
+							.parse(method.getName());
 					if (method.getAnnotation(Predicate.class) != null)
 					{
 						foundAnnotation = true;
 						if (ActionType.GETTER == actionType)
 						{
 							parser.parse(method);
-						}
-						else
+						} else
 						{
 							annotated.add(method);
 						}
 					}
-				}
-				catch (final IllegalArgumentException expected)
+				} catch (final IllegalArgumentException expected)
 				{
 					// not an action type ignore method
 				}
@@ -762,8 +765,8 @@ public class EntityManagerImpl implements EntityManager
 			}
 			if (!foundAnnotation)
 			{
-				throw new MissingAnnotation("No annotated methods in "
-						+ clazz.getCanonicalName());
+				throw new MissingAnnotation(
+						"No annotated methods in " + clazz.getCanonicalName());
 			}
 
 			for (final Method method : annotated)
@@ -776,14 +779,13 @@ public class EntityManagerImpl implements EntityManager
 	}
 
 	@Override
-	public void parseClasses( final String packageName )
-			throws MissingAnnotation
+	public void parseClasses(final String packageName) throws MissingAnnotation
 	{
 		parseClasses(new String[] { packageName });
 	}
 
 	@Override
-	public void parseClasses( final String[] packageNames )
+	public void parseClasses(final String[] packageNames)
 			throws MissingAnnotation
 	{
 		boolean hasErrors = false;
@@ -797,11 +799,10 @@ public class EntityManagerImpl implements EntityManager
 					try
 					{
 						parse(c);
-					}
-					catch (final MissingAnnotation e)
+					} catch (final MissingAnnotation e)
 					{
-						EntityManagerImpl.LOG.warn("Error processing {}: {}",
-								c, e.getMessage());
+						EntityManagerImpl.LOG.warn("Error processing {}: {}", c,
+								e.getMessage());
 						hasErrors = true;
 					}
 				}
@@ -816,15 +817,15 @@ public class EntityManagerImpl implements EntityManager
 	}
 
 	@Override
-	public <T> T make( final Object source, final Class<T> primaryClass,
-			final Class<?>... secondaryClasses ) throws MissingAnnotation
+	public <T> T make(final Object source, final Class<T> primaryClass,
+			final Class<?>... secondaryClasses) throws MissingAnnotation
 	{
-		Resource r = addInstanceProperties( getResource(source), primaryClass);
+		Resource r = addInstanceProperties(getResource(source), primaryClass);
 		for (final Class<?> c : secondaryClasses)
 		{
-			r = addInstanceProperties( r, c );
+			r = addInstanceProperties(r, c);
 		}
-		return read( r, primaryClass, secondaryClasses);
+		return read(r, primaryClass, secondaryClasses);
 	}
 
 	/*
@@ -835,9 +836,10 @@ public class EntityManagerImpl implements EntityManager
 	 * .Resource, java.lang.Class, java.lang.Class)
 	 */
 	@Override
-	@SuppressWarnings( "unchecked" )
-	public <T> T read( final Object source, final Class<T> primaryClass,
-			final Class<?>... secondaryClasses ) throws MissingAnnotation, IllegalArgumentException
+	@SuppressWarnings("unchecked")
+	public <T> T read(final Object source, final Class<T> primaryClass,
+			final Class<?>... secondaryClasses)
+			throws MissingAnnotation, IllegalArgumentException
 	{
 		final List<Class<?>> classes = new ArrayList<Class<?>>();
 		SubjectInfoImpl subjectInfo;
@@ -875,19 +877,17 @@ public class EntityManagerImpl implements EntityManager
 	}
 
 	@Override
-	public void close() {
+	public void close()
+	{
 		connection.close();
 	}
 
-
 	/**
 	 * Since the EntityManger implements the manager as a live data read against
-	 * the Model, this method
-	 * provides a mechanism to copy all the values from the source to the
-	 * target. It reads scans the
-	 * target class for "set" methods and the source class for associated "get"
-	 * methods. If a pairing is
-	 * found the value of the "get" call is passed to the "set" call.
+	 * the Model, this method provides a mechanism to copy all the values from
+	 * the source to the target. It reads scans the target class for "set"
+	 * methods and the source class for associated "get" methods. If a pairing
+	 * is found the value of the "get" call is passed to the "set" call.
 	 * 
 	 * @param source
 	 *            The object that has the values to transfer.
@@ -896,7 +896,7 @@ public class EntityManagerImpl implements EntityManager
 	 * @return The target object after all setters have been called.
 	 */
 	@Override
-	public Object update( final Object source, final Object target )
+	public Object update(final Object source, final Object target)
 	{
 		final Class<?> targetClass = target.getClass();
 		final Class<?> sourceClass = source.getClass();
@@ -917,8 +917,7 @@ public class EntityManagerImpl implements EntityManager
 					try
 					{
 						configMethod = sourceClass.getMethod(configMethodName);
-					}
-					catch (final NoSuchMethodException e)
+					} catch (final NoSuchMethodException e)
 					{
 						// no "getX" method so try "isX"
 						try
@@ -926,16 +925,16 @@ public class EntityManagerImpl implements EntityManager
 							configMethodName = "is" + partialName;
 							configMethod = sourceClass
 									.getMethod(configMethodName);
-						}
-						catch (final NoSuchMethodException expected)
+						} catch (final NoSuchMethodException expected)
 						{
 							// no getX or setX
 							// configMethod will be null.
 						}
 					}
-					/* verify that the config method was annotated as a
-					 predicate before
-					 we use it. */
+					/*
+					 * verify that the config method was annotated as a
+					 * predicate before we use it.
+					 */
 
 					try
 					{
@@ -954,16 +953,13 @@ public class EntityManagerImpl implements EntityManager
 							}
 
 						}
-					}
-					catch (final IllegalArgumentException e)
+					} catch (final IllegalArgumentException e)
 					{
 						throw new RuntimeException(e);
-					}
-					catch (final IllegalAccessException e)
+					} catch (final IllegalAccessException e)
 					{
 						throw new RuntimeException(e);
-					}
-					catch (final InvocationTargetException e)
+					} catch (final InvocationTargetException e)
 					{
 						throw new RuntimeException(e);
 					}
@@ -989,7 +985,8 @@ public class EntityManagerImpl implements EntityManager
 	@Override
 	public void unregisterListener(Listener listener)
 	{
-		synchronized (listeners) {
+		synchronized (listeners)
+		{
 			final Iterator<WeakReference<Listener>> iter = listeners.iterator();
 			while (iter.hasNext())
 			{
@@ -998,31 +995,38 @@ public class EntityManagerImpl implements EntityManager
 				if (l == null || l == listener)
 				{
 					iter.remove();
-				} 
+				}
 			}
 		}
 	}
-	
+
 	/**
 	 * Get the Update Handler.
+	 * 
 	 * @return the update handler.
 	 */
-	public UpdateHandler getUpdateHandler() {
+	public UpdateHandler getUpdateHandler()
+	{
 		return updateHandler;
 	}
 
 	@Override
-	public void sync() {
+	public void sync()
+	{
 		updateHandler.execute();
 		cachingGraph.sync();
 	}
-	
+
 	@Override
-	public QueryExecution execute( Query query )
+	public QueryExecution execute(Query query)
 	{
 		Query q = query.cloneQuery();
-		ElementNamedGraph eng = new ElementNamedGraph( modelName, q.getQueryPattern());
-		q.setQueryPattern(eng);
+		if (!modelName.equals(Quad.defaultGraphIRI))
+		{
+			ElementNamedGraph eng = new ElementNamedGraph(modelName,
+					q.getQueryPattern());
+			q.setQueryPattern(eng);
+		}
 		return connection.query(q);
 	}
 
@@ -1030,7 +1034,8 @@ public class EntityManagerImpl implements EntityManager
 	 * A class that ensures that there is a hard reference between the resource
 	 * and its subject table.
 	 */
-	private class ResourceInterceptor implements MethodInterceptor {
+	private class ResourceInterceptor implements MethodInterceptor
+	{
 		// we just need to hold a reference to the table.
 		@SuppressWarnings("unused")
 		private final SubjectTable tbl;
@@ -1039,43 +1044,51 @@ public class EntityManagerImpl implements EntityManager
 
 		/**
 		 * Constructor.
-		 * @param res the resource 
+		 * 
+		 * @param res
+		 *            the resource
 		 */
-		private ResourceInterceptor( Resource res )
+		private ResourceInterceptor(Resource res)
 		{
-			this.tbl = cachingGraph.getTable( res.asNode() );
+			this.tbl = cachingGraph.getTable(res.asNode());
 			this.res = res;
 		}
 
 		@Override
 		public Object intercept(Object obj, Method method, Object[] args,
 				MethodProxy proxy) throws Throwable
-		{	
+		{
 			return method.invoke(res, args);
 		}
 	}
 
-	public interface UpdateHandler {
+	public interface UpdateHandler
+	{
 		void reset();
+
 		void execute();
-		void prepare( Update update );
-		void prepare( UpdateRequest updateReq);
+
+		void prepare(Update update);
+
+		void prepare(UpdateRequest updateReq);
 	}
-	
-	private class UpdateDirect implements UpdateHandler {
+
+	private class UpdateDirect implements UpdateHandler
+	{
 
 		@Override
 		public synchronized void prepare(UpdateRequest updateReq)
 		{
 			if (updateReq.iterator().hasNext())
 			{
-				synchronized (connection) {
-					connection.begin( ReadWrite.WRITE );
-					try {
-						connection.update( updateReq );
+				synchronized (connection)
+				{
+					connection.begin(ReadWrite.WRITE);
+					try
+					{
+						connection.update(updateReq);
 						connection.commit();
-					}
-					catch (final RuntimeException e)
+					} catch (final RuntimeException e)
 					{
 						connection.abort();
 						throw e;
@@ -1083,89 +1096,96 @@ public class EntityManagerImpl implements EntityManager
 				}
 			}
 		}
-		
+
 		@Override
 		public synchronized void prepare(Update update)
 		{
-			synchronized (connection) {
-				connection.begin( ReadWrite.WRITE );
-				try {
-					connection.update( update );
+			synchronized (connection)
+			{
+				connection.begin(ReadWrite.WRITE);
+				try
+				{
+					connection.update(update);
 					connection.commit();
-				}
-				catch (final RuntimeException e)
+				} catch (final RuntimeException e)
 				{
 					connection.abort();
 					throw e;
 				}
-			}	
+			}
 		}
-		
-		public void execute() {}
-		
-		public void reset() {};
+
+		public void execute()
+		{
+		}
+
+		public void reset()
+		{
+		};
 	}
-	
-	private class UpdateCached implements UpdateHandler {
-		
+
+	private class UpdateCached implements UpdateHandler
+	{
+
 		private UpdateRequest updates = null;
-		
 
 		@Override
 		public synchronized void prepare(UpdateRequest updateReq)
-		{	
+		{
 			Iterator<Update> iter = updateReq.iterator();
 			if (iter.hasNext())
 			{
 				if (updates == null)
 				{
 					updates = updateReq;
-				} else {
+				} else
+				{
 					while (iter.hasNext())
 					{
-						updates.add( iter.next() );
+						updates.add(iter.next());
 					}
 				}
 			}
 		}
-		
+
 		@Override
 		public synchronized void prepare(Update update)
-		{		
+		{
 			if (updates == null)
 			{
-				updates = new UpdateRequest( update );
-			} else {
-				updates.add( update );
+				updates = new UpdateRequest(update);
+			} else
+			{
+				updates.add(update);
 			}
 		}
-		
+
 		public synchronized void execute()
 		{
-			if ( updates.iterator().hasNext())
-			{		
-				synchronized (connection) {
-					connection.begin( ReadWrite.WRITE );
-					try {
-						connection.update( updates );
+			if (updates.iterator().hasNext())
+			{
+				synchronized (connection)
+				{
+					connection.begin(ReadWrite.WRITE);
+					try
+					{
+						connection.update(updates);
 						connection.commit();
-					}
-					catch (final RuntimeException e)
+					} catch (final RuntimeException e)
 					{
 						connection.abort();
 						throw e;
 					}
-				}	
+				}
 			}
 			reset();
 		}
-		
+
 		public synchronized void reset()
 		{
 			updates = null;
 		}
-		
+
 	}
 
-	
 }
