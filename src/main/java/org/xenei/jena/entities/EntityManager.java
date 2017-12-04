@@ -269,7 +269,7 @@ public interface EntityManager {
 	
 	/**
 	 * Execute a query.  The query will be modified to apply to the specific 
-	 * graph represented by theis EntityManager.
+	 * graph represented by this EntityManager.
 	 * 
 	 * @param query The query to execute.
 	 * @return The query execution for the query
@@ -318,6 +318,10 @@ public interface EntityManager {
 	 */
 	public boolean hasResource( String uri );
 
+	/**
+	 * @return The RDFConnection that this entity manager is using. 
+	 */
+	public RDFConnection getConnection();
 	/**
 	 * The listener interface.
 	 *

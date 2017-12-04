@@ -229,6 +229,7 @@ public class EntityManagerImpl implements EntityManager
 		this.resourceCache = new HashMap<Byte, List<SoftReference<Resource>>>();
 	}
 
+	@Override
 	public RDFConnection getConnection() {
 		return connection;
 	}
@@ -1028,6 +1029,11 @@ public class EntityManagerImpl implements EntityManager
 			q.setQueryPattern(eng);
 		}
 		return connection.query(q);
+	}
+	
+	@Override
+	public String toString() {
+	    return String.format(  "EntityManager[%s]", modelName );
 	}
 
 	/**
