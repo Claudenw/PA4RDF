@@ -481,6 +481,10 @@ public class EntityManagerImpl implements EntityManager
 
 	private Resource register(Resource r)
 	{
+	    if (cachingModel != r.getModel())
+	    {
+	        r = cachingModel.wrapAsResource( r.asNode() );
+	    }
 		final ResourceInterceptor interceptor = new ResourceInterceptor(r);
 		final Enhancer e = new Enhancer();
 		e.setInterfaces(new Class[] { Resource.class });

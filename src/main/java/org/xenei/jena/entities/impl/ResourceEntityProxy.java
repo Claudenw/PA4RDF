@@ -18,6 +18,7 @@ import org.apache.jena.rdf.model.Resource;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.util.List;
 
 import net.sf.cglib.proxy.MethodInterceptor;
 import net.sf.cglib.proxy.MethodProxy;
@@ -155,9 +156,21 @@ public class ResourceEntityProxy implements MethodInterceptor // Invoker
 		if (pi instanceof PredicateInfoImpl)
 		{
 			Object o = ((PredicateInfoImpl) pi).exec(m, resource, args);
+			List<Method> lst = subjectInfo.getPredicateInfo( m ).getPostExec();
 			for (Method peMethod : subjectInfo.getPredicateInfo( m ).getPostExec())
 			{
-				o = peMethod.invoke(obj, o);
+			    switch (pi.getActionType())
+			    {
+			    case GETTER:
+			        o = peMethod.invoke(obj, o);
+			       break;
+			       
+			    case EXISTENTIAL:
+			    case REMOVER:
+			    case SETTER:
+			        peMethod.invoke(  obj, args );
+			    }
+				
 			}
 			return o;
 		}

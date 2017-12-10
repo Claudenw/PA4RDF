@@ -256,7 +256,7 @@ public class MethodParser
 			if (parms.length == 1)
 			{
 				final Class<?> valueType = parms[0];
-				ActionType.SETTER.extractName(method.getName());
+				//ActionType.SETTER.extractName(method.getName());
 				// "set"
 				// or
 				// "add"

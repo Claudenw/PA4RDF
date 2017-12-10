@@ -107,13 +107,11 @@ public class EffectivePredicate
 								break;
 						}
 						peMethod = m.getDeclaringClass().getMethod(mName, argType);
-						if ( argType.equals( peMethod.getReturnType()))
+						if ( actionType==ActionType.GETTER && !argType.equals( peMethod.getReturnType()))
 						{
-							addPostExec( peMethod );
+						    throw new RuntimeException( String.format( "%s does not return its parameter type", peMethod ));
 						}
-						else {
-							throw new RuntimeException( String.format( "%s does not return its parameter type", peMethod ));
-						}
+                        addPostExec( peMethod );
 					}
 					catch (NoSuchMethodException e)
 					{
@@ -204,13 +202,13 @@ public class EffectivePredicate
 			type = RDFNode.class.equals(predicate.type()) ? type : predicate
 					.type();
 			impl |= predicate.impl();
-			if (predicate.postExec != null)
-			{
-				for (Method m : predicate.postExec)
-				{
-					addPostExec( m );
-				}
-			}
+//			if (predicate.postExec != null)
+//			{
+//				for (Method m : predicate.postExec)
+//				{
+//					addPostExec( m );
+//				}
+//			}
 			
 		}
 		return this;

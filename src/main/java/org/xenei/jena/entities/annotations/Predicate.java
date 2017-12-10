@@ -22,29 +22,29 @@ import java.lang.annotation.RetentionPolicy;
 
 /**
  * An annotation that modifies the standard info about a property.
- * 
+ * <p>
  * the name attribute will specify the name of the property. for example:
  * <code>Iterator&lt;RDFNode&gt; getClassType()</code> would return a list of
  * <code>class</code>s in the RDF sense. But <code>getClass()</code> would
  * conflict with the java function. <code>@Predicate( class='class' )
  * Iterator&lt;RDFNode&gt; getClassType()</code> resolves the problem.
- * 
+ * </p><p>
  * The namespace attribute specifies that the namespace of the attribute is not
  * the same as for the entity.
- * 
+ * </p><p>
  * The upcase boolean attribute (default false) will upcase the first character
  * of the attribute name. This is the first character after the "get", "set" or
  * "is" prefix.
- * 
+ * </p><p>
  * the type attribute is used when an iterator is returned. It specifies the
  * enclosed class type. default = <code>RDFNode.class</code> In the
  * <code>getClassType()</code> example above we would use the following:
  * <code>@Predicate( class='class', type=RDFNode.class )
  * Iterator&lt;RDFNode&gt; getClassType()</code>
- * 
+ * </p><p>
  * NOTE: if <code>type</code> is set to <code>URI.class</code> the return value
  * is interpreted as a URI string.
- * 
+ * </p>
  * 
  */
 @Retention( RetentionPolicy.RUNTIME )
