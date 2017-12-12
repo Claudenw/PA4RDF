@@ -494,7 +494,6 @@ public class CachingGraph extends GraphBase implements Graph {
 			}
 
 			TableLoader loader = new TableLoader(subj.asNode());
-			System.out.println(loader.getTable());
 			return loader.getTable();
 		}
 
