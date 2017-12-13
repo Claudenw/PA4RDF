@@ -1,5 +1,7 @@
 package org.xenei.jena.entities.impl;
 
+import static org.mockito.Mockito.*;
+
 import org.apache.jena.datatypes.TypeMapper;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
@@ -22,7 +24,7 @@ public class SingleValueMixedTypeParserTest
 
 	private Model model;
 	private SubjectInfo subjectInfo;
-
+	private EntityManager entityManager;
 	private static String namespaceStr = "http://localhost/test#";
 
 	@Before
@@ -36,6 +38,7 @@ public class SingleValueMixedTypeParserTest
 				SingleValueMixedTypeTestClass.class);
 		subjectInfo = manager
 				.getSubjectInfo(SingleValueMixedTypeTestClass.class);
+		entityManager = mock(EntityManager.class);
 	}
 
 	@After
@@ -57,7 +60,7 @@ public class SingleValueMixedTypeParserTest
 				.getInstance().getTypeByClass(c));
 
 		Assert.assertEquals("isB", pi.getMethodName());
-		Assert.assertEquals(phandler, pi.getObjectHandler());
+		Assert.assertEquals(phandler, pi.getObjectHandler( entityManager ));
 		Assert.assertEquals(c, pi.getValueClass());
 		Assert.assertEquals(SingleValueMixedTypeParserTest.namespaceStr + "b",
 				pi.getUriString());
@@ -67,7 +70,7 @@ public class SingleValueMixedTypeParserTest
 		pi = (PredicateInfoImpl) subjectInfo.getPredicateInfo("setB",
 				Boolean.class);
 		Assert.assertEquals("setB", pi.getMethodName());
-		Assert.assertEquals(handler, pi.getObjectHandler());
+		Assert.assertEquals(handler, pi.getObjectHandler( entityManager ));
 		Assert.assertEquals(Boolean.class, pi.getValueClass());
 		Assert.assertEquals(SingleValueMixedTypeParserTest.namespaceStr + "b",
 				pi.getUriString());
@@ -76,7 +79,7 @@ public class SingleValueMixedTypeParserTest
 
 		pi = (PredicateInfoImpl) subjectInfo.getPredicateInfo("isB", c);
 		Assert.assertEquals("isB", pi.getMethodName());
-		Assert.assertEquals(phandler, pi.getObjectHandler());
+		Assert.assertEquals(phandler, pi.getObjectHandler( entityManager ));
 		Assert.assertEquals(c, pi.getValueClass());
 		Assert.assertEquals(SingleValueMixedTypeParserTest.namespaceStr + "b",
 				pi.getUriString());
@@ -85,7 +88,7 @@ public class SingleValueMixedTypeParserTest
 
 		pi = (PredicateInfoImpl) subjectInfo.getPredicateInfo("setB", c);
 		Assert.assertEquals("setB", pi.getMethodName());
-		Assert.assertEquals(handler, pi.getObjectHandler());
+		Assert.assertEquals(handler, pi.getObjectHandler( entityManager ));
 		Assert.assertEquals(Boolean.class, pi.getValueClass());
 		Assert.assertEquals(SingleValueMixedTypeParserTest.namespaceStr + "b",
 				pi.getUriString());
@@ -105,7 +108,7 @@ public class SingleValueMixedTypeParserTest
 				.getInstance().getTypeByClass(Boolean.class));
 
 		Assert.assertEquals("isBool", pi.getMethodName());
-		Assert.assertEquals(handler, pi.getObjectHandler());
+		Assert.assertEquals(handler, pi.getObjectHandler( entityManager ));
 		Assert.assertEquals(Boolean.class, pi.getValueClass());
 		Assert.assertEquals(SingleValueMixedTypeParserTest.namespaceStr
 				+ "bool", pi.getUriString());
@@ -115,7 +118,7 @@ public class SingleValueMixedTypeParserTest
 		pi = (PredicateInfoImpl) subjectInfo.getPredicateInfo("setBool",
 				Boolean.class);
 		Assert.assertEquals("setBool", pi.getMethodName());
-		Assert.assertEquals(handler, pi.getObjectHandler());
+		Assert.assertEquals(handler, pi.getObjectHandler( entityManager ));
 		Assert.assertEquals(c, pi.getValueClass());
 		Assert.assertEquals(SingleValueMixedTypeParserTest.namespaceStr
 				+ "bool", pi.getUriString());
@@ -124,7 +127,7 @@ public class SingleValueMixedTypeParserTest
 
 		pi = (PredicateInfoImpl) subjectInfo.getPredicateInfo("isBool", c);
 		Assert.assertEquals("isBool", pi.getMethodName());
-		Assert.assertEquals(handler, pi.getObjectHandler());
+		Assert.assertEquals(handler, pi.getObjectHandler( entityManager ));
 		Assert.assertEquals(Boolean.class, pi.getValueClass());
 		Assert.assertEquals(SingleValueMixedTypeParserTest.namespaceStr
 				+ "bool", pi.getUriString());
@@ -133,7 +136,7 @@ public class SingleValueMixedTypeParserTest
 
 		pi = (PredicateInfoImpl) subjectInfo.getPredicateInfo("setBool", c);
 		Assert.assertEquals("setBool", pi.getMethodName());
-		Assert.assertEquals(handler, pi.getObjectHandler());
+		Assert.assertEquals(handler, pi.getObjectHandler( entityManager ));
 		Assert.assertEquals(c, pi.getValueClass());
 		Assert.assertEquals(SingleValueMixedTypeParserTest.namespaceStr
 				+ "bool", pi.getUriString());
@@ -158,7 +161,7 @@ public class SingleValueMixedTypeParserTest
 				.getInstance().getTypeByClass(c));
 
 		Assert.assertEquals("getC", pi.getMethodName());
-		Assert.assertEquals(phandler, pi.getObjectHandler());
+		Assert.assertEquals(phandler, pi.getObjectHandler( entityManager ));
 		Assert.assertEquals(c, pi.getValueClass());
 		Assert.assertEquals(SingleValueMixedTypeParserTest.namespaceStr + "c",
 				pi.getUriString());
@@ -168,7 +171,7 @@ public class SingleValueMixedTypeParserTest
 		pi = (PredicateInfoImpl) subjectInfo.getPredicateInfo("setC",
 				Character.class);
 		Assert.assertEquals("setC", pi.getMethodName());
-		Assert.assertEquals(handler, pi.getObjectHandler());
+		Assert.assertEquals(handler, pi.getObjectHandler( entityManager ));
 		Assert.assertEquals(Character.class, pi.getValueClass());
 		Assert.assertEquals(SingleValueMixedTypeParserTest.namespaceStr + "c",
 				pi.getUriString());
@@ -177,7 +180,7 @@ public class SingleValueMixedTypeParserTest
 
 		pi = (PredicateInfoImpl) subjectInfo.getPredicateInfo("getC", c);
 		Assert.assertEquals("getC", pi.getMethodName());
-		Assert.assertEquals(phandler, pi.getObjectHandler());
+		Assert.assertEquals(phandler, pi.getObjectHandler( entityManager ));
 		Assert.assertEquals(c, pi.getValueClass());
 		Assert.assertEquals(SingleValueMixedTypeParserTest.namespaceStr + "c",
 				pi.getUriString());
@@ -186,7 +189,7 @@ public class SingleValueMixedTypeParserTest
 
 		pi = (PredicateInfoImpl) subjectInfo.getPredicateInfo("setC", c);
 		Assert.assertEquals("setC", pi.getMethodName());
-		Assert.assertEquals(handler, pi.getObjectHandler());
+		Assert.assertEquals(handler, pi.getObjectHandler( entityManager ));
 		Assert.assertEquals(Character.class, pi.getValueClass());
 		Assert.assertEquals(SingleValueMixedTypeParserTest.namespaceStr + "c",
 				pi.getUriString());
@@ -211,7 +214,7 @@ public class SingleValueMixedTypeParserTest
 				.getInstance().getTypeByClass(c));
 
 		Assert.assertEquals("getChar", pi.getMethodName());
-		Assert.assertEquals(handler, pi.getObjectHandler());
+		Assert.assertEquals(handler, pi.getObjectHandler( entityManager ));
 		Assert.assertEquals(Character.class, pi.getValueClass());
 		Assert.assertEquals(SingleValueMixedTypeParserTest.namespaceStr
 				+ "char", pi.getUriString());
@@ -221,7 +224,7 @@ public class SingleValueMixedTypeParserTest
 		pi = (PredicateInfoImpl) subjectInfo.getPredicateInfo("setChar",
 				Character.class);
 		Assert.assertEquals("setChar", pi.getMethodName());
-		Assert.assertEquals(phandler, pi.getObjectHandler());
+		Assert.assertEquals(phandler, pi.getObjectHandler( entityManager ));
 		Assert.assertEquals(c, pi.getValueClass());
 		Assert.assertEquals(SingleValueMixedTypeParserTest.namespaceStr
 				+ "char", pi.getUriString());
@@ -230,7 +233,7 @@ public class SingleValueMixedTypeParserTest
 
 		pi = (PredicateInfoImpl) subjectInfo.getPredicateInfo("getChar", c);
 		Assert.assertEquals("getChar", pi.getMethodName());
-		Assert.assertEquals(handler, pi.getObjectHandler());
+		Assert.assertEquals(handler, pi.getObjectHandler( entityManager ));
 		Assert.assertEquals(Character.class, pi.getValueClass());
 		Assert.assertEquals(SingleValueMixedTypeParserTest.namespaceStr
 				+ "char", pi.getUriString());
@@ -239,7 +242,7 @@ public class SingleValueMixedTypeParserTest
 
 		pi = (PredicateInfoImpl) subjectInfo.getPredicateInfo("setChar", c);
 		Assert.assertEquals("setChar", pi.getMethodName());
-		Assert.assertEquals(phandler, pi.getObjectHandler());
+		Assert.assertEquals(phandler, pi.getObjectHandler( entityManager ));
 		Assert.assertEquals(c, pi.getValueClass());
 		Assert.assertEquals(SingleValueMixedTypeParserTest.namespaceStr
 				+ "char", pi.getUriString());
@@ -263,7 +266,7 @@ public class SingleValueMixedTypeParserTest
 				.getInstance().getTypeByClass(c));
 
 		Assert.assertEquals("getD", pi.getMethodName());
-		Assert.assertEquals(phandler, pi.getObjectHandler());
+		Assert.assertEquals(phandler, pi.getObjectHandler( entityManager ));
 		Assert.assertEquals(c, pi.getValueClass());
 		Assert.assertEquals(SingleValueMixedTypeParserTest.namespaceStr + "d",
 				pi.getUriString());
@@ -273,7 +276,7 @@ public class SingleValueMixedTypeParserTest
 		pi = (PredicateInfoImpl) subjectInfo.getPredicateInfo("setD",
 				Double.class);
 		Assert.assertEquals("setD", pi.getMethodName());
-		Assert.assertEquals(handler, pi.getObjectHandler());
+		Assert.assertEquals(handler, pi.getObjectHandler( entityManager ));
 		Assert.assertEquals(Double.class, pi.getValueClass());
 		Assert.assertEquals(SingleValueMixedTypeParserTest.namespaceStr + "d",
 				pi.getUriString());
@@ -282,7 +285,7 @@ public class SingleValueMixedTypeParserTest
 
 		pi = (PredicateInfoImpl) subjectInfo.getPredicateInfo("getD", c);
 		Assert.assertEquals("getD", pi.getMethodName());
-		Assert.assertEquals(phandler, pi.getObjectHandler());
+		Assert.assertEquals(phandler, pi.getObjectHandler( entityManager ));
 		Assert.assertEquals(c, pi.getValueClass());
 		Assert.assertEquals(SingleValueMixedTypeParserTest.namespaceStr + "d",
 				pi.getUriString());
@@ -291,7 +294,7 @@ public class SingleValueMixedTypeParserTest
 
 		pi = (PredicateInfoImpl) subjectInfo.getPredicateInfo("setD", c);
 		Assert.assertEquals("setD", pi.getMethodName());
-		Assert.assertEquals(handler, pi.getObjectHandler());
+		Assert.assertEquals(handler, pi.getObjectHandler( entityManager ));
 		Assert.assertEquals(Double.class, pi.getValueClass());
 		Assert.assertEquals(SingleValueMixedTypeParserTest.namespaceStr + "d",
 				pi.getUriString());
@@ -315,7 +318,7 @@ public class SingleValueMixedTypeParserTest
 				.getInstance().getTypeByClass(c));
 
 		Assert.assertEquals("getDbl", pi.getMethodName());
-		Assert.assertEquals(handler, pi.getObjectHandler());
+		Assert.assertEquals(handler, pi.getObjectHandler( entityManager ));
 		Assert.assertEquals(Double.class, pi.getValueClass());
 		Assert.assertEquals(
 				SingleValueMixedTypeParserTest.namespaceStr + "dbl",
@@ -326,7 +329,7 @@ public class SingleValueMixedTypeParserTest
 		pi = (PredicateInfoImpl) subjectInfo.getPredicateInfo("setDbl",
 				Double.class);
 		Assert.assertEquals("setDbl", pi.getMethodName());
-		Assert.assertEquals(phandler, pi.getObjectHandler());
+		Assert.assertEquals(phandler, pi.getObjectHandler( entityManager ));
 		Assert.assertEquals(c, pi.getValueClass());
 		Assert.assertEquals(
 				SingleValueMixedTypeParserTest.namespaceStr + "dbl",
@@ -336,7 +339,7 @@ public class SingleValueMixedTypeParserTest
 
 		pi = (PredicateInfoImpl) subjectInfo.getPredicateInfo("getDbl", c);
 		Assert.assertEquals("getDbl", pi.getMethodName());
-		Assert.assertEquals(handler, pi.getObjectHandler());
+		Assert.assertEquals(handler, pi.getObjectHandler( entityManager ));
 		Assert.assertEquals(Double.class, pi.getValueClass());
 		Assert.assertEquals(
 				SingleValueMixedTypeParserTest.namespaceStr + "dbl",
@@ -346,7 +349,7 @@ public class SingleValueMixedTypeParserTest
 
 		pi = (PredicateInfoImpl) subjectInfo.getPredicateInfo("setDbl", c);
 		Assert.assertEquals("setDbl", pi.getMethodName());
-		Assert.assertEquals(phandler, pi.getObjectHandler());
+		Assert.assertEquals(phandler, pi.getObjectHandler( entityManager ));
 		Assert.assertEquals(c, pi.getValueClass());
 		Assert.assertEquals(
 				SingleValueMixedTypeParserTest.namespaceStr + "dbl",
@@ -371,7 +374,7 @@ public class SingleValueMixedTypeParserTest
 				.getInstance().getTypeByClass(c));
 
 		Assert.assertEquals("getF", pi.getMethodName());
-		Assert.assertEquals(phandler, pi.getObjectHandler());
+		Assert.assertEquals(phandler, pi.getObjectHandler( entityManager ));
 		Assert.assertEquals(c, pi.getValueClass());
 		Assert.assertEquals(SingleValueMixedTypeParserTest.namespaceStr + "f",
 				pi.getUriString());
@@ -381,7 +384,7 @@ public class SingleValueMixedTypeParserTest
 		pi = (PredicateInfoImpl) subjectInfo.getPredicateInfo("setF",
 				Float.class);
 		Assert.assertEquals("setF", pi.getMethodName());
-		Assert.assertEquals(handler, pi.getObjectHandler());
+		Assert.assertEquals(handler, pi.getObjectHandler( entityManager ));
 		Assert.assertEquals(Float.class, pi.getValueClass());
 		Assert.assertEquals(SingleValueMixedTypeParserTest.namespaceStr + "f",
 				pi.getUriString());
@@ -390,7 +393,7 @@ public class SingleValueMixedTypeParserTest
 
 		pi = (PredicateInfoImpl) subjectInfo.getPredicateInfo("getF", c);
 		Assert.assertEquals("getF", pi.getMethodName());
-		Assert.assertEquals(phandler, pi.getObjectHandler());
+		Assert.assertEquals(phandler, pi.getObjectHandler( entityManager ));
 		Assert.assertEquals(c, pi.getValueClass());
 		Assert.assertEquals(SingleValueMixedTypeParserTest.namespaceStr + "f",
 				pi.getUriString());
@@ -399,7 +402,7 @@ public class SingleValueMixedTypeParserTest
 
 		pi = (PredicateInfoImpl) subjectInfo.getPredicateInfo("setF", c);
 		Assert.assertEquals("setF", pi.getMethodName());
-		Assert.assertEquals(handler, pi.getObjectHandler());
+		Assert.assertEquals(handler, pi.getObjectHandler( entityManager ));
 		Assert.assertEquals(Float.class, pi.getValueClass());
 		Assert.assertEquals(SingleValueMixedTypeParserTest.namespaceStr + "f",
 				pi.getUriString());
@@ -423,7 +426,7 @@ public class SingleValueMixedTypeParserTest
 				.getInstance().getTypeByClass(c));
 
 		Assert.assertEquals("getFlt", pi.getMethodName());
-		Assert.assertEquals(handler, pi.getObjectHandler());
+		Assert.assertEquals(handler, pi.getObjectHandler( entityManager ));
 		Assert.assertEquals(Float.class, pi.getValueClass());
 		Assert.assertEquals(
 				SingleValueMixedTypeParserTest.namespaceStr + "flt",
@@ -434,7 +437,7 @@ public class SingleValueMixedTypeParserTest
 		pi = (PredicateInfoImpl) subjectInfo.getPredicateInfo("setFlt",
 				Float.class);
 		Assert.assertEquals("setFlt", pi.getMethodName());
-		Assert.assertEquals(phandler, pi.getObjectHandler());
+		Assert.assertEquals(phandler, pi.getObjectHandler( entityManager ));
 		Assert.assertEquals(c, pi.getValueClass());
 		Assert.assertEquals(
 				SingleValueMixedTypeParserTest.namespaceStr + "flt",
@@ -444,7 +447,7 @@ public class SingleValueMixedTypeParserTest
 
 		pi = (PredicateInfoImpl) subjectInfo.getPredicateInfo("getFlt", c);
 		Assert.assertEquals("getFlt", pi.getMethodName());
-		Assert.assertEquals(handler, pi.getObjectHandler());
+		Assert.assertEquals(handler, pi.getObjectHandler( entityManager ));
 		Assert.assertEquals(Float.class, pi.getValueClass());
 		Assert.assertEquals(
 				SingleValueMixedTypeParserTest.namespaceStr + "flt",
@@ -454,7 +457,7 @@ public class SingleValueMixedTypeParserTest
 
 		pi = (PredicateInfoImpl) subjectInfo.getPredicateInfo("setFlt", c);
 		Assert.assertEquals("setFlt", pi.getMethodName());
-		Assert.assertEquals(phandler, pi.getObjectHandler());
+		Assert.assertEquals(phandler, pi.getObjectHandler( entityManager ));
 		Assert.assertEquals(c, pi.getValueClass());
 		Assert.assertEquals(
 				SingleValueMixedTypeParserTest.namespaceStr + "flt",
@@ -479,7 +482,7 @@ public class SingleValueMixedTypeParserTest
 				.getInstance().getTypeByClass(c));
 
 		Assert.assertEquals("getI", pi.getMethodName());
-		Assert.assertEquals(phandler, pi.getObjectHandler());
+		Assert.assertEquals(phandler, pi.getObjectHandler( entityManager ));
 		Assert.assertEquals(c, pi.getValueClass());
 		Assert.assertEquals(SingleValueMixedTypeParserTest.namespaceStr + "i",
 				pi.getUriString());
@@ -489,7 +492,7 @@ public class SingleValueMixedTypeParserTest
 		pi = (PredicateInfoImpl) subjectInfo.getPredicateInfo("setI",
 				Integer.class);
 		Assert.assertEquals("setI", pi.getMethodName());
-		Assert.assertEquals(handler, pi.getObjectHandler());
+		Assert.assertEquals(handler, pi.getObjectHandler( entityManager ));
 		Assert.assertEquals(Integer.class, pi.getValueClass());
 		Assert.assertEquals(SingleValueMixedTypeParserTest.namespaceStr + "i",
 				pi.getUriString());
@@ -498,7 +501,7 @@ public class SingleValueMixedTypeParserTest
 
 		pi = (PredicateInfoImpl) subjectInfo.getPredicateInfo("getI", c);
 		Assert.assertEquals("getI", pi.getMethodName());
-		Assert.assertEquals(phandler, pi.getObjectHandler());
+		Assert.assertEquals(phandler, pi.getObjectHandler( entityManager ));
 		Assert.assertEquals(c, pi.getValueClass());
 		Assert.assertEquals(SingleValueMixedTypeParserTest.namespaceStr + "i",
 				pi.getUriString());
@@ -507,7 +510,7 @@ public class SingleValueMixedTypeParserTest
 
 		pi = (PredicateInfoImpl) subjectInfo.getPredicateInfo("setI", c);
 		Assert.assertEquals("setI", pi.getMethodName());
-		Assert.assertEquals(handler, pi.getObjectHandler());
+		Assert.assertEquals(handler, pi.getObjectHandler( entityManager ));
 		Assert.assertEquals(Integer.class, pi.getValueClass());
 		Assert.assertEquals(SingleValueMixedTypeParserTest.namespaceStr + "i",
 				pi.getUriString());
@@ -531,7 +534,7 @@ public class SingleValueMixedTypeParserTest
 				.getInstance().getTypeByClass(c));
 
 		Assert.assertEquals("getInt", pi.getMethodName());
-		Assert.assertEquals(handler, pi.getObjectHandler());
+		Assert.assertEquals(handler, pi.getObjectHandler( entityManager ));
 		Assert.assertEquals(Integer.class, pi.getValueClass());
 		Assert.assertEquals(
 				SingleValueMixedTypeParserTest.namespaceStr + "int",
@@ -542,7 +545,7 @@ public class SingleValueMixedTypeParserTest
 		pi = (PredicateInfoImpl) subjectInfo.getPredicateInfo("setInt",
 				Integer.class);
 		Assert.assertEquals("setInt", pi.getMethodName());
-		Assert.assertEquals(phandler, pi.getObjectHandler());
+		Assert.assertEquals(phandler, pi.getObjectHandler( entityManager ));
 		Assert.assertEquals(c, pi.getValueClass());
 		Assert.assertEquals(
 				SingleValueMixedTypeParserTest.namespaceStr + "int",
@@ -552,7 +555,7 @@ public class SingleValueMixedTypeParserTest
 
 		pi = (PredicateInfoImpl) subjectInfo.getPredicateInfo("getInt", c);
 		Assert.assertEquals("getInt", pi.getMethodName());
-		Assert.assertEquals(handler, pi.getObjectHandler());
+		Assert.assertEquals(handler, pi.getObjectHandler( entityManager ));
 		Assert.assertEquals(Integer.class, pi.getValueClass());
 		Assert.assertEquals(
 				SingleValueMixedTypeParserTest.namespaceStr + "int",
@@ -562,7 +565,7 @@ public class SingleValueMixedTypeParserTest
 
 		pi = (PredicateInfoImpl) subjectInfo.getPredicateInfo("setInt", c);
 		Assert.assertEquals("setInt", pi.getMethodName());
-		Assert.assertEquals(phandler, pi.getObjectHandler());
+		Assert.assertEquals(phandler, pi.getObjectHandler( entityManager ));
 		Assert.assertEquals(c, pi.getValueClass());
 		Assert.assertEquals(
 				SingleValueMixedTypeParserTest.namespaceStr + "int",
@@ -587,7 +590,7 @@ public class SingleValueMixedTypeParserTest
 				.getInstance().getTypeByClass(c));
 
 		Assert.assertEquals("getL", pi.getMethodName());
-		Assert.assertEquals(phandler, pi.getObjectHandler());
+		Assert.assertEquals(phandler, pi.getObjectHandler( entityManager ));
 		Assert.assertEquals(c, pi.getValueClass());
 		Assert.assertEquals(SingleValueMixedTypeParserTest.namespaceStr + "l",
 				pi.getUriString());
@@ -597,7 +600,7 @@ public class SingleValueMixedTypeParserTest
 		pi = (PredicateInfoImpl) subjectInfo.getPredicateInfo("setL",
 				Long.class);
 		Assert.assertEquals("setL", pi.getMethodName());
-		Assert.assertEquals(handler, pi.getObjectHandler());
+		Assert.assertEquals(handler, pi.getObjectHandler( entityManager ));
 		Assert.assertEquals(Long.class, pi.getValueClass());
 		Assert.assertEquals(SingleValueMixedTypeParserTest.namespaceStr + "l",
 				pi.getUriString());
@@ -606,7 +609,7 @@ public class SingleValueMixedTypeParserTest
 
 		pi = (PredicateInfoImpl) subjectInfo.getPredicateInfo("getL", c);
 		Assert.assertEquals("getL", pi.getMethodName());
-		Assert.assertEquals(phandler, pi.getObjectHandler());
+		Assert.assertEquals(phandler, pi.getObjectHandler( entityManager ));
 		Assert.assertEquals(c, pi.getValueClass());
 		Assert.assertEquals(SingleValueMixedTypeParserTest.namespaceStr + "l",
 				pi.getUriString());
@@ -615,7 +618,7 @@ public class SingleValueMixedTypeParserTest
 
 		pi = (PredicateInfoImpl) subjectInfo.getPredicateInfo("setL", c);
 		Assert.assertEquals("setL", pi.getMethodName());
-		Assert.assertEquals(handler, pi.getObjectHandler());
+		Assert.assertEquals(handler, pi.getObjectHandler( entityManager ));
 		Assert.assertEquals(Long.class, pi.getValueClass());
 		Assert.assertEquals(SingleValueMixedTypeParserTest.namespaceStr + "l",
 				pi.getUriString());
@@ -638,7 +641,7 @@ public class SingleValueMixedTypeParserTest
 				.getInstance().getTypeByClass(c));
 
 		Assert.assertEquals("getLng", pi.getMethodName());
-		Assert.assertEquals(handler, pi.getObjectHandler());
+		Assert.assertEquals(handler, pi.getObjectHandler( entityManager ));
 		Assert.assertEquals(Long.class, pi.getValueClass());
 		Assert.assertEquals(
 				SingleValueMixedTypeParserTest.namespaceStr + "lng",
@@ -649,7 +652,7 @@ public class SingleValueMixedTypeParserTest
 		pi = (PredicateInfoImpl) subjectInfo.getPredicateInfo("setLng",
 				Long.class);
 		Assert.assertEquals("setLng", pi.getMethodName());
-		Assert.assertEquals(phandler, pi.getObjectHandler());
+		Assert.assertEquals(phandler, pi.getObjectHandler( entityManager ));
 		Assert.assertEquals(c, pi.getValueClass());
 		Assert.assertEquals(
 				SingleValueMixedTypeParserTest.namespaceStr + "lng",
@@ -659,7 +662,7 @@ public class SingleValueMixedTypeParserTest
 
 		pi = (PredicateInfoImpl) subjectInfo.getPredicateInfo("getLng", c);
 		Assert.assertEquals("getLng", pi.getMethodName());
-		Assert.assertEquals(handler, pi.getObjectHandler());
+		Assert.assertEquals(handler, pi.getObjectHandler( entityManager ));
 		Assert.assertEquals(Long.class, pi.getValueClass());
 		Assert.assertEquals(
 				SingleValueMixedTypeParserTest.namespaceStr + "lng",
@@ -669,7 +672,7 @@ public class SingleValueMixedTypeParserTest
 
 		pi = (PredicateInfoImpl) subjectInfo.getPredicateInfo("setLng", c);
 		Assert.assertEquals("setLng", pi.getMethodName());
-		Assert.assertEquals(phandler, pi.getObjectHandler());
+		Assert.assertEquals(phandler, pi.getObjectHandler( entityManager ));
 		Assert.assertEquals(c, pi.getValueClass());
 		Assert.assertEquals(
 				SingleValueMixedTypeParserTest.namespaceStr + "lng",
@@ -691,7 +694,7 @@ public class SingleValueMixedTypeParserTest
 		final ResourceHandler rHandler = new ResourceHandler();
 
 		Assert.assertEquals("getU", pi.getMethodName());
-		Assert.assertEquals(rHandler, pi.getObjectHandler());
+		Assert.assertEquals(rHandler, pi.getObjectHandler( entityManager ));
 		Assert.assertEquals(RDFNode.class, pi.getValueClass());
 		Assert.assertEquals(SingleValueMixedTypeParserTest.namespaceStr + "u",
 				pi.getUriString());
@@ -701,7 +704,7 @@ public class SingleValueMixedTypeParserTest
 		pi = (PredicateInfoImpl) subjectInfo.getPredicateInfo("setU",
 				String.class);
 		Assert.assertEquals("setU", pi.getMethodName());
-		Assert.assertEquals(handler, pi.getObjectHandler());
+		Assert.assertEquals(handler, pi.getObjectHandler( entityManager ));
 		Assert.assertEquals(c, pi.getValueClass());
 		Assert.assertEquals(SingleValueMixedTypeParserTest.namespaceStr + "u",
 				pi.getUriString());
@@ -720,7 +723,7 @@ public class SingleValueMixedTypeParserTest
 		final ObjectHandler phandler = new UriHandler();
 
 		Assert.assertEquals("getU2", pi.getMethodName());
-		Assert.assertEquals(phandler, pi.getObjectHandler());
+		Assert.assertEquals(phandler, pi.getObjectHandler( entityManager ));
 		Assert.assertEquals(String.class, pi.getValueClass());
 		Assert.assertEquals(SingleValueMixedTypeParserTest.namespaceStr + "u2",
 				pi.getUriString());
@@ -730,7 +733,7 @@ public class SingleValueMixedTypeParserTest
 		pi = (PredicateInfoImpl) subjectInfo.getPredicateInfo("setU2",
 				RDFNode.class);
 		Assert.assertEquals("setU2", pi.getMethodName());
-		Assert.assertEquals(handler, pi.getObjectHandler());
+		Assert.assertEquals(handler, pi.getObjectHandler( entityManager ));
 		Assert.assertEquals(RDFNode.class, pi.getValueClass());
 		Assert.assertEquals(SingleValueMixedTypeParserTest.namespaceStr + "u2",
 				pi.getUriString());

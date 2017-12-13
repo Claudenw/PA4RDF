@@ -40,7 +40,7 @@ public class ResourceEntityProxy implements MethodInterceptor // Invoker
 {
 	private final Resource resource;
 	private final SubjectInfo subjectInfo;
-	private final EntityManager entityManager;
+	private final EntityManagerImpl entityManager;
 
 	/**
 	 * The constructor
@@ -52,7 +52,7 @@ public class ResourceEntityProxy implements MethodInterceptor // Invoker
 	 * @param subjectInfo
 	 *            The subjectInfo for the resource.
 	 */
-	public ResourceEntityProxy( final EntityManager entityManager,
+	public ResourceEntityProxy( final EntityManagerImpl entityManager,
 			final Resource resource, final SubjectInfo subjectInfo )
 	{
 		this.resource = resource;
@@ -155,7 +155,7 @@ public class ResourceEntityProxy implements MethodInterceptor // Invoker
 
 		if (pi instanceof PredicateInfoImpl)
 		{
-		   Object o = ((PredicateInfoImpl) pi).exec(m, resource, args);
+		   Object o = ((PredicateInfoImpl) pi).exec(entityManager, m, resource, args);
 			List<Method> lst = subjectInfo.getPredicateInfo( m ).getPostExec();
 			for (Method peMethod : subjectInfo.getPredicateInfo( m ).getPostExec())
 			{

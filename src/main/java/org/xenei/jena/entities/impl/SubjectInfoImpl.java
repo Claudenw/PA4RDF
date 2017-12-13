@@ -31,7 +31,7 @@ public class SubjectInfoImpl implements SubjectInfo
 {
 	private boolean validated;
 	private final Class<?> implementedClass;
-	private final Map<String, Map<ObjectHandler, PredicateInfo>> predicateInfo = new HashMap<String, Map<ObjectHandler, PredicateInfo>>();
+	private final Map<String, Map<Class<?>, PredicateInfo>> predicateInfo = new HashMap<String, Map<Class<?>, PredicateInfo>>();
 
 	public SubjectInfoImpl( final Class<?> implementedClass )
 	{
@@ -51,15 +51,15 @@ public class SubjectInfoImpl implements SubjectInfo
 		{
 			throw new IllegalArgumentException("PredicateInfo may not be null");
 		}
-		Map<ObjectHandler, PredicateInfo> map = predicateInfo.get(pi
+		Map<Class<?>, PredicateInfo> map = predicateInfo.get(pi
 				.getMethodName());
 		if (map == null)
 		{
-			map = new HashMap<ObjectHandler, PredicateInfo>();
+			map = new HashMap<Class<?>, PredicateInfo>();
 			predicateInfo.put(pi.getMethodName(), map);
 		}
 
-		map.put(pi.getObjectHandler(), pi);
+		map.put(pi.getValueClass(), pi);
 	}
 
 	/*
@@ -100,7 +100,7 @@ public class SubjectInfoImpl implements SubjectInfo
 
 	private PredicateInfo getPredicateInfo( final String function )
 	{
-		final Map<ObjectHandler, PredicateInfo> map = predicateInfo
+		final Map<Class<?>, PredicateInfo> map = predicateInfo
 				.get(function);
 		if (map == null)
 		{
@@ -128,7 +128,7 @@ public class SubjectInfoImpl implements SubjectInfo
 	public PredicateInfo getPredicateInfo( final String function,
 			final Class<?> clazz )
 	{
-		final Map<ObjectHandler, PredicateInfo> map = predicateInfo
+		final Map<Class<?>, PredicateInfo> map = predicateInfo
 				.get(function);
 		if (map != null)
 		{
@@ -272,7 +272,7 @@ public class SubjectInfoImpl implements SubjectInfo
 	 */
 	public void removePredicateInfo( final String function, final Class<?> clazz )
 	{
-		final Map<ObjectHandler, PredicateInfo> map = predicateInfo
+		final Map<Class<?>, PredicateInfo> map = predicateInfo
 				.get(function);
 		if (map != null)
 		{
@@ -305,7 +305,7 @@ public class SubjectInfoImpl implements SubjectInfo
 	public Collection<PredicateInfo> getPredicates()
 	{
 		Set<PredicateInfo> set = new HashSet<PredicateInfo>();
-		for ( Map<ObjectHandler,PredicateInfo> m : predicateInfo.values())
+		for ( Map<Class<?>,PredicateInfo> m : predicateInfo.values())
 		{
 			set.addAll( m.values() );
 		}

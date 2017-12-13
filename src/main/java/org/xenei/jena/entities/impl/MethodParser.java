@@ -853,7 +853,7 @@ public class MethodParser
 		try
 		{
 			if ((pi.getValueClass() == String.class)
-					&& (pi.getObjectHandler().getClass() == UriHandler.class))
+					&& (pi.getObjectHandler(entityManager).getClass() == UriHandler.class))
 			{
 				parse(m.getDeclaringClass().getMethod(pi.getMethodName(),
 						RDFNode.class), predicate);

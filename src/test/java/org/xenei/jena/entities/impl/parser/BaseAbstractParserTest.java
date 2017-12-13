@@ -18,6 +18,7 @@ abstract public class BaseAbstractParserTest
 	protected MethodParser parser;
 	protected SubjectInfoImpl subjectInfo;
 	protected final Class<?> classUnderTest;
+	protected EntityManagerImpl entityManager;
 
 	protected BaseAbstractParserTest( final Class<?> classUnderTest )
 	{
@@ -69,7 +70,7 @@ abstract public class BaseAbstractParserTest
 		subjectInfo = new SubjectInfoImpl(classUnderTest);
 		final Map<String, Integer> addCount = countAdders(classUnderTest
 				.getMethods());
-		EntityManagerImpl entityManager = (EntityManagerImpl)EntityManagerFactory.create();
+		entityManager = (EntityManagerImpl)EntityManagerFactory.create();
 		parser = new MethodParser(entityManager,
 				subjectInfo, addCount);
 	}

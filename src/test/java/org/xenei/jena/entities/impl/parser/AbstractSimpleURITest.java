@@ -71,7 +71,7 @@ public abstract class AbstractSimpleURITest extends BaseAbstractParserTest
 		Assert.assertEquals("http://example.com/", pi.getNamespace());
 		Assert.assertEquals("http://example.com/u", pi.getUriString());
 		Assert.assertEquals(UriHandler.class, ((PredicateInfoImpl) pi)
-				.getObjectHandler().getClass());
+				.getObjectHandler( entityManager ).getClass());
 		Assert.assertEquals(String.class, pi.getValueClass());
 
 		pi = subjectInfo.getPredicateInfo(classUnderTest.getMethod("setU",
@@ -90,7 +90,7 @@ public abstract class AbstractSimpleURITest extends BaseAbstractParserTest
 		Assert.assertEquals("http://example.com/", pi.getNamespace());
 		Assert.assertEquals("http://example.com/u", pi.getUriString());
 		Assert.assertEquals(ResourceHandler.class, ((PredicateInfoImpl) pi)
-				.getObjectHandler().getClass());
+				.getObjectHandler( entityManager ).getClass());
 		Assert.assertEquals(RDFNode.class, pi.getValueClass());
 
 		pi = subjectInfo.getPredicateInfo(classUnderTest.getMethod("hasU"));
