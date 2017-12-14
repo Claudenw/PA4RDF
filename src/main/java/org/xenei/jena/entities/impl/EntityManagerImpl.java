@@ -927,6 +927,9 @@ public class EntityManagerImpl implements EntityManager
 									| IllegalArgumentException
 									| InvocationTargetException e)
 							{
+								System.out.println( "StackTrace: "+tMethod.toString() );
+								e.printStackTrace( System.out );
+								System.out.println( "End StackTrace");
 								throw new IllegalStateException( String.format( "Unable to execute %s to and pass result to %s", sMethod, tMethod), e );
 							}
 						}

@@ -517,19 +517,25 @@ public class PredicateInfoImpl implements PredicateInfo
 	private Object execSet( final EntityManagerImpl entityManager, final ObjectHandler objectHandler,  final Resource resource, final Property p,
 			final Object[] args)
 	{
+		final List<Statement> stmtLst = resource.listProperties(p).toList();
 		try
 		{			
 			resource.getModel().enterCriticalSection(Lock.WRITE);
 			RDFNode value = objectHandler.createRDFNode( args[0] );
-			resource.listProperties(p).forEachRemaining( stmt -> objectHandler.removeObject( stmt, value));
+			
+			for( Statement stmt : stmtLst )
+			{
+				objectHandler.removeObject( stmt, value);
+			}
 			resource.removeAll(p); // just in case it get set by another thread
 			// first.
 			return execAdd(objectHandler, resource, p, args);
 		}
 		finally
 		{
-			final List<Statement> l = resource.listProperties(p).toList();
-			if (l.size() > 1)
+			resource.getModel().leaveCriticalSection();
+						
+			if (stmtLst.size() > 1)
 			{
 				final Logger log = LoggerFactory
 						.getLogger(PredicateInfoImpl.class);
@@ -541,14 +547,13 @@ public class PredicateInfoImpl implements PredicateInfo
 				catch (final Exception e)
 				{
 					log.error("Error:", e);
-					for (final Statement s : l)
+					for (final Statement s : stmtLst)
 					{
 						log.error("Statement: {} ", s.asTriple());
 					}
 				}
 
-			}
-			resource.getModel().leaveCriticalSection();
+			}			
 		}
 	}
 

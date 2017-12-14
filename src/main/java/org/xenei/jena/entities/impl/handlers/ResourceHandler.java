@@ -33,6 +33,10 @@ public class ResourceHandler extends AbstractObjectHandler
 	@Override
 	public RDFNode createRDFNode( final Object obj )
 	{
+		if (obj == null)
+		{
+			return null;
+		}
 		if (obj instanceof RDFNode)
 		{
 			return (RDFNode) obj;

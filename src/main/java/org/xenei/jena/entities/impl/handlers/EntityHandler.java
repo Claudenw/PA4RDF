@@ -52,7 +52,7 @@ public class EntityHandler extends  AbstractObjectHandler
 	@Override
 	public RDFNode createRDFNode( final Object obj )
 	{
-		return ((ResourceWrapper) obj).getResource();
+		return obj==null?null:((ResourceWrapper) obj).getResource();
 	}
 
 	@Override

@@ -52,6 +52,10 @@ public class LiteralHandler extends AbstractObjectHandler
 	@Override
 	public Literal createRDFNode( final Object obj )
 	{
+		if (obj == null)
+		{
+			return null;
+		}
 		final String lexicalForm = literalDatatype.unparse(obj);
 		return ResourceFactory.createTypedLiteral(lexicalForm, literalDatatype);
 	}

@@ -1,5 +1,6 @@
 package org.xenei.jena.entities.impl.handlers;
 
+
 public interface HandlerTestInterface
 {
 	/**

@@ -36,7 +36,7 @@ public class UriHandler extends AbstractObjectHandler
 	@Override
 	public RDFNode createRDFNode( final Object obj )
 	{
-		return ResourceFactory.createResource(String.valueOf(obj));
+		return obj==null?null:ResourceFactory.createResource(String.valueOf(obj));
 	}
 
 	@Override
