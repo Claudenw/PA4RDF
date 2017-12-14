@@ -264,11 +264,9 @@ public class PredicateInfoImpl implements PredicateInfo
 		this.actionType = pi.actionType;
 		this.concreteType = pi.concreteType;
 		this.methodName = pi.methodName;
-		//this.objectHandler = pi.objectHandler;
 		this.predicate = new EffectivePredicate( pi.predicate );
 		this.property = pi.property;
 		this.valueClass = pi.valueClass;
-		//this.entityManager = pi.entityManager;
 		this.annotations = new HashMap<Class<?>,Annotation>(pi.annotations);		
 	}
 
@@ -507,7 +505,6 @@ public class PredicateInfoImpl implements PredicateInfo
 			if (valueClass == null)
 			{
 				resource.removeAll(p);
-//				doRemove( resource, p );
 			}
 			return null;
 		}
@@ -516,15 +513,6 @@ public class PredicateInfoImpl implements PredicateInfo
 			resource.getModel().leaveCriticalSection();
 		}
 	}
-
-//	private void doRemove( Resource r, Property p )
-//	{
-//		final Var v = Var.alloc( "o" );
-//		entityManager.getUpdateHandler().prepare( new UpdateBuilder()
-//				.addDelete( r, p, v )
-//				.addWhere( r, p, v ).build());
-//
-//	}
 
 	private Object execSet( final EntityManagerImpl entityManager, final ObjectHandler objectHandler,  final Resource resource, final Property p,
 			final Object[] args)
@@ -536,7 +524,6 @@ public class PredicateInfoImpl implements PredicateInfo
 			resource.listProperties(p).forEachRemaining( stmt -> objectHandler.removeObject( stmt, value));
 			resource.removeAll(p); // just in case it get set by another thread
 			// first.
-//			doRemove( resource, p );
 			return execAdd(objectHandler, resource, p, args);
 		}
 		finally
