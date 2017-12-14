@@ -36,6 +36,7 @@ import org.apache.jena.datatypes.RDFDatatype;
 import org.apache.jena.datatypes.TypeMapper;
 import org.apache.jena.rdf.model.NodeIterator;
 import org.apache.jena.rdf.model.Property;
+import org.apache.jena.rdf.model.RDFList;
 import org.apache.jena.rdf.model.RDFNode;
 import org.apache.jena.rdf.model.Resource;
 import org.apache.jena.rdf.model.ResourceFactory;
@@ -52,6 +53,7 @@ import org.xenei.jena.entities.PredicateInfo;
 import org.xenei.jena.entities.annotations.Subject;
 import org.xenei.jena.entities.annotations.URI;
 import org.xenei.jena.entities.impl.handlers.EntityHandler;
+import org.xenei.jena.entities.impl.handlers.ListHandler;
 import org.xenei.jena.entities.impl.handlers.LiteralHandler;
 import org.xenei.jena.entities.impl.handlers.ResourceHandler;
 import org.xenei.jena.entities.impl.handlers.UriHandler;
@@ -169,6 +171,23 @@ public class PredicateInfoImpl implements PredicateInfo
 			if (returnType.getAnnotation(Subject.class) != null)
 			{
 				return new EntityHandler(entityManager, returnType);
+			}
+			if (RDFList.class.isAssignableFrom(returnType))
+			{
+				Class<?> contained;
+				ObjectHandler innerHandler;
+				if (pred != null)
+				{
+					contained = pred.contained();
+					if (contained == null || contained.equals( RDFList.class ))
+					{
+						throw new IllegalArgumentException( "contained value must be set and may not be RDFList");
+					}
+					innerHandler = getHandler( entityManager, contained, null );
+				} else {
+					innerHandler = new ResourceHandler();
+				}
+				return new ListHandler( entityManager, innerHandler);
 			}
 			if (RDFNode.class.isAssignableFrom(returnType))
 			{
@@ -473,17 +492,16 @@ public class PredicateInfoImpl implements PredicateInfo
 	{
 		try
 		{
-
 			resource.getModel().enterCriticalSection(Lock.WRITE);
+			RDFNode value = args.length==0?null:objectHandler.createRDFNode( args[0]);
+			for (Statement stmt : resource.listProperties(p).toList())
+			{
+				objectHandler.removeObject( stmt, value );
+			}
 			if (valueClass == null)
 			{
 				resource.removeAll(p);
-				doRemove( resource, p );
-			}
-			else
-			{
-				final RDFNode obj = objectHandler.createRDFNode(args[0]); 
-				resource.getModel().remove(resource, p, obj );				
+//				doRemove( resource, p );
 			}
 			return null;
 		}
@@ -493,24 +511,26 @@ public class PredicateInfoImpl implements PredicateInfo
 		}
 	}
 
-	private void doRemove( Resource r, Property p )
-	{
-		final Var v = Var.alloc( "o" );
-		entityManager.getUpdateHandler().prepare( new UpdateBuilder()
-				.addDelete( r, p, v )
-				.addWhere( r, p, v ).build());
-
-	}
+//	private void doRemove( Resource r, Property p )
+//	{
+//		final Var v = Var.alloc( "o" );
+//		entityManager.getUpdateHandler().prepare( new UpdateBuilder()
+//				.addDelete( r, p, v )
+//				.addWhere( r, p, v ).build());
+//
+//	}
 
 	private Object execSet( final Resource resource, final Property p,
 			final Object[] args)
 	{
 		try
-		{
+		{			
 			resource.getModel().enterCriticalSection(Lock.WRITE);
+			RDFNode value = objectHandler.createRDFNode( args[0] );
+			resource.listProperties(p).forEachRemaining( stmt -> objectHandler.removeObject( stmt, value));
 			resource.removeAll(p); // just in case it get set by another thread
 			// first.
-			doRemove( resource, p );
+//			doRemove( resource, p );
 			return execAdd(resource, p, args);
 		}
 		finally

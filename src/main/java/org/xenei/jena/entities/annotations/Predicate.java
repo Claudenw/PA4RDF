@@ -70,7 +70,7 @@ public @interface Predicate
 	boolean impl() default false;
 
 	/**
-	 * The name of the literal type or an empty string if not is use.
+	 * The name of the literal type or an empty string if not in use.
 	 * If specified it is used in a call to typeMapper.getSafeTypeByName()
 	 * to get the RDFDatatype used to parse and unparse literal values.
 	 * 
@@ -110,6 +110,13 @@ public @interface Predicate
 	 */
 	Class<?> type() default RDFNode.class;
 
+	/**
+	 * The java object class that is contained in the list when type is RDFList
+	 * 
+	 * @return The list contents type class.
+	 */
+	Class<?> contained() default RDFNode.class;
+	
 	/**
 	 * determines if the local name should have the first character upper cased.
 	 * If false (the default) the first character will be lower cased.

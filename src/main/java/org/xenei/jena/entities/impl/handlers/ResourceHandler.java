@@ -15,14 +15,14 @@
 package org.xenei.jena.entities.impl.handlers;
 
 import org.apache.jena.rdf.model.RDFNode;
-
+import org.apache.jena.rdf.model.Statement;
 import org.apache.commons.lang3.StringUtils;
 import org.xenei.jena.entities.impl.ObjectHandler;
 
 /**
  * An ObjectHandler that does not convert RDFNodes.
  */
-public class ResourceHandler implements ObjectHandler
+public class ResourceHandler extends AbstractObjectHandler
 {
 	/**
 	 * Convert an object to an RDFNode.
@@ -90,4 +90,5 @@ public class ResourceHandler implements ObjectHandler
 	{
 		return "ResourceHandler";
 	}
+
 }

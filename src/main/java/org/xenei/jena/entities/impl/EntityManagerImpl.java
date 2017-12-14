@@ -33,6 +33,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -68,6 +69,7 @@ import org.slf4j.LoggerFactory;
 import org.xenei.jena.entities.EntityManager;
 import org.xenei.jena.entities.EntityManagerFactory;
 import org.xenei.jena.entities.MissingAnnotation;
+import org.xenei.jena.entities.PredicateInfo;
 import org.xenei.jena.entities.ResourceWrapper;
 import org.xenei.jena.entities.SubjectInfo;
 import org.xenei.jena.entities.annotations.Predicate;
@@ -901,80 +903,42 @@ public class EntityManagerImpl implements EntityManager
 	 * @return The target object after all setters have been called.
 	 */
 	@Override
-	public Object update(final Object source, final Object target)
+	public <T> T update(final Object source, final T target)
 	{
-		final Class<?> targetClass = target.getClass();
-		final Class<?> sourceClass = source.getClass();
-		for (final Method targetMethod : targetClass.getMethods())
+		List<Method> sMethods = Arrays.asList(source.getClass().getMethods()).stream().filter( m -> ActionType.GETTER.isA( m.getName())).collect( Collectors.toList());
+		for (Method tMethod : target.getClass().getMethods())
 		{
-			if (ActionType.SETTER.isA(targetMethod.getName()))
+			if (ActionType.SETTER.isA( tMethod.getName()))
 			{
-				final Class<?>[] targetMethodParams = targetMethod
-						.getParameterTypes();
-				if (targetMethodParams.length == 1)
+				String tName = ActionType.SETTER.extractName( tMethod.getName() );
+				Class<?>[] params = tMethod.getParameterTypes();
+				if (params.length == 1)
 				{
-					final String partialName = ActionType.SETTER
-							.extractName(targetMethod.getName());
-
-					Method configMethod = null;
-					// try "getX" method
-					String configMethodName = "get" + partialName;
-					try
+					List<Method> candidates = sMethods.stream().filter( m -> ActionType.GETTER.extractName( m.getName()).equals( tName )).collect( Collectors.toList());
+					for (Method sMethod : candidates)
 					{
-						configMethod = sourceClass.getMethod(configMethodName);
-					} catch (final NoSuchMethodException e)
-					{
-						// no "getX" method so try "isX"
-						try
+						if (sMethod.getReturnType().equals( params[0]) && sMethod.getParameterTypes().length==0)
 						{
-							configMethodName = "is" + partialName;
-							configMethod = sourceClass
-									.getMethod(configMethodName);
-						} catch (final NoSuchMethodException expected)
-						{
-							// no getX or setX
-							// configMethod will be null.
-						}
-					}
-					/*
-					 * verify that the config method was annotated as a
-					 * predicate before we use it.
-					 */
-
-					try
-					{
-						if (configMethod != null)
-						{
-							final boolean setNull = !targetMethodParams[0]
-									.isPrimitive();
-							if (TypeChecker.canBeSetFrom(targetMethodParams[0],
-									configMethod.getReturnType()))
+							try
 							{
-								final Object val = configMethod.invoke(source);
-								if (setNull || (val != null))
-								{
-									targetMethod.invoke(target, val);
-								}
+								Object o = sMethod.invoke( source );
+								tMethod.invoke(target, o);
+							} catch (IllegalAccessException
+									| IllegalArgumentException
+									| InvocationTargetException e)
+							{
+								throw new IllegalStateException( String.format( "Unable to execute %s to and pass result to %s", sMethod, tMethod), e );
 							}
-
 						}
-					} catch (final IllegalArgumentException e)
-					{
-						throw new RuntimeException(e);
-					} catch (final IllegalAccessException e)
-					{
-						throw new RuntimeException(e);
-					} catch (final InvocationTargetException e)
-					{
-						throw new RuntimeException(e);
 					}
-
 				}
 			}
 		}
+		
 		return target;
 	}
-
+	
+	
 	@Override
 	public Collection<SubjectInfo> getSubjects()
 	{
@@ -1020,6 +984,11 @@ public class EntityManagerImpl implements EntityManager
 	{
 		updateHandler.execute();
 		cachingGraph.sync();
+	}
+	
+	@Override
+	public Model getModel() {
+		return cachingModel;
 	}
 
 	@Override
