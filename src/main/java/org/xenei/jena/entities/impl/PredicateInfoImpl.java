@@ -69,14 +69,12 @@ import org.xenei.jena.entities.impl.handlers.VoidHandler;
  */
 public class PredicateInfoImpl implements PredicateInfo
 {
-	private final ObjectHandler objectHandler;
 	private Class<?> concreteType;
 	private final Class<?> valueClass;
 	private final String methodName;
 	private Property property;
 	private final ActionType actionType;
 	private final EffectivePredicate predicate;
-	private final EntityManagerImpl entityManager;
 	private final Map<Class<?>,Annotation> annotations;
 
 	/**
@@ -249,9 +247,9 @@ public class PredicateInfoImpl implements PredicateInfo
 		{
 			if (concreteType.isPrimitive() && !valueClass.isPrimitive())
 			{
-				// This allows us to have setters that take primitives but
-				// getters
-				// that return objects.
+				/* This allows us to have setters that take primitives but
+				 getters
+				 that return objects. */
 				concreteType = valueClass;
 			}
 			else if (!concreteType.isPrimitive() && valueClass.isPrimitive())
@@ -259,9 +257,6 @@ public class PredicateInfoImpl implements PredicateInfo
 				concreteType = valueClass;
 			}
 		}
-		objectHandler = PredicateInfoImpl.getHandler(entityManager,
-				concreteType, predicate);
-		this.entityManager = entityManager;
 	}
 
 	public PredicateInfoImpl( PredicateInfoImpl pi )
@@ -269,11 +264,11 @@ public class PredicateInfoImpl implements PredicateInfo
 		this.actionType = pi.actionType;
 		this.concreteType = pi.concreteType;
 		this.methodName = pi.methodName;
-		this.objectHandler = pi.objectHandler;
+		//this.objectHandler = pi.objectHandler;
 		this.predicate = new EffectivePredicate( pi.predicate );
 		this.property = pi.property;
 		this.valueClass = pi.valueClass;
-		this.entityManager = pi.entityManager;
+		//this.entityManager = pi.entityManager;
 		this.annotations = new HashMap<Class<?>,Annotation>(pi.annotations);		
 	}
 
@@ -283,6 +278,16 @@ public class PredicateInfoImpl implements PredicateInfo
 		{
 			annotations.put( a.annotationType(), a);
 		}
+	}
+	
+	/**
+	 * Get the ObjectHandler for this predicate info.
+	 * @param entityManager the EntityManager to use for the object handler.
+	 * @return the ObjectHandler instance for this predicate info
+	 */
+	public ObjectHandler getObjectHandler(EntityManager entityManager)
+	{
+	    return PredicateInfoImpl.getHandler(entityManager, concreteType, predicate);
 	}
 	
 	private Property createResourceProperty( final Resource resource )
@@ -306,37 +311,38 @@ public class PredicateInfoImpl implements PredicateInfo
 	 *             if the return type of the method is a primitive and the
 	 *             predicate does not exist on the resource.
 	 */
-	public Object exec( final Method method, final Resource resource,
+	public Object exec( final EntityManagerImpl entityManager, final Method method, final Resource resource,
 			final Object[] args )
 	{
+	    final ObjectHandler objectHandler = getObjectHandler( entityManager );
 		final Property p = createResourceProperty(resource);
 		Object retval = null;
 		switch (actionType)
 		{
 			case GETTER:
-				retval = execRead(resource, p);
+				retval = execRead(objectHandler, resource, p);
 				break;
 			case SETTER:
 				if (method.getName().startsWith("set"))
 				{
-					retval = execSet(resource, p, args);
+					retval = execSet(entityManager, objectHandler, resource, p, args);
 				}
 				else
 				{
-					retval = execAdd(resource, p, args);
+					retval = execAdd(objectHandler, resource, p, args);
 				}
 				break;
 			case REMOVER:
-				retval = execRemove(resource, p, args);
+				retval = execRemove(entityManager, objectHandler, resource, p, args);
 				break;
 			case EXISTENTIAL:
-				retval = execHas(resource, p, args);
+				retval = execHas(objectHandler, resource, p, args);
 				break;
 		}
 		return retval;
 	}
 
-	private Object execAdd( final Resource resource, final Property p,
+	private Object execAdd(final ObjectHandler objectHandler, final Resource resource, final Property p,
 			final Object[] args )
 	{
 		final boolean empty = objectHandler.isEmpty(args[0]);
@@ -351,7 +357,7 @@ public class PredicateInfoImpl implements PredicateInfo
 		return null;
 	}
 
-	private Object execHas( final Resource resource, final Property p,
+	private Object execHas( final ObjectHandler objectHandler, final Resource resource, final Property p,
 			final Object[] args )
 	{
 		try
@@ -367,23 +373,23 @@ public class PredicateInfoImpl implements PredicateInfo
 		}
 	}
 
-	private Object execRead( final Resource resource, final Property p )
+	private Object execRead( final ObjectHandler objectHandler, final Resource resource, final Property p )
 	{
 		if (Iterator.class.isAssignableFrom(valueClass))
 		{
-			return execReadMultiple(resource, p);
+			return execReadMultiple(objectHandler, resource, p);
 		}
 		else if (Collection.class.isAssignableFrom(valueClass))
 		{
-			return execReadCollection(resource, p);
+			return execReadCollection(objectHandler, resource, p);
 		}
 		else
 		{
-			return execReadSingle(resource, p);
+			return execReadSingle(objectHandler, resource, p);
 		}
 	}
 
-	private Object execReadCollection( final Resource resource, final Property p )
+	private Object execReadCollection(final ObjectHandler objectHandler, final Resource resource, final Property p )
 	{
 		resource.getModel().enterCriticalSection(Lock.READ);
 		try
@@ -424,7 +430,7 @@ public class PredicateInfoImpl implements PredicateInfo
 		}
 	}
 
-	private ExtendedIterator<?> execReadMultiple( final Resource resource,
+	private ExtendedIterator<?> execReadMultiple( final ObjectHandler objectHandler, final Resource resource,
 			final Property p )
 	{
 		resource.getModel().enterCriticalSection(Lock.READ);
@@ -448,7 +454,7 @@ public class PredicateInfoImpl implements PredicateInfo
 		}
 	}
 
-	private Object execReadSingle( final Resource resource, final Property p )
+	private Object execReadSingle( final ObjectHandler objectHandler, final Resource resource, final Property p )
 	{
 		try
 		{
@@ -487,7 +493,7 @@ public class PredicateInfoImpl implements PredicateInfo
 		}
 	}
 
-	private Object execRemove( final Resource resource, final Property p,
+	private Object execRemove( final EntityManagerImpl entityManager, final ObjectHandler objectHandler, final Resource resource, final Property p,
 			final Object[] args )
 	{
 		try
@@ -520,7 +526,7 @@ public class PredicateInfoImpl implements PredicateInfo
 //
 //	}
 
-	private Object execSet( final Resource resource, final Property p,
+	private Object execSet( final EntityManagerImpl entityManager, final ObjectHandler objectHandler,  final Resource resource, final Property p,
 			final Object[] args)
 	{
 		try
@@ -531,7 +537,7 @@ public class PredicateInfoImpl implements PredicateInfo
 			resource.removeAll(p); // just in case it get set by another thread
 			// first.
 //			doRemove( resource, p );
-			return execAdd(resource, p, args);
+			return execAdd(objectHandler, resource, p, args);
 		}
 		finally
 		{
@@ -595,11 +601,7 @@ public class PredicateInfoImpl implements PredicateInfo
 		return predicate.namespace();
 	}
 
-	public ObjectHandler getObjectHandler()
-	{
-		return objectHandler;
-	}
-
+	
 	/*
 	 * (non-Javadoc)
 	 * 
