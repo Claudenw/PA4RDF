@@ -2,6 +2,7 @@ package org.xenei.jena.entities.impl.handlers;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -9,6 +10,8 @@ import org.apache.jena.rdf.model.RDFList;
 import org.apache.jena.rdf.model.RDFNode;
 import org.apache.jena.rdf.model.Resource;
 import org.apache.jena.rdf.model.Statement;
+import org.apache.jena.util.iterator.ExtendedIterator;
+import org.apache.jena.util.iterator.WrappedIterator;
 import org.xenei.jena.entities.EntityManager;
 import org.xenei.jena.entities.impl.ObjectHandler;
 
@@ -34,15 +37,20 @@ public class ListHandler extends AbstractObjectHandler
 		{
 			return null;
 		}
+		if (obj instanceof Iterator)
+		{
+			ExtendedIterator<RDFNode> iter = WrappedIterator.create((Iterator<?>)obj)
+					.mapWith( o -> innerHandler.createRDFNode(o) );
+			return entityManager.getModel().createList( iter );	
+		}
 		if (obj.getClass().isArray())
 		{
 			Object[] ary = (Object[]) obj;
-			return createRDFNode( Arrays.asList( ary ));			
+			return createRDFNode( Arrays.asList( ary ).iterator());			
 		}
 		else if (obj instanceof Collection)
 		{
-			Collection<?> col = (Collection<?>)obj;
-			return entityManager.getModel().createList(col.stream().map( o -> innerHandler.createRDFNode(o)).iterator());
+			return createRDFNode( ((Collection<?>)obj).iterator());
 		}
 		else if (obj instanceof RDFNode)
 		{

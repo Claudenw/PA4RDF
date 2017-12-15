@@ -46,6 +46,7 @@ import org.apache.jena.shared.Lock;
 import org.apache.jena.sparql.core.Var;
 import org.apache.jena.update.UpdateRequest;
 import org.apache.jena.util.iterator.ExtendedIterator;
+import org.apache.jena.util.iterator.WrappedIterator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xenei.jena.entities.EntityManager;
@@ -389,9 +390,14 @@ public class PredicateInfoImpl implements PredicateInfo
 
 	private Object execReadCollection(final ObjectHandler objectHandler, final Resource resource, final Property p )
 	{
+		if (RDFList.class.equals( this.concreteType))
+		{
+			return execReadSingle( objectHandler, resource, p );
+		}
 		resource.getModel().enterCriticalSection(Lock.READ);
 		try
 		{
+			
 			final NodeIterator iter = resource.getModel()
 					.listObjectsOfProperty(resource, p);
 
@@ -431,6 +437,12 @@ public class PredicateInfoImpl implements PredicateInfo
 	private ExtendedIterator<?> execReadMultiple( final ObjectHandler objectHandler, final Resource resource,
 			final Property p )
 	{
+		if (RDFList.class.equals( this.concreteType))
+		{
+			List<?> lst = (List<?>)execReadSingle( objectHandler, resource, p );
+			return WrappedIterator.create(lst.iterator());
+		}
+		
 		resource.getModel().enterCriticalSection(Lock.READ);
 		try
 		{
