@@ -239,24 +239,23 @@ public class EntityManagerImpl implements EntityManager
 	{
 		// check for same name
 		String defaultName = Quad.defaultGraphIRI.getURI();
-		String newModelName = StringUtils.defaultIfBlank(modelName.getURI(),
-				defaultName);
-		if (newModelName.equals(StringUtils
+		String modelNameStr = modelName.getURI();
+		if (modelNameStr.equals(StringUtils
 				.defaultIfBlank(getModelName().getURI(), defaultName)))
 		{
 			return this;
 		}
-		if (!defaultName.equals(newModelName)
-				&& !Quad.unionGraph.getURI().equals(newModelName))
+		if (!defaultName.equals(modelNameStr)
+				&& !Quad.unionGraph.getURI().equals(modelNameStr))
 		{
-			AskBuilder askBuilder = new AskBuilder().addGraph(newModelName,
+			AskBuilder askBuilder = new AskBuilder().addGraph(modelName,
 					new AskBuilder().addWhere("?s", "?p", "?o"));
 			if (!connection.queryAsk(askBuilder.build()))
 			{
-				connection.put(newModelName, ModelFactory.createDefaultModel());
+			    connection.load(modelNameStr, ModelFactory.createDefaultModel());
 			}
 		}
-		return new EntityManagerImpl(this, NodeFactory.createURI(newModelName));
+		return new EntityManagerImpl(this, modelName);
 	}
 
 	@Override
