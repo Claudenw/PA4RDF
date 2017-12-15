@@ -19,7 +19,7 @@ import org.apache.jena.datatypes.RDFDatatype;
 import org.apache.jena.rdf.model.Literal;
 import org.apache.jena.rdf.model.RDFNode;
 import org.apache.jena.rdf.model.ResourceFactory;
-
+import org.apache.jena.rdf.model.Statement;
 import org.apache.commons.lang3.StringUtils;
 import org.xenei.jena.entities.impl.ObjectHandler;
 
@@ -27,7 +27,7 @@ import org.xenei.jena.entities.impl.ObjectHandler;
  * An ObjectHandler that encodes objects as Literals and visa versa.
  * 
  */
-public class LiteralHandler implements ObjectHandler
+public class LiteralHandler extends AbstractObjectHandler
 {
 	private final RDFDatatype literalDatatype;
 
@@ -52,6 +52,10 @@ public class LiteralHandler implements ObjectHandler
 	@Override
 	public Literal createRDFNode( final Object obj )
 	{
+		if (obj == null)
+		{
+			return null;
+		}
 		final String lexicalForm = literalDatatype.unparse(obj);
 		return ResourceFactory.createTypedLiteral(lexicalForm, literalDatatype);
 	}
@@ -65,7 +69,7 @@ public class LiteralHandler implements ObjectHandler
 		}
 		return false;
 	}
-
+	
 	@Override
 	public int hashCode()
 	{
@@ -102,4 +106,6 @@ public class LiteralHandler implements ObjectHandler
 	{
 		return "LiteralHandler{" + literalDatatype + "}";
 	}
+	
+	
 }

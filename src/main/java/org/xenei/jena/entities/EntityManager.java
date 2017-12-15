@@ -21,6 +21,7 @@ import org.apache.jena.graph.Node;
 import org.apache.jena.query.Query;
 import org.apache.jena.query.QueryExecution;
 import org.apache.jena.rdf.model.AnonId;
+import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.Resource;
 import org.apache.jena.rdfconnection.RDFConnection;
 import org.apache.jena.update.UpdateRequest;
@@ -205,7 +206,7 @@ public interface EntityManager {
 	 *            The object to copy data to.
 	 * @return The target object for chaining.
 	 */
-	public Object update(Object source, Object target);
+	public <T> T update(Object source, T target);
 	
 	/**
 	 * Reset the entity manager to its initial state.
@@ -322,6 +323,15 @@ public interface EntityManager {
 	 * @return The RDFConnection that this entity manager is using. 
 	 */
 	public RDFConnection getConnection();
+	
+	/**
+	 * Get the internal model.
+	 * 
+	 * <b>INTERNAL USE ONLY</b>
+	 * @return the model.
+	 */
+	public Model getModel();
+	
 	/**
 	 * The listener interface.
 	 *
@@ -333,6 +343,5 @@ public interface EntityManager {
 		 */
 		void onParseClass( SubjectInfo info );
 	}
-	
 	
 }

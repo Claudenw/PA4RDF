@@ -36,6 +36,7 @@ import org.apache.jena.datatypes.RDFDatatype;
 import org.apache.jena.datatypes.TypeMapper;
 import org.apache.jena.rdf.model.NodeIterator;
 import org.apache.jena.rdf.model.Property;
+import org.apache.jena.rdf.model.RDFList;
 import org.apache.jena.rdf.model.RDFNode;
 import org.apache.jena.rdf.model.Resource;
 import org.apache.jena.rdf.model.ResourceFactory;
@@ -52,6 +53,7 @@ import org.xenei.jena.entities.PredicateInfo;
 import org.xenei.jena.entities.annotations.Subject;
 import org.xenei.jena.entities.annotations.URI;
 import org.xenei.jena.entities.impl.handlers.EntityHandler;
+import org.xenei.jena.entities.impl.handlers.ListHandler;
 import org.xenei.jena.entities.impl.handlers.LiteralHandler;
 import org.xenei.jena.entities.impl.handlers.ResourceHandler;
 import org.xenei.jena.entities.impl.handlers.UriHandler;
@@ -168,6 +170,23 @@ public class PredicateInfoImpl implements PredicateInfo
 			{
 				return new EntityHandler(entityManager, returnType);
 			}
+			if (RDFList.class.isAssignableFrom(returnType))
+			{
+				Class<?> contained;
+				ObjectHandler innerHandler;
+				if (pred != null)
+				{
+					contained = pred.contained();
+					if (contained == null || contained.equals( RDFList.class ))
+					{
+						throw new IllegalArgumentException( "contained value must be set and may not be RDFList");
+					}
+					innerHandler = getHandler( entityManager, contained, null );
+				} else {
+					innerHandler = new ResourceHandler();
+				}
+				return new ListHandler( entityManager, innerHandler);
+			}
 			if (RDFNode.class.isAssignableFrom(returnType))
 			{
 				return new ResourceHandler();
@@ -245,11 +264,9 @@ public class PredicateInfoImpl implements PredicateInfo
 		this.actionType = pi.actionType;
 		this.concreteType = pi.concreteType;
 		this.methodName = pi.methodName;
-		//this.objectHandler = pi.objectHandler;
 		this.predicate = new EffectivePredicate( pi.predicate );
 		this.property = pi.property;
 		this.valueClass = pi.valueClass;
-		//this.entityManager = pi.entityManager;
 		this.annotations = new HashMap<Class<?>,Annotation>(pi.annotations);		
 	}
 
@@ -479,17 +496,15 @@ public class PredicateInfoImpl implements PredicateInfo
 	{
 		try
 		{
-
 			resource.getModel().enterCriticalSection(Lock.WRITE);
+			RDFNode value = args.length==0?null:objectHandler.createRDFNode( args[0]);
+			for (Statement stmt : resource.listProperties(p).toList())
+			{
+				objectHandler.removeObject( stmt, value );
+			}
 			if (valueClass == null)
 			{
 				resource.removeAll(p);
-				doRemove( entityManager, resource, p );
-			}
-			else
-			{
-				final RDFNode obj = objectHandler.createRDFNode(args[0]); 
-				resource.getModel().remove(resource, p, obj );				
 			}
 			return null;
 		}
@@ -499,30 +514,28 @@ public class PredicateInfoImpl implements PredicateInfo
 		}
 	}
 
-	private void doRemove( EntityManagerImpl entityManager, Resource r, Property p )
-	{
-		final Var v = Var.alloc( "o" );
-		entityManager.getUpdateHandler().prepare( new UpdateBuilder()
-				.addDelete( r, p, v )
-				.addWhere( r, p, v ).build());
-
-	}
-
 	private Object execSet( final EntityManagerImpl entityManager, final ObjectHandler objectHandler,  final Resource resource, final Property p,
 			final Object[] args)
 	{
+		final List<Statement> stmtLst = resource.listProperties(p).toList();
 		try
-		{
+		{			
 			resource.getModel().enterCriticalSection(Lock.WRITE);
+			RDFNode value = objectHandler.createRDFNode( args[0] );
+			
+			for( Statement stmt : stmtLst )
+			{
+				objectHandler.removeObject( stmt, value);
+			}
 			resource.removeAll(p); // just in case it get set by another thread
 			// first.
-			doRemove( entityManager, resource, p );
 			return execAdd(objectHandler, resource, p, args);
 		}
 		finally
 		{
-			final List<Statement> l = resource.listProperties(p).toList();
-			if (l.size() > 1)
+			resource.getModel().leaveCriticalSection();
+						
+			if (stmtLst.size() > 1)
 			{
 				final Logger log = LoggerFactory
 						.getLogger(PredicateInfoImpl.class);
@@ -534,14 +547,13 @@ public class PredicateInfoImpl implements PredicateInfo
 				catch (final Exception e)
 				{
 					log.error("Error:", e);
-					for (final Statement s : l)
+					for (final Statement s : stmtLst)
 					{
 						log.error("Statement: {} ", s.asTriple());
 					}
 				}
 
-			}
-			resource.getModel().leaveCriticalSection();
+			}			
 		}
 	}
 
@@ -581,6 +593,7 @@ public class PredicateInfoImpl implements PredicateInfo
 		return predicate.namespace();
 	}
 
+	
 	/*
 	 * (non-Javadoc)
 	 * 

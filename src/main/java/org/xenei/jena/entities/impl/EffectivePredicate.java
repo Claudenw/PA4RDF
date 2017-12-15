@@ -41,6 +41,7 @@ public class EffectivePredicate
 	String namespace = "";
 	String literalType = "";
 	Class<?> type = null;
+	Class<?> contained = RDFNode.class;
 	boolean emptyIsNull = true;
 	boolean impl = false;
 	List<Method> postExec = null;
@@ -201,15 +202,8 @@ public class EffectivePredicate
 					: predicate.literalType();
 			type = RDFNode.class.equals(predicate.type()) ? type : predicate
 					.type();
+			contained = contained==null?predicate.contained():contained;
 			impl |= predicate.impl();
-//			if (predicate.postExec != null)
-//			{
-//				for (Method m : predicate.postExec)
-//				{
-//					addPostExec( m );
-//				}
-//			}
-			
 		}
 		return this;
 	}
@@ -227,7 +221,7 @@ public class EffectivePredicate
 					: predicate.literalType();
 			type = RDFNode.class.equals(predicate.type()) ? type : predicate
 					.type();
-			// type = type!=null ? type : predicate.type();
+			contained = predicate.contained();
 			emptyIsNull = predicate.emptyIsNull();
 			impl |= predicate.impl();
 		}
@@ -265,9 +259,15 @@ public class EffectivePredicate
 		return type == null ? RDFNode.class : type;
 	}
 
+	public Class<?> contained()
+	{
+		return contained;// == null ? RDFNode.class : type;
+	}
+	
 	public boolean upcase()
 	{
 		return upcase;
 	}
-
+	
+	
 }

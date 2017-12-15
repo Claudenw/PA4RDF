@@ -15,6 +15,7 @@
 package org.xenei.jena.entities.impl;
 
 import org.apache.jena.rdf.model.RDFNode;
+import org.apache.jena.rdf.model.Statement;
 
 /**
  * The interface for the internal ObjectHandler.
@@ -55,5 +56,14 @@ public interface ObjectHandler
 	 * @return The Object from the unparsed RDFNode.
 	 */
 	Object parseObject( RDFNode node );
+	
+	/**
+	 * Perform any actions to remove the node.
+	 * 
+	 * @param stmt
+	 *            The statement to evaluate
+	 * @param value the RDFNode value to remove.        
+	 */
+	void removeObject( Statement stmt, RDFNode value );
 
 }

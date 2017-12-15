@@ -15,7 +15,7 @@
 package org.xenei.jena.entities.impl.handlers;
 
 import org.apache.jena.rdf.model.RDFNode;
-
+import org.apache.jena.rdf.model.Statement;
 import org.xenei.jena.entities.EntityManager;
 import org.xenei.jena.entities.MissingAnnotation;
 import org.xenei.jena.entities.ResourceWrapper;
@@ -26,7 +26,7 @@ import org.xenei.jena.entities.impl.ObjectHandler;
  * RDFResources and visa versa.
  * 
  */
-public class EntityHandler implements ObjectHandler
+public class EntityHandler extends  AbstractObjectHandler
 {
 	private final Class<?> valueClass;
 	private final EntityManager entityManager;
@@ -52,7 +52,7 @@ public class EntityHandler implements ObjectHandler
 	@Override
 	public RDFNode createRDFNode( final Object obj )
 	{
-		return ((ResourceWrapper) obj).getResource();
+		return obj==null?null:((ResourceWrapper) obj).getResource();
 	}
 
 	@Override
@@ -66,7 +66,7 @@ public class EntityHandler implements ObjectHandler
 	{
 		return toString().hashCode();
 	}
-
+	
 	@Override
 	public boolean isEmpty( final Object obj )
 	{
@@ -94,10 +94,12 @@ public class EntityHandler implements ObjectHandler
 			throw new RuntimeException(e);
 		}
 	}
-
+	
 	@Override
 	public String toString()
 	{
 		return "EntityHandler";
 	}
+
+	
 }

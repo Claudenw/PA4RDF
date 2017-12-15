@@ -29,6 +29,7 @@ public class VoidHandlerTest implements HandlerTestInterface
 	}
 	
 	@Override
+	@Test
 	public void testCreateRDFNode_Null() {
 		final RDFNode n = handler.createRDFNode( null );
 		Assert.assertNull(n);

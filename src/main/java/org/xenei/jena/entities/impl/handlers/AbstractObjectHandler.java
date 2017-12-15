@@ -16,62 +16,27 @@ package org.xenei.jena.entities.impl.handlers;
 
 import org.apache.jena.rdf.model.RDFNode;
 import org.apache.jena.rdf.model.Statement;
+import org.xenei.jena.entities.EntityManager;
+import org.xenei.jena.entities.MissingAnnotation;
+import org.xenei.jena.entities.ResourceWrapper;
 import org.xenei.jena.entities.impl.ObjectHandler;
 
 /**
- * An ObjectHandler that always returns null.
+ * An Abstract ObjectHandler that creates provided default implementations.
+ * 
  */
-public class VoidHandler extends AbstractObjectHandler
-{
-	/**
-	 * Convert the object to null
-	 * 
-	 * @param obj
-	 *            The object to convert
-	 * @return null
-	 */
-	@Override
-	public RDFNode createRDFNode( final Object obj )
-	{
-		return null;
-	}
-
-	@Override
-	public boolean equals( final Object o )
-	{
-		return o instanceof VoidHandler;
-	}
-
-	@Override
-	public int hashCode()
-	{
-		return toString().hashCode();
-	}
-
-	@Override
-	public boolean isEmpty( final Object obj )
-	{
-		return true;
-	}
+public abstract class AbstractObjectHandler implements ObjectHandler
+{	
 
 	/**
-	 * convert the node to a null
-	 * 
-	 * @param node
-	 *            The node to convert.
-	 * @return null.
+	 * Default implementation of removeObject.
 	 */
 	@Override
-	public Object parseObject( final RDFNode node )
+	public void removeObject(Statement stmt, RDFNode value)
 	{
-		return null;
+		if (value == null || stmt.getObject().equals(value))
+		{
+			stmt.getSubject().getModel().remove( stmt );
+		}
 	}
-
-	@Override
-	public String toString()
-	{
-		return "VoidHandler";
-	}
-
-	
 }
