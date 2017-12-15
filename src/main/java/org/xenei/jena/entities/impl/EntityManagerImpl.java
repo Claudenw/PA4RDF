@@ -45,6 +45,7 @@ import org.apache.jena.datatypes.TypeMapper;
 import org.apache.jena.enhanced.EnhGraph;
 import org.apache.jena.graph.Node;
 import org.apache.jena.graph.NodeFactory;
+import org.apache.jena.graph.TransactionHandler;
 import org.apache.jena.query.Dataset;
 import org.apache.jena.query.DatasetFactory;
 import org.apache.jena.query.Query;
@@ -1083,16 +1084,16 @@ public class EntityManagerImpl implements EntityManager
 		{
 			synchronized (connection)
 			{
-				connection.begin(ReadWrite.WRITE);
+			    TransactionHolder th = new TransactionHolder( connection, ReadWrite.WRITE);
 				try
 				{
 					connection.update(update);
-					connection.commit();
+					th.commit();
 				} catch (final RuntimeException e)
 				{
-					connection.abort();
+					th.abort();
 					throw e;
-				}
+				} 
 			}
 		}
 

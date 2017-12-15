@@ -47,6 +47,7 @@ import org.apache.jena.util.iterator.ExtendedIterator;
 import org.apache.jena.util.iterator.IteratorIterator;
 import org.apache.jena.util.iterator.WrappedIterator;
 import org.xenei.jena.entities.impl.EntityManagerImpl;
+import org.xenei.jena.entities.impl.TransactionHolder;
 
 /**
  * A graph that caches remote data.
@@ -520,26 +521,26 @@ public class CachingGraph extends GraphBase implements Graph {
 				r = model.createResource(subject.getURI());
 				sb.addWhere(subject, P, O);
 			}
+			TransactionHolder txn = new TransactionHolder( entityManager.getConnection(), ReadWrite.READ);
 			try (QueryExecution qe = entityManager.execute(sb.build()))
 			{
-			    entityManager.getConnection().begin( ReadWrite.READ );
 			    Iterator<QuerySolution> rs = qe.execSelect();
 			
-			if (subject.isBlank()) {
-				rs = WrappedIterator.create(rs).filterKeep(
-						qs -> qs.getResource("s").getId().getBlankNodeId().equals(subject.getBlankNodeId()));
-			}
-			while (rs.hasNext()) {
-				QuerySolution qs = rs.next();
-				model.add(r, qs.getResource("p").as(Property.class), qs.get("o"));
-				if (!subject.isBlank() && qs.get("o").isAnon()) {
-					Triple t = new Triple(subject, qs.getResource("p").asNode(), qs.get("o").asNode());
-					queue.add(t);
-				}
-			}
+    			if (subject.isBlank()) {
+    				rs = WrappedIterator.create(rs).filterKeep(
+    						qs -> qs.getResource("s").getId().getBlankNodeId().equals(subject.getBlankNodeId()));
+    			}
+    			while (rs.hasNext()) {
+    				QuerySolution qs = rs.next();
+    				model.add(r, qs.getResource("p").as(Property.class), qs.get("o"));
+    				if (!subject.isBlank() && qs.get("o").isAnon()) {
+    					Triple t = new Triple(subject, qs.getResource("p").asNode(), qs.get("o").asNode());
+    					queue.add(t);
+    				}
+    			}
 			} finally {
-                entityManager.getConnection().end();
-            }
+			    txn.end();
+			}
 			subjectTable = new SubjectTableImpl(subject, model);
 			map.put(subject, new SoftReference<SubjectTable>(subjectTable));
 			if (!queue.isEmpty()) {
@@ -582,7 +583,8 @@ public class CachingGraph extends GraphBase implements Graph {
 				}
 				t2 = triples.firstElement();
 				sb.addWhere(t2.getSubject(), p, S);
-
+				TransactionHolder txn = new TransactionHolder( entityManager.getConnection(), ReadWrite.READ);
+				try {
 				ResultSet rs = entityManager.execute(sb.build()).execSelect();
 				while (rs.hasNext()) {
 					QuerySolution qs = rs.next();
@@ -595,6 +597,10 @@ public class CachingGraph extends GraphBase implements Graph {
 						process(triples);
 						triples.pop();
 					}
+				}
+				}
+				finally {
+				    txn.end();
 				}
 			}
 

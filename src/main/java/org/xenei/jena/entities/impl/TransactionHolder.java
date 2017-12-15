@@ -1,0 +1,41 @@
+package org.xenei.jena.entities.impl;
+
+import org.apache.jena.query.ReadWrite;
+import org.apache.jena.sparql.core.Transactional;
+
+public class TransactionHolder  {
+    private final Transactional txn;
+    private final boolean started;
+    private final ReadWrite rw;
+    
+    public TransactionHolder( Transactional txn, ReadWrite rw )
+    {
+        this.txn = txn;
+        this.rw = rw;
+        started = ! txn.isInTransaction();
+        if (started)
+        {
+            txn.begin( rw );
+        }
+    }
+    
+    public void commit() {
+        if (started) {
+            txn.commit();
+        }
+    }
+
+    public void abort() {
+        if (started)
+        {
+            txn.abort();
+        }
+    }
+
+   public void end() {
+        if (started) {
+            txn.end();
+        }
+   }
+
+}
