@@ -27,7 +27,9 @@ import org.apache.jena.graph.Triple;
 import org.apache.jena.graph.impl.AllCapabilities;
 import org.apache.jena.graph.impl.GraphBase;
 import org.apache.jena.mem.TrackingTripleIterator;
+import org.apache.jena.query.QueryExecution;
 import org.apache.jena.query.QuerySolution;
+import org.apache.jena.query.ReadWrite;
 import org.apache.jena.query.ResultSet;
 import org.apache.jena.rdf.model.AnonId;
 import org.apache.jena.rdf.model.Model;
@@ -518,7 +520,11 @@ public class CachingGraph extends GraphBase implements Graph {
 				r = model.createResource(subject.getURI());
 				sb.addWhere(subject, P, O);
 			}
-			Iterator<QuerySolution> rs = entityManager.execute(sb.build()).execSelect();
+			try (QueryExecution qe = entityManager.execute(sb.build()))
+			{
+			    entityManager.getConnection().begin( ReadWrite.READ );
+			    Iterator<QuerySolution> rs = qe.execSelect();
+			
 			if (subject.isBlank()) {
 				rs = WrappedIterator.create(rs).filterKeep(
 						qs -> qs.getResource("s").getId().getBlankNodeId().equals(subject.getBlankNodeId()));
@@ -531,7 +537,9 @@ public class CachingGraph extends GraphBase implements Graph {
 					queue.add(t);
 				}
 			}
-
+			} finally {
+                entityManager.getConnection().end();
+            }
 			subjectTable = new SubjectTableImpl(subject, model);
 			map.put(subject, new SoftReference<SubjectTable>(subjectTable));
 			if (!queue.isEmpty()) {
