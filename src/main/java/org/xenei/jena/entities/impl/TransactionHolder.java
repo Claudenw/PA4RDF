@@ -19,6 +19,10 @@ public class TransactionHolder  {
         }
     }
     
+    public boolean ownsTranaction() {
+    	return started;
+    }
+    
     public void commit() {
         if (started) {
             txn.commit();

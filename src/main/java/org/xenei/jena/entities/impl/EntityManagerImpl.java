@@ -76,9 +76,6 @@ import org.xenei.jena.entities.cache.CachingGraph;
 import org.xenei.jena.entities.cache.CachingModel;
 import org.xenei.jena.entities.cache.ModelInterceptor.Intercepted;
 import org.xenei.jena.entities.cache.ResourceInterceptor;
-import org.xenei.jena.entities.cache.UpdateCached;
-import org.xenei.jena.entities.cache.UpdateDirect;
-import org.xenei.jena.entities.cache.UpdateHandler;
 import org.xenei.jena.entities.impl.datatype.CharDatatype;
 import org.xenei.jena.entities.impl.datatype.CharacterDatatype;
 import org.xenei.jena.entities.impl.datatype.LongDatatype;
@@ -99,11 +96,9 @@ public class EntityManagerImpl implements EntityManager
 
 	private final List<WeakReference<Listener>> listeners;
 
-	final RDFConnection connection;
+	private final RDFConnection connection;
 
 	protected final CachingModel cachingModel;
-
-	private final UpdateHandler updateHandler;
 
 	private final Node modelName;
 
@@ -142,19 +137,12 @@ public class EntityManagerImpl implements EntityManager
 	/**
 	 * Constructor.
 	 */
-	public EntityManagerImpl(RDFConnection connection, boolean writeThrough)
+	public EntityManagerImpl(RDFConnection connection)
 	{
 		this.modelName = Quad.defaultGraphIRI;
 		this.connection = connection;
 		this.cachingModel = CachingModel.makeInstance( this );
 
-		if (writeThrough)
-		{
-			this.updateHandler = new UpdateDirect(connection);
-		} else
-		{
-			this.updateHandler = new UpdateCached(connection);
-		}
 		listeners = Collections
 				.synchronizedList(new ArrayList<WeakReference<Listener>>());
 		classInfo = new HashMap<Class<?>, SubjectInfo>()
@@ -220,7 +208,6 @@ public class EntityManagerImpl implements EntityManager
 		this.modelName = modelName == null ? Quad.defaultGraphIRI : modelName;
 		this.connection = base.connection;
 		this.cachingModel = CachingModel.makeInstance(this);
-		this.updateHandler = base.updateHandler;
 		this.listeners = base.listeners;
 		this.classInfo = base.classInfo;
 	}
@@ -269,7 +256,7 @@ public class EntityManagerImpl implements EntityManager
 	@Override
 	public void reset()
 	{
-		updateHandler.reset();
+		cachingModel.clear();
 		classInfo.clear();
 		registerTypes();
 		try
@@ -894,22 +881,10 @@ public class EntityManagerImpl implements EntityManager
 		}
 	}
 
-	/**
-	 * Get the Update Handler.
-	 * 
-	 * @return the update handler.
-	 */
-	public UpdateHandler getUpdateHandler()
-	{
-		return updateHandler;
-	}
-
 	@Override
 	public void sync()
 	{
-		updateHandler.execute();
 		cachingModel.sync();
-//cachingGraph.sync();
 	}
 	
 	@Override

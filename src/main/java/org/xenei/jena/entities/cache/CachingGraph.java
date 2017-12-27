@@ -11,6 +11,8 @@ import java.util.NoSuchElementException;
 import java.util.Queue;
 import java.util.Set;
 import java.util.Stack;
+import java.util.function.Supplier;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.jena.arq.querybuilder.ExprFactory;
@@ -26,6 +28,7 @@ import org.apache.jena.graph.TransactionHandler;
 import org.apache.jena.graph.Triple;
 import org.apache.jena.graph.impl.AllCapabilities;
 import org.apache.jena.graph.impl.GraphBase;
+import org.apache.jena.graph.impl.TransactionHandlerBase;
 import org.apache.jena.mem.TrackingTripleIterator;
 import org.apache.jena.query.ARQ;
 import org.apache.jena.query.QueryExecution;
@@ -38,15 +41,18 @@ import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.rdf.model.Property;
 import org.apache.jena.rdf.model.Resource;
 import org.apache.jena.shared.AddDeniedException;
+import org.apache.jena.shared.Command;
 import org.apache.jena.shared.DeleteDeniedException;
 import org.apache.jena.shared.PrefixMapping;
 import org.apache.jena.sparql.core.Quad;
 import org.apache.jena.sparql.core.Var;
+import org.apache.jena.sparql.graph.GraphFactory;
 import org.apache.jena.sparql.path.Path;
 import org.apache.jena.sparql.path.PathFactory;
 import org.apache.jena.util.iterator.ExtendedIterator;
 import org.apache.jena.util.iterator.IteratorIterator;
 import org.apache.jena.util.iterator.WrappedIterator;
+import org.xenei.jena.entities.EntityManager;
 import org.xenei.jena.entities.impl.EntityManagerImpl;
 import org.xenei.jena.entities.impl.TransactionHolder;
 
@@ -66,6 +72,8 @@ public class CachingGraph extends GraphBase implements Graph {
 	private static final Var S = Var.alloc("s");
 	private static final Var P = Var.alloc("p");
 	private static final Var O = Var.alloc("o");
+	private final UpdateByDiff updater;
+	private final TxnHandler txnHandler;
 	
 	static {
 		ARQ.getContext().set(ARQ.inputGraphBNodeLabels, true);
@@ -81,7 +89,15 @@ public class CachingGraph extends GraphBase implements Graph {
 		this.entityManager = entityManager;
 		this.graphNode = entityManager.getModelName();
 		this.graphWriteNode = (graphNode.equals(Quad.unionGraph)) ? Quad.defaultGraphIRI : graphNode;
-		map = Collections.synchronizedMap(new HashMap<Node, SoftReference<SubjectTable>>());
+		this.map = Collections.synchronizedMap(new HashMap<Node, SoftReference<SubjectTable>>());
+		this.updater = new UpdateByDiff();
+		this.txnHandler = new TxnHandler();
+	}
+
+	@Override
+	public TransactionHandler getTransactionHandler()
+	{
+		return txnHandler;
 	}
 
 	@Override
@@ -105,6 +121,12 @@ public class CachingGraph extends GraphBase implements Graph {
 	public void reset()
 	{
 		map.clear();
+		updater.clear();
+	}
+	
+	public void clear()
+	{
+		super.clear();
 	}
 
 	/**
@@ -112,21 +134,36 @@ public class CachingGraph extends GraphBase implements Graph {
 	 * every subject is read from the remote graph. Local changes are discarded.
 	 */
 	public void sync() {
-		HashSet<Node> keys = new HashSet<Node>();
-		synchronized (map) {
-			keys.addAll(map.keySet());
-		}
-		for (final Node subject : keys) {
-			final SoftReference<SubjectTable> sr = map.get(subject);
-			SubjectTable st = sr==null?null:sr.get();
-			if (st == null) {
-				map.remove(subject);
-			} else {
-				if (st.getSubject().equals(subject)) {
-					new TableLoader(subject);
+		if (updater.sync( entityManager, graphWriteNode ))
+		{
+				
+		Runnable r = new Runnable() {
+
+			@Override
+			public void run() {
+				HashSet<Node> keys = new HashSet<Node>();
+				synchronized (map) {
+					keys.addAll(map.keySet());
+				}	
+				for (final Node subject : keys) {
+					final SoftReference<SubjectTable> sr = map.get(subject);
+					SubjectTable st = sr==null?null:sr.get();
+					if (st == null) {
+						map.remove(subject);
+					} else {
+						if (st.getSubject().equals(subject)) {
+							new TableLoader(subject);
+						}
+					}
 				}
-			}
-		}
+				
+			}};
+		
+		 Thread t = new Thread(r, "sync - "+System.currentTimeMillis());        
+        
+         t.start();
+	}
+		
 	}
 
 	/**
@@ -180,6 +217,10 @@ public class CachingGraph extends GraphBase implements Graph {
 
 	@Override
 	public void performAdd(Triple t) {
+		if (!t.isConcrete())
+		{
+			return;
+		}
 		final SoftReference<SubjectTable> tblRef = map.get(t.getSubject());
 		SubjectTable tbl = null;
 		if (tblRef != null) {
@@ -188,12 +229,16 @@ public class CachingGraph extends GraphBase implements Graph {
 		if (tbl == null) {
 			tbl = new TableLoader(t.getSubject()).getTable();
 		}
+		updater.register( tbl );
 		tbl.addValue(t.getPredicate(), t.getObject());
-		entityManager.getUpdateHandler().prepare(new UpdateBuilder().addInsert(graphWriteNode, t).build());
 	}
 
 	@Override
 	public void performDelete(Triple t) {
+		if (!t.isConcrete())
+		{
+			return;
+		}
 		final SoftReference<SubjectTable> tblRef = map.get(t.getSubject());
 		SubjectTable tbl = null;
 		if (tblRef != null) {
@@ -202,8 +247,8 @@ public class CachingGraph extends GraphBase implements Graph {
 		if (tbl == null) {
 			tbl = new TableLoader(t.getSubject()).getTable();
 		}
+		updater.register( tbl );
 		tbl.removeValue(t.getPredicate(), t.getObject());
-		entityManager.getUpdateHandler().prepare(new UpdateBuilder().addDelete(graphWriteNode, t).build());
 		if (tbl.isEmpty()) {
 			map.remove(t.getSubject());
 		}
@@ -233,7 +278,7 @@ public class CachingGraph extends GraphBase implements Graph {
 			this.subject = subject;
 			this.subGraph = model.getGraph();
 		}
-
+		
 		@Override
 		public Node getSubject() {
 			return subject;
@@ -293,7 +338,22 @@ public class CachingGraph extends GraphBase implements Graph {
 
 		@Override
 		public Graph asGraph() {
-			return new WrappedGraph(subGraph);
+			return subGraph;
+		}
+		
+		@Override
+		public Graph snapshot() {
+			Graph g = GraphFactory.createDefaultGraph();
+			subGraph.find().forEachRemaining( t -> g.add(t));
+			return g;
+		}
+		
+
+		@Override
+		public void reset(Graph graph)
+		{
+			subGraph.clear();
+			graph.find().forEachRemaining( t-> subGraph.add(t) );
 		}
 
 		@Override
@@ -320,129 +380,7 @@ public class CachingGraph extends GraphBase implements Graph {
 		}
 	}
 
-	private class WrappedGraph implements Graph {
-		private Graph subGraph;
-
-		private WrappedGraph(Graph subGraph) {
-			this.subGraph = subGraph;
-		}
-
-		@Override
-		public boolean dependsOn(Graph other) {
-			return subGraph.dependsOn(other);
-		}
-
-		@Override
-		public TransactionHandler getTransactionHandler() {
-			return subGraph.getTransactionHandler();
-		}
-
-		@Override
-		public Capabilities getCapabilities() {
-			return subGraph.getCapabilities();
-		}
-
-		@Override
-		public GraphStatisticsHandler getStatisticsHandler() {
-			return subGraph.getStatisticsHandler();
-		}
-
-		@Override
-		public PrefixMapping getPrefixMapping() {
-			return subGraph.getPrefixMapping();
-		}
-
-		@Override
-		public void add(Triple t) throws AddDeniedException {
-			subGraph.add(t);
-		}
-
-		@Override
-		public void delete(Triple t) throws DeleteDeniedException {
-			subGraph.delete(t);
-		}
-
-		@Override
-		public ExtendedIterator<Triple> find(Triple m) {
-			return new DeletingTripleIterator(subGraph.find(m));
-		}
-
-		@Override
-		public ExtendedIterator<Triple> find(Node s, Node p, Node o) {
-			return new DeletingTripleIterator(subGraph.find(s, p, o));
-		}
-
-		@Override
-		public ExtendedIterator<Triple> find() {
-			return new DeletingTripleIterator(subGraph.find());
-		}
-
-		@Override
-		public boolean isIsomorphicWith(Graph g) {
-			return subGraph.isIsomorphicWith(g);
-		}
-
-		@Override
-		public boolean contains(Node s, Node p, Node o) {
-			return subGraph.contains(s, p, o);
-		}
-
-		@Override
-		public boolean contains(Triple t) {
-			return subGraph.contains(t);
-		}
-
-		@Override
-		public void clear() {
-			subGraph.clear();
-		}
-
-		@Override
-		public void remove(Node s, Node p, Node o) {
-			subGraph.remove(s, p, o);
-		}
-
-		@Override
-		public void close() {
-			subGraph.close();
-		}
-
-		@Override
-		public boolean isEmpty() {
-			return subGraph.isEmpty();
-		}
-
-		@Override
-		public int size() {
-			return subGraph.size();
-		}
-
-		@Override
-		public boolean isClosed() {
-			return subGraph.isClosed();
-		}
-
-		@Override
-		public GraphEventManager getEventManager() {
-			return subGraph.getEventManager();
-		}
-
-	}
-
-	private class DeletingTripleIterator extends TrackingTripleIterator {
-
-		private DeletingTripleIterator(Iterator<Triple> it) {
-			super(it);
-		}
-
-		@Override
-		public void remove() {
-			super.remove();
-			CachingGraph.this.getEventManager().notifyDeleteTriple(CachingGraph.this, current);
-			entityManager.getUpdateHandler().prepare(new UpdateBuilder().addDelete(graphWriteNode, current).build());
-		}
-	}
-
+	
 	private class BlockIterator implements Iterator<SubjectTable> {
 
 		private ResultSet rs;
@@ -614,5 +552,32 @@ public class CachingGraph extends GraphBase implements Graph {
 			}
 
 		}
+	}
+	
+	private class TxnHandler extends TransactionHandlerBase {
+
+		@Override
+		public boolean transactionsSupported()
+		{
+			return true;
+		}
+
+		@Override
+		public void begin()
+		{
+		}
+
+		@Override
+		public void abort()
+		{
+			updater.rollback();
+		}
+
+		@Override
+		public void commit()
+		{
+			sync();
+		}
+		
 	}
 }

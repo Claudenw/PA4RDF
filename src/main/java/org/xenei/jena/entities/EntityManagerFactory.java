@@ -35,40 +35,19 @@ public class EntityManagerFactory
 		return create( DatasetFactory.create());
 	}
 
-	public static EntityManager create(boolean writeThrough)
-	{
-		return create( DatasetFactory.create(), true);
-	}
-
 	public static EntityManager create( Model model)
 	{
 		return create( DatasetFactory.create( model ));
 	}
-	
-	public static EntityManager create( Model model, boolean writeThrough)
-	{
-		return create( DatasetFactory.create( model ), writeThrough );
-	}
 
 	public static EntityManager create( Dataset dataset)
 	{
-		return create( RDFConnectionFactory.connect( dataset), true);
-	}
-
-	public static EntityManager create( Dataset dataset, boolean writeThrough)
-	{
-		return EntityManagerFactory.create( RDFConnectionFactory.connect( dataset), writeThrough);
+		return create( RDFConnectionFactory.connect( dataset));
 	}
 
 	public static EntityManager create( RDFConnection connection)
 	{
-		return EntityManagerFactory.create( connection, true);
+		return new EntityManagerImpl( connection);
 	}
-	
-	public static EntityManager create( RDFConnection connection, boolean writeThrough)
-	{
-		return new EntityManagerImpl( connection, writeThrough);
-	}
-
 	
 }

@@ -77,6 +77,17 @@ public interface SubjectTable {
 	public Graph asGraph();
 	
 	/**
+	 * @return A new graph with the contents of this graph
+	 */
+	public Graph snapshot();
+	
+	/**
+	 * Reset the contents of this table to the specified graph
+	 * @param graph the graph to copy contents from.
+	 */
+	public void reset(Graph graph);
+	
+	/**
 	 * Return true if the predicate and property exist in the table.
 	 * Either value may be null for wild card.
 	 * @param predicate the predicate to locate

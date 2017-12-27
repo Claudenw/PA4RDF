@@ -34,6 +34,7 @@ public class ModelInterceptor implements MethodInterceptor
 	
 	private static final Method SYNC;
 	private static final Method ADOPT;
+	private static final Method CLEAR;
 	
 	static {
 		
@@ -41,6 +42,7 @@ public class ModelInterceptor implements MethodInterceptor
 		{
 			SYNC = CachingModel.class.getMethod("sync");
 			ADOPT = CachingModel.class.getMethod( "adopt", Resource.class);
+			CLEAR = CachingModel.class.getMethod("clear");
 		} catch (NoSuchMethodException | SecurityException e)
 		{
 			throw new IllegalStateException( e );
@@ -66,12 +68,17 @@ public class ModelInterceptor implements MethodInterceptor
 	public Object intercept(Object obj, Method method, Object[] args,
 			MethodProxy proxy) throws Throwable
 	{
+		if (CLEAR.equals(method))
+		{
+			graph.clear();
+			return null;
+		}
 		
 		if (SYNC.equals( method ))
 		{
 			graph.sync();
 			return null;
-		}
+		} 
 		
 		if (ADOPT.equals( method ))
 		{
@@ -92,7 +99,7 @@ public class ModelInterceptor implements MethodInterceptor
 		}
 		
 		return wrapResource( method.invoke(model, args) );
-	
+		
 	}
 	
 	public Object wrapResource(Object retval)

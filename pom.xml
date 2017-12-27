@@ -175,6 +175,11 @@
   <scope>test</scope>
   <version>${jena_version}</version> <!-- Set the version -->
 </dependency>
+		<dependency>
+			<groupId>org.xenei</groupId>
+			<artifactId>rdf-diff-patch</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
 	</dependencies>
 	<build>
 <!-- 	<extensions> -->

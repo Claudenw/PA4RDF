@@ -61,6 +61,8 @@ public interface CachingModel extends Model
 	 */
 	public void sync();
 	
+	public void clear();
+	
 	/**
 	 * Adopt the resource into this graph.
 	 * @param r the resource to adopt
