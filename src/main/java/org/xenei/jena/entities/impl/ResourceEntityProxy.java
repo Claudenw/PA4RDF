@@ -36,7 +36,7 @@ import org.xenei.jena.entities.annotations.Predicate;
  * This method intercepts the annotated entity methods as well as the
  * ResourceWrapper.getResource() method.
  */
-public class ResourceEntityProxy implements MethodInterceptor // Invoker
+public class ResourceEntityProxy implements MethodInterceptor
 {
 	private final Resource resource;
 	private final SubjectInfo subjectInfo;

@@ -27,6 +27,7 @@ import org.apache.jena.graph.Triple;
 import org.apache.jena.graph.impl.AllCapabilities;
 import org.apache.jena.graph.impl.GraphBase;
 import org.apache.jena.mem.TrackingTripleIterator;
+import org.apache.jena.query.ARQ;
 import org.apache.jena.query.QueryExecution;
 import org.apache.jena.query.QuerySolution;
 import org.apache.jena.query.ReadWrite;
@@ -65,6 +66,10 @@ public class CachingGraph extends GraphBase implements Graph {
 	private static final Var S = Var.alloc("s");
 	private static final Var P = Var.alloc("p");
 	private static final Var O = Var.alloc("o");
+	
+	static {
+		ARQ.getContext().set(ARQ.inputGraphBNodeLabels, true);
+	}
 
 	/**
 	 * Constructor.
@@ -92,6 +97,14 @@ public class CachingGraph extends GraphBase implements Graph {
 				};
 			return capabilities;
 		}
+	}
+	
+	/**
+	 * Clears the cache and resets to starting condition
+	 */
+	public void reset()
+	{
+		map.clear();
 	}
 
 	/**
@@ -459,10 +472,6 @@ public class CachingGraph extends GraphBase implements Graph {
 				Object s = triplePattern.getSubject().isConcrete() ? triplePattern.getSubject() : S;
 				Object p = triplePattern.getPredicate().isConcrete() ? triplePattern.getPredicate() : Var.alloc("p2");
 				Object o = triplePattern.getObject().isConcrete() ? triplePattern.getObject() : Var.alloc("o2");
-
-				// SelectBuilder inner = new SelectBuilder()
-				// .addWhere( s, p, o );
-
 				sb.addWhere(s, p, o);
 				if (!s.equals(S)) {
 					ExprFactory exprF = sb.getExprFactory();

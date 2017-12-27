@@ -57,7 +57,7 @@
 	</issueManagement>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<jena_version>3.4.0</jena_version>
+		<jena_version>3.7.0-SNAPSHOT</jena_version>
 	</properties>
 <!-- 	<repositories> -->
 <!-- 		<repository> -->
@@ -169,6 +169,12 @@
 			<version>1.9.5</version>
 			<scope>test</scope>
 		</dependency>
+		<dependency>
+  <groupId>org.apache.jena</groupId>
+  <artifactId>jena-fuseki-embedded</artifactId>
+  <scope>test</scope>
+  <version>${jena_version}</version> <!-- Set the version -->
+</dependency>
 	</dependencies>
 	<build>
 <!-- 	<extensions> -->
