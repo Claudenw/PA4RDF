@@ -1,27 +1,35 @@
 package org.xenei.jena.entities.cache;
 
 import org.apache.jena.graph.Graph;
+import org.apache.jena.graph.GraphContractTest;
 import org.apache.jena.graph.Node;
 import org.apache.jena.graph.NodeFactory;
 import org.apache.jena.query.Dataset;
 import org.apache.jena.query.DatasetFactory;
 import org.apache.jena.rdf.model.ModelFactory;
+import org.apache.jena.sparql.graph.GraphFactory;
 import org.apache.jena.testing_framework.AbstractGraphProducer;
 import org.junit.runner.RunWith;
 import org.xenei.jena.entities.EntityManagerFactory;
 import org.xenei.jena.entities.impl.EntityManagerImpl;
 import org.xenei.junit.contract.Contract;
+import org.xenei.junit.contract.ContractExclude;
 import org.xenei.junit.contract.ContractImpl;
 import org.xenei.junit.contract.ContractSuite;
 import org.xenei.junit.contract.IProducer;
 
 @RunWith(ContractSuite.class)
 @ContractImpl(CachingGraph.class)
+@ContractExclude( value=GraphContractTest.class, 
+	methods={"testContains_Node_Node_Node_Concrete",
+		"testContains_Triple_Concrete", 
+		"testTransactionHandler_Abort"} )
 public class CachingGraphContractSuite
 {
-	EntityManagerImpl entityManager = (EntityManagerImpl) EntityManagerFactory.create();
-	int i = 0;
-
+	
+	private EntityManagerImpl entityManager = (EntityManagerImpl) EntityManagerFactory.create();
+	private int i = 0;
+	
 	private AbstractGraphProducer<CachingGraph> producer = new AbstractGraphProducer<CachingGraph>()
 	{
 

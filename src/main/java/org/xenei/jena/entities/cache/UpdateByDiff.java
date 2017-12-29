@@ -1,7 +1,10 @@
 package org.xenei.jena.entities.cache;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.jena.graph.Graph;
@@ -72,6 +75,10 @@ public class UpdateByDiff
 		final Patch<Quad> patch = PatchFactory.patch( origDS,  chgdDS);
 		return UpdateFactory.asUpdate(patch);
 	}
+	
+	public List<Node> getTableNames() {
+		return new ArrayList<Node>( snapshots.keySet() );
+	}
 
 	/**
 	 * Synchronize the data.  
@@ -79,19 +86,20 @@ public class UpdateByDiff
 	 * @param graphNode
 	 * @return true if any changes were made.
 	 */
-	public synchronized boolean sync( EntityManager entityManager, Node graphNode ) {
+	public synchronized List<Node> sync( EntityManager entityManager, Node graphNode ) {
 		final UpdateRequest req = generateUpdate( graphNode.getURI() );
 		if (!req.iterator().hasNext())
 		{
-			return false;
+			return Collections.emptyList();
 		}
 		final TransactionHolder th = new TransactionHolder( entityManager.getConnection(), ReadWrite.WRITE);
 		try {
+			List<Node> retval = new ArrayList<Node>(snapshots.keySet());
 			entityManager.getConnection().update(req);
 			th.commit();
 			snapshots.clear();
 			tables.clear();
-			return true;
+			return retval;
 		}
 		catch (final RuntimeException e) {
 			th.abort();

@@ -76,7 +76,7 @@ public class ModelInterceptor implements MethodInterceptor
 		
 		if (SYNC.equals( method ))
 		{
-			graph.sync();
+			graph.sync(false);
 			return null;
 		} 
 		
