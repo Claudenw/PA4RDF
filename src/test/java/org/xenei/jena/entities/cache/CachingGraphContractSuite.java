@@ -21,9 +21,8 @@ import org.xenei.junit.contract.IProducer;
 @RunWith(ContractSuite.class)
 @ContractImpl(CachingGraph.class)
 @ContractExclude( value=GraphContractTest.class, 
-	methods={"testContains_Node_Node_Node_Concrete",
-		"testContains_Triple_Concrete", 
-		"testTransactionHandler_Abort"} )
+	methods={"testContains_Node_Node_Node_Concrete_BlankPredicate",
+		"testContains_Triple_Concrete_BlankPredicate"} )
 public class CachingGraphContractSuite
 {
 	
