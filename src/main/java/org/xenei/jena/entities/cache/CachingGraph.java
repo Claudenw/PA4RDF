@@ -58,10 +58,14 @@ import org.xenei.jena.entities.impl.TransactionHolder;
 
 /**
  * A graph that caches remote data.
- * 
- * This implementation caches predicates and objects for each subject that is
+ * <p>
+ * Rhis implementation caches predicates and objects for each subject that is
  * retrieved from the remote system.
- *
+ * </p>
+ * <p><b>
+ * This is not a full Graph implementation.</b>
+ * Specifically triples are restricted to the values available in a Model Statement.
+ * </p>
  */
 public class CachingGraph extends GraphBase implements Graph
 {
