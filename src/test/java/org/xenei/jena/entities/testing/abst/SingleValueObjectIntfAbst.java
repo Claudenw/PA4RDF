@@ -17,14 +17,11 @@ package org.xenei.jena.entities.testing.abst;
 import org.xenei.jena.entities.annotations.Subject;
 import org.xenei.jena.entities.testing.iface.SingleValueObjectInterface;
 
-@Subject( namespace = "http://localhost/test#" )
-public abstract class SingleValueObjectIntfAbst implements
-		SingleValueObjectInterface
-{
+@Subject(namespace = "http://localhost/test#")
+public abstract class SingleValueObjectIntfAbst implements SingleValueObjectInterface {
 
-	public String getSomeValue()
-	{
-		return "Some Value";
-	}
+    public String getSomeValue() {
+        return "Some Value";
+    }
 
 }

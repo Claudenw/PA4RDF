@@ -16,132 +16,130 @@ package org.xenei.jena.entities.testing.iface;
 
 import org.apache.jena.rdf.model.RDFNode;
 import org.apache.jena.util.iterator.ExtendedIterator;
-
 import org.xenei.jena.entities.annotations.Predicate;
 import org.xenei.jena.entities.annotations.Subject;
 import org.xenei.jena.entities.annotations.URI;
 
-@Subject( namespace = "http://localhost/test#" )
-public interface MultiValueInterface
-{
+@Subject(namespace = "http://localhost/test#")
+public interface MultiValueInterface {
 
-	@Predicate
-	void addBool( Boolean b );
+    @Predicate
+    void addBool(Boolean b);
 
-	@Predicate
-	void addChar( Character b );
+    @Predicate
+    void addChar(Character b);
 
-	@Predicate
-	void addDbl( Double b );
+    @Predicate
+    void addDbl(Double b);
 
-	@Predicate
-	void addEnt( TestInterface b );
+    @Predicate
+    void addEnt(TestInterface b);
 
-	@Predicate
-	void addFlt( Float b );
+    @Predicate
+    void addFlt(Float b);
 
-	@Predicate
-	void addInt( Integer b );
+    @Predicate
+    void addInt(Integer b);
 
-	@Predicate
-	void addLng( Long b );
+    @Predicate
+    void addLng(Long b);
 
-	@Predicate
-	void addRDF( RDFNode b );
+    @Predicate
+    void addRDF(RDFNode b);
 
-	@Predicate
-	void addStr( String b );
+    @Predicate
+    void addStr(String b);
 
-	void addU( RDFNode b );
+    void addU(RDFNode b);
 
-	@Predicate
-	void addU( @URI String b );
+    @Predicate
+    void addU(@URI String b);
 
-	@Predicate
-	void addU3( RDFNode b );
+    @Predicate
+    void addU3(RDFNode b);
 
-	void addU3( @URI String b );
+    void addU3(@URI String b);
 
-	ExtendedIterator<Boolean> getBool();
+    ExtendedIterator<Boolean> getBool();
 
-	ExtendedIterator<Character> getChar();
+    ExtendedIterator<Character> getChar();
 
-	ExtendedIterator<Double> getDbl();
+    ExtendedIterator<Double> getDbl();
 
-	ExtendedIterator<TestInterface> getEnt();
+    ExtendedIterator<TestInterface> getEnt();
 
-	ExtendedIterator<Float> getFlt();
+    ExtendedIterator<Float> getFlt();
 
-	ExtendedIterator<Integer> getInt();
+    ExtendedIterator<Integer> getInt();
 
-	ExtendedIterator<Long> getLng();
+    ExtendedIterator<Long> getLng();
 
-	ExtendedIterator<RDFNode> getRDF();
+    ExtendedIterator<RDFNode> getRDF();
 
-	ExtendedIterator<String> getStr();
+    ExtendedIterator<String> getStr();
 
-	@Predicate( type = RDFNode.class )
-	ExtendedIterator<RDFNode> getU();
+    @Predicate(type = RDFNode.class)
+    ExtendedIterator<RDFNode> getU();
 
-	@Predicate( type = URI.class, name = "u" )
-	ExtendedIterator<String> getU2();
+    @Predicate(type = URI.class, name = "u")
+    ExtendedIterator<String> getU2();
 
-	@Predicate( type = RDFNode.class )
-	ExtendedIterator<RDFNode> getU3();
+    @Predicate(type = RDFNode.class)
+    ExtendedIterator<RDFNode> getU3();
 
-	@Predicate( type = URI.class, name = "u3" )
-	ExtendedIterator<String> getU4();
+    @Predicate(type = URI.class, name = "u3")
+    ExtendedIterator<String> getU4();
 
-	Boolean hasBool( Boolean b );
+    Boolean hasBool(Boolean b);
 
-	Boolean hasChar( Character b );
+    Boolean hasChar(Character b);
 
-	Boolean hasDbl( Double b );
+    Boolean hasDbl(Double b);
 
-	Boolean hasEnt( TestInterface b );
+    Boolean hasEnt(TestInterface b);
 
-	Boolean hasFlt( Float b );
+    Boolean hasFlt(Float b);
 
-	Boolean hasInt( Integer b );
+    Boolean hasInt(Integer b);
 
-	Boolean hasLng( Long b );
+    Boolean hasLng(Long b);
 
-	Boolean hasRDF( RDFNode b );
+    Boolean hasRDF(RDFNode b);
 
-	Boolean hasStr( String b );
+    Boolean hasStr(String b);
 
-	Boolean hasU( RDFNode b );
+    Boolean hasU(RDFNode b);
 
-	Boolean hasU( @URI String b );
+    Boolean hasU(@URI String b);
 
-	Boolean hasU3( RDFNode b );
+    Boolean hasU3(RDFNode b);
 
-	Boolean hasU3( @URI String b );
+    Boolean hasU3(@URI String b);
 
-	void removeBool( Boolean b );
+    void removeBool(Boolean b);
 
-	void removeChar( Character b );
+    void removeChar(Character b);
 
-	void removeDbl( Double b );
+    void removeDbl(Double b);
 
-	void removeEnt( TestInterface b );
+    void removeEnt(TestInterface b);
 
-	void removeFlt( Float b );
+    void removeFlt(Float b);
 
-	void removeInt( Integer b );
+    void removeInt(Integer b);
 
-	void removeLng( Long b );
+    void removeLng(Long b);
 
-	void removeRDF( RDFNode b );
+    void removeRDF(RDFNode b);
 
-	void removeStr( String b );
+    void removeStr(String b);
 
-	void removeU( RDFNode b );
+    void removeU(RDFNode b);
 
-	void removeU( @URI String b );
+    void removeU(@URI String b);
 
-	void removeU3( RDFNode b );
+    void removeU3(RDFNode b);
 
-	void removeU3( @URI String b );
+    void removeU3(@URI String b);
 
 }

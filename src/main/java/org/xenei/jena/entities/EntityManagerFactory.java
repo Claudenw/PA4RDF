@@ -18,7 +18,6 @@ package org.xenei.jena.entities;
 import org.apache.jena.query.Dataset;
 import org.apache.jena.query.DatasetFactory;
 import org.apache.jena.rdf.model.Model;
-import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.rdfconnection.RDFConnection;
 import org.apache.jena.rdfconnection.RDFConnectionFactory;
 import org.xenei.jena.entities.impl.EntityManagerImpl;
@@ -27,27 +26,22 @@ import org.xenei.jena.entities.impl.EntityManagerImpl;
  * Factory to create EntityManagers.
  * 
  */
-public class EntityManagerFactory
-{
-	
-	public static EntityManager create()
-	{
-		return create( DatasetFactory.create());
-	}
+public class EntityManagerFactory {
 
-	public static EntityManager create( Model model)
-	{
-		return create( DatasetFactory.create( model ));
-	}
+    public static EntityManager create() {
+        return create( DatasetFactory.create() );
+    }
 
-	public static EntityManager create( Dataset dataset)
-	{
-		return create( RDFConnectionFactory.connect( dataset));
-	}
+    public static EntityManager create(Model model) {
+        return create( DatasetFactory.create( model ) );
+    }
 
-	public static EntityManager create( RDFConnection connection)
-	{
-		return new EntityManagerImpl( connection);
-	}
-	
+    public static EntityManager create(Dataset dataset) {
+        return create( RDFConnectionFactory.connect( dataset ) );
+    }
+
+    public static EntityManager create(RDFConnection connection) {
+        return new EntityManagerImpl( connection );
+    }
+
 }

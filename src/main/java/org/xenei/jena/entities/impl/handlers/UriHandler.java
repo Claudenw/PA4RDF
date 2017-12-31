@@ -14,66 +14,57 @@
  */
 package org.xenei.jena.entities.impl.handlers;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.jena.rdf.model.RDFNode;
 import org.apache.jena.rdf.model.ResourceFactory;
-import org.apache.jena.rdf.model.Statement;
-import org.apache.commons.lang3.StringUtils;
-import org.xenei.jena.entities.impl.ObjectHandler;
 
 /**
  * An ObjectHandler that handles converting RDFNodes to URI strings and visa
  * versa
  */
-public class UriHandler extends AbstractObjectHandler
-{
-	/**
-	 * Convert the object as a string to an RDFNode.
-	 * 
-	 * @param obj
-	 *            The object to convert
-	 * @return The RDFNode with the object string value as the URI.
-	 */
-	@Override
-	public RDFNode createRDFNode( final Object obj )
-	{
-		return obj==null?null:ResourceFactory.createResource(String.valueOf(obj));
-	}
+public class UriHandler extends AbstractObjectHandler {
+    /**
+     * Convert the object as a string to an RDFNode.
+     * 
+     * @param obj
+     *            The object to convert
+     * @return The RDFNode with the object string value as the URI.
+     */
+    @Override
+    public RDFNode createRDFNode(final Object obj) {
+        return obj == null ? null : ResourceFactory.createResource( String.valueOf( obj ) );
+    }
 
-	@Override
-	public boolean equals( final Object o )
-	{
-		return o instanceof UriHandler;
-	}
+    @Override
+    public boolean equals(final Object o) {
+        return o instanceof UriHandler;
+    }
 
-	@Override
-	public int hashCode()
-	{
-		return toString().hashCode();
-	}
+    @Override
+    public int hashCode() {
+        return toString().hashCode();
+    }
 
-	@Override
-	public boolean isEmpty( final Object obj )
-	{
-		return (obj == null) || StringUtils.isBlank(String.valueOf(obj));
-	}
+    @Override
+    public boolean isEmpty(final Object obj) {
+        return (obj == null) || StringUtils.isBlank( String.valueOf( obj ) );
+    }
 
-	/**
-	 * Return the URI string for the RDFnode
-	 * 
-	 * @param node
-	 *            the RDFNode
-	 * @return the URI fo the RDF node
-	 */
-	@Override
-	public Object parseObject( final RDFNode node )
-	{
-		return node.asResource().getURI();
-	}
+    /**
+     * Return the URI string for the RDFnode
+     * 
+     * @param node
+     *            the RDFNode
+     * @return the URI fo the RDF node
+     */
+    @Override
+    public Object parseObject(final RDFNode node) {
+        return node.asResource().getURI();
+    }
 
-	@Override
-	public String toString()
-	{
-		return "UriHandler";
-	}
-	
+    @Override
+    public String toString() {
+        return "UriHandler";
+    }
+
 }

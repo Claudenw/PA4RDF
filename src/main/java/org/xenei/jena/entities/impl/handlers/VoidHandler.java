@@ -15,63 +15,53 @@
 package org.xenei.jena.entities.impl.handlers;
 
 import org.apache.jena.rdf.model.RDFNode;
-import org.apache.jena.rdf.model.Statement;
-import org.xenei.jena.entities.impl.ObjectHandler;
 
 /**
  * An ObjectHandler that always returns null.
  */
-public class VoidHandler extends AbstractObjectHandler
-{
-	/**
-	 * Convert the object to null
-	 * 
-	 * @param obj
-	 *            The object to convert
-	 * @return null
-	 */
-	@Override
-	public RDFNode createRDFNode( final Object obj )
-	{
-		return null;
-	}
+public class VoidHandler extends AbstractObjectHandler {
+    /**
+     * Convert the object to null
+     * 
+     * @param obj
+     *            The object to convert
+     * @return null
+     */
+    @Override
+    public RDFNode createRDFNode(final Object obj) {
+        return null;
+    }
 
-	@Override
-	public boolean equals( final Object o )
-	{
-		return o instanceof VoidHandler;
-	}
+    @Override
+    public boolean equals(final Object o) {
+        return o instanceof VoidHandler;
+    }
 
-	@Override
-	public int hashCode()
-	{
-		return toString().hashCode();
-	}
+    @Override
+    public int hashCode() {
+        return toString().hashCode();
+    }
 
-	@Override
-	public boolean isEmpty( final Object obj )
-	{
-		return true;
-	}
+    @Override
+    public boolean isEmpty(final Object obj) {
+        return true;
+    }
 
-	/**
-	 * convert the node to a null
-	 * 
-	 * @param node
-	 *            The node to convert.
-	 * @return null.
-	 */
-	@Override
-	public Object parseObject( final RDFNode node )
-	{
-		return null;
-	}
+    /**
+     * convert the node to a null
+     * 
+     * @param node
+     *            The node to convert.
+     * @return null.
+     */
+    @Override
+    public Object parseObject(final RDFNode node) {
+        return null;
+    }
 
-	@Override
-	public String toString()
-	{
-		return "VoidHandler";
-	}
+    @Override
+    public String toString() {
+        return "VoidHandler";
+    }
 
-	
 }

@@ -14,85 +14,70 @@
  */
 package org.xenei.jena.entities.impl.handlers;
 
-import org.apache.jena.rdf.model.RDFNode;
-import org.apache.jena.rdf.model.Statement;
 import org.apache.commons.lang3.StringUtils;
-import org.xenei.jena.entities.impl.ObjectHandler;
+import org.apache.jena.rdf.model.RDFNode;
 
 /**
  * An ObjectHandler that does not convert RDFNodes.
  */
-public class ResourceHandler extends AbstractObjectHandler
-{
-	/**
-	 * Convert an object to an RDFNode.
-	 * 
-	 * @throws IllegalArgumentException
-	 *             if obj is not an instance of RDFNode
-	 */
-	@Override
-	public RDFNode createRDFNode( final Object obj )
-	{
-		if (obj == null)
-		{
-			return null;
-		}
-		if (obj instanceof RDFNode)
-		{
-			return (RDFNode) obj;
-		}
-		throw new IllegalArgumentException(String.format(
-				"%s is not an RDFNode", obj));
-	}
+public class ResourceHandler extends AbstractObjectHandler {
+    /**
+     * Convert an object to an RDFNode.
+     * 
+     * @throws IllegalArgumentException
+     *             if obj is not an instance of RDFNode
+     */
+    @Override
+    public RDFNode createRDFNode(final Object obj) {
+        if (obj == null) {
+            return null;
+        }
+        if (obj instanceof RDFNode) {
+            return (RDFNode) obj;
+        }
+        throw new IllegalArgumentException( String.format( "%s is not an RDFNode", obj ) );
+    }
 
-	@Override
-	public boolean equals( final Object o )
-	{
-		return o instanceof ResourceHandler;
-	}
+    @Override
+    public boolean equals(final Object o) {
+        return o instanceof ResourceHandler;
+    }
 
-	@Override
-	public int hashCode()
-	{
-		return toString().hashCode();
-	}
+    @Override
+    public int hashCode() {
+        return toString().hashCode();
+    }
 
-	@Override
-	public boolean isEmpty( final Object obj )
-	{
-		if ((obj != null) && (obj instanceof RDFNode))
-		{
-			final RDFNode node = (RDFNode) obj;
-			if (node.isLiteral())
-			{
-				return StringUtils.isBlank(node.asLiteral().getLexicalForm());
-			}
-			if (node.isURIResource())
-			{
-				return StringUtils.isBlank(node.asResource().getURI());
-			}
-			return false;
-		}
-		return true;
-	}
+    @Override
+    public boolean isEmpty(final Object obj) {
+        if ((obj != null) && (obj instanceof RDFNode)) {
+            final RDFNode node = (RDFNode) obj;
+            if (node.isLiteral()) {
+                return StringUtils.isBlank( node.asLiteral().getLexicalForm() );
+            }
+            if (node.isURIResource()) {
+                return StringUtils.isBlank( node.asResource().getURI() );
+            }
+            return false;
+        }
+        return true;
+    }
 
-	/**
-	 * Returns the argument
-	 * 
-	 * @param node
-	 *            The RDFNode to parse/return
-	 * @return The node parameter
-	 */
-	@Override
-	public Object parseObject( final RDFNode node )
-	{
-		return node;
-	}
+    /**
+     * Returns the argument
+     * 
+     * @param node
+     *            The RDFNode to parse/return
+     * @return The node parameter
+     */
+    @Override
+    public Object parseObject(final RDFNode node) {
+        return node;
+    }
 
-	@Override
-	public String toString()
-	{
-		return "ResourceHandler";
-	}
+    @Override
+    public String toString() {
+        return "ResourceHandler";
+    }
 
 }

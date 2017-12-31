@@ -16,27 +16,21 @@ package org.xenei.jena.entities.impl.handlers;
 
 import org.apache.jena.rdf.model.RDFNode;
 import org.apache.jena.rdf.model.Statement;
-import org.xenei.jena.entities.EntityManager;
-import org.xenei.jena.entities.MissingAnnotation;
-import org.xenei.jena.entities.ResourceWrapper;
 import org.xenei.jena.entities.impl.ObjectHandler;
 
 /**
  * An Abstract ObjectHandler that creates provided default implementations.
  * 
  */
-public abstract class AbstractObjectHandler implements ObjectHandler
-{	
+public abstract class AbstractObjectHandler implements ObjectHandler {
 
-	/**
-	 * Default implementation of removeObject.
-	 */
-	@Override
-	public void removeObject(Statement stmt, RDFNode value)
-	{
-		if (value == null || stmt.getObject().equals(value))
-		{
-			stmt.getSubject().getModel().remove( stmt );
-		}
-	}
+    /**
+     * Default implementation of removeObject.
+     */
+    @Override
+    public void removeObject(Statement stmt, RDFNode value) {
+        if (value == null || stmt.getObject().equals( value )) {
+            stmt.getSubject().getModel().remove( stmt );
+        }
+    }
 }

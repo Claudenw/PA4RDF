@@ -16,31 +16,29 @@ package org.xenei.jena.entities.testing.abst;
 
 import org.apache.jena.rdf.model.Resource;
 import org.apache.jena.util.iterator.ExtendedIterator;
-
 import org.xenei.jena.entities.annotations.Predicate;
 
-public abstract class TestPropertyRenamingInterface implements Resource
-{
+public abstract class TestPropertyRenamingInterface implements Resource {
 
-	@Predicate( name = "foo", namespace = "http://localhost/different#" )
-	public abstract void addFoomer( String key );
+    @Predicate(name = "foo", namespace = "http://localhost/different#")
+    public abstract void addFoomer(String key);
 
-	public abstract ExtendedIterator<String> getFoomer();
+    public abstract ExtendedIterator<String> getFoomer();
 
-	public abstract String getFoomer2();
+    public abstract String getFoomer2();
 
-	public abstract Boolean isFoomer3();
+    public abstract Boolean isFoomer3();
 
-	public abstract void removeFoomer( String key );
+    public abstract void removeFoomer(String key);
 
-	public abstract void removeFoomer2();
+    public abstract void removeFoomer2();
 
-	public abstract void removeFoomer3();
+    public abstract void removeFoomer3();
 
-	@Predicate( name = "foo2", namespace = "http://localhost/different#" )
-	public abstract void setFoomer2( String example );
+    @Predicate(name = "foo2", namespace = "http://localhost/different#")
+    public abstract void setFoomer2(String example);
 
-	@Predicate( name = "foo3", namespace = "http://localhost/different#" )
-	public abstract void setFoomer3( Boolean example );
+    @Predicate(name = "foo3", namespace = "http://localhost/different#")
+    public abstract void setFoomer3(Boolean example);
 
 }

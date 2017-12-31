@@ -18,14 +18,12 @@ package org.xenei.jena.entities;
 /**
  * Thrown when an annotation is required but not found.
  */
-public class MissingAnnotation extends Exception
-{
+public class MissingAnnotation extends Exception {
 
-	private static final long serialVersionUID = -5874216486380814195L;
+    private static final long serialVersionUID = -5874216486380814195L;
 
-	public MissingAnnotation( final String message )
-	{
-		super(message);
-	}
+    public MissingAnnotation(final String message) {
+        super( message );
+    }
 
 }

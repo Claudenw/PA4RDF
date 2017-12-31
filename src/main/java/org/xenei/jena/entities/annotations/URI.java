@@ -25,8 +25,7 @@ import java.lang.annotation.RetentionPolicy;
  * <code>Predicate</code> annotation.
  * 
  */
-@Retention( RetentionPolicy.RUNTIME )
-public @interface URI
-{
+@Retention(RetentionPolicy.RUNTIME)
+public @interface URI {
 
 }

@@ -1,322 +1,283 @@
 package org.xenei.jena.entities;
 
-import org.apache.jena.query.DatasetFactory;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.rdf.model.Resource;
-import org.apache.jena.rdfconnection.RDFConnection;
-import org.apache.jena.rdfconnection.RDFConnectionFactory;
-
-import junit.framework.Assert;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.xenei.jena.entities.annotations.Predicate;
 import org.xenei.jena.entities.annotations.Subject;
-import org.xenei.jena.entities.impl.EntityManagerImpl;
 
-public class UpdaterTests
-{
-	Model model;
-	EntityManager manager;
+import junit.framework.Assert;
 
-	public UpdaterTests()
-	{
-		model = ModelFactory.createDefaultModel();
-	}
+public class UpdaterTests {
+    Model model;
+    EntityManager manager;
 
-	public class DataSource
-	{
-		private int intValue;
-		private double dblValue;
-		private float fltValue;
-		private long lngValue;
-		private String strValue;
+    public UpdaterTests() {
+        model = ModelFactory.createDefaultModel();
+    }
 
-		public double getDblValue()
-		{
-			return dblValue;
-		}
+    public class DataSource {
+        private int intValue;
+        private double dblValue;
+        private float fltValue;
+        private long lngValue;
+        private String strValue;
 
-		public float getFltValue()
-		{
-			return fltValue;
-		}
+        public double getDblValue() {
+            return dblValue;
+        }
 
-		public int getIntValue()
-		{
-			return intValue;
-		}
+        public float getFltValue() {
+            return fltValue;
+        }
 
-		public long getLngValue()
-		{
-			return lngValue;
-		}
+        public int getIntValue() {
+            return intValue;
+        }
 
-		public String getStrValue()
-		{
-			return strValue;
-		}
+        public long getLngValue() {
+            return lngValue;
+        }
 
-		public void setDblValue(final double dblValue)
-		{
-			this.dblValue = dblValue;
-		}
+        public String getStrValue() {
+            return strValue;
+        }
 
-		public void setFltValue(final float fltValue)
-		{
-			this.fltValue = fltValue;
-		}
+        public void setDblValue(final double dblValue) {
+            this.dblValue = dblValue;
+        }
 
-		public void setIntValue(final int intValue)
-		{
-			this.intValue = intValue;
-		}
+        public void setFltValue(final float fltValue) {
+            this.fltValue = fltValue;
+        }
 
-		public void setLngValue(final long lngValue)
-		{
-			this.lngValue = lngValue;
-		}
+        public void setIntValue(final int intValue) {
+            this.intValue = intValue;
+        }
 
-		public void setStrValue(final String strValue)
-		{
-			this.strValue = strValue;
-		}
-	}
+        public void setLngValue(final long lngValue) {
+            this.lngValue = lngValue;
+        }
 
-	public interface DataSourceIface
-	{
-		public double getDblValue();
+        public void setStrValue(final String strValue) {
+            this.strValue = strValue;
+        }
+    }
 
-		public float getFltValue();
+    public interface DataSourceIface {
+        public double getDblValue();
 
-		public int getIntValue();
+        public float getFltValue();
 
-		public long getLngValue();
+        public int getIntValue();
 
-		public String getStrValue();
+        public long getLngValue();
 
-		public void setDblValue(double dblValue);
+        public String getStrValue();
 
-		public void setFltValue(float fltValue);
+        public void setDblValue(double dblValue);
 
-		public void setIntValue(int intValue);
+        public void setFltValue(float fltValue);
 
-		public void setLngValue(long lngValue);
+        public void setIntValue(int intValue);
 
-		public void setStrValue(String strValue);
-	}
+        public void setLngValue(long lngValue);
 
-	public class DataSourceIfaceImpl implements DataSourceIface
-	{
-		private int intValue;
-		private double dblValue;
-		private float fltValue;
-		private long lngValue;
-		private String strValue;
+        public void setStrValue(String strValue);
+    }
 
-		@Override
-		public double getDblValue()
-		{
-			return dblValue;
-		}
+    public class DataSourceIfaceImpl implements DataSourceIface {
+        private int intValue;
+        private double dblValue;
+        private float fltValue;
+        private long lngValue;
+        private String strValue;
 
-		@Override
-		public float getFltValue()
-		{
-			return fltValue;
-		}
+        @Override
+        public double getDblValue() {
+            return dblValue;
+        }
 
-		@Override
-		public int getIntValue()
-		{
-			return intValue;
-		}
+        @Override
+        public float getFltValue() {
+            return fltValue;
+        }
 
-		@Override
-		public long getLngValue()
-		{
-			return lngValue;
-		}
+        @Override
+        public int getIntValue() {
+            return intValue;
+        }
 
-		@Override
-		public String getStrValue()
-		{
-			return strValue;
-		}
+        @Override
+        public long getLngValue() {
+            return lngValue;
+        }
 
-		@Override
-		public void setDblValue(final double dblValue)
-		{
-			this.dblValue = dblValue;
-		}
+        @Override
+        public String getStrValue() {
+            return strValue;
+        }
 
-		@Override
-		public void setFltValue(final float fltValue)
-		{
-			this.fltValue = fltValue;
-		}
+        @Override
+        public void setDblValue(final double dblValue) {
+            this.dblValue = dblValue;
+        }
 
-		@Override
-		public void setIntValue(final int intValue)
-		{
-			this.intValue = intValue;
-		}
+        @Override
+        public void setFltValue(final float fltValue) {
+            this.fltValue = fltValue;
+        }
 
-		@Override
-		public void setLngValue(final long lngValue)
-		{
-			this.lngValue = lngValue;
-		}
+        @Override
+        public void setIntValue(final int intValue) {
+            this.intValue = intValue;
+        }
 
-		@Override
-		public void setStrValue(final String strValue)
-		{
-			this.strValue = strValue;
-		}
-	}
+        @Override
+        public void setLngValue(final long lngValue) {
+            this.lngValue = lngValue;
+        }
 
-	@Subject(namespace = "http://example.com/test#")
-	public interface DataSourceModelIface
-	{
-		@Predicate
-		public double getDblValue();
+        @Override
+        public void setStrValue(final String strValue) {
+            this.strValue = strValue;
+        }
+    }
 
-		@Predicate
-		public float getFltValue();
+    @Subject(namespace = "http://example.com/test#")
+    public interface DataSourceModelIface {
+        @Predicate
+        public double getDblValue();
 
-		@Predicate
-		public int getIntValue();
+        @Predicate
+        public float getFltValue();
 
-		@Predicate
-		public long getLngValue();
+        @Predicate
+        public int getIntValue();
 
-		@Predicate
-		public String getStrValue();
+        @Predicate
+        public long getLngValue();
 
-		public void setDblValue(double dblValue);
+        @Predicate
+        public String getStrValue();
 
-		public void setFltValue(float fltValue);
+        public void setDblValue(double dblValue);
 
-		public void setIntValue(int intValue);
+        public void setFltValue(float fltValue);
 
-		public void setLngValue(long lngValue);
+        public void setIntValue(int intValue);
 
-		public void setStrValue(String strValue);
-	}
+        public void setLngValue(long lngValue);
 
-	@Before
-	public void setup()
-	{
-		model.removeAll();
-		manager = EntityManagerFactory.create(model);
-	}
+        public void setStrValue(String strValue);
+    }
 
-	@Test
-	public void DataSourceModelTest() throws Exception
-	{
-		final DataSource ds1 = new DataSource();
-		ds1.setIntValue(1);
-		ds1.setDblValue(2.1);
-		ds1.setFltValue(3.2F);
-		ds1.setLngValue(4);
-		ds1.setStrValue("5");
+    @Before
+    public void setup() {
+        model.removeAll();
+        manager = EntityManagerFactory.create( model );
+    }
 
-		final Model m = ModelFactory.createDefaultModel();
-		final Resource r = m.createResource("http://example.com/test/resource");
-		final DataSourceModelIface ds2 = manager.read(r,
-				DataSourceModelIface.class);
-		manager.update(ds1, ds2);
+    @Test
+    public void DataSourceModelTest() throws Exception {
+        final DataSource ds1 = new DataSource();
+        ds1.setIntValue( 1 );
+        ds1.setDblValue( 2.1 );
+        ds1.setFltValue( 3.2F );
+        ds1.setLngValue( 4 );
+        ds1.setStrValue( "5" );
 
-		Assert.assertEquals(1, ds2.getIntValue());
-		Assert.assertEquals(2.1, ds2.getDblValue());
-		Assert.assertEquals(3.2F, ds2.getFltValue());
-		Assert.assertEquals(4, ds2.getLngValue());
-		Assert.assertEquals("5", ds2.getStrValue());
-	}
+        final Model m = ModelFactory.createDefaultModel();
+        final Resource r = m.createResource( "http://example.com/test/resource" );
+        final DataSourceModelIface ds2 = manager.read( r, DataSourceModelIface.class );
+        manager.update( ds1, ds2 );
 
-	@Test
-	public void DataSourceModelTest2() throws Exception
-	{
-		final Model m = ModelFactory.createDefaultModel();
-		final Resource r = m.createResource("http://example.com/test/resource");
-		final DataSourceModelIface ds1 = manager.read(r,
-				DataSourceModelIface.class);
+        Assert.assertEquals( 1, ds2.getIntValue() );
+        Assert.assertEquals( 2.1, ds2.getDblValue() );
+        Assert.assertEquals( 3.2F, ds2.getFltValue() );
+        Assert.assertEquals( 4, ds2.getLngValue() );
+        Assert.assertEquals( "5", ds2.getStrValue() );
+    }
 
-		ds1.setIntValue(1);
-		ds1.setDblValue(2.1);
-		ds1.setFltValue(3.2F);
-		ds1.setLngValue(4);
-		ds1.setStrValue("5");
+    @Test
+    public void DataSourceModelTest2() throws Exception {
+        final Model m = ModelFactory.createDefaultModel();
+        final Resource r = m.createResource( "http://example.com/test/resource" );
+        final DataSourceModelIface ds1 = manager.read( r, DataSourceModelIface.class );
 
-		final DataSource ds2 = new DataSource();
-		manager.update(ds1, ds2);
+        ds1.setIntValue( 1 );
+        ds1.setDblValue( 2.1 );
+        ds1.setFltValue( 3.2F );
+        ds1.setLngValue( 4 );
+        ds1.setStrValue( "5" );
 
-		Assert.assertEquals(1, ds2.getIntValue());
-		Assert.assertEquals(2.1, ds2.getDblValue());
-		Assert.assertEquals(3.2F, ds2.getFltValue());
-		Assert.assertEquals(4, ds2.getLngValue());
-		Assert.assertEquals("5", ds2.getStrValue());
-	}
+        final DataSource ds2 = new DataSource();
+        manager.update( ds1, ds2 );
 
-	@Test
-	public void testInterfaceUpdate()
-	{
-		final DataSource ds1 = new DataSource();
-		ds1.setIntValue(1);
-		ds1.setDblValue(2.1);
-		ds1.setFltValue(3.2F);
-		ds1.setLngValue(4);
-		ds1.setStrValue("5");
+        Assert.assertEquals( 1, ds2.getIntValue() );
+        Assert.assertEquals( 2.1, ds2.getDblValue() );
+        Assert.assertEquals( 3.2F, ds2.getFltValue() );
+        Assert.assertEquals( 4, ds2.getLngValue() );
+        Assert.assertEquals( "5", ds2.getStrValue() );
+    }
 
-		final DataSourceIface ds2 = new DataSourceIfaceImpl();
-		manager.update(ds1, ds2);
+    @Test
+    public void testInterfaceUpdate() {
+        final DataSource ds1 = new DataSource();
+        ds1.setIntValue( 1 );
+        ds1.setDblValue( 2.1 );
+        ds1.setFltValue( 3.2F );
+        ds1.setLngValue( 4 );
+        ds1.setStrValue( "5" );
 
-		Assert.assertEquals(1, ds2.getIntValue());
-		Assert.assertEquals(2.1, ds2.getDblValue());
-		Assert.assertEquals(3.2F, ds2.getFltValue());
-		Assert.assertEquals(4, ds2.getLngValue());
-		Assert.assertEquals("5", ds2.getStrValue());
-	}
+        final DataSourceIface ds2 = new DataSourceIfaceImpl();
+        manager.update( ds1, ds2 );
 
-	@Test
-	public void testInterfaceUpdate2()
-	{
-		final DataSourceIface ds1 = new DataSourceIfaceImpl();
-		ds1.setIntValue(1);
-		ds1.setDblValue(2.1);
-		ds1.setFltValue(3.2F);
-		ds1.setLngValue(4);
-		ds1.setStrValue("5");
+        Assert.assertEquals( 1, ds2.getIntValue() );
+        Assert.assertEquals( 2.1, ds2.getDblValue() );
+        Assert.assertEquals( 3.2F, ds2.getFltValue() );
+        Assert.assertEquals( 4, ds2.getLngValue() );
+        Assert.assertEquals( "5", ds2.getStrValue() );
+    }
 
-		final DataSource ds2 = new DataSource();
-		manager.update(ds1, ds2);
+    @Test
+    public void testInterfaceUpdate2() {
+        final DataSourceIface ds1 = new DataSourceIfaceImpl();
+        ds1.setIntValue( 1 );
+        ds1.setDblValue( 2.1 );
+        ds1.setFltValue( 3.2F );
+        ds1.setLngValue( 4 );
+        ds1.setStrValue( "5" );
 
-		Assert.assertEquals(1, ds2.getIntValue());
-		Assert.assertEquals(2.1, ds2.getDblValue());
-		Assert.assertEquals(3.2F, ds2.getFltValue());
-		Assert.assertEquals(4, ds2.getLngValue());
-		Assert.assertEquals("5", ds2.getStrValue());
-	}
+        final DataSource ds2 = new DataSource();
+        manager.update( ds1, ds2 );
 
-	@Test
-	public void testStandardUpdate()
-	{
-		final DataSource ds1 = new DataSource();
-		ds1.setIntValue(1);
-		ds1.setDblValue(2.1);
-		ds1.setFltValue(3.2F);
-		ds1.setLngValue(4);
-		ds1.setStrValue("5");
+        Assert.assertEquals( 1, ds2.getIntValue() );
+        Assert.assertEquals( 2.1, ds2.getDblValue() );
+        Assert.assertEquals( 3.2F, ds2.getFltValue() );
+        Assert.assertEquals( 4, ds2.getLngValue() );
+        Assert.assertEquals( "5", ds2.getStrValue() );
+    }
 
-		final DataSource ds2 = new DataSource();
-		manager.update(ds1, ds2);
+    @Test
+    public void testStandardUpdate() {
+        final DataSource ds1 = new DataSource();
+        ds1.setIntValue( 1 );
+        ds1.setDblValue( 2.1 );
+        ds1.setFltValue( 3.2F );
+        ds1.setLngValue( 4 );
+        ds1.setStrValue( "5" );
 
-		Assert.assertEquals(1, ds2.getIntValue());
-		Assert.assertEquals(2.1, ds2.getDblValue());
-		Assert.assertEquals(3.2F, ds2.getFltValue());
-		Assert.assertEquals(4, ds2.getLngValue());
-		Assert.assertEquals("5", ds2.getStrValue());
-	}
+        final DataSource ds2 = new DataSource();
+        manager.update( ds1, ds2 );
+
+        Assert.assertEquals( 1, ds2.getIntValue() );
+        Assert.assertEquals( 2.1, ds2.getDblValue() );
+        Assert.assertEquals( 3.2F, ds2.getFltValue() );
+        Assert.assertEquals( 4, ds2.getLngValue() );
+        Assert.assertEquals( "5", ds2.getStrValue() );
+    }
 
 }

@@ -2,12 +2,10 @@ package org.xenei.jena.entities.impl.parser;
 
 import org.xenei.jena.entities.testing.impl.CollectionValueSubjectImpl;
 
-public class CollectionValueSubjectImplTest extends AbstractCollectionValueTest
-{
+public class CollectionValueSubjectImplTest extends AbstractCollectionValueTest {
 
-	public CollectionValueSubjectImplTest()
-	{
-		super(CollectionValueSubjectImpl.class);
-	}
+    public CollectionValueSubjectImplTest() {
+        super( CollectionValueSubjectImpl.class );
+    }
 
 }

@@ -25,17 +25,17 @@ import org.apache.jena.datatypes.xsd.impl.XSDBaseNumericType;
  */
 public class LongDatatype extends XSDBaseNumericType {
 
-	public LongDatatype() {
-		super("long", Long.class);
-	}
+    public LongDatatype() {
+        super( "long", Long.class );
+    }
 
-	/**
-	 * @param lexical
-	 * @return Number
-	 */
-	@Override
-	protected Number suitableInteger(String lexical) {
-		return Long.parseLong(lexical);
-	}
+    /**
+     * @param lexical
+     * @return Number
+     */
+    @Override
+    protected Number suitableInteger(String lexical) {
+        return Long.parseLong( lexical );
+    }
 
 }

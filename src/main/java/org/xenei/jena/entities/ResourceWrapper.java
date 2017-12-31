@@ -16,7 +16,6 @@
 package org.xenei.jena.entities;
 
 import org.apache.jena.rdf.model.Resource;
-
 import org.xenei.jena.entities.annotations.Predicate;
 import org.xenei.jena.entities.annotations.Subject;
 
@@ -24,28 +23,29 @@ import org.xenei.jena.entities.annotations.Subject;
  * An interface to retrieve a resource from a subject annotated object.
  * 
  */
-@Subject( namespace = "http://xenei.org/jena/entities/resourceWrapper#" )
-public interface ResourceWrapper
-{
-	/**
-	 * Get the wrapped resource.
-	 * 
-	 * @return The Jena model resource.
-	 */
-	@Predicate
-	public Resource getResource();
-	
-	/**
-	 * Get the EntityManager that created or decorated this Object
-	 * @return The EntityManager that created this object.
-	 */
-	@Predicate
-	public EntityManager getEntityManager();
+@Subject(namespace = "http://xenei.org/jena/entities/resourceWrapper#")
+public interface ResourceWrapper {
+    /**
+     * Get the wrapped resource.
+     * 
+     * @return The Jena model resource.
+     */
+    @Predicate
+    public Resource getResource();
 
-	/**
-	 * Get the SubjectInfo for this object.
-	 * @return The SubjectInfo for this object.
-	 */
-	@Predicate
-	public SubjectInfo getSubjectInfo();
+    /**
+     * Get the EntityManager that created or decorated this Object
+     * 
+     * @return The EntityManager that created this object.
+     */
+    @Predicate
+    public EntityManager getEntityManager();
+
+    /**
+     * Get the SubjectInfo for this object.
+     * 
+     * @return The SubjectInfo for this object.
+     */
+    @Predicate
+    public SubjectInfo getSubjectInfo();
 }

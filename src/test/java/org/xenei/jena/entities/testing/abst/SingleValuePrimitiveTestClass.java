@@ -15,54 +15,52 @@
 package org.xenei.jena.entities.testing.abst;
 
 import org.apache.jena.rdf.model.Resource;
-
 import org.xenei.jena.entities.annotations.Predicate;
 import org.xenei.jena.entities.annotations.Subject;
 
-@Subject( namespace = "http://localhost/test#" )
-public abstract class SingleValuePrimitiveTestClass implements Resource
-{
+@Subject(namespace = "http://localhost/test#")
+public abstract class SingleValuePrimitiveTestClass implements Resource {
 
-	public abstract char getChar();
+    public abstract char getChar();
 
-	public abstract double getDbl();
+    public abstract double getDbl();
 
-	public abstract float getFlt();
+    public abstract float getFlt();
 
-	public abstract int getInt();
+    public abstract int getInt();
 
-	public abstract long getLng();
+    public abstract long getLng();
 
-	public abstract boolean isBool();
+    public abstract boolean isBool();
 
-	public abstract void removeBool();
+    public abstract void removeBool();
 
-	public abstract void removeChar();
+    public abstract void removeChar();
 
-	public abstract void removeDbl();
+    public abstract void removeDbl();
 
-	public abstract void removeFlt();
+    public abstract void removeFlt();
 
-	public abstract void removeInt();
+    public abstract void removeInt();
 
-	public abstract void removeLng();
+    public abstract void removeLng();
 
-	@Predicate
-	public abstract void setBool( boolean b );
+    @Predicate
+    public abstract void setBool(boolean b);
 
-	@Predicate
-	public abstract void setChar( char b );
+    @Predicate
+    public abstract void setChar(char b);
 
-	@Predicate
-	public abstract void setDbl( double b );
+    @Predicate
+    public abstract void setDbl(double b);
 
-	@Predicate
-	public abstract void setFlt( float b );
+    @Predicate
+    public abstract void setFlt(float b);
 
-	@Predicate
-	public abstract void setInt( int b );
+    @Predicate
+    public abstract void setInt(int b);
 
-	@Predicate
-	public abstract void setLng( long b );
+    @Predicate
+    public abstract void setLng(long b);
 
 }

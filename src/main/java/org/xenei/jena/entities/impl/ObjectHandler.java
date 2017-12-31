@@ -21,49 +21,47 @@ import org.apache.jena.rdf.model.Statement;
  * The interface for the internal ObjectHandler.
  * 
  * The handler will create the RDFNode from the object passed to the setter
- * method, and will
- * create the object to be returned for the getter method.
+ * method, and will create the object to be returned for the getter method.
  * 
  * In general X.equals( parseObject( createRDFNode( X ))) should hold true as
- * should
- * X.equals( createRDFNode( parseObject( X ))).
+ * should X.equals( createRDFNode( parseObject( X ))).
  */
-public interface ObjectHandler
-{
-	/**
-	 * Parse the object into an RDFNode representation.
-	 * 
-	 * @param obj
-	 *            The object to represent
-	 * @return The RDFNode representation
-	 */
-	RDFNode createRDFNode( Object obj );
+public interface ObjectHandler {
+    /**
+     * Parse the object into an RDFNode representation.
+     * 
+     * @param obj
+     *            The object to represent
+     * @return The RDFNode representation
+     */
+    RDFNode createRDFNode(Object obj);
 
-	/**
-	 * Returns true if the object is considered empty.
-	 * 
-	 * @param obj
-	 *            the object that would be passed to createRDFNode
-	 * @return true if the object is a empty.
-	 */
-	boolean isEmpty( Object obj );
+    /**
+     * Returns true if the object is considered empty.
+     * 
+     * @param obj
+     *            the object that would be passed to createRDFNode
+     * @return true if the object is a empty.
+     */
+    boolean isEmpty(Object obj);
 
-	/**
-	 * Parse the RDF node into an object.
-	 * 
-	 * @param node
-	 *            The RDFNode to be unparsed.
-	 * @return The Object from the unparsed RDFNode.
-	 */
-	Object parseObject( RDFNode node );
-	
-	/**
-	 * Perform any actions to remove the node.
-	 * 
-	 * @param stmt
-	 *            The statement to evaluate
-	 * @param value the RDFNode value to remove.        
-	 */
-	void removeObject( Statement stmt, RDFNode value );
+    /**
+     * Parse the RDF node into an object.
+     * 
+     * @param node
+     *            The RDFNode to be unparsed.
+     * @return The Object from the unparsed RDFNode.
+     */
+    Object parseObject(RDFNode node);
+
+    /**
+     * Perform any actions to remove the node.
+     * 
+     * @param stmt
+     *            The statement to evaluate
+     * @param value
+     *            the RDFNode value to remove.
+     */
+    void removeObject(Statement stmt, RDFNode value);
 
 }

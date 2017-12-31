@@ -3,26 +3,21 @@ package org.xenei.jena.entities.impl;
 import org.apache.jena.query.ReadWrite;
 import org.apache.jena.sparql.core.Transactional;
 
-public class TransactionHolder  {
+public class TransactionHolder {
     private final Transactional txn;
     private final boolean started;
-    private final ReadWrite rw;
-    
-    public TransactionHolder( Transactional txn, ReadWrite rw )
-    {
+    public TransactionHolder(Transactional txn, ReadWrite rw) {
         this.txn = txn;
-        this.rw = rw;
-        started = ! txn.isInTransaction();
-        if (started)
-        {
+        started = !txn.isInTransaction();
+        if (started) {
             txn.begin( rw );
         }
     }
-    
+
     public boolean ownsTranaction() {
-    	return started;
+        return started;
     }
-    
+
     public void commit() {
         if (started) {
             txn.commit();
@@ -30,16 +25,15 @@ public class TransactionHolder  {
     }
 
     public void abort() {
-        if (started)
-        {
+        if (started) {
             txn.abort();
         }
     }
 
-   public void end() {
+    public void end() {
         if (started) {
             txn.end();
         }
-   }
+    }
 
 }

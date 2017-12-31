@@ -17,14 +17,11 @@ package org.xenei.jena.entities.testing.abst;
 import org.xenei.jena.entities.annotations.Subject;
 import org.xenei.jena.entities.testing.iface.CollectionValueInterface;
 
-@Subject( namespace = "http://localhost/test#" )
-public abstract class CollectionValueIntfAbst implements
-		CollectionValueInterface
-{
+@Subject(namespace = "http://localhost/test#")
+public abstract class CollectionValueIntfAbst implements CollectionValueInterface {
 
-	public String getSomething()
-	{
-		return "Something";
-	}
+    public String getSomething() {
+        return "Something";
+    }
 
 }
