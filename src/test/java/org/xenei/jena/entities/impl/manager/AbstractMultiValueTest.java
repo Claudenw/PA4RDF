@@ -1,13 +1,20 @@
 package org.xenei.jena.entities.impl.manager;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
 import org.apache.jena.datatypes.TypeMapper;
 import org.apache.jena.rdf.model.RDFNode;
+import org.apache.jena.rdf.model.Resource;
+import org.apache.jena.rdf.model.ResourceFactory;
 import org.apache.jena.util.iterator.ExtendedIterator;
 import org.junit.Assert;
 import org.junit.Test;
 import org.xenei.jena.entities.impl.ObjectHandler;
 import org.xenei.jena.entities.impl.PredicateInfoImpl;
 import org.xenei.jena.entities.impl.handlers.EntityHandler;
+import org.xenei.jena.entities.impl.handlers.ListHandler;
 import org.xenei.jena.entities.impl.handlers.LiteralHandler;
 import org.xenei.jena.entities.impl.handlers.ResourceHandler;
 import org.xenei.jena.entities.impl.handlers.UriHandler;
@@ -570,4 +577,39 @@ public abstract class AbstractMultiValueTest extends BaseAbstractManagerTest {
         Assert.assertEquals( BaseAbstractManagerTest.NS, pi.getNamespace() );
     }
 
+
+    @Test
+    public void testLst() {
+        PredicateInfoImpl pi = (PredicateInfoImpl) subjectInfo.getPredicateInfo( "getLst", Collection.class );
+        ObjectHandler handler = new LiteralHandler( TypeMapper.getInstance().getTypeByClass( String.class ) );
+        handler = new ListHandler( false, manager, handler );
+        Assert.assertEquals( handler, pi.getObjectHandler( manager ) );
+        Assert.assertEquals( "getLst", pi.getMethodName() );
+        Assert.assertEquals( Collection.class, pi.getValueClass() );
+        Assert.assertEquals( BaseAbstractManagerTest.NS + "lst", pi.getUriString() );
+        Assert.assertEquals( BaseAbstractManagerTest.NS, pi.getNamespace() );
+        
+        pi = (PredicateInfoImpl) subjectInfo.getPredicateInfo( "setLst", Collection.class );
+        Assert.assertEquals( handler, pi.getObjectHandler( manager ) );
+        Assert.assertEquals( "setLst", pi.getMethodName() );
+        Assert.assertEquals( Collection.class, pi.getValueClass() );
+        Assert.assertEquals( BaseAbstractManagerTest.NS + "lst", pi.getUriString() );
+        Assert.assertEquals( BaseAbstractManagerTest.NS, pi.getNamespace() );
+        
+        pi = (PredicateInfoImpl) subjectInfo.getPredicateInfo( "hasLst", String.class );
+        handler = new LiteralHandler( TypeMapper.getInstance().getTypeByClass( String.class ) );
+        Assert.assertEquals( handler, pi.getObjectHandler( manager ) );
+         Assert.assertEquals( "hasLst", pi.getMethodName() );
+         Assert.assertEquals( String.class, pi.getValueClass() );
+         Assert.assertEquals( BaseAbstractManagerTest.NS + "lst", pi.getUriString() );
+         Assert.assertEquals( BaseAbstractManagerTest.NS, pi.getNamespace() );
+
+         pi = (PredicateInfoImpl) subjectInfo.getPredicateInfo( "removeLst", String.class );
+         Assert.assertEquals( handler, pi.getObjectHandler( manager ) );
+          Assert.assertEquals( "removeLst", pi.getMethodName() );
+          Assert.assertEquals( String.class, pi.getValueClass() );
+          Assert.assertEquals( BaseAbstractManagerTest.NS + "lst", pi.getUriString() );
+          Assert.assertEquals( BaseAbstractManagerTest.NS, pi.getNamespace() );
+
+    }
 }

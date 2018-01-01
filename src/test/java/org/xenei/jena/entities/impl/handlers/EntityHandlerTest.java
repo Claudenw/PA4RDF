@@ -9,8 +9,7 @@ import org.xenei.jena.entities.EntityManager;
 import org.xenei.jena.entities.EntityManagerFactory;
 import org.xenei.jena.entities.testing.iface.TwoValueSimpleInterface;
 
-public class EntityHandlerTest implements HandlerTestInterface {
-    EntityHandler handler;
+public class EntityHandlerTest extends AbstractObjectHandlerTest {
     EntityManager em;
     RDFNode node;
     TwoValueSimpleInterface instance;
@@ -18,7 +17,7 @@ public class EntityHandlerTest implements HandlerTestInterface {
     @Before
     public void setup() throws Exception {
         em = EntityManagerFactory.create();
-        handler = new EntityHandler( em, TwoValueSimpleInterface.class );
+        underTest = new EntityHandler( em, TwoValueSimpleInterface.class );
         node = ResourceFactory.createResource();
         instance = em.read( node, TwoValueSimpleInterface.class );
     }
@@ -26,7 +25,7 @@ public class EntityHandlerTest implements HandlerTestInterface {
     @Override
     @Test
     public void testCreateRDFNode() {
-        final RDFNode n = handler.createRDFNode( instance );
+        final RDFNode n = underTest.createRDFNode( instance );
         Assert.assertNotNull( n );
         Assert.assertEquals( node, n );
     }
@@ -34,21 +33,21 @@ public class EntityHandlerTest implements HandlerTestInterface {
     @Override
     @Test
     public void testCreateRDFNode_Null() {
-        final RDFNode n = handler.createRDFNode( null );
+        final RDFNode n = underTest.createRDFNode( null );
         Assert.assertNull( n );
     }
 
     @Override
     @Test
     public void testIsEmpty() {
-        Assert.assertTrue( handler.isEmpty( null ) );
-        Assert.assertFalse( handler.isEmpty( instance ) );
+        Assert.assertTrue( underTest.isEmpty( null ) );
+        Assert.assertFalse( underTest.isEmpty( instance ) );
     }
 
     @Override
     @Test
     public void testParseObject() {
-        final Object o = handler.parseObject( node );
+        final Object o = underTest.parseObject( node );
         Assert.assertNotNull( o );
         Assert.assertTrue( o instanceof TwoValueSimpleInterface );
         final TwoValueSimpleInterface a2 = (TwoValueSimpleInterface) o;

@@ -8,14 +8,13 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-public class LiteralHandlerTest implements HandlerTestInterface {
-    LiteralHandler handler;
-    RDFNode node;
+public class LiteralHandlerTest extends AbstractObjectHandlerTest {
+     RDFNode node;
     Integer instance;
 
     @Before
     public void setup() {
-        handler = new LiteralHandler( XSDDatatype.XSDinteger );
+        underTest = new LiteralHandler( XSDDatatype.XSDinteger );
         node = ResourceFactory.createPlainLiteral( "5" );
         instance = 5;
     }
@@ -23,7 +22,7 @@ public class LiteralHandlerTest implements HandlerTestInterface {
     @Override
     @Test
     public void testCreateRDFNode() {
-        final RDFNode n = handler.createRDFNode( Integer.valueOf( 5 ) );
+        final RDFNode n = underTest.createRDFNode( Integer.valueOf( 5 ) );
         Assert.assertNotNull( n );
         final Literal l = ResourceFactory.createTypedLiteral( "5", XSDDatatype.XSDinteger );
         Assert.assertEquals( l, n );
@@ -32,21 +31,21 @@ public class LiteralHandlerTest implements HandlerTestInterface {
     @Override
     @Test
     public void testIsEmpty() {
-        Assert.assertTrue( handler.isEmpty( null ) );
-        Assert.assertFalse( handler.isEmpty( instance ) );
-        handler = new LiteralHandler( XSDDatatype.XSDstring );
-        Assert.assertTrue( handler.isEmpty( null ) );
-        Assert.assertTrue( handler.isEmpty( "" ) );
-        Assert.assertTrue( handler.isEmpty( " " ) );
-        Assert.assertFalse( handler.isEmpty( instance ) );
-        Assert.assertFalse( handler.isEmpty( "foo" ) );
+        Assert.assertTrue( underTest.isEmpty( null ) );
+        Assert.assertFalse( underTest.isEmpty( instance ) );
+        underTest = new LiteralHandler( XSDDatatype.XSDstring );
+        Assert.assertTrue( underTest.isEmpty( null ) );
+        Assert.assertTrue( underTest.isEmpty( "" ) );
+        Assert.assertTrue( underTest.isEmpty( " " ) );
+        Assert.assertFalse( underTest.isEmpty( instance ) );
+        Assert.assertFalse( underTest.isEmpty( "foo" ) );
 
     }
 
     @Override
     @Test
     public void testParseObject() {
-        final Object o = handler.parseObject( node );
+        final Object o = underTest.parseObject( node );
         Assert.assertNotNull( o );
         Assert.assertTrue( o instanceof Integer );
         final Integer a2 = (Integer) o;
@@ -57,7 +56,7 @@ public class LiteralHandlerTest implements HandlerTestInterface {
     @Override
     @Test
     public void testCreateRDFNode_Null() {
-        final RDFNode n = handler.createRDFNode( null );
+        final RDFNode n = underTest.createRDFNode( null );
         Assert.assertNull( n );
     }
 }

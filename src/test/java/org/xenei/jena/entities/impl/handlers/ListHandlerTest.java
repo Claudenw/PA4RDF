@@ -19,23 +19,22 @@ import org.junit.Test;
 import org.xenei.jena.entities.EntityManager;
 import org.xenei.jena.entities.EntityManagerFactory;
 
-public class ListHandlerTest implements HandlerTestInterface {
+public class ListHandlerTest extends AbstractObjectHandlerTest {
     EntityManager em;
-    ListHandler handler;
     Integer instance;
     String[] args = { "Hello", "World" };
 
     @Before
     public void setup() {
         em = EntityManagerFactory.create();
-        handler = new ListHandler( em, new LiteralHandler( XSDDatatype.XSDstring ) );
+        underTest = new ListHandler( false, em, new LiteralHandler( XSDDatatype.XSDstring ) );
 
     }
 
     @Override
     @Test
     public void testCreateRDFNode() {
-        final RDFNode n = handler.createRDFNode( args );
+        final RDFNode n = underTest.createRDFNode( args );
         Assert.assertNotNull( n );
         Assert.assertTrue( n.canAs( RDFList.class ) );
         final List<RDFNode> lst = n.as( RDFList.class ).asJavaList();
@@ -47,7 +46,7 @@ public class ListHandlerTest implements HandlerTestInterface {
     @Test
     public void testCreateRDFNode_List() {
 
-        final RDFNode n = handler.createRDFNode( Arrays.asList( args ) );
+        final RDFNode n = underTest.createRDFNode( Arrays.asList( args ) );
         Assert.assertNotNull( n );
         Assert.assertTrue( n.canAs( RDFList.class ) );
         final List<RDFNode> lst = n.as( RDFList.class ).asJavaList();
@@ -59,7 +58,7 @@ public class ListHandlerTest implements HandlerTestInterface {
     @Override
     @Test
     public void testCreateRDFNode_Null() {
-        final RDFNode n = handler.createRDFNode( null );
+        final RDFNode n = underTest.createRDFNode( null );
         Assert.assertNull( n );
     }
 
@@ -71,13 +70,13 @@ public class ListHandlerTest implements HandlerTestInterface {
                 ResourceFactory.createPlainLiteral( "World" ) };
         final RDFList lst = model.createList( nodes );
 
-        Assert.assertTrue( handler.isEmpty( null ) );
-        Assert.assertFalse( handler.isEmpty( lst ) );
-        Assert.assertTrue( handler.isEmpty( model.createList( new RDFNode[0] ) ) );
+        Assert.assertTrue( underTest.isEmpty( null ) );
+        Assert.assertFalse( underTest.isEmpty( lst ) );
+        Assert.assertTrue( underTest.isEmpty( model.createList( new RDFNode[0] ) ) );
 
-        Assert.assertTrue( handler.isEmpty( new Object[0] ) );
-        Assert.assertTrue( handler.isEmpty( new ArrayList<String>() ) );
-        Assert.assertTrue( handler.isEmpty( new HashSet<String>() ) );
+        Assert.assertTrue( underTest.isEmpty( new Object[0] ) );
+        Assert.assertTrue( underTest.isEmpty( new ArrayList<String>() ) );
+        Assert.assertTrue( underTest.isEmpty( new HashSet<String>() ) );
     }
 
     @Override
@@ -87,7 +86,7 @@ public class ListHandlerTest implements HandlerTestInterface {
         final RDFNode[] nodes = { ResourceFactory.createPlainLiteral( "Hello" ),
                 ResourceFactory.createPlainLiteral( "World" ) };
         final RDFList lst = model.createList( nodes );
-        final Object o = handler.parseObject( lst );
+        final Object o = underTest.parseObject( lst );
         Assert.assertNotNull( o );
         Assert.assertTrue( o instanceof List );
         final List<?> lst2 = (List<?>) o;

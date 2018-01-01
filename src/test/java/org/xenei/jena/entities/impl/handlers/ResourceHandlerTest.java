@@ -7,14 +7,14 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-public class ResourceHandlerTest implements HandlerTestInterface {
-    ResourceHandler handler;
+public class ResourceHandlerTest extends AbstractObjectHandlerTest {
+
     RDFNode node;
     Integer instance;
 
     @Before
     public void setup() {
-        handler = new ResourceHandler();
+        underTest = new ResourceHandler();
         node = ResourceFactory.createResource();
         instance = 5;
     }
@@ -22,7 +22,7 @@ public class ResourceHandlerTest implements HandlerTestInterface {
     @Override
     @Test
     public void testCreateRDFNode() {
-        final RDFNode n = handler.createRDFNode( node );
+        final RDFNode n = underTest.createRDFNode( node );
         Assert.assertNotNull( n );
         Assert.assertEquals( node, n );
     }
@@ -30,29 +30,29 @@ public class ResourceHandlerTest implements HandlerTestInterface {
     @Override
     @Test
     public void testCreateRDFNode_Null() {
-        final RDFNode n = handler.createRDFNode( null );
+        final RDFNode n = underTest.createRDFNode( null );
         Assert.assertNull( n );
     }
 
     @Override
     @Test
     public void testIsEmpty() {
-        Assert.assertTrue( handler.isEmpty( null ) );
-        Assert.assertFalse( handler.isEmpty( node ) );
-        Assert.assertTrue( handler.isEmpty( "foo" ) );
-        Assert.assertTrue( handler.isEmpty( "" ) );
-        Assert.assertTrue( handler.isEmpty( " " ) );
-        Assert.assertTrue( handler.isEmpty( ResourceFactory.createResource( "" ) ) );
-        Assert.assertTrue( handler.isEmpty( ResourceFactory.createResource( " " ) ) );
-        Assert.assertFalse( handler.isEmpty( ResourceFactory.createResource() ) );
-        Assert.assertTrue( handler.isEmpty( ResourceFactory.createTypedLiteral( "", XSDDatatype.XSDstring ) ) );
-        Assert.assertTrue( handler.isEmpty( ResourceFactory.createTypedLiteral( " ", XSDDatatype.XSDstring ) ) );
+        Assert.assertTrue( underTest.isEmpty( null ) );
+        Assert.assertFalse( underTest.isEmpty( node ) );
+        Assert.assertTrue( underTest.isEmpty( "foo" ) );
+        Assert.assertTrue( underTest.isEmpty( "" ) );
+        Assert.assertTrue( underTest.isEmpty( " " ) );
+        Assert.assertTrue( underTest.isEmpty( ResourceFactory.createResource( "" ) ) );
+        Assert.assertTrue( underTest.isEmpty( ResourceFactory.createResource( " " ) ) );
+        Assert.assertFalse( underTest.isEmpty( ResourceFactory.createResource() ) );
+        Assert.assertTrue( underTest.isEmpty( ResourceFactory.createTypedLiteral( "", XSDDatatype.XSDstring ) ) );
+        Assert.assertTrue( underTest.isEmpty( ResourceFactory.createTypedLiteral( " ", XSDDatatype.XSDstring ) ) );
     }
 
     @Override
     @Test
     public void testParseObject() {
-        final Object o = handler.parseObject( node );
+        final Object o = underTest.parseObject( node );
         Assert.assertNotNull( o );
         Assert.assertEquals( node, o );
     }

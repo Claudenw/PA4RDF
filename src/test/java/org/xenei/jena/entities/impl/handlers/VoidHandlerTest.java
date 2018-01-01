@@ -6,14 +6,13 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-public class VoidHandlerTest implements HandlerTestInterface {
-    VoidHandler handler;
+public class VoidHandlerTest extends AbstractObjectHandlerTest {
     RDFNode node;
     Integer instance;
 
     @Before
     public void setup() {
-        handler = new VoidHandler();
+        underTest = new VoidHandler();
         node = ResourceFactory.createPlainLiteral( "5" );
         instance = 5;
     }
@@ -21,32 +20,32 @@ public class VoidHandlerTest implements HandlerTestInterface {
     @Override
     @Test
     public void testCreateRDFNode() {
-        final RDFNode n = handler.createRDFNode( Integer.valueOf( 5 ) );
+        final RDFNode n = underTest.createRDFNode( Integer.valueOf( 5 ) );
         Assert.assertNull( n );
     }
 
     @Override
     @Test
     public void testCreateRDFNode_Null() {
-        final RDFNode n = handler.createRDFNode( null );
+        final RDFNode n = underTest.createRDFNode( null );
         Assert.assertNull( n );
     }
 
     @Override
     @Test
     public void testIsEmpty() {
-        Assert.assertTrue( handler.isEmpty( null ) );
-        Assert.assertTrue( handler.isEmpty( instance ) );
-        Assert.assertTrue( handler.isEmpty( "" ) );
-        Assert.assertTrue( handler.isEmpty( " " ) );
-        Assert.assertTrue( handler.isEmpty( "foo" ) );
+        Assert.assertTrue( underTest.isEmpty( null ) );
+        Assert.assertTrue( underTest.isEmpty( instance ) );
+        Assert.assertTrue( underTest.isEmpty( "" ) );
+        Assert.assertTrue( underTest.isEmpty( " " ) );
+        Assert.assertTrue( underTest.isEmpty( "foo" ) );
 
     }
 
     @Override
     @Test
     public void testParseObject() {
-        final Object o = handler.parseObject( node );
+        final Object o = underTest.parseObject( node );
         Assert.assertNull( o );
     }
 }
