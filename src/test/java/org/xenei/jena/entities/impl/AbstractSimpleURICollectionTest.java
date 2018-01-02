@@ -1,7 +1,5 @@
 package org.xenei.jena.entities.impl;
 
-import static org.junit.Assert.*;
-
 import java.lang.reflect.Method;
 import java.util.List;
 
@@ -9,7 +7,6 @@ import org.apache.jena.rdf.model.RDFNode;
 import org.apache.jena.util.iterator.ExtendedIterator;
 import org.junit.Assert;
 import org.junit.Test;
-import org.xenei.jena.entities.MissingAnnotation;
 import org.xenei.jena.entities.PredicateInfo;
 import org.xenei.jena.entities.testing.iface.SimpleURICollectionInterface;
 
@@ -67,7 +64,7 @@ public abstract class AbstractSimpleURICollectionTest extends AbstractMethodPars
 
     @Test
     public void testParseGetter() throws Exception {
-        
+
         final PredicateInfo predicateInfo = parser.parse( getter );
         assertSame( PIMap.get( getter ), predicateInfo );
         assertSame( PIMap.get( getter ), subjectInfo.getPredicateInfo( getter ) );
