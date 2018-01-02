@@ -20,6 +20,12 @@ import org.apache.jena.rdf.model.RDFNode;
  * An ObjectHandler that always returns null.
  */
 public class VoidHandler extends AbstractObjectHandler {
+    
+    public static final VoidHandler INSTANCE = new VoidHandler();
+    
+    private VoidHandler() {
+        
+    }
     /**
      * Convert the object to null
      * 

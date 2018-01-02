@@ -186,7 +186,7 @@ public class PredicateInfoImpl implements PredicateInfo {
                 return new UriHandler();
             }
         }
-        return new VoidHandler();
+        return VoidHandler.INSTANCE;
     }
 
     /**
