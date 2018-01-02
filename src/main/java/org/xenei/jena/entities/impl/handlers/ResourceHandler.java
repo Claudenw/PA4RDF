@@ -21,6 +21,11 @@ import org.apache.jena.rdf.model.RDFNode;
  * An ObjectHandler that does not convert RDFNodes.
  */
 public class ResourceHandler extends AbstractObjectHandler {
+    
+    public static final ResourceHandler INSTANCE = new ResourceHandler();
+    
+    private ResourceHandler() {
+    }
     /**
      * Convert an object to an RDFNode.
      * 

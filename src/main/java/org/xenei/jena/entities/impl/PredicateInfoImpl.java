@@ -180,7 +180,7 @@ public class PredicateInfoImpl implements PredicateInfo {
                 return new ListHandler( RDFList.class.isAssignableFrom( returnType ), entityManager, innerHandler );
             }
             if (RDFNode.class.isAssignableFrom( returnType )) {
-                return new ResourceHandler();
+                return ResourceHandler.INSTANCE;
             }
             if (returnType.equals( URI.class )) {
                 return UriHandler.INSTANCE;
