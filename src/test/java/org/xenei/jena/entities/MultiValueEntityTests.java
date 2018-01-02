@@ -14,6 +14,9 @@
  */
 package org.xenei.jena.entities;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.rdf.model.RDFNode;
@@ -380,4 +383,5 @@ public class MultiValueEntityTests {
         Assert.assertEquals( 0, tc.getU2().toList().size() );
 
     }
+    
 }

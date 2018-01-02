@@ -17,6 +17,11 @@ package org.xenei.jena.entities.impl;
 import org.apache.jena.rdf.model.RDFNode;
 import org.apache.jena.rdf.model.Statement;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.stream.Collectors;
+
 /**
  * The interface for the internal ObjectHandler.
  * 
@@ -63,5 +68,20 @@ public interface ObjectHandler {
      *            the RDFNode value to remove.
      */
     void removeObject(Statement stmt, RDFNode value);
+    
+    default Collection<RDFNode> asCollection( boolean emptyisNull, Object obj ) {
+        Collection<Object> objs = null;
+        if (obj instanceof Collection)
+        {
+            objs = (Collection<Object>) obj;
+        } else if (obj.getClass().isArray())
+        {
+            objs = new ArrayList<Object>(  Arrays.asList( obj ) );
+        } else {
+            objs = new ArrayList<Object>();
+            objs.add(  obj  );
+        }
+        return objs.stream().map( o -> createRDFNode(o)).collect(  Collectors.toList() );
+    }
 
 }

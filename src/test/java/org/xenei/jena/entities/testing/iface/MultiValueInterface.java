@@ -14,6 +14,8 @@
  */
 package org.xenei.jena.entities.testing.iface;
 
+import java.util.Collection;
+
 import org.apache.jena.rdf.model.RDFNode;
 import org.apache.jena.util.iterator.ExtendedIterator;
 import org.xenei.jena.entities.annotations.Predicate;
@@ -59,6 +61,15 @@ public interface MultiValueInterface {
     void addU3(RDFNode b);
 
     void addU3(@URI String b);
+    
+    @Predicate( contained=String.class )
+    void setLst( Collection<String> s);
+    
+    @Predicate
+    void setAry( String[] s);
+
+    @Predicate
+    void setAry2( String... s);
 
     ExtendedIterator<Boolean> getBool();
 
@@ -115,6 +126,12 @@ public interface MultiValueInterface {
     Boolean hasU3(RDFNode b);
 
     Boolean hasU3(@URI String b);
+    
+    Boolean hasLst( String s );
+    
+    Boolean hasAry( String s );
+
+    Boolean hasAry2(String s );
 
     void removeBool(Boolean b);
 
@@ -141,5 +158,16 @@ public interface MultiValueInterface {
     void removeU3(RDFNode b);
 
     void removeU3(@URI String b);
+    
+    void removeLst( String s );
+    
+    void removeAry( String s );
 
+    void removeAry2(String s );
+
+    Collection<String> getLst();
+    
+    Collection<String> getAry();
+
+    Collection<String> getAry2();
 }

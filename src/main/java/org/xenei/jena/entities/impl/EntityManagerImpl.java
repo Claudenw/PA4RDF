@@ -527,6 +527,10 @@ public class EntityManagerImpl implements EntityManager {
 
             final MethodParser parser = new MethodParser( this, subjectInfo, countAdders( clazz.getMethods() ) );
 
+            /*
+             * Parse getter annotated methods.  All others put into annotated list to parse later.
+             * Parsing getters provides us with extra information about the methods (like the return type)
+             */
             boolean foundAnnotation = false;
             final List<Method> annotated = new ArrayList<Method>();
             for (final Method method : clazz.getMethods()) {
@@ -549,9 +553,14 @@ public class EntityManagerImpl implements EntityManager {
                 throw new MissingAnnotation( "No annotated methods in " + clazz.getCanonicalName() );
             }
 
+            /*
+             * Now parse all the annotated non-getter methods
+             */
             for (final Method method : annotated) {
                 parser.parse( method );
             }
+            
+            /* save the result */
             classInfo.put( clazz, subjectInfo );
         }
         return subjectInfo;
@@ -621,7 +630,6 @@ public class EntityManagerImpl implements EntityManager {
         if (!classes.contains( ResourceWrapper.class )) {
             classes.add( ResourceWrapper.class );
         }
-        subjectInfo.validate( classes );
         final Resource resolvedResource = getResource( source );
         if (resolvedResource instanceof Intercepted) {
             classes.add( Intercepted.class );

@@ -25,6 +25,7 @@ public interface SimpleURICollectionInterface {
     //
     // List with URI annotations
     //
+    @Predicate(type = RDFNode.class)
     List<RDFNode> getU();
 
     @Predicate(type = RDFNode.class)

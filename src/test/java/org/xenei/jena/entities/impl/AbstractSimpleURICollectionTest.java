@@ -1,5 +1,7 @@
 package org.xenei.jena.entities.impl;
 
+import static org.junit.Assert.*;
+
 import java.lang.reflect.Method;
 import java.util.List;
 
@@ -7,6 +9,7 @@ import org.apache.jena.rdf.model.RDFNode;
 import org.apache.jena.util.iterator.ExtendedIterator;
 import org.junit.Assert;
 import org.junit.Test;
+import org.xenei.jena.entities.MissingAnnotation;
 import org.xenei.jena.entities.PredicateInfo;
 import org.xenei.jena.entities.testing.iface.SimpleURICollectionInterface;
 
@@ -31,11 +34,11 @@ public abstract class AbstractSimpleURICollectionTest extends AbstractMethodPars
             throws NoSuchMethodException, SecurityException {
 
         getter = SimpleURICollectionInterface.class.getMethod( "getU" );
-        PIMap.put( getter, mockPredicateInfo( getter, "u", ActionType.GETTER, List.class, 0, 0 ) );
+        PIMap.put( getter, mockPredicateInfo( getter, "u", ActionType.GETTER, List.class, 1, 0 ) );
         setterR = SimpleURICollectionInterface.class.getMethod( "addU", RDFNode.class );
-        PIMap.put( setterR, mockPredicateInfo( setterR, "u", ActionType.SETTER, RDFNode.class, 1, 0 ) );
+        PIMap.put( setterR, mockPredicateInfo( setterR, "u", ActionType.SETTER, RDFNode.class, 0, 0 ) );
         setterS = SimpleURICollectionInterface.class.getMethod( "addU", String.class );
-        PIMap.put( setterS, mockPredicateInfo( setterS, "u", ActionType.SETTER, String.class, 0, 0 ) );
+        PIMap.put( setterS, mockPredicateInfo( setterS, "u", ActionType.SETTER, String.class, 1, 0 ) );
         remover = SimpleURICollectionInterface.class.getMethod( "removeU", String.class );
         PIMap.put( remover, mockPredicateInfo( remover, "u", ActionType.REMOVER, String.class, 0, 0 ) );
         existential = SimpleURICollectionInterface.class.getMethod( "hasU", String.class );
@@ -64,6 +67,7 @@ public abstract class AbstractSimpleURICollectionTest extends AbstractMethodPars
 
     @Test
     public void testParseGetter() throws Exception {
+        
         final PredicateInfo predicateInfo = parser.parse( getter );
         assertSame( PIMap.get( getter ), predicateInfo );
         assertSame( PIMap.get( getter ), subjectInfo.getPredicateInfo( getter ) );
@@ -71,7 +75,6 @@ public abstract class AbstractSimpleURICollectionTest extends AbstractMethodPars
         assertSame( PIMap.get( setterR ), subjectInfo.getPredicateInfo( setterR ) );
         assertSame( PIMap.get( existential ), subjectInfo.getPredicateInfo( existential ) );
         assertSame( PIMap.get( remover ), subjectInfo.getPredicateInfo( remover ) );
-
     }
 
     @Test

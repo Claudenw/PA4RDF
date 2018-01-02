@@ -27,17 +27,29 @@ import org.xenei.jena.entities.SubjectInfo;
 import org.xenei.jena.entities.annotations.Subject;
 
 public class SubjectInfoImpl implements SubjectInfo {
-    private boolean validated;
+    /**
+     * The class that we parsed.
+     */
     private final Class<?> implementedClass;
+    /**
+     * The predicates for the parsed class
+     */
     private final Map<String, Map<Class<?>, PredicateInfo>> predicateInfo = new HashMap<String, Map<Class<?>, PredicateInfo>>();
 
     public SubjectInfoImpl(final Class<?> implementedClass) {
         this.implementedClass = implementedClass;
-        this.validated = false;
+    }
+    
+    @Override
+    public String toString() {
+        return String.format( "SubjectInfo[%s]", implementedClass );
     }
 
     /**
      * Add a predicate info to this subject.
+     * 
+     * PredicateInfo are stored in a multi-dimentional map first by argument/return type
+     * and then by method name.
      * 
      * @param pi
      *            The predicateInfo to add.
@@ -234,21 +246,6 @@ public class SubjectInfoImpl implements SubjectInfo {
                 predicateInfo.remove( function );
             }
         }
-    }
-
-    @Override
-    public void validate(final Collection<Class<?>> iface) {
-        if (validated) {
-            return;
-        }
-        // final Collection<Class<?>> clazz = new ArrayList<Class<?>>(iface);
-        // if (!implementedClass.isInterface())
-        // {
-        // clazz.add(implementedClass);
-        // }
-        // // clazz.remove(Resource.class);
-        // verifyNoNullMethods(clazz);
-        validated = true;
     }
 
     @Override

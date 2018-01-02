@@ -1,5 +1,7 @@
 package org.xenei.jena.entities.testing.impl;
 
+import java.util.Collection;
+
 import org.apache.jena.rdf.model.RDFNode;
 import org.apache.jena.util.iterator.ExtendedIterator;
 import org.xenei.jena.entities.EntityManagerRequiredException;
@@ -347,4 +349,88 @@ public class MultiValueSubjectImpl implements MultiValueInterface {
 
     }
 
+    @Override
+    @Predicate(impl = true)
+    public void setLst(Collection<String> s) {
+        throw new EntityManagerRequiredException();
+
+    }
+
+    @Override
+    @Predicate(impl = true)
+    public void setAry(String[] s) {
+        throw new EntityManagerRequiredException();
+
+    }
+
+    @Override
+    @Predicate(impl = true)
+    public void setAry2(String... s) {
+        throw new EntityManagerRequiredException();
+
+    }
+
+    @Override
+    @Predicate(impl = true)
+    public Boolean hasLst(String s) {
+        throw new EntityManagerRequiredException();
+
+    }
+
+    @Override
+    @Predicate(impl = true)
+    public Boolean hasAry(String s) {
+        throw new EntityManagerRequiredException();
+
+    }
+
+    @Override
+    @Predicate(impl = true)
+    public Boolean hasAry2(String s) {
+        throw new EntityManagerRequiredException();
+
+    }
+
+    @Override
+    @Predicate(impl = true)
+    public void removeLst(String s) {
+        throw new EntityManagerRequiredException();
+
+    }
+
+    @Override
+    @Predicate(impl = true)
+    public void removeAry(String s) {
+        throw new EntityManagerRequiredException();
+
+    }
+
+    @Override
+    @Predicate(impl = true)
+    public void removeAry2(String s) {
+        throw new EntityManagerRequiredException();
+
+    }
+
+    @Override
+    @Predicate(impl = true)
+    public Collection<String> getLst() {
+        throw new EntityManagerRequiredException();
+
+    }
+
+    @Override
+    @Predicate(impl = true)
+    public Collection<String> getAry() {
+        throw new EntityManagerRequiredException();
+
+    }
+
+    @Override
+    @Predicate(impl = true)
+    public Collection<String> getAry2() {
+        throw new EntityManagerRequiredException();
+
+    }
+    
 }

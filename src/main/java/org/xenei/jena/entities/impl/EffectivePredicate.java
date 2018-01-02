@@ -43,6 +43,7 @@ public class EffectivePredicate {
     boolean emptyIsNull = true;
     boolean impl = false;
     List<Method> postExec = null;
+    boolean isCollection = false;
 
     public EffectivePredicate() {
     }
@@ -52,47 +53,48 @@ public class EffectivePredicate {
         merge( ep );
     }
 
-    public EffectivePredicate(final Method m) {
-        if (m != null) {
+    public EffectivePredicate(final Method method) {
+        if (method != null) {
 
-            if (m.getParameterTypes().length > 0) {
+            if (method.getParameterTypes().length > 0) {
 
-                for (final Annotation a : m.getParameterAnnotations()[0]) {
+                for (final Annotation a : method.getParameterAnnotations()[0]) {
                     if (a instanceof URI) {
                         this.type = URI.class;
                     }
                 }
             }
 
-            final Subject s = m.getDeclaringClass().getAnnotation( Subject.class );
+            final Subject s = method.getDeclaringClass().getAnnotation( Subject.class );
             if (s != null) {
                 this.namespace = s.namespace();
             }
-            final Predicate p = m.getAnnotation( Predicate.class );
-            merge( p );
+            isCollection = MethodParser.isCollection( method );
+            final Predicate p = method.getAnnotation( Predicate.class );          
             if (p != null) {
+                merge( p );
                 if (StringUtils.isNotBlank( p.postExec() )) {
                     final String mName = p.postExec().trim();
                     try {
                         Method peMethod = null;
                         Class<?> argType = null;
-                        final ActionType actionType = ActionType.parse( m.getName() );
+                        final ActionType actionType = ActionType.parse( method.getName() );
                         switch (actionType) {
                         case GETTER:
-                            argType = m.getReturnType();
+                            argType = method.getReturnType();
                             break;
 
                         case SETTER:
                         case EXISTENTIAL:
                         case REMOVER:
-                            if (m.getParameterTypes().length != 1) {
+                            if (method.getParameterTypes().length != 1) {
                                 throw new RuntimeException(
                                         String.format( "%s does not have a single parameter", peMethod ) );
                             }
-                            argType = m.getParameterTypes()[0];
+                            argType = method.getParameterTypes()[0];
                             break;
                         }
-                        peMethod = m.getDeclaringClass().getMethod( mName, argType );
+                        peMethod = method.getDeclaringClass().getMethod( mName, argType );
                         if (actionType == ActionType.GETTER && !argType.equals( peMethod.getReturnType() )) {
                             throw new RuntimeException(
                                     String.format( "%s does not return its parameter type", peMethod ) );
@@ -109,8 +111,8 @@ public class EffectivePredicate {
             }
             if (StringUtils.isBlank( name )) {
                 try {
-                    final ActionType actionType = ActionType.parse( m.getName() );
-                    setName( actionType.extractName( m.getName() ) );
+                    final ActionType actionType = ActionType.parse( method.getName() );
+                    setName( actionType.extractName( method.getName() ) );
                 } catch (final IllegalArgumentException e) {
                     // expected when not an action method.
                 }
@@ -160,11 +162,19 @@ public class EffectivePredicate {
             setName( StringUtils.isBlank( predicate.name() ) ? name : predicate.name() );
             namespace = StringUtils.isBlank( predicate.namespace() ) ? namespace : predicate.namespace();
             literalType = StringUtils.isBlank( predicate.literalType() ) ? literalType : predicate.literalType();
-            type = RDFNode.class.equals( predicate.type() ) ? type : predicate.type();
-            contained = contained == null ? predicate.contained() : contained;
+            if (type == null)
+            {
+                type = predicate.type();
+            }
+            contained = contained.equals(  RDFNode.class ) ? predicate.contained() : contained;
             impl |= predicate.impl();
+            isCollection |= predicate.isCollection();
         }
         return this;
+    }
+    
+    public boolean isCollection() {
+        return isCollection;
     }
 
     public EffectivePredicate merge(final Predicate predicate) {
@@ -173,7 +183,12 @@ public class EffectivePredicate {
             setName( StringUtils.isBlank( predicate.name() ) ? name : predicate.name() );
             namespace = StringUtils.isBlank( predicate.namespace() ) ? namespace : predicate.namespace();
             literalType = StringUtils.isBlank( predicate.literalType() ) ? literalType : predicate.literalType();
-            type = RDFNode.class.equals( predicate.type() ) ? type : predicate.type();
+            if (type == null)
+            {
+                type = predicate.type();
+            } else {
+                type = RDFNode.class.equals( predicate.type() ) ? type : predicate.type();
+            }
             contained = predicate.contained();
             emptyIsNull = predicate.emptyIsNull();
             impl |= predicate.impl();
@@ -200,16 +215,35 @@ public class EffectivePredicate {
         }
     }
 
-    public Class<?> type() {
-        return type == null ? RDFNode.class : type;
+    /**
+     * Gets the type.  
+     * @param dflt The default value if the type is not set.
+     * @return the type.
+     */
+    public Class<?> type(Class<?> dflt) {
+        return type == null ? dflt : type;
     }
 
+    /**
+     * Gets the type.  If not set defaults to RDFNode.class
+     * @return the type.
+     */
+    public Class<?> type() {
+        return type;
+    }
+    
     public Class<?> contained() {
         return contained;// == null ? RDFNode.class : type;
     }
 
     public boolean upcase() {
         return upcase;
+    }
+    
+    @Override
+    public String toString() {
+        return String.format(  "EffectivePredicate[ ns:%s n:%s impl:%s, colection:%s type:%s cntd:%s uc:%s enull:%s lit:%s postExec:%s ]", 
+                namespace, name, impl, isCollection, type, contained, upcase, emptyIsNull, literalType, postExec==null?0:postExec.size() );
     }
 
 }

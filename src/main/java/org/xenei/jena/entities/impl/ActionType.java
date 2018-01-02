@@ -25,35 +25,47 @@ public enum ActionType {
     /**
      * Indicates a method that gets a value
      */
-    GETTER(),
+    GETTER("get", "is"),
     /**
      * Indicates a method that sets a value
      */
-    SETTER(),
+    SETTER("set", "add"),
     /**
      * Indicates a method that removes a value
      */
-    REMOVER(),
+    REMOVER( "remove"),
     /**
-     * Indicates a method that checks for the existance of a value
+     * Indicates a method that checks for the existence of a value
      */
-    EXISTENTIAL();
+    EXISTENTIAL( "has");
+    
+    private String[] prefixes;
+    
+    ActionType( String... prefixes)
+    {
+        this.prefixes = prefixes;
+    }
 
-    public static boolean isMultiple(final Method m) {
-        final ActionType at = ActionType.parse( m.getName() );
+    /**
+     * Return true if the method is backed by multiple entries in the graph.
+     * @param method the method to check
+     * @return true if there are multiples.
+     */
+    public static boolean isMultiple(final Method method) {
+        final ActionType at = ActionType.parse( method.getName() );
         switch (at) {
         case GETTER:
-            return Iterator.class.isAssignableFrom( m.getReturnType() )
-                    || Collection.class.isAssignableFrom( m.getReturnType() );
+            return Iterator.class.isAssignableFrom( method.getReturnType() )
+                    || Collection.class.isAssignableFrom( method.getReturnType() );
 
         case SETTER:
-            return m.getName().startsWith( "set" );
+            return method.getName().startsWith( "set" );
 
         case EXISTENTIAL:
         case REMOVER:
-            return m.getParameterTypes().length > 0;
+            return method.getParameterTypes().length > 0;
         }
-        throw new IllegalArgumentException( String.format( "%s is not an action type function", m ) );
+        throw new IllegalArgumentException( String.format( "%s is not an action type function", method ) );
     }
 
     /**
@@ -94,24 +106,20 @@ public enum ActionType {
      *             if the function does not have an action type prefix.
      */
     public static ActionType parse(final String functionName) {
-        if (functionName.startsWith( "get" ) || functionName.startsWith( "is" )) {
-            return GETTER;
+        for (ActionType type :ActionType.values())
+        {
+            if (type.isA( functionName  ))                
+            {
+                return type;
+            }
         }
-        if (functionName.startsWith( "set" ) || functionName.startsWith( "add" )) {
-            return SETTER;
-        }
-        if (functionName.startsWith( "remove" )) {
-            return REMOVER;
-        }
-        if (functionName.startsWith( "has" )) {
-            return EXISTENTIAL;
-        }
+        
         throw new IllegalArgumentException( String.format( "%s is not an action type function", functionName ) );
 
     }
 
     /**
-     * Extract the local name portion of the function name/
+     * Extract the local name portion of the function name.
      * 
      * @param name
      *            The function name to extract the local portion from.
@@ -138,6 +146,24 @@ public enum ActionType {
     }
 
     /**
+     * Create method names from the the name suffix of the function name.
+     * 
+     * @param nameSuffix
+     *            the suffix for the name.
+     * @return an array of potential method names.
+     * @throws IllegalArgumentException
+     *             fur unrecognized ActionType instances.
+     */
+    public String[] functionNames(final String nameSuffix) {
+        String[] retval = new String[ prefixes.length];
+        for (int i=0;i<prefixes.length;i++)
+        {
+            retval[i] = prefixes[i]+nameSuffix;
+        }
+        return retval;
+    }
+    
+    /**
      * Test to see if the function name is of this action type.
      * 
      * @param functionName
@@ -148,18 +174,12 @@ public enum ActionType {
         if (functionName == null) {
             return false;
         }
-        switch (this) {
-        case EXISTENTIAL:
-            return functionName.startsWith( "has" );
-
-        case GETTER:
-            return functionName.startsWith( "get" ) || functionName.startsWith( "is" );
-
-        case REMOVER:
-            return functionName.startsWith( "remove" );
-
-        case SETTER:
-            return functionName.startsWith( "set" ) || functionName.startsWith( "add" );
+        for (String pfx : prefixes)
+        {
+            if (functionName.startsWith( pfx ))
+            {
+                return true;
+            }
         }
         return false;
     }

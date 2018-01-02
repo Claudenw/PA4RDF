@@ -87,5 +87,5 @@ public interface PredicateInfo {
      * @return The set of annotations.
      */
     public Collection<Annotation> getAnnotations();
-
+    
 }
