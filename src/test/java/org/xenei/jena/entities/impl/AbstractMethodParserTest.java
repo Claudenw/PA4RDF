@@ -6,13 +6,20 @@ import static org.mockito.Mockito.when;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.jena.rdf.model.ResourceFactory;
 import org.junit.Assert;
+import org.xenei.jena.entities.EntityManagerFactory;
 import org.xenei.jena.entities.PredicateInfo;
 
 public abstract class AbstractMethodParserTest {
+
+    protected final EntityManagerImpl entityManager = (EntityManagerImpl) EntityManagerFactory.create();
+    protected final Map<String, Integer> addCount = new HashMap<String, Integer>();
+    protected final Map<Method, PredicateInfo> PIMap = new HashMap<Method, PredicateInfo>();
 
     protected void assertSame(PredicateInfo expected, PredicateInfo actual) {
         Assert.assertNotNull( "Missing predicate info " + expected.getActionType(), actual );
@@ -27,7 +34,8 @@ public abstract class AbstractMethodParserTest {
         Assert.assertEquals( expected.getValueClass(), actual.getValueClass() );
     }
 
-    protected PredicateInfo mockPredicateInfo(Method m, String shortName, ActionType type, Class valueClass,
+    @SuppressWarnings("unchecked")
+    protected PredicateInfo mockPredicateInfo(Method m, String shortName, ActionType type, @SuppressWarnings("rawtypes") Class valueClass,
             int annotationCount, int execCount) {
         final PredicateInfo pi = mock( PredicateInfo.class );
         when( pi.getNamespace() ).thenReturn( "http://example.com/" );
