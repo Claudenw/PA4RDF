@@ -183,7 +183,7 @@ public class PredicateInfoImpl implements PredicateInfo {
                 return new ResourceHandler();
             }
             if (returnType.equals( URI.class )) {
-                return new UriHandler();
+                return UriHandler.INSTANCE;
             }
         }
         return VoidHandler.INSTANCE;

@@ -23,6 +23,12 @@ import org.apache.jena.rdf.model.ResourceFactory;
  * versa
  */
 public class UriHandler extends AbstractObjectHandler {
+    
+    public static final UriHandler INSTANCE = new UriHandler();
+    
+    private UriHandler() 
+    {}
+    
     /**
      * Convert the object as a string to an RDFNode.
      * 
