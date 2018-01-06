@@ -120,25 +120,37 @@ public class SubjectInfoImpl implements SubjectInfo {
         final Map<Class<?>, PredicateInfo> map = predicateInfo.get( function );
         if (map != null) {
             for (final PredicateInfo pi : map.values()) {
-                final Class<?> valueClass = pi.getValueClass();
+                //final Class<?> valueClass = pi.getValueClass();
                 switch (pi.getActionType()) {
                 case SETTER:
-                    if (TypeChecker.canBeSetFrom( valueClass, clazz )) {
+                    if (TypeChecker.canBeSetFrom( pi.getValueClass(), clazz )) {
                         return pi;
                     }
                     break;
 
                 case GETTER:
-                    if (TypeChecker.canBeSetFrom( clazz, valueClass )) {
+                    if (TypeChecker.canBeSetFrom( clazz, pi.getValueClass() )) {
                         return pi;
                     }
                     break;
 
                 case REMOVER:
-                case EXISTENTIAL:
-                    if (valueClass != null) {
+                    if (pi.getValueClass() != null) {
                         // it needs an argument
-                        if (TypeChecker.canBeSetFrom( valueClass, clazz )) {
+                        if (TypeChecker.canBeSetFrom( pi.getValueClass(), clazz )) {
+                            return pi;
+                        }
+                    } else {
+                        // it does not want an argument
+                        if ((clazz == null) || clazz.equals( void.class )) {
+                            return pi;
+                        }
+                    }
+                    break;
+                case EXISTENTIAL:
+                    if (pi.getEffectivePredicate().type() != null) {
+                        // it needs an argument
+                        if (TypeChecker.canBeSetFrom( pi.getEffectivePredicate().type(), clazz )) {
                             return pi;
                         }
                     } else {

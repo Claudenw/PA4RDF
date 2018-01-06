@@ -23,6 +23,7 @@ import java.util.Collections;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.jena.datatypes.RDFDatatype;
 import org.apache.jena.datatypes.TypeMapper;
 import org.apache.jena.rdf.model.Literal;
@@ -48,15 +49,15 @@ public class EffectivePredicate {
     private boolean emptyIsNull = false;
     private boolean impl = false;
     private List<Method> postExec = null;
-    private ActionType actionType;
+    private final ActionType actionType;
 
-    
-    
-    public EffectivePredicate() {
-    }
+//    
+//    
+//    public EffectivePredicate() {
+//    }
 
     public EffectivePredicate(final EffectivePredicate ep) {
-        this();
+        
         upcase = ep.upcase;
         name = ep.name;
         namespace = ep.namespace;
@@ -73,6 +74,7 @@ public class EffectivePredicate {
     }
 
     public EffectivePredicate(final Method method) {
+        
         if (method != null) {
             // set the type and collection type.
             this.actionType = ActionType.parse( method.getName() );
@@ -161,6 +163,9 @@ public class EffectivePredicate {
                     // expected when not an action method.
                 }
             }
+        }
+        else {
+            actionType = null;
         }
     }
 
@@ -318,9 +323,13 @@ public class EffectivePredicate {
     public Class<?> collectionType() {
         return collectionType;
     }
+    
+    public void collectionType( Class<?> collectionType) {
+        this.collectionType = collectionType;
+    }
 
     public boolean isTypeNotSet() {
-        return type.equals( Predicate.UNSET.class );
+        return type == null || type.equals( Predicate.UNSET.class );
     }
 
     /**
@@ -339,6 +348,38 @@ public class EffectivePredicate {
                 "EffectivePredicate[ ns:%s n:%s impl:%s,  Types[e:%s i:%s c:%s] uc:%s enull:%s lit:%s postExec:%s ]",
                 namespace, name, impl, type, internalType, collectionType, upcase, emptyIsNull, literalType,
                 postExec == null ? 0 : postExec.size() );
+    }
+    
+    @Override
+    public boolean equals( Object o )
+    {
+        if (o instanceof EffectivePredicate)
+        {
+            EffectivePredicate other = (EffectivePredicate) o;
+            if (actionType == null) 
+            {
+                return super.equals( o );
+            }
+            return new EqualsBuilder()
+                    .append( actionType, other.actionType )
+                    .append( upcase, other.upcase )
+                    .append( name, other.name )
+                    .append( namespace, other.namespace )
+                    .append( literalType, other.literalType )
+                    .append( type, other.type )
+                    .append( internalType, other.internalType )
+                    .append( collectionType, other.collectionType )
+                    .append( emptyIsNull, other.emptyIsNull )
+                    .append( impl, other.impl )
+                    .append( postExec, other.postExec )
+                    .build();
+        }
+        return false;
+    }
+    
+    @Override
+    public int hashCode() {
+        return actionType==null?super.hashCode():actionType.hashCode();
     }
 
 }

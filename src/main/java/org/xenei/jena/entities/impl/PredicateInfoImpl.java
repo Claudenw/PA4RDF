@@ -153,7 +153,10 @@ public class PredicateInfoImpl implements PredicateInfo {
                 
         if (pred.isCollection())
         {
-            return new ListHandler( pred, returnType, entityManager );            
+            EffectivePredicate ep = new EffectivePredicate( pred );
+            ep.collectionType( null );
+            ObjectHandler handler = PredicateInfoImpl.getHandler( entityManager, returnType, ep );
+            return new ListHandler( handler, pred.collectionType() );            
         }
         
         if (pred.type().getAnnotation( Subject.class ) != null) {
@@ -210,7 +213,11 @@ public class PredicateInfoImpl implements PredicateInfo {
          * getters that return objects.
          */
          if ((concreteType != null) && (valueClass != null)) {
-             // perform exclusive or check
+             /*
+             * perform exclusive or check.
+            * This allows us to have setters that take primitives but
+            * getters that return objects.
+            */
              if ((concreteType.isPrimitive() ^ valueClass.isPrimitive()))
              {
                  concreteType = valueClass;

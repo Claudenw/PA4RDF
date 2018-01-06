@@ -27,7 +27,7 @@ public class ListHandlerTest extends AbstractObjectHandlerTest {
     @Before
     public void setup() {
         em = EntityManagerFactory.create();
-        underTest = new ListHandler( false, em, new LiteralHandler( XSDDatatype.XSDstring ) );
+        underTest = new ListHandler( new LiteralHandler( XSDDatatype.XSDstring ), List.class );
 
     }
 

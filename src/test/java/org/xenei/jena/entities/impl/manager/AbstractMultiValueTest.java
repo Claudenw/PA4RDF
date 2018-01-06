@@ -582,7 +582,7 @@ public abstract class AbstractMultiValueTest extends BaseAbstractManagerTest {
     public void testLst() {
         PredicateInfoImpl pi = (PredicateInfoImpl) subjectInfo.getPredicateInfo( "getLst", Collection.class );
         ObjectHandler handler = new LiteralHandler( TypeMapper.getInstance().getTypeByClass( String.class ) );
-        handler = new ListHandler( false, manager, handler );
+        handler = new ListHandler(  handler,  List.class );
         Assert.assertEquals( handler, pi.getObjectHandler( manager ) );
         Assert.assertEquals( "getLst", pi.getMethodName() );
         Assert.assertEquals( Collection.class, pi.getValueClass() );

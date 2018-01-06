@@ -34,10 +34,10 @@ public abstract class AbstractSimpleURICollectionTest extends AbstractMethodPars
     protected AbstractSimpleURICollectionTest(Class<? extends SimpleURICollectionInterface> interfaceClass)
             throws NoSuchMethodException, SecurityException {
         super( interfaceClass );
-        
+        EffectivePredicate pred;
         getter = SimpleURICollectionInterface.class.getMethod( "getU" );
         PIMap.put( getter, mockPredicateInfo( getter, "u", ActionType.GETTER, List.class, 1, 0 ) );
-        OMMap.put( getter, new ListHandler(false, entityManager, ResourceHandler.INSTANCE) );
+        OMMap.put( getter, new ListHandler(ResourceHandler.INSTANCE, List.class) );
         
         setterR = SimpleURICollectionInterface.class.getMethod( "addU", RDFNode.class );
         PIMap.put( setterR, mockPredicateInfo( setterR, "u", ActionType.SETTER, RDFNode.class, 0, 0 ) );
@@ -57,7 +57,7 @@ public abstract class AbstractSimpleURICollectionTest extends AbstractMethodPars
 
         getter2 = SimpleURICollectionInterface.class.getMethod( "getU2" );
         PIMap.put( getter2, mockPredicateInfo( getter2, "u2", ActionType.GETTER, ExtendedIterator.class, 1, 0 ) );
-        OMMap.put( getter2, new ListHandler(false, entityManager, ResourceHandler.INSTANCE) );
+        OMMap.put( getter2, new ListHandler( ResourceHandler.INSTANCE, ExtendedIterator.class) );
         
         setterR2 = SimpleURICollectionInterface.class.getMethod( "addU2", RDFNode.class );
         PIMap.put( setterR2, mockPredicateInfo( setterR2, "u2", ActionType.SETTER, RDFNode.class, 0, 0 ) );

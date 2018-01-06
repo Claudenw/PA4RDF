@@ -22,6 +22,7 @@ import java.util.List;
 
 import org.apache.jena.rdf.model.Property;
 import org.xenei.jena.entities.impl.ActionType;
+import org.xenei.jena.entities.impl.EffectivePredicate;
 
 /**
  * Information about the predicate.
@@ -87,5 +88,11 @@ public interface PredicateInfo {
      * @return The set of annotations.
      */
     public Collection<Annotation> getAnnotations();
+    
+    /**
+     * Get the effective predicate for this method.
+     * @return the effective predicate.
+     */
+    public EffectivePredicate getEffectivePredicate();
     
 }
