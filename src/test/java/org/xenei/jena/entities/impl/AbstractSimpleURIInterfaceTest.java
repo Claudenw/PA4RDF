@@ -44,7 +44,7 @@ public abstract class AbstractSimpleURIInterfaceTest extends AbstractMethodParse
         existential = interfaceClass.getMethod( "hasU" );
         PIMap.put( existential, mockPredicateInfo( existential, "u", ActionType.EXISTENTIAL,
                 TypeChecker.getPrimitiveClass( Boolean.class ), 0, 0 ) );
-        OMMap.put( existential, new LiteralHandler( XSDDatatype.XSDboolean) );
+        OMMap.put( existential, VoidHandler.INSTANCE );
 
         addCount.put( "setU", Integer.valueOf( 2 ) );
     }
