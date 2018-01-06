@@ -57,7 +57,9 @@ public class LiteralHandler extends AbstractObjectHandler {
     @Override
     public boolean equals(final Object o) {
         if (o instanceof LiteralHandler) {
-            return literalDatatype.equals( ((LiteralHandler) o).literalDatatype );
+            RDFDatatype oType = ((LiteralHandler) o).literalDatatype;
+            return (literalDatatype.getJavaClass().equals(  oType.getJavaClass() )) &&
+                    (literalDatatype.getURI().equals(  oType.getURI() ));
         }
         return false;
     }
