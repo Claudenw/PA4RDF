@@ -134,16 +134,9 @@ public class MethodParser {
             }
         }
 
-        private void parseGetter(final Method method, final EffectivePredicate superPredicate)
+        private void parseGetter(final Method method, final EffectivePredicate predicate)
                 throws MissingAnnotation {
-            // predicate for getter method includes predicate info for setter
-            // method.
-
-            final EffectivePredicate predicate = new EffectivePredicate( method ).merge( superPredicate );
-            // ExtendedIterator or Collection return type
-//            if (method.getReturnType().equals( ExtendedIterator.class )
-//                    || Collection.class.isAssignableFrom( method.getReturnType() )) {
-
+              
             String nameSuffix = predicate.actionType().extractName( method.getName() );
               if (isCollection(method)) {
                 if (!isMultiAdd( nameSuffix )) {
@@ -208,9 +201,6 @@ public class MethodParser {
                 predicate.checkValid();
                 final PredicateInfoImpl pi = new PredicateInfoImpl( entityManager, predicate, method, valueType );
                 subjectInfo.add( pi );
-
-//                predicate.type = null;
-//                predicate.literalType = "";
 
                 if (multiAdd) {
                     processAssociatedSetters( pi, method, predicate );
@@ -293,6 +283,12 @@ public class MethodParser {
     private class ImplementedMethodParser {
 
         private void parse(final Method method, final EffectivePredicate predicate) throws MissingAnnotation {
+            
+            /*
+             * If the class of the method has a Subject annotation then all the Subject annotations
+             * from parent classes are overridden so just call the abstractMethodParser as it will handle
+             * the results correctly. 
+             */
             if (method.getDeclaringClass().isAnnotationPresent( Subject.class )) {
                 MethodParser.this.abstractMethodParser.parse( method, predicate );
                 return;
@@ -321,7 +317,9 @@ public class MethodParser {
                 break;
 
             case REMOVER:
-                parseRemover( interfaces, method );
+                if (method.getParameterTypes().length <= 1) {
+                    parseRemover( interfaces, method );
+                }
                 break;
 
             }
@@ -372,7 +370,8 @@ public class MethodParser {
                     final SubjectInfo si = entityManager.getSubjectInfo( m.getDeclaringClass() );
                     final PredicateInfoImpl pi = (PredicateInfoImpl) si.getPredicateInfo( m );
                     if (pi != null) {
-                        subjectInfo.add( pi );
+                        PredicateInfoImpl pi2 = new PredicateInfoImpl( pi );
+                        subjectInfo.add( pi2 );
                         return;
                     }
                 }
@@ -399,9 +398,10 @@ public class MethodParser {
 
         private void parseRemover(final Set<Class<?>> abstracts, final Method method) throws MissingAnnotation {
             for (final Method m : findMethod( abstracts, method )) {
-                final PredicateInfoImpl pi = (PredicateInfoImpl) MethodParser.this.parse( m );
+                final SubjectInfo si = entityManager.getSubjectInfo( m.getDeclaringClass() );
+                final PredicateInfoImpl pi = (PredicateInfoImpl) si.getPredicateInfo( m );
                 if (pi != null) {
-                    subjectInfo.add( pi );
+                    subjectInfo.add( new PredicateInfoImpl( pi ) );
                     return;
                 }
             }
@@ -417,48 +417,81 @@ public class MethodParser {
          */
         private void parseSetter(final Set<Class<?>> abstracts, final Method method, final boolean multiAdd)
                 throws MissingAnnotation {
-            final String subName = ActionType.SETTER.extractName( method.getName() );
+            
             final List<Method> lm = findMethod( abstracts, method );
             System.out.println(  String.format( "Matching method count for %s: %s", method, lm.size() ));
             assert( lm.size() < 2);
             for (final Method m : lm) {
 
                 final SubjectInfo si = entityManager.getSubjectInfo( m.getDeclaringClass() );
-                final PredicateInfoImpl pi = (PredicateInfoImpl) si.getPredicateInfo( m );
-
-                subjectInfo.add( pi );
-
-                if (multiAdd) {
-                    processAssociatedSetters( pi, method, pi.getEffectivePredicate() );
-                }
-
-                // add the sub types here
-                final boolean isMultiple = m.getName().startsWith( "add" );
-                parseAssociatedMethod( method.getDeclaringClass(), abstracts, pi.getEffectivePredicate(),
-                        "get" + subName, null );
-                parseAssociatedMethod( method.getDeclaringClass(), abstracts, pi.getEffectivePredicate(),
-                        "is" + subName, null );
-                if (isMultiple) {
-                    parseAssociatedMethod( method.getDeclaringClass(), abstracts, pi.getEffectivePredicate(),
-                            "has" + subName, pi.getValueClass() );
-                    parseAssociatedMethod( method.getDeclaringClass(), abstracts, pi.getEffectivePredicate(),
-                            "remove" + subName, pi.getValueClass() );
-
-                    if (pi.getValueClass() == RDFNode.class) {
-                        // look for @URI annotated strings
-                        parseAssociatedURIMethod( method.getDeclaringClass(), abstracts, pi.getEffectivePredicate(),
-                                "has" + subName );
-                        parseAssociatedURIMethod( method.getDeclaringClass(), abstracts, pi.getEffectivePredicate(),
-                                "remove" + subName );
+                final PredicateInfoImpl oldPi = (PredicateInfoImpl) si.getPredicateInfo( m );
+                if (oldPi != null)
+                {
+                    final PredicateInfoImpl pi = new PredicateInfoImpl( oldPi );
+    
+                    subjectInfo.add( pi );
+    
+                    if (multiAdd) {
+                        processAssociatedSetters( pi, method, pi.getEffectivePredicate() );
                     }
-                } else {
-                    parseAssociatedMethod( method.getDeclaringClass(), abstracts, pi.getEffectivePredicate(),
-                            "has" + subName, null );
-                    parseAssociatedMethod( method.getDeclaringClass(), abstracts, pi.getEffectivePredicate(),
-                            "remove" + subName, null );
+                    
+                    final String nameSuffix = pi.getEffectivePredicate().actionType().extractName( method.getName() );
+    
+                    // add sub types
+                    for (String fnName : ActionType.GETTER.functionNames( nameSuffix ))
+                    {
+                        parseAssociatedMethod( method.getDeclaringClass(), abstracts, pi.getEffectivePredicate(),
+                                fnName, null );
+                    }
+                                       
+                    if (ActionType.isMultiple( method )) {
+                        for (String fnName : ActionType.EXISTENTIAL.functionNames( nameSuffix ))
+                        {
+                            parseAssociatedMethod( method.getDeclaringClass(), abstracts, pi.getEffectivePredicate(),
+                                    fnName, pi.getValueClass() );
+                            if (pi.getValueClass() == RDFNode.class) {
+                                // look for @URI annotated strings
+                                parseAssociatedURIMethod( method.getDeclaringClass(), abstracts, pi.getEffectivePredicate(),
+                                        fnName );
+                            }
+                        }
+                        for (String fnName : ActionType.REMOVER.functionNames( nameSuffix ))
+                        {
+                            parseAssociatedMethod( method.getDeclaringClass(), abstracts, pi.getEffectivePredicate(),
+                                    fnName, pi.getValueClass() );
+                            if (pi.getValueClass() == RDFNode.class) {
+                                // look for @URI annotated strings
+                                parseAssociatedURIMethod( method.getDeclaringClass(), abstracts, pi.getEffectivePredicate(),
+                                        fnName );
+                            }
+                        }                       
+    
+                        
+                    } else {
+                        for (String fnName : ActionType.EXISTENTIAL.functionNames( nameSuffix ))
+                        {
+                            parseAssociatedMethod( method.getDeclaringClass(), abstracts, pi.getEffectivePredicate(),
+                                    fnName, null );
+                            if (pi.getValueClass() == RDFNode.class) {
+                                // look for @URI annotated strings
+                                parseAssociatedURIMethod( method.getDeclaringClass(), abstracts, pi.getEffectivePredicate(),
+                                        fnName );
+                            }
+                        }
+                        for (String fnName : ActionType.REMOVER.functionNames( nameSuffix ))
+                        {
+                            parseAssociatedMethod( method.getDeclaringClass(), abstracts, pi.getEffectivePredicate(),
+                                    fnName, null );
+                            if (pi.getValueClass() == RDFNode.class) {
+                                // look for @URI annotated strings
+                                parseAssociatedURIMethod( method.getDeclaringClass(), abstracts, pi.getEffectivePredicate(),
+                                        fnName );
+                            }
+                        }                       
+                    }
+                    
+                    return;
                 }
-                return;
-
             }
             throw new MissingAnnotation( String.format( "Can not locate annotated %s from %s", method.getName(),
                     method.getDeclaringClass() ) );
@@ -710,7 +743,7 @@ public class MethodParser {
      * @return the Predicate info.
      * @throws MissingAnnotation if the Method does not have an annotation.
      */
-    /* package private */ PredicateInfo parse(final Method method, final EffectivePredicate predicate) throws MissingAnnotation {
+    private PredicateInfo parse(final Method method, final EffectivePredicate predicate) throws MissingAnnotation {
         PredicateInfo pi = subjectInfo.getPredicateInfo( method );
 
         // only process if we havn't yet.

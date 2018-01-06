@@ -227,6 +227,10 @@ public class PredicateInfoImpl implements PredicateInfo {
         }
     }
 
+    /**
+     * Copy constructor.
+     * @param pi the predicate info to copy.
+     */
     public PredicateInfoImpl(PredicateInfoImpl pi) {
         this.concreteType = pi.concreteType;
         this.methodName = pi.methodName;
