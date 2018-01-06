@@ -107,14 +107,14 @@ public @interface Predicate {
      * 
      * @return The object class.
      */
-    Class<?> type() default RDFNode.class;
+    Class<?> type() default UNSET.class;
 
     /**
      * The java object class that is contained in the list when type is RDFList
      * 
      * @return The list contents type class.
      */
-    Class<?> contained() default RDFNode.class;
+    Class<?> internalType() default UNSET.class;
 
     /**
      * determines if the local name should have the first character upper cased.
@@ -131,4 +131,6 @@ public @interface Predicate {
      * @return the name of the method to call.
      */
     String postExec() default "";
+    
+    public static class UNSET{};
 }

@@ -390,7 +390,7 @@ public abstract class AbstractMultiValueTest extends BaseAbstractManagerTest {
     @Test
     public void testRdf() {
         PredicateInfoImpl pi = (PredicateInfoImpl) subjectInfo.getPredicateInfo( "getRDF", ExtendedIterator.class );
-        final ObjectHandler handler = new ResourceHandler();
+        final ObjectHandler handler = ResourceHandler.INSTANCE;
 
         Assert.assertEquals( "getRDF", pi.getMethodName() );
         Assert.assertEquals( handler, pi.getObjectHandler( manager ) );
@@ -456,8 +456,8 @@ public abstract class AbstractMultiValueTest extends BaseAbstractManagerTest {
     @Test
     public void testURI() {
         PredicateInfoImpl pi = (PredicateInfoImpl) subjectInfo.getPredicateInfo( "getU", ExtendedIterator.class );
-        final ObjectHandler resHandler = new ResourceHandler();
-        final ObjectHandler uriHandler = new UriHandler();
+        final ObjectHandler resHandler = ResourceHandler.INSTANCE;
+        final ObjectHandler uriHandler = UriHandler.INSTANCE;
 
         Assert.assertEquals( "getU", pi.getMethodName() );
         Assert.assertEquals( resHandler, pi.getObjectHandler( manager ) );
@@ -518,8 +518,8 @@ public abstract class AbstractMultiValueTest extends BaseAbstractManagerTest {
     @Test
     public void testURIOrdering() {
         PredicateInfoImpl pi = (PredicateInfoImpl) subjectInfo.getPredicateInfo( "getU3", ExtendedIterator.class );
-        final ObjectHandler resHandler = new ResourceHandler();
-        final ObjectHandler uriHandler = new UriHandler();
+        final ObjectHandler resHandler = ResourceHandler.INSTANCE;
+        final ObjectHandler uriHandler = UriHandler.INSTANCE;
 
         Assert.assertEquals( "getU3", pi.getMethodName() );
         Assert.assertEquals( resHandler, pi.getObjectHandler( manager ) );

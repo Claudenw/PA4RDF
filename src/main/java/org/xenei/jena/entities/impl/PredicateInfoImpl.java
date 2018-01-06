@@ -80,10 +80,6 @@ public class PredicateInfoImpl implements PredicateInfo {
      */
     private Property property;
     /**
-     * The action type for the method
-     */
-    private final ActionType actionType;
-    /**
      * The effective predicate.  This is the effective values for the Predicate annotation. 
      */
     private final EffectivePredicate predicate;
@@ -149,43 +145,29 @@ public class PredicateInfoImpl implements PredicateInfo {
      */
     public static ObjectHandler getHandler(final EntityManager entityManager, final Class<?> returnType,
             final EffectivePredicate pred) {
-        final TypeMapper typeMapper = TypeMapper.getInstance();
-        RDFDatatype dt = null;
-        if ((pred != null) && !pred.literalType().equals( "" )) {
-            dt = typeMapper.getSafeTypeByName( pred.literalType() );
-        } else {
-            dt = typeMapper.getTypeByClass( returnType );
+        // it is a literal
+        if (pred.literalType() != null)
+        {
+            return new LiteralHandler( pred.literalType() );
         }
-        if (dt != null) {
-            return new LiteralHandler( dt );
+                
+        if (pred.isCollection())
+        {
+            return new ListHandler( pred, returnType, entityManager );            
         }
-        if (returnType != null) {
-            /*
-             * If return type is a managed object use entity handler.
-             */
-            if (returnType.getAnnotation( Subject.class ) != null) {
-                return new EntityHandler( entityManager, returnType );
-            }
-            /*
-             * If return type is a list
-             */
-            if (pred != null && pred.isCollection()) {
-                Class<?> contained;
-                ObjectHandler innerHandler;
-                contained = pred.contained();
-                if (contained == null || contained.equals( RDFList.class )) {
-                    throw new IllegalArgumentException( "contained value must be set and may not be RDFList" );
-                }
-                innerHandler = getHandler( entityManager, contained, null );
-                return new ListHandler( RDFList.class.isAssignableFrom( returnType ), entityManager, innerHandler );
-            }
-            if (RDFNode.class.isAssignableFrom( returnType )) {
-                return ResourceHandler.INSTANCE;
-            }
-            if (returnType.equals( URI.class )) {
-                return UriHandler.INSTANCE;
-            }
+        
+        if (pred.type().getAnnotation( Subject.class ) != null) {
+            return new EntityHandler( entityManager, returnType );
         }
+        
+        if (RDFNode.class.isAssignableFrom( pred.type() )) {
+            return ResourceHandler.INSTANCE;
+        }
+        
+        if (pred.type().equals( URI.class )) {
+            return UriHandler.INSTANCE;
+        }
+                
         return VoidHandler.INSTANCE;
     }
 
@@ -207,17 +189,17 @@ public class PredicateInfoImpl implements PredicateInfo {
             throw new IllegalArgumentException( "Predicate may not be null" );
         }
         this.methodName = method.getName();
-        this.actionType = ActionType.parse( methodName );
         this.valueClass = valueClass;
         this.annotations = new HashMap<Class<?>, Annotation>();
-        this.predicate = predicate;
+        // make a copy so it does not get updated by further external processing of param
+        this.predicate = new EffectivePredicate( predicate );
         addAnnotations( method );
         if (URI.class.equals( predicate.type() )) {
             concreteType = URI.class;
         } else {
             if ((valueClass != null) && (Iterator.class.isAssignableFrom( valueClass )
                     || Collection.class.isAssignableFrom( valueClass ))) {
-                concreteType = predicate.type( RDFNode.class );
+                concreteType = predicate.type();
             } else {
                 concreteType = valueClass;
             }
@@ -246,7 +228,6 @@ public class PredicateInfoImpl implements PredicateInfo {
     }
 
     public PredicateInfoImpl(PredicateInfoImpl pi) {
-        this.actionType = pi.actionType;
         this.concreteType = pi.concreteType;
         this.methodName = pi.methodName;
         this.predicate = new EffectivePredicate( pi.predicate );
@@ -296,7 +277,7 @@ public class PredicateInfoImpl implements PredicateInfo {
         final ObjectHandler objectHandler = getObjectHandler( entityManager );
         final Property p = createResourceProperty( resource );
         Object retval = null;
-        switch (actionType) {
+        switch (predicate.actionType()) {
         case GETTER:
             retval = execRead( objectHandler, resource, p );
             break;
@@ -494,7 +475,7 @@ public class PredicateInfoImpl implements PredicateInfo {
      */
     @Override
     public ActionType getActionType() {
-        return actionType;
+        return predicate.actionType();
     }
 
     public EffectivePredicate getEffectivePredicate() {
@@ -561,10 +542,7 @@ public class PredicateInfoImpl implements PredicateInfo {
 
     @Override
     public List<Method> getPostExec() {
-        if (predicate.postExec == null) {
-            return Collections.emptyList();
-        }
-        return Collections.unmodifiableList( predicate.postExec );
+        return Collections.unmodifiableList( predicate.postExec() );
     }
 
     @Override

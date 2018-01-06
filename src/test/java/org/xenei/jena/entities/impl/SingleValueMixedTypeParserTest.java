@@ -171,7 +171,7 @@ public class SingleValueMixedTypeParserTest {
 
         pi = (PredicateInfoImpl) subjectInfo.getPredicateInfo( "setChar", Character.class );
         Assert.assertEquals( "setChar", pi.getMethodName() );
-        Assert.assertEquals( phandler, pi.getObjectHandler( entityManager ) );
+        Assert.assertEquals( handler, pi.getObjectHandler( entityManager ) );
         Assert.assertEquals( c, pi.getValueClass() );
         Assert.assertEquals( SingleValueMixedTypeParserTest.namespaceStr + "char", pi.getUriString() );
         Assert.assertEquals( SingleValueMixedTypeParserTest.namespaceStr, pi.getNamespace() );
@@ -509,8 +509,8 @@ public class SingleValueMixedTypeParserTest {
         final Class<?> c = String.class;
 
         PredicateInfoImpl pi = (PredicateInfoImpl) subjectInfo.getPredicateInfo( "getU", RDFNode.class );
-        final ObjectHandler handler = new UriHandler();
-        final ResourceHandler rHandler = new ResourceHandler();
+        final ObjectHandler handler = UriHandler.INSTANCE;
+        final ResourceHandler rHandler = ResourceHandler.INSTANCE;
 
         Assert.assertEquals( "getU", pi.getMethodName() );
         Assert.assertEquals( rHandler, pi.getObjectHandler( entityManager ) );
@@ -531,8 +531,8 @@ public class SingleValueMixedTypeParserTest {
     public void testU2()
             throws IllegalArgumentException, SecurityException, IllegalAccessException, NoSuchFieldException {
         PredicateInfoImpl pi = (PredicateInfoImpl) subjectInfo.getPredicateInfo( "getU2", String.class );
-        final ObjectHandler handler = new ResourceHandler();
-        final ObjectHandler phandler = new UriHandler();
+        final ObjectHandler handler = ResourceHandler.INSTANCE;
+        final ObjectHandler phandler = UriHandler.INSTANCE;
 
         Assert.assertEquals( "getU2", pi.getMethodName() );
         Assert.assertEquals( phandler, pi.getObjectHandler( entityManager ) );

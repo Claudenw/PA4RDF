@@ -2,16 +2,19 @@ package org.xenei.jena.entities.impl;
 
 import java.lang.reflect.Method;
 
+import org.apache.jena.datatypes.xsd.XSDDatatype;
 import org.apache.jena.rdf.model.RDFNode;
 import org.junit.Assert;
 import org.junit.Test;
 import org.xenei.jena.entities.PredicateInfo;
+import org.xenei.jena.entities.impl.handlers.LiteralHandler;
+import org.xenei.jena.entities.impl.handlers.ResourceHandler;
+import org.xenei.jena.entities.impl.handlers.UriHandler;
+import org.xenei.jena.entities.impl.handlers.VoidHandler;
 import org.xenei.jena.entities.testing.iface.SimpleURIInterface;
 
 public abstract class AbstractSimpleURIInterfaceTest extends AbstractMethodParserTest {
 
-    protected final MethodParser parser;
-    protected final SubjectInfoImpl subjectInfo;
     protected final Method getter;
     protected final Method setterS;
     protected final Method setterR;
@@ -20,83 +23,86 @@ public abstract class AbstractSimpleURIInterfaceTest extends AbstractMethodParse
 
     protected AbstractSimpleURIInterfaceTest(Class<? extends SimpleURIInterface> interfaceClass)
             throws NoSuchMethodException, SecurityException {
+        super( interfaceClass );
 
         getter = interfaceClass.getMethod( "getU" );
         PIMap.put( getter, mockPredicateInfo( getter, "u", ActionType.GETTER, RDFNode.class, 0, 0 ) );
+        OMMap.put( getter, ResourceHandler.INSTANCE);
 
         setterR = interfaceClass.getMethod( "setU", RDFNode.class );
         PIMap.put( setterR, mockPredicateInfo( setterR, "u", ActionType.SETTER, RDFNode.class, 0, 0 ) );
+        OMMap.put( setterR, ResourceHandler.INSTANCE );
 
         setterS = interfaceClass.getMethod( "setU", String.class );
         PIMap.put( setterS, mockPredicateInfo( setterS, "u", ActionType.SETTER, String.class, 1, 0 ) );
+        OMMap.put( setterS, UriHandler.INSTANCE );
 
         remover = interfaceClass.getMethod( "removeU" );
         PIMap.put( remover, mockPredicateInfo( remover, "u", ActionType.REMOVER, null, 0, 0 ) );
+        OMMap.put( remover, VoidHandler.INSTANCE );
 
         existential = interfaceClass.getMethod( "hasU" );
         PIMap.put( existential, mockPredicateInfo( existential, "u", ActionType.EXISTENTIAL,
                 TypeChecker.getPrimitiveClass( Boolean.class ), 0, 0 ) );
-
-        subjectInfo = new SubjectInfoImpl( interfaceClass );
+        OMMap.put( existential, new LiteralHandler( XSDDatatype.XSDboolean) );
 
         addCount.put( "setU", Integer.valueOf( 2 ) );
-        parser = new MethodParser( entityManager, subjectInfo, addCount );
     }
 
     @Test
     public void testParseGetter() throws Exception {
         final PredicateInfo predicateInfo = parser.parse( getter );
-        assertSame( PIMap.get( getter ), predicateInfo );
-        assertSame( PIMap.get( getter ), subjectInfo.getPredicateInfo( getter ) );
-        assertSame( PIMap.get( setterS ), subjectInfo.getPredicateInfo( setterS ) );
-        assertSame( PIMap.get( setterR ), subjectInfo.getPredicateInfo( setterR ) );
-        assertSame( PIMap.get( existential ), subjectInfo.getPredicateInfo( existential ) );
-        assertSame( PIMap.get( remover ), subjectInfo.getPredicateInfo( remover ) );
+        assertSame( PIMap.get( getter ), predicateInfo, getter );
+        assertSame(  getter );
+        assertSame(  setterS );
+        assertSame( setterR );
+        assertSame(  existential );
+        assertSame(  remover );
 
     }
 
     @Test
     public void testParseSetterS() throws Exception {
         final PredicateInfo predicateInfo = parser.parse( setterS );
-        assertSame( PIMap.get( setterS ), predicateInfo );
-        assertSame( PIMap.get( getter ), subjectInfo.getPredicateInfo( getter ) );
-        assertSame( PIMap.get( setterS ), subjectInfo.getPredicateInfo( setterS ) );
-        assertSame( PIMap.get( setterR ), subjectInfo.getPredicateInfo( setterR ) );
-        assertSame( PIMap.get( existential ), subjectInfo.getPredicateInfo( existential ) );
-        assertSame( PIMap.get( remover ), subjectInfo.getPredicateInfo( remover ) );
+        assertSame( PIMap.get( setterS ), predicateInfo, setterS );
+        assertSame(  getter );
+        assertSame(  setterS );
+        assertSame( setterR );
+        assertSame(  existential );
+        assertSame(  remover );
     }
 
     @Test
     public void testParseSetterR() throws Exception {
         final PredicateInfo predicateInfo = parser.parse( setterR );
-        assertSame( PIMap.get( setterR ), predicateInfo );
-        assertSame( PIMap.get( getter ), subjectInfo.getPredicateInfo( getter ) );
-        assertSame( PIMap.get( setterS ), subjectInfo.getPredicateInfo( setterS ) );
-        assertSame( PIMap.get( setterR ), subjectInfo.getPredicateInfo( setterR ) );
-        assertSame( PIMap.get( existential ), subjectInfo.getPredicateInfo( existential ) );
-        assertSame( PIMap.get( remover ), subjectInfo.getPredicateInfo( remover ) );
+        assertSame( PIMap.get( setterR ), predicateInfo, setterR );
+        assertSame(  getter );
+        assertSame(  setterS );
+        assertSame( setterR );
+        assertSame(  existential );
+        assertSame(  remover );
     }
 
     @Test
     public void testParseExistential() throws Exception {
         final PredicateInfo predicateInfo = parser.parse( existential );
-        assertSame( PIMap.get( existential ), predicateInfo );
+        assertSame( PIMap.get( existential ), predicateInfo, existential );
         Assert.assertNull( subjectInfo.getPredicateInfo( getter ) );
         Assert.assertNull( subjectInfo.getPredicateInfo( setterS ) );
         Assert.assertNull( subjectInfo.getPredicateInfo( setterR ) );
-        assertSame( PIMap.get( existential ), subjectInfo.getPredicateInfo( existential ) );
+        assertSame(  existential );
         Assert.assertNull( subjectInfo.getPredicateInfo( remover ) );
     }
 
     @Test
     public void testParseRemover() throws Exception {
         final PredicateInfo predicateInfo = parser.parse( remover );
-        assertSame( PIMap.get( remover ), predicateInfo );
+        assertSame( PIMap.get( remover ), predicateInfo, remover );
         Assert.assertNull( subjectInfo.getPredicateInfo( getter ) );
         Assert.assertNull( subjectInfo.getPredicateInfo( setterS ) );
         Assert.assertNull( subjectInfo.getPredicateInfo( setterR ) );
         Assert.assertNull( subjectInfo.getPredicateInfo( existential ) );
-        assertSame( PIMap.get( remover ), subjectInfo.getPredicateInfo( remover ) );
+        assertSame(  remover );
     }
 
 }

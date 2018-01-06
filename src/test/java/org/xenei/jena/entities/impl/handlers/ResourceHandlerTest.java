@@ -14,7 +14,7 @@ public class ResourceHandlerTest extends AbstractObjectHandlerTest {
 
     @Before
     public void setup() {
-        underTest = new ResourceHandler();
+        underTest = ResourceHandler.INSTANCE;
         node = ResourceFactory.createResource();
         instance = 5;
     }

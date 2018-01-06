@@ -12,7 +12,7 @@ public class VoidHandlerTest extends AbstractObjectHandlerTest {
 
     @Before
     public void setup() {
-        underTest = new VoidHandler();
+        underTest = VoidHandler.INSTANCE;
         node = ResourceFactory.createPlainLiteral( "5" );
         instance = 5;
     }

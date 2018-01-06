@@ -12,6 +12,7 @@ import org.apache.jena.rdf.model.Statement;
 import org.apache.jena.util.iterator.ExtendedIterator;
 import org.apache.jena.util.iterator.WrappedIterator;
 import org.xenei.jena.entities.EntityManager;
+import org.xenei.jena.entities.impl.EffectivePredicate;
 import org.xenei.jena.entities.impl.ObjectHandler;
 
 /**
@@ -34,6 +35,13 @@ public class ListHandler extends AbstractObjectHandler {
      */
     private final boolean isList;
 
+    public ListHandler(final EffectivePredicate pred, Class<?> returnType, EntityManager entityManager) {
+        this.isList = isList;
+        this.entityManager = entityManager;
+        this.innerHandler = innerHandler;
+    }
+
+    
     public ListHandler(boolean isList, EntityManager entityManager, ObjectHandler innerHandler) {
         this.isList = isList;
         this.entityManager = entityManager;

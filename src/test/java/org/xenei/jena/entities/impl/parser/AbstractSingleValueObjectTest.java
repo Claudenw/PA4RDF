@@ -48,7 +48,7 @@ public abstract class AbstractSingleValueObjectTest extends BaseAbstractParserTe
         m = classUnderTest.getMethod( "removeBool" );
         pi = (PredicateInfoImpl) parser.parse( m );
         Assert.assertEquals( "removeBool", pi.getMethodName() );
-        Assert.assertEquals( new VoidHandler(), pi.getObjectHandler( entityManager ) );
+        Assert.assertEquals( VoidHandler.INSTANCE, pi.getObjectHandler( entityManager ) );
         Assert.assertEquals( null, pi.getValueClass() );
         Assert.assertEquals( AbstractSingleValueObjectTest.NS + "bool", pi.getUriString() );
         Assert.assertEquals( AbstractSingleValueObjectTest.NS, pi.getNamespace() );
@@ -78,7 +78,7 @@ public abstract class AbstractSingleValueObjectTest extends BaseAbstractParserTe
         m = classUnderTest.getMethod( "removeChar" );
         pi = (PredicateInfoImpl) parser.parse( m );
         Assert.assertEquals( "removeChar", pi.getMethodName() );
-        Assert.assertEquals( new VoidHandler(), pi.getObjectHandler( entityManager ) );
+        Assert.assertEquals( VoidHandler.INSTANCE, pi.getObjectHandler( entityManager ) );
         Assert.assertEquals( null, pi.getValueClass() );
         Assert.assertEquals( AbstractSingleValueObjectTest.NS + "char", pi.getUriString() );
         Assert.assertEquals( AbstractSingleValueObjectTest.NS, pi.getNamespace() );
@@ -108,7 +108,7 @@ public abstract class AbstractSingleValueObjectTest extends BaseAbstractParserTe
         m = classUnderTest.getMethod( "removeDbl" );
         pi = (PredicateInfoImpl) parser.parse( m );
         Assert.assertEquals( "removeDbl", pi.getMethodName() );
-        Assert.assertEquals( new VoidHandler(), pi.getObjectHandler( entityManager ) );
+        Assert.assertEquals( VoidHandler.INSTANCE, pi.getObjectHandler( entityManager ) );
         Assert.assertEquals( null, pi.getValueClass() );
         Assert.assertEquals( AbstractSingleValueObjectTest.NS + "dbl", pi.getUriString() );
         Assert.assertEquals( AbstractSingleValueObjectTest.NS, pi.getNamespace() );
@@ -138,7 +138,7 @@ public abstract class AbstractSingleValueObjectTest extends BaseAbstractParserTe
         m = classUnderTest.getMethod( "removeEnt" );
         pi = (PredicateInfoImpl) parser.parse( m );
         Assert.assertEquals( "removeEnt", pi.getMethodName() );
-        Assert.assertEquals( new VoidHandler(), pi.getObjectHandler( entityManager ) );
+        Assert.assertEquals( VoidHandler.INSTANCE, pi.getObjectHandler( entityManager ) );
         Assert.assertEquals( null, pi.getValueClass() );
         Assert.assertEquals( AbstractSingleValueObjectTest.NS + "ent", pi.getUriString() );
         Assert.assertEquals( AbstractSingleValueObjectTest.NS, pi.getNamespace() );
@@ -167,7 +167,7 @@ public abstract class AbstractSingleValueObjectTest extends BaseAbstractParserTe
         m = classUnderTest.getMethod( "removeFlt" );
         pi = (PredicateInfoImpl) parser.parse( m );
         Assert.assertEquals( "removeFlt", pi.getMethodName() );
-        Assert.assertEquals( new VoidHandler(), pi.getObjectHandler( entityManager ) );
+        Assert.assertEquals( VoidHandler.INSTANCE, pi.getObjectHandler( entityManager ) );
         Assert.assertEquals( null, pi.getValueClass() );
         Assert.assertEquals( AbstractSingleValueObjectTest.NS + "flt", pi.getUriString() );
         Assert.assertEquals( AbstractSingleValueObjectTest.NS, pi.getNamespace() );
@@ -198,7 +198,7 @@ public abstract class AbstractSingleValueObjectTest extends BaseAbstractParserTe
         m = classUnderTest.getMethod( "removeInt" );
         pi = (PredicateInfoImpl) parser.parse( m );
         Assert.assertEquals( "removeInt", pi.getMethodName() );
-        Assert.assertEquals( new VoidHandler(), pi.getObjectHandler( entityManager ) );
+        Assert.assertEquals( VoidHandler.INSTANCE, pi.getObjectHandler( entityManager ) );
         Assert.assertEquals( null, pi.getValueClass() );
         Assert.assertEquals( AbstractSingleValueObjectTest.NS + "int", pi.getUriString() );
         Assert.assertEquals( AbstractSingleValueObjectTest.NS, pi.getNamespace() );
@@ -228,7 +228,7 @@ public abstract class AbstractSingleValueObjectTest extends BaseAbstractParserTe
         m = classUnderTest.getMethod( "removeLng" );
         pi = (PredicateInfoImpl) parser.parse( m );
         Assert.assertEquals( "removeLng", pi.getMethodName() );
-        Assert.assertEquals( new VoidHandler(), pi.getObjectHandler( entityManager ) );
+        Assert.assertEquals( VoidHandler.INSTANCE, pi.getObjectHandler( entityManager ) );
         Assert.assertEquals( null, pi.getValueClass() );
         Assert.assertEquals( AbstractSingleValueObjectTest.NS + "lng", pi.getUriString() );
         Assert.assertEquals( AbstractSingleValueObjectTest.NS, pi.getNamespace() );
@@ -239,7 +239,7 @@ public abstract class AbstractSingleValueObjectTest extends BaseAbstractParserTe
     public void testRdf() throws Exception {
         Method m = classUnderTest.getMethod( "getRDF" );
         PredicateInfoImpl pi = (PredicateInfoImpl) parser.parse( m );
-        final ObjectHandler handler = new ResourceHandler();
+        final ObjectHandler handler = ResourceHandler.INSTANCE;
 
         Assert.assertEquals( "getRDF", pi.getMethodName() );
         Assert.assertEquals( handler, pi.getObjectHandler( entityManager ) );
@@ -258,7 +258,7 @@ public abstract class AbstractSingleValueObjectTest extends BaseAbstractParserTe
         m = classUnderTest.getMethod( "removeRDF" );
         pi = (PredicateInfoImpl) parser.parse( m );
         Assert.assertEquals( "removeRDF", pi.getMethodName() );
-        Assert.assertEquals( new VoidHandler(), pi.getObjectHandler( entityManager ) );
+        Assert.assertEquals( VoidHandler.INSTANCE, pi.getObjectHandler( entityManager ) );
         Assert.assertEquals( null, pi.getValueClass() );
         Assert.assertEquals( AbstractSingleValueObjectTest.NS + "rDF", pi.getUriString() );
         Assert.assertEquals( AbstractSingleValueObjectTest.NS, pi.getNamespace() );
@@ -287,7 +287,7 @@ public abstract class AbstractSingleValueObjectTest extends BaseAbstractParserTe
         m = classUnderTest.getMethod( "removeStr" );
         pi = (PredicateInfoImpl) parser.parse( m );
         Assert.assertEquals( "removeStr", pi.getMethodName() );
-        Assert.assertEquals( new VoidHandler(), pi.getObjectHandler( entityManager ) );
+        Assert.assertEquals( VoidHandler.INSTANCE, pi.getObjectHandler( entityManager ) );
         Assert.assertEquals( null, pi.getValueClass() );
         Assert.assertEquals( AbstractSingleValueObjectTest.NS + "str", pi.getUriString() );
         Assert.assertEquals( AbstractSingleValueObjectTest.NS, pi.getNamespace() );
@@ -298,8 +298,8 @@ public abstract class AbstractSingleValueObjectTest extends BaseAbstractParserTe
         Method m = classUnderTest.getMethod( "getU" );
         PredicateInfoImpl pi = (PredicateInfoImpl) parser.parse( m );
 
-        final ObjectHandler uriHandler = new UriHandler();
-        final ObjectHandler rdfHandler = new ResourceHandler();
+        final ObjectHandler uriHandler = UriHandler.INSTANCE;
+        final ObjectHandler rdfHandler = ResourceHandler.INSTANCE;
 
         Assert.assertEquals( "getU", pi.getMethodName() );
         Assert.assertEquals( rdfHandler, pi.getObjectHandler( entityManager ) );
@@ -326,7 +326,7 @@ public abstract class AbstractSingleValueObjectTest extends BaseAbstractParserTe
         m = classUnderTest.getMethod( "removeU" );
         pi = (PredicateInfoImpl) parser.parse( m );
         Assert.assertEquals( "removeU", pi.getMethodName() );
-        Assert.assertEquals( new VoidHandler(), pi.getObjectHandler( entityManager ) );
+        Assert.assertEquals( VoidHandler.INSTANCE, pi.getObjectHandler( entityManager ) );
         Assert.assertEquals( null, pi.getValueClass() );
         Assert.assertEquals( AbstractSingleValueObjectTest.NS + "u", pi.getUriString() );
         Assert.assertEquals( AbstractSingleValueObjectTest.NS, pi.getNamespace() );

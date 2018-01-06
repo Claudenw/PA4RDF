@@ -386,7 +386,7 @@ public abstract class AbstractCollectionValueTest extends BaseAbstractManagerTes
     @Test
     public void testRdf() {
         PredicateInfoImpl pi = (PredicateInfoImpl) subjectInfo.getPredicateInfo( "getRDF", List.class );
-        final ObjectHandler handler = new ResourceHandler();
+        final ObjectHandler handler = ResourceHandler.INSTANCE;
 
         Assert.assertEquals( "getRDF", pi.getMethodName() );
         Assert.assertEquals( handler, pi.getObjectHandler( manager ) );
@@ -452,8 +452,8 @@ public abstract class AbstractCollectionValueTest extends BaseAbstractManagerTes
     @Test
     public void testURI() {
         PredicateInfoImpl pi = (PredicateInfoImpl) subjectInfo.getPredicateInfo( "getU", Set.class );
-        final ObjectHandler resHandler = new ResourceHandler();
-        final ObjectHandler uriHandler = new UriHandler();
+        final ObjectHandler resHandler = ResourceHandler.INSTANCE;
+        final ObjectHandler uriHandler = UriHandler.INSTANCE;
 
         Assert.assertEquals( "getU", pi.getMethodName() );
         Assert.assertEquals( resHandler, pi.getObjectHandler( manager ) );
@@ -514,8 +514,8 @@ public abstract class AbstractCollectionValueTest extends BaseAbstractManagerTes
     @Test
     public void testURIOrdering() {
         PredicateInfoImpl pi = (PredicateInfoImpl) subjectInfo.getPredicateInfo( "getU3", Queue.class );
-        final ObjectHandler resHandler = new ResourceHandler();
-        final ObjectHandler uriHandler = new UriHandler();
+        final ObjectHandler resHandler = ResourceHandler.INSTANCE;
+        final ObjectHandler uriHandler = UriHandler.INSTANCE;
 
         Assert.assertEquals( "getU3", pi.getMethodName() );
         Assert.assertEquals( resHandler, pi.getObjectHandler( manager ) );

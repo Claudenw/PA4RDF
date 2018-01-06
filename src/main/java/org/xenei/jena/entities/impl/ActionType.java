@@ -15,8 +15,11 @@
 package org.xenei.jena.entities.impl;
 
 import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.List;
 
 /**
  * An enumeration of Action types.
@@ -25,27 +28,40 @@ public enum ActionType {
     /**
      * Indicates a method that gets a value
      */
-    GETTER("get", "is"),
+    GETTER(new String[]{"get", "is"}, new boolean[]{false,false}, false),
     /**
      * Indicates a method that sets a value
      */
-    SETTER("set", "add"),
+    SETTER(new String[]{"set", "add"}, new boolean[]{false,true}, false),
     /**
      * Indicates a method that removes a value
      */
-    REMOVER( "remove"),
+    REMOVER( new String[]{"remove"}, new boolean[]{false}, true),
     /**
      * Indicates a method that checks for the existence of a value
      */
-    EXISTENTIAL( "has");
+    EXISTENTIAL( new String[]{"has"}, new boolean[]{false}, true);
     
     private String[] prefixes;
+    private boolean[] flags;
+    private boolean allowNull; 
     
-    ActionType( String... prefixes)
+    ActionType( String[] prefixes, boolean[] flags, boolean allowNull)
     {
         this.prefixes = prefixes;
+        this.flags = flags;
+        this.allowNull = allowNull;
     }
 
+    public boolean isMultipleFN( final String namePrefix)
+    {
+        int pos = Arrays.asList( prefixes ).indexOf( namePrefix );
+        if (pos >= 0 )
+        {
+            return flags[pos];
+        }
+        return false;
+    }
     /**
      * Return true if the method is backed by multiple entries in the graph.
      * @param method the method to check
@@ -151,8 +167,6 @@ public enum ActionType {
      * @param nameSuffix
      *            the suffix for the name.
      * @return an array of potential method names.
-     * @throws IllegalArgumentException
-     *             fur unrecognized ActionType instances.
      */
     public String[] functionNames(final String nameSuffix) {
         String[] retval = new String[ prefixes.length];
@@ -161,6 +175,25 @@ public enum ActionType {
             retval[i] = prefixes[i]+nameSuffix;
         }
         return retval;
+    }
+    
+    /**
+     * Create method names used for multiple entries from the the name suffix of the function name.
+     * 
+     * @param nameSuffix
+     *            the suffix for the name.
+     * @return an array of potential multiple method names.
+     */
+    public String[] functionNamesMultiple(final String nameSuffix) {
+        List<String> retval = new ArrayList<String>();
+        for (int i=0;i<flags.length;i++)
+        {
+            if (flags[i])
+            {
+                retval.add(  prefixes[i]+nameSuffix );
+            }
+        }
+        return retval.toArray( new String[ retval.size()] );
     }
     
     /**
@@ -182,6 +215,13 @@ public enum ActionType {
             }
         }
         return false;
+    }
+    
+   /**
+    * @return true if the action type allows a null user facing type.
+    */
+    public boolean allowsNull() {
+        return allowNull;
     }
 
 }

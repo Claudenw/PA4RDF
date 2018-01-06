@@ -12,7 +12,7 @@ public class UriHandlerTest extends AbstractObjectHandlerTest {
 
     @Before
     public void setup() {
-        underTest = new UriHandler();
+        underTest = UriHandler.INSTANCE;
         node = ResourceFactory.createResource( "http://example.com" );
         instance = 5;
     }

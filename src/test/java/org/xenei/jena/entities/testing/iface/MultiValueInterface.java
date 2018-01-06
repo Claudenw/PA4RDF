@@ -62,7 +62,7 @@ public interface MultiValueInterface {
 
     void addU3(@URI String b);
     
-    @Predicate( contained=String.class )
+    @Predicate( type=String.class )
     void setLst( Collection<String> s);
     
     @Predicate

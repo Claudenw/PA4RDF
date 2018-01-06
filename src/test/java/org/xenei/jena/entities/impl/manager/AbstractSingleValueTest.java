@@ -40,7 +40,7 @@ public abstract class AbstractSingleValueTest extends BaseAbstractManagerTest {
 
         pi = (PredicateInfoImpl) subjectInfo.getPredicateInfo( "removeBool", null );
         Assert.assertEquals( "removeBool", pi.getMethodName() );
-        Assert.assertEquals( new VoidHandler(), pi.getObjectHandler( manager ) );
+        Assert.assertEquals( VoidHandler.INSTANCE, pi.getObjectHandler( manager ) );
         Assert.assertEquals( null, pi.getValueClass() );
         Assert.assertEquals( BaseAbstractManagerTest.NS + "bool", pi.getUriString() );
         Assert.assertEquals( BaseAbstractManagerTest.NS, pi.getNamespace() );
@@ -84,7 +84,7 @@ public abstract class AbstractSingleValueTest extends BaseAbstractManagerTest {
 
         pi = (PredicateInfoImpl) subjectInfo.getPredicateInfo( "removeChar", null );
         Assert.assertEquals( "removeChar", pi.getMethodName() );
-        Assert.assertEquals( new VoidHandler(), pi.getObjectHandler( manager ) );
+        Assert.assertEquals( VoidHandler.INSTANCE, pi.getObjectHandler( manager ) );
         Assert.assertEquals( null, pi.getValueClass() );
         Assert.assertEquals( BaseAbstractManagerTest.NS + "char", pi.getUriString() );
         Assert.assertEquals( BaseAbstractManagerTest.NS, pi.getNamespace() );
@@ -128,7 +128,7 @@ public abstract class AbstractSingleValueTest extends BaseAbstractManagerTest {
 
         pi = (PredicateInfoImpl) subjectInfo.getPredicateInfo( "removeDbl", null );
         Assert.assertEquals( "removeDbl", pi.getMethodName() );
-        Assert.assertEquals( new VoidHandler(), pi.getObjectHandler( manager ) );
+        Assert.assertEquals( VoidHandler.INSTANCE, pi.getObjectHandler( manager ) );
         Assert.assertEquals( null, pi.getValueClass() );
         Assert.assertEquals( BaseAbstractManagerTest.NS + "dbl", pi.getUriString() );
         Assert.assertEquals( BaseAbstractManagerTest.NS, pi.getNamespace() );
@@ -171,7 +171,7 @@ public abstract class AbstractSingleValueTest extends BaseAbstractManagerTest {
 
         pi = (PredicateInfoImpl) subjectInfo.getPredicateInfo( "removeEnt", null );
         Assert.assertEquals( "removeEnt", pi.getMethodName() );
-        Assert.assertEquals( new VoidHandler(), pi.getObjectHandler( manager ) );
+        Assert.assertEquals( VoidHandler.INSTANCE, pi.getObjectHandler( manager ) );
         Assert.assertEquals( null, pi.getValueClass() );
         Assert.assertEquals( BaseAbstractManagerTest.NS + "ent", pi.getUriString() );
         Assert.assertEquals( BaseAbstractManagerTest.NS, pi.getNamespace() );
@@ -198,7 +198,7 @@ public abstract class AbstractSingleValueTest extends BaseAbstractManagerTest {
 
         pi = (PredicateInfoImpl) subjectInfo.getPredicateInfo( "removeFlt", null );
         Assert.assertEquals( "removeFlt", pi.getMethodName() );
-        Assert.assertEquals( new VoidHandler(), pi.getObjectHandler( manager ) );
+        Assert.assertEquals( VoidHandler.INSTANCE, pi.getObjectHandler( manager ) );
         Assert.assertEquals( null, pi.getValueClass() );
         Assert.assertEquals( BaseAbstractManagerTest.NS + "flt", pi.getUriString() );
         Assert.assertEquals( BaseAbstractManagerTest.NS, pi.getNamespace() );
@@ -243,7 +243,7 @@ public abstract class AbstractSingleValueTest extends BaseAbstractManagerTest {
 
         pi = (PredicateInfoImpl) subjectInfo.getPredicateInfo( "removeInt", null );
         Assert.assertEquals( "removeInt", pi.getMethodName() );
-        Assert.assertEquals( new VoidHandler(), pi.getObjectHandler( manager ) );
+        Assert.assertEquals( VoidHandler.INSTANCE, pi.getObjectHandler( manager ) );
         Assert.assertEquals( null, pi.getValueClass() );
         Assert.assertEquals( BaseAbstractManagerTest.NS + "int", pi.getUriString() );
         Assert.assertEquals( BaseAbstractManagerTest.NS, pi.getNamespace() );
@@ -287,7 +287,7 @@ public abstract class AbstractSingleValueTest extends BaseAbstractManagerTest {
 
         pi = (PredicateInfoImpl) subjectInfo.getPredicateInfo( "removeLng", null );
         Assert.assertEquals( "removeLng", pi.getMethodName() );
-        Assert.assertEquals( new VoidHandler(), pi.getObjectHandler( manager ) );
+        Assert.assertEquals( VoidHandler.INSTANCE, pi.getObjectHandler( manager ) );
         Assert.assertEquals( null, pi.getValueClass() );
         Assert.assertEquals( BaseAbstractManagerTest.NS + "lng", pi.getUriString() );
         Assert.assertEquals( BaseAbstractManagerTest.NS, pi.getNamespace() );
@@ -312,7 +312,7 @@ public abstract class AbstractSingleValueTest extends BaseAbstractManagerTest {
     @Test
     public void testRdf() {
         PredicateInfoImpl pi = (PredicateInfoImpl) subjectInfo.getPredicateInfo( "getRDF", RDFNode.class );
-        final ObjectHandler handler = new ResourceHandler();
+        final ObjectHandler handler = ResourceHandler.INSTANCE;
 
         Assert.assertEquals( "getRDF", pi.getMethodName() );
         Assert.assertEquals( handler, pi.getObjectHandler( manager ) );
@@ -329,7 +329,7 @@ public abstract class AbstractSingleValueTest extends BaseAbstractManagerTest {
 
         pi = (PredicateInfoImpl) subjectInfo.getPredicateInfo( "removeRDF", null );
         Assert.assertEquals( "removeRDF", pi.getMethodName() );
-        Assert.assertEquals( new VoidHandler(), pi.getObjectHandler( manager ) );
+        Assert.assertEquals( VoidHandler.INSTANCE, pi.getObjectHandler( manager ) );
         Assert.assertEquals( null, pi.getValueClass() );
         Assert.assertEquals( BaseAbstractManagerTest.NS + "rDF", pi.getUriString() );
         Assert.assertEquals( BaseAbstractManagerTest.NS, pi.getNamespace() );
@@ -355,7 +355,7 @@ public abstract class AbstractSingleValueTest extends BaseAbstractManagerTest {
 
         pi = (PredicateInfoImpl) subjectInfo.getPredicateInfo( "removeStr", null );
         Assert.assertEquals( "removeStr", pi.getMethodName() );
-        Assert.assertEquals( new VoidHandler(), pi.getObjectHandler( manager ) );
+        Assert.assertEquals( VoidHandler.INSTANCE, pi.getObjectHandler( manager ) );
         Assert.assertEquals( null, pi.getValueClass() );
         Assert.assertEquals( BaseAbstractManagerTest.NS + "str", pi.getUriString() );
         Assert.assertEquals( BaseAbstractManagerTest.NS, pi.getNamespace() );
@@ -365,8 +365,8 @@ public abstract class AbstractSingleValueTest extends BaseAbstractManagerTest {
     public void testURI() {
         PredicateInfoImpl pi = (PredicateInfoImpl) subjectInfo.getPredicateInfo( "getU", RDFNode.class );
 
-        final ObjectHandler uriHandler = new UriHandler();
-        final ObjectHandler rdfHandler = new ResourceHandler();
+        final ObjectHandler uriHandler = UriHandler.INSTANCE;
+        final ObjectHandler rdfHandler = ResourceHandler.INSTANCE;
 
         Assert.assertEquals( "getU", pi.getMethodName() );
         Assert.assertEquals( rdfHandler, pi.getObjectHandler( manager ) );
@@ -390,7 +390,7 @@ public abstract class AbstractSingleValueTest extends BaseAbstractManagerTest {
 
         pi = (PredicateInfoImpl) subjectInfo.getPredicateInfo( "removeU", null );
         Assert.assertEquals( "removeU", pi.getMethodName() );
-        Assert.assertEquals( new VoidHandler(), pi.getObjectHandler( manager ) );
+        Assert.assertEquals( VoidHandler.INSTANCE, pi.getObjectHandler( manager ) );
         Assert.assertEquals( null, pi.getValueClass() );
         Assert.assertEquals( BaseAbstractManagerTest.NS + "u", pi.getUriString() );
         Assert.assertEquals( BaseAbstractManagerTest.NS, pi.getNamespace() );

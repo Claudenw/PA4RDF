@@ -280,7 +280,7 @@ public abstract class AbstractMultiValueTest extends BaseAbstractParserTest {
     public void testRdf() throws Exception {
         Method m = classUnderTest.getMethod( "getRDF" );
         PredicateInfoImpl pi = (PredicateInfoImpl) parser.parse( m );
-        final ObjectHandler handler = new ResourceHandler();
+        final ObjectHandler handler = ResourceHandler.INSTANCE;
 
         Assert.assertEquals( "getRDF", pi.getMethodName() );
         Assert.assertEquals( handler, pi.getObjectHandler( entityManager ) );
@@ -354,8 +354,8 @@ public abstract class AbstractMultiValueTest extends BaseAbstractParserTest {
     public void testURI() throws Exception {
         Method m = classUnderTest.getMethod( "getU" );
         PredicateInfoImpl pi = (PredicateInfoImpl) parser.parse( m );
-        final ObjectHandler resHandler = new ResourceHandler();
-        final ObjectHandler uriHandler = new UriHandler();
+        final ObjectHandler resHandler = ResourceHandler.INSTANCE;
+        final ObjectHandler uriHandler = UriHandler.INSTANCE;
 
         Assert.assertEquals( "getU", pi.getMethodName() );
         Assert.assertEquals( resHandler, pi.getObjectHandler( entityManager ) );
@@ -424,8 +424,8 @@ public abstract class AbstractMultiValueTest extends BaseAbstractParserTest {
     public void testURIOrdering() throws Exception {
         Method m = classUnderTest.getMethod( "getU3" );
         PredicateInfoImpl pi = (PredicateInfoImpl) parser.parse( m );
-        final ObjectHandler resHandler = new ResourceHandler();
-        final ObjectHandler uriHandler = new UriHandler();
+        final ObjectHandler resHandler = ResourceHandler.INSTANCE;
+        final ObjectHandler uriHandler = UriHandler.INSTANCE;
 
         Assert.assertEquals( "getU3", pi.getMethodName() );
         Assert.assertEquals( resHandler, pi.getObjectHandler( entityManager ) );
