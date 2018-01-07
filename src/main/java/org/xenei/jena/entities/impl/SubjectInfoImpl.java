@@ -26,6 +26,7 @@ import org.apache.jena.rdf.model.Property;
 import org.apache.jena.rdf.model.RDFNode;
 import org.xenei.jena.entities.PredicateInfo;
 import org.xenei.jena.entities.SubjectInfo;
+import org.xenei.jena.entities.annotations.Predicate;
 import org.xenei.jena.entities.annotations.Subject;
 import org.xenei.jena.entities.annotations.URI;
 
@@ -67,18 +68,21 @@ public class SubjectInfoImpl implements SubjectInfo {
             predicateInfo.put( pi.getMethodName(), map );
         }
 
+        Class<?> idx = null;
         switch (pi.getActionType())
         {
         case GETTER:           
         case SETTER:
-            map.put(  pi.getValueClass(), pi );
+            idx = pi.getValueClass();
             break;
             
         case REMOVER:
         case EXISTENTIAL:
-            map.put(  pi.getEffectivePredicate().type(), pi );
+            idx = pi.getEffectivePredicate().type();
             break;
         }
+        
+        map.put( idx, pi );
     }
 
     /*
@@ -154,54 +158,40 @@ public class SubjectInfoImpl implements SubjectInfo {
      */
     @Override
     public PredicateInfo getPredicateInfo(final String function, final Class<?> clazz) {
-        
-        
+
         final Map<Class<?>, PredicateInfo> map = predicateInfo.get( function );
         if (map != null) {
-            return map.get(  clazz  );
-//            for (final PredicateInfo pi : map.values()) {
-//                //final Class<?> valueClass = pi.getValueClass();
-//                switch (pi.getActionType()) {
-//                case SETTER:
-//                    if (TypeChecker.canBeSetFrom( pi.getValueClass(), clazz )) {
-//                        return pi;
-//                    }
-//                    break;
-//
-//                case GETTER:
-//                    if (TypeChecker.canBeSetFrom( clazz, pi.getValueClass() )) {
-//                        return pi;
-//                    }
-//                    break;
-//
-//                case REMOVER:
-//                    if (pi.getValueClass() != null) {
-//                        // it needs an argument
-//                        if (TypeChecker.canBeSetFrom( pi.getValueClass(), clazz )) {
-//                            return pi;
-//                        }
-//                    } else {
-//                        // it does not want an argument
-//                        if ((clazz == null) || clazz.equals( void.class )) {
-//                            return pi;
-//                        }
-//                    }
-//                    break;
-//                case EXISTENTIAL:
-//                    if (pi.getValueClass() != null) {
-//                        // it needs an argument
-//                        if (TypeChecker.canBeSetFrom( pi.getValueClass(), clazz )) {
-//                            return pi;
-//                        }
-//                    } else {
-//                        // it does not want an argument
-//                        if ((clazz == null) || clazz.equals( void.class )) {
-//                            return pi;
-//                        }
-//                    }
-//                    break;
-//                }
-//            }
+            Class<?> idx = clazz;
+            if ( clazz == null || clazz.equals(  void.class ))
+            {
+                idx = Predicate.UNSET.class;
+            }
+            PredicateInfo retval = map.get( idx );
+            if (retval != null)
+            {
+                return retval;
+            }
+                for (Map.Entry<Class<?>,PredicateInfo> entry : map.entrySet())
+                {
+                    switch (entry.getValue().getActionType())
+                    {
+                  case SETTER:
+                  case REMOVER:
+                  case EXISTENTIAL:
+                  if (TypeChecker.canBeSetFrom( entry.getKey(), idx )) {
+                      return entry.getValue();
+                  }
+                  break;
+
+              case GETTER:
+                  if (TypeChecker.canBeSetFrom( idx, entry.getKey() )) {
+                      return entry.getValue();
+                  }
+                  break;
+
+  
+                }
+            }
         }
         return null;
     }

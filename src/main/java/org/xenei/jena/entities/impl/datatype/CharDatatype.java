@@ -15,6 +15,7 @@
 package org.xenei.jena.entities.impl.datatype;
 
 import org.apache.jena.datatypes.DatatypeFormatException;
+import org.apache.jena.datatypes.TypeMapper;
 import org.apache.jena.datatypes.xsd.impl.XSDBaseStringType;
 
 /**
@@ -23,7 +24,9 @@ import org.apache.jena.datatypes.xsd.impl.XSDBaseStringType;
  */
 public class CharDatatype extends XSDBaseStringType {
 
-    public CharDatatype() {
+    public static CharDatatype INSTANCE = new CharDatatype();
+    
+    private CharDatatype() {
         super( "string", null );
         try {
             this.javaClass = (Class<?>) Character.class.getField( "TYPE" ).get( null );

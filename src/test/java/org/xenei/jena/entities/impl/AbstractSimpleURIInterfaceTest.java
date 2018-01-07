@@ -20,6 +20,10 @@ public abstract class AbstractSimpleURIInterfaceTest extends AbstractMethodParse
     protected final Method remover;
     protected final Method existential;
 
+    static {
+        EntityManagerImpl.registerTypes();
+    }
+
     protected AbstractSimpleURIInterfaceTest(Class<? extends SimpleURIInterface> interfaceClass)
             throws NoSuchMethodException, SecurityException {
         super( interfaceClass );

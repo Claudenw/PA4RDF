@@ -247,7 +247,7 @@ public class SingleValueMixedTypeParserTest {
         Assert.assertEquals( SingleValueMixedTypeParserTest.namespaceStr + "dbl", pi.getUriString() );
         Assert.assertEquals( SingleValueMixedTypeParserTest.namespaceStr, pi.getNamespace() );
 
-        pi = (PredicateInfoImpl) subjectInfo.getPredicateInfo( "setDbl", Double.class );
+        pi = (PredicateInfoImpl) subjectInfo.getPredicateInfo( "setDbl", c );
         Assert.assertEquals( "setDbl", pi.getMethodName() );
         Assert.assertEquals( phandler, pi.getObjectHandler( entityManager ) );
         Assert.assertEquals( c, pi.getValueClass() );

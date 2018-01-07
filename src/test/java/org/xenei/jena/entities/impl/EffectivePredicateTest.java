@@ -12,12 +12,17 @@ import org.apache.jena.rdf.model.Literal;
 import org.apache.jena.rdf.model.RDFNode;
 import org.junit.Test;
 import org.xenei.jena.entities.annotations.Predicate;
+import org.xenei.jena.entities.impl.datatype.CharacterDatatype;
 import org.xenei.jena.entities.testing.abst.SingleValueMixedTypeTestClass;
 import org.xenei.jena.entities.testing.iface.MultiValueInterface;
 import org.xenei.jena.entities.testing.iface.SimpleInterface;
 
 public class EffectivePredicateTest {
     private EffectivePredicate underTest;
+    
+    static {
+        EntityManagerImpl.registerTypes();
+    }
 
     @Test
     public void simpleGetTest() throws Exception {
@@ -93,7 +98,7 @@ public class EffectivePredicateTest {
         assertEquals( ActionType.GETTER, underTest.actionType() );
         assertEquals( Character.class, underTest.type() );
         assertEquals( Literal.class, underTest.internalType() );
-        assertEquals( XSDDatatype.XSDstring, underTest.literalType() );
+        assertEquals( CharacterDatatype.INSTANCE, underTest.literalType() );
         assertEquals( "http://localhost/test#", underTest.namespace() );
         assertEquals( "char", underTest.name() );
         assertTrue( underTest.postExec().isEmpty() );

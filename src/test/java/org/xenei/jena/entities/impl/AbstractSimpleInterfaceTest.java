@@ -20,6 +20,10 @@ public abstract class AbstractSimpleInterfaceTest extends AbstractMethodParserTe
 
     protected final static LiteralHandler lh = new LiteralHandler( XSDDatatype.XSDstring );
 
+    static {
+        EntityManagerImpl.registerTypes();
+    }
+
     protected AbstractSimpleInterfaceTest(Class<? extends SimpleInterface> interfaceClass)
             throws NoSuchMethodException, SecurityException {
         super( interfaceClass );

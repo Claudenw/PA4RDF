@@ -51,11 +51,6 @@ public class EffectivePredicate {
     private List<Method> postExec = null;
     private final ActionType actionType;
 
-//    
-//    
-//    public EffectivePredicate() {
-//    }
-
     public EffectivePredicate(final EffectivePredicate ep) {
         
         upcase = ep.upcase;

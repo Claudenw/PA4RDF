@@ -77,6 +77,10 @@ public abstract class AbstractCollectionValueInterfaceTest extends AbstractMetho
 
     protected Method getU4;
 
+    static {
+        EntityManagerImpl.registerTypes();
+    }
+
     protected AbstractCollectionValueInterfaceTest(Class<? extends CollectionValueInterface> underTest)
             throws NoSuchMethodException, SecurityException {
         super( underTest );

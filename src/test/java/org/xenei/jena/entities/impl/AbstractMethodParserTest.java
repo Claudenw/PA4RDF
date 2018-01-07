@@ -26,6 +26,10 @@ public abstract class AbstractMethodParserTest {
     protected final MethodParser parser;
     protected String NS = "http://example.com/";
 
+    static {
+        EntityManagerImpl.registerTypes();
+    }
+
     protected AbstractMethodParserTest(Class<?> interfaceClass) {
         subjectInfo = new SubjectInfoImpl( interfaceClass );
         parser = new MethodParser( entityManager, subjectInfo, addCount );

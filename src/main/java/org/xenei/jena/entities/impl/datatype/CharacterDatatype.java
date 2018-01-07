@@ -15,6 +15,7 @@
 package org.xenei.jena.entities.impl.datatype;
 
 import org.apache.jena.datatypes.DatatypeFormatException;
+import org.apache.jena.datatypes.TypeMapper;
 import org.apache.jena.datatypes.xsd.impl.XSDBaseStringType;
 
 /**
@@ -22,11 +23,13 @@ import org.apache.jena.datatypes.xsd.impl.XSDBaseStringType;
  * single character strings and back again.
  */
 public class CharacterDatatype extends XSDBaseStringType {
+    
+    public static CharacterDatatype INSTANCE = new CharacterDatatype();
     /**
      * constructor
      */
-    public CharacterDatatype() {
-        super( "string", Character.class );
+    private CharacterDatatype() {
+        super( "string", Character.class );        
     }
 
     /**

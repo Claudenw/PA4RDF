@@ -99,21 +99,17 @@ public class EntityManagerImpl implements EntityManager {
      * and finally resetting xsd:string to java.lang.String
      */
     public static void registerTypes() {
-        RDFDatatype rtype = null;
         // handle the string types
         // preserve string class and put it back later.
         final RDFDatatype stype = TypeMapper.getInstance().getTypeByClass( String.class );
-        rtype = new CharacterDatatype();
-        TypeMapper.getInstance().registerDatatype( rtype );
-        rtype = new CharDatatype();
-        TypeMapper.getInstance().registerDatatype( rtype );
+
+        TypeMapper.getInstance().registerDatatype( CharacterDatatype.INSTANCE );
+        TypeMapper.getInstance().registerDatatype( CharDatatype.INSTANCE );
+        TypeMapper.getInstance().registerDatatype( LongDatatype.INSTANCE );
         // put the string type back so that it is the registered type for
         // xsd:string
         TypeMapper.getInstance().registerDatatype( stype );
 
-        // change the long type.
-        rtype = new LongDatatype();
-        TypeMapper.getInstance().registerDatatype( rtype );
     }
 
     /**

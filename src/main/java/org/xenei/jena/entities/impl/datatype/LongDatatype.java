@@ -14,6 +14,7 @@
  */
 package org.xenei.jena.entities.impl.datatype;
 
+import org.apache.jena.datatypes.TypeMapper;
 import org.apache.jena.datatypes.xsd.impl.XSDBaseNumericType;
 
 /**
@@ -25,7 +26,9 @@ import org.apache.jena.datatypes.xsd.impl.XSDBaseNumericType;
  */
 public class LongDatatype extends XSDBaseNumericType {
 
-    public LongDatatype() {
+    public static LongDatatype INSTANCE = new LongDatatype();
+    
+    private LongDatatype() {
         super( "long", Long.class );
     }
 

@@ -35,6 +35,10 @@ public abstract class AbstractSimpleURICollectionTest extends AbstractMethodPars
     protected final ListHandler lhRIter = new ListHandler( ResourceHandler.INSTANCE, ExtendedIterator.class );
     protected final ListHandler lhUIter = new ListHandler( UriHandler.INSTANCE, ExtendedIterator.class );
 
+    static {
+        EntityManagerImpl.registerTypes();
+    }
+
     protected AbstractSimpleURICollectionTest(Class<? extends SimpleURICollectionInterface> interfaceClass)
             throws NoSuchMethodException, SecurityException {
         super( interfaceClass );
