@@ -20,6 +20,7 @@ import org.apache.jena.datatypes.RDFDatatype;
 import org.apache.jena.rdf.model.Literal;
 import org.apache.jena.rdf.model.RDFNode;
 import org.apache.jena.rdf.model.ResourceFactory;
+import org.xenei.jena.entities.impl.TypeChecker;
 
 /**
  * An ObjectHandler that encodes objects as Literals and visa versa.
@@ -54,19 +55,25 @@ public class LiteralHandler extends AbstractObjectHandler {
         return ResourceFactory.createTypedLiteral( lexicalForm, literalDatatype );
     }
 
+    private Class<?> getReducedClass()
+    {
+        Class<?> pType = TypeChecker.getPrimitiveClass( literalDatatype.getJavaClass() );
+        return (pType == null)?literalDatatype.getJavaClass():pType;
+    }
+    
     @Override
     public boolean equals(final Object o) {
         if (o instanceof LiteralHandler) {
-            RDFDatatype oType = ((LiteralHandler) o).literalDatatype;
-            return (literalDatatype.getJavaClass().equals(  oType.getJavaClass() )) &&
-                    (literalDatatype.getURI().equals(  oType.getURI() ));
+            Class<?> oType = ((LiteralHandler) o).getReducedClass();
+            return getReducedClass().equals( oType ) &&
+                    (literalDatatype.getURI().equals(  ((LiteralHandler) o).literalDatatype.getURI() ));
         }
         return false;
     }
 
     @Override
     public int hashCode() {
-        return toString().hashCode();
+        return getReducedClass().hashCode();
     }
 
     @Override

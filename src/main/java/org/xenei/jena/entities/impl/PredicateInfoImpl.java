@@ -83,10 +83,10 @@ public class PredicateInfoImpl implements PredicateInfo {
      * The effective predicate.  This is the effective values for the Predicate annotation. 
      */
     private final EffectivePredicate predicate;
-    /**
-     * The map annotations on this method indexed by Annotation class.
-     */
-    private final Map<Class<?>, Annotation> annotations;
+//    /**
+//     * The map annotations on this method indexed by Annotation class.
+//     */
+//    private final Map<Class<?>, Annotation> annotations;
 
     /**
      * Create a sorted list of registered data types.
@@ -193,10 +193,10 @@ public class PredicateInfoImpl implements PredicateInfo {
         }
         this.methodName = method.getName();
         this.valueClass = valueClass;
-        this.annotations = new HashMap<Class<?>, Annotation>();
+        //this.annotations = new HashMap<Class<?>, Annotation>();
         // make a copy so it does not get updated by further external processing of param
         this.predicate = new EffectivePredicate( predicate );
-        addAnnotations( method );
+//        addAnnotations( method );
         if (URI.class.equals( predicate.type() )) {
             concreteType = URI.class;
         } else {
@@ -244,14 +244,14 @@ public class PredicateInfoImpl implements PredicateInfo {
         this.predicate = new EffectivePredicate( pi.predicate );
         this.property = pi.property;
         this.valueClass = pi.valueClass;
-        this.annotations = new HashMap<Class<?>, Annotation>( pi.annotations );
+        //this.annotations = new HashMap<Class<?>, Annotation>( pi.annotations );
     }
 
-    /* package private */ void addAnnotations(Method method) {
-        for (final Annotation a : method.getAnnotations()) {
-            annotations.put( a.annotationType(), a );
-        }
-    }
+//    /* package private */ void addAnnotations(Method method) {
+//        for (final Annotation a : method.getAnnotations()) {
+//            annotations.put( a.annotationType(), a );
+//        }
+//    }
 
     /**
      * Get the ObjectHandler for this predicate info.
@@ -556,9 +556,9 @@ public class PredicateInfoImpl implements PredicateInfo {
         return Collections.unmodifiableList( predicate.postExec() );
     }
 
-    @Override
-    public Collection<Annotation> getAnnotations() {
-        return Collections.unmodifiableCollection( annotations.values() );
-    }
+//    @Override
+//    public Collection<Annotation> getAnnotations() {
+//        return Collections.unmodifiableCollection( annotations.values() );
+//    }
     
 }

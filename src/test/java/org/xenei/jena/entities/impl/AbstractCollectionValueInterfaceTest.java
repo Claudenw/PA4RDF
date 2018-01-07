@@ -93,20 +93,20 @@ public abstract class AbstractCollectionValueInterfaceTest extends AbstractMetho
         removeChar = underTest.getMethod( "removeChar", Character.class );
 
         addDbl = underTest.getMethod( "addDbl", Double.class );
-        PIMap.put( addDbl, mockPredicateInfo( addDbl, "dbl", ActionType.SETTER, Double.class, 1, 0 ) );
+        PIMap.put( addDbl, mockPredicateInfo( addDbl, "dbl", ActionType.SETTER, Double.class, 0 ) );
         OMMap.put( addDbl, new LiteralHandler( XSDDatatype.XSDdouble ) );
         addCount.put( "addDbl", Integer.valueOf( 1 ) );
 
         getDbl = underTest.getMethod( "getDbl" );
-        PIMap.put( getDbl, mockPredicateInfo( getDbl, "dbl", ActionType.GETTER, Queue.class, 0, 0 ) );
+        PIMap.put( getDbl, mockPredicateInfo( getDbl, "dbl", ActionType.GETTER, Queue.class, 0 ) );
         OMMap.put( getDbl, new LiteralHandler( XSDDatatype.XSDdouble ) );
 
         hasDbl = underTest.getMethod( "hasDbl", Double.class );
-        PIMap.put( hasDbl, mockPredicateInfo( hasDbl, "dbl", ActionType.EXISTENTIAL, Boolean.class, 0, 0 ) );
+        PIMap.put( hasDbl, mockPredicateInfo( hasDbl, "dbl", ActionType.EXISTENTIAL, Boolean.class, 0 ) );
         OMMap.put( hasDbl, new LiteralHandler( XSDDatatype.XSDdouble ) );
 
         removeDbl = underTest.getMethod( "removeDbl", Double.class );
-        PIMap.put( removeDbl, mockPredicateInfo( removeDbl, "dbl", ActionType.REMOVER, Double.class, 0, 0 ) );
+        PIMap.put( removeDbl, mockPredicateInfo( removeDbl, "dbl", ActionType.REMOVER, Double.class, 0 ) );
         OMMap.put( removeDbl, new LiteralHandler( XSDDatatype.XSDdouble ) );
 
         addEnt = underTest.getMethod( "addEnt", TestInterface.class );

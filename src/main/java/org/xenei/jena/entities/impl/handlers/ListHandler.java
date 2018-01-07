@@ -146,6 +146,6 @@ public class ListHandler extends AbstractObjectHandler {
     
     @Override
     public String toString() {
-        return String.format(  "ListHandler{ inner:%s }", innerHandler );
+        return String.format(  "ListHandler{ inner:%s return:%s}", innerHandler, returnType );
     }
 }

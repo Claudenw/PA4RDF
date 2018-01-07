@@ -28,29 +28,33 @@ public enum ActionType {
     /**
      * Indicates a method that gets a value
      */
-    GETTER(new String[]{"get", "is"}, new boolean[]{false,false}, false),
+    GETTER(new String[]{"get", "is"}, new boolean[]{false,false}, false, 0, 1),
     /**
      * Indicates a method that sets a value
      */
-    SETTER(new String[]{"set", "add"}, new boolean[]{false,true}, false),
+    SETTER(new String[]{"set", "add"}, new boolean[]{false,true}, false, 1, 1),
     /**
      * Indicates a method that removes a value
      */
-    REMOVER( new String[]{"remove"}, new boolean[]{false}, true),
+    REMOVER( new String[]{"remove"}, new boolean[]{false}, true, 0, 1),
     /**
      * Indicates a method that checks for the existence of a value
      */
-    EXISTENTIAL( new String[]{"has"}, new boolean[]{false}, true);
+    EXISTENTIAL( new String[]{"has"}, new boolean[]{false}, true, 0,1);
     
     private String[] prefixes;
     private boolean[] flags;
     private boolean allowNull; 
+    private int minArgs;
+    private int maxArgs;
     
-    ActionType( String[] prefixes, boolean[] flags, boolean allowNull)
+    ActionType( String[] prefixes, boolean[] flags, boolean allowNull, int minArgs, int maxArgs)
     {
         this.prefixes = prefixes;
         this.flags = flags;
         this.allowNull = allowNull;
+        this.minArgs = minArgs;
+        this.maxArgs = maxArgs;
     }
 
     public boolean isMultipleFN( final String namePrefix)
@@ -135,11 +139,11 @@ public enum ActionType {
     }
 
     /**
-     * Extract the local name portion of the function name.
+     * Extract the name suffix of the function name.
      * 
      * @param name
      *            The function name to extract the local portion from.
-     * @return The local name.
+     * @return The suffix of the name.
      * @throws IllegalArgumentException
      *             fur unrecognized ActionType instances.
      */
@@ -222,6 +226,21 @@ public enum ActionType {
     */
     public boolean allowsNull() {
         return allowNull;
+    }
+    
+    /**
+     * Return true if the method is of this action type.
+     * @param method the method to check
+     * @return true if the method is of this action type.
+     */
+    public boolean isType( Method method )
+    {
+        if (isA( method.getName() ))
+        {
+            int paramCount = method.getParameterTypes().length;
+            return paramCount>=minArgs && paramCount<=maxArgs;
+        }
+        return false;
     }
 
 }

@@ -82,12 +82,12 @@ public interface PredicateInfo {
      */
     public List<Method> getPostExec();
 
-    /**
-     * Get the annotations associated with the method
-     * 
-     * @return The set of annotations.
-     */
-    public Collection<Annotation> getAnnotations();
+//    /**
+//     * Get the annotations associated with the method
+//     * 
+//     * @return The set of annotations.
+//     */
+//    public Collection<Annotation> getAnnotations();
     
     /**
      * Get the effective predicate for this method.

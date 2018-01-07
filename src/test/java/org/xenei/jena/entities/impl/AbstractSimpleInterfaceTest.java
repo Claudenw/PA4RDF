@@ -6,6 +6,7 @@ import org.apache.jena.datatypes.xsd.XSDDatatype;
 import org.junit.Assert;
 import org.junit.Test;
 import org.xenei.jena.entities.PredicateInfo;
+import org.xenei.jena.entities.annotations.Predicate;
 import org.xenei.jena.entities.impl.handlers.LiteralHandler;
 import org.xenei.jena.entities.impl.handlers.VoidHandler;
 import org.xenei.jena.entities.testing.iface.SimpleInterface;
@@ -18,31 +19,30 @@ public abstract class AbstractSimpleInterfaceTest extends AbstractMethodParserTe
     protected final Method existential;
 
     protected final static LiteralHandler lh = new LiteralHandler( XSDDatatype.XSDstring );
-    
+
     protected AbstractSimpleInterfaceTest(Class<? extends SimpleInterface> interfaceClass)
             throws NoSuchMethodException, SecurityException {
         super( interfaceClass );
-         
-        
+
         getter = interfaceClass.getMethod( "getX" );
-        PIMap.put( getter, mockPredicateInfo( getter, "x", ActionType.GETTER, String.class, 0, 0 ) );
+        PIMap.put( getter, mockPredicateInfo( getter, "x", ActionType.GETTER, String.class, 0 ) );
         OMMap.put( getter, lh );
-        
+
         setter = interfaceClass.getMethod( "setX", String.class );
-        PIMap.put( setter, mockPredicateInfo( setter, "x", ActionType.SETTER, String.class, 1, 0 ) );
+        PIMap.put( setter, mockPredicateInfo( setter, "x", ActionType.SETTER, String.class, 0 ) );
         OMMap.put( setter, lh );
 
         remover = interfaceClass.getMethod( "removeX" );
-        PIMap.put( remover, mockPredicateInfo( remover, "x", ActionType.REMOVER, null, 0, 0 ) );
+        PIMap.put( remover, mockPredicateInfo( remover, "x", ActionType.REMOVER, Predicate.UNSET.class, 0 ) );
         OMMap.put( remover, VoidHandler.INSTANCE );
-        
+
         existential = interfaceClass.getMethod( "hasX" );
         PIMap.put( existential, mockPredicateInfo( existential, "x", ActionType.EXISTENTIAL,
-                TypeChecker.getPrimitiveClass( Boolean.class ), 0, 0 ) );
+                TypeChecker.getPrimitiveClass( Boolean.class ), 0 ) );
         OMMap.put( existential, VoidHandler.INSTANCE );
 
         addCount.put( "setX", Integer.valueOf( 1 ) );
- 
+
     }
 
     @Test
@@ -52,10 +52,10 @@ public abstract class AbstractSimpleInterfaceTest extends AbstractMethodParserTe
         OMMap.put( existential, lh );
         final PredicateInfo predicateInfo = parser.parse( getter );
         assertSame( PIMap.get( getter ), predicateInfo, getter );
-        assertSame( getter  );
-        assertSame( setter  );
+        assertSame( getter );
+        assertSame( setter );
         assertSame( existential );
-        assertSame( remover  );
+        assertSame( remover );
 
     }
 
@@ -66,10 +66,10 @@ public abstract class AbstractSimpleInterfaceTest extends AbstractMethodParserTe
         OMMap.put( existential, lh );
         final PredicateInfo predicateInfo = parser.parse( setter );
         assertSame( PIMap.get( setter ), predicateInfo, setter );
-        assertSame( getter  );
-        assertSame( setter  );
+        assertSame( getter );
+        assertSame( setter );
         assertSame( existential );
-        assertSame( remover  );
+        assertSame( remover );
     }
 
     @Test

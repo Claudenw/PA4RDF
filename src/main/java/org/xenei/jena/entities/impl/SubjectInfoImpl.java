@@ -14,6 +14,7 @@
  */
 package org.xenei.jena.entities.impl;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.HashMap;
@@ -22,9 +23,11 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.jena.rdf.model.Property;
+import org.apache.jena.rdf.model.RDFNode;
 import org.xenei.jena.entities.PredicateInfo;
 import org.xenei.jena.entities.SubjectInfo;
 import org.xenei.jena.entities.annotations.Subject;
+import org.xenei.jena.entities.annotations.URI;
 
 public class SubjectInfoImpl implements SubjectInfo {
     /**
@@ -64,7 +67,18 @@ public class SubjectInfoImpl implements SubjectInfo {
             predicateInfo.put( pi.getMethodName(), map );
         }
 
-        map.put( pi.getValueClass(), pi );
+        switch (pi.getActionType())
+        {
+        case GETTER:           
+        case SETTER:
+            map.put(  pi.getValueClass(), pi );
+            break;
+            
+        case REMOVER:
+        case EXISTENTIAL:
+            map.put(  pi.getEffectivePredicate().type(), pi );
+            break;
+        }
     }
 
     /*
@@ -85,15 +99,38 @@ public class SubjectInfoImpl implements SubjectInfo {
      */
     @Override
     public PredicateInfo getPredicateInfo(final Method m) {
-        if (m.isVarArgs() || (m.getParameterTypes().length > 1)) {
-            return null;
+        EffectivePredicate ep = new EffectivePredicate( m );
+        // verify that the method params match for type.
+        if (ep.actionType().isType( m ))
+        {
+            switch (ep.actionType())
+            {
+            case SETTER:
+                return getPredicateInfo( m.getName(), m.getParameterTypes()[0] );
+            case GETTER:
+                return getPredicateInfo( m.getName(), m.getReturnType());
+            case EXISTENTIAL:
+            case REMOVER:
+                return getPredicateInfo( m.getName(), ep.type() );
+            }
         }
-        if (m.getParameterTypes().length == 0) {
-            // must be a getter or single value remove
-            return getPredicateInfo( m.getName(), m.getReturnType() );
-        } else {
-            return getPredicateInfo( m.getName(), m.getParameterTypes()[0] );
-        }
+        return null;
+//        if (m.isVarArgs() || (m.getParameterTypes().length > 1)) {
+//            return null;
+//        }
+//        if (m.getParameterTypes().length == 0) {
+//            // must be a getter or single value remove
+//            return getPredicateInfo( m.getName(), m.getReturnType() );
+//        } else {
+//            Class<?> typeClass = m.getParameterTypes()[0];
+//            
+////            for (final Annotation a : m.getParameterAnnotations()[0]) {
+////                if (a instanceof URI) {
+////                    typeClass = URI.class;
+////                }
+////            }
+//            return getPredicateInfo( m.getName(), typeClass );
+//        }
     }
 
     private PredicateInfo getPredicateInfo(final String function) {
@@ -117,51 +154,54 @@ public class SubjectInfoImpl implements SubjectInfo {
      */
     @Override
     public PredicateInfo getPredicateInfo(final String function, final Class<?> clazz) {
+        
+        
         final Map<Class<?>, PredicateInfo> map = predicateInfo.get( function );
         if (map != null) {
-            for (final PredicateInfo pi : map.values()) {
-                //final Class<?> valueClass = pi.getValueClass();
-                switch (pi.getActionType()) {
-                case SETTER:
-                    if (TypeChecker.canBeSetFrom( pi.getValueClass(), clazz )) {
-                        return pi;
-                    }
-                    break;
-
-                case GETTER:
-                    if (TypeChecker.canBeSetFrom( clazz, pi.getValueClass() )) {
-                        return pi;
-                    }
-                    break;
-
-                case REMOVER:
-                    if (pi.getValueClass() != null) {
-                        // it needs an argument
-                        if (TypeChecker.canBeSetFrom( pi.getValueClass(), clazz )) {
-                            return pi;
-                        }
-                    } else {
-                        // it does not want an argument
-                        if ((clazz == null) || clazz.equals( void.class )) {
-                            return pi;
-                        }
-                    }
-                    break;
-                case EXISTENTIAL:
-                    if (pi.getEffectivePredicate().type() != null) {
-                        // it needs an argument
-                        if (TypeChecker.canBeSetFrom( pi.getEffectivePredicate().type(), clazz )) {
-                            return pi;
-                        }
-                    } else {
-                        // it does not want an argument
-                        if ((clazz == null) || clazz.equals( void.class )) {
-                            return pi;
-                        }
-                    }
-                    break;
-                }
-            }
+            return map.get(  clazz  );
+//            for (final PredicateInfo pi : map.values()) {
+//                //final Class<?> valueClass = pi.getValueClass();
+//                switch (pi.getActionType()) {
+//                case SETTER:
+//                    if (TypeChecker.canBeSetFrom( pi.getValueClass(), clazz )) {
+//                        return pi;
+//                    }
+//                    break;
+//
+//                case GETTER:
+//                    if (TypeChecker.canBeSetFrom( clazz, pi.getValueClass() )) {
+//                        return pi;
+//                    }
+//                    break;
+//
+//                case REMOVER:
+//                    if (pi.getValueClass() != null) {
+//                        // it needs an argument
+//                        if (TypeChecker.canBeSetFrom( pi.getValueClass(), clazz )) {
+//                            return pi;
+//                        }
+//                    } else {
+//                        // it does not want an argument
+//                        if ((clazz == null) || clazz.equals( void.class )) {
+//                            return pi;
+//                        }
+//                    }
+//                    break;
+//                case EXISTENTIAL:
+//                    if (pi.getValueClass() != null) {
+//                        // it needs an argument
+//                        if (TypeChecker.canBeSetFrom( pi.getValueClass(), clazz )) {
+//                            return pi;
+//                        }
+//                    } else {
+//                        // it does not want an argument
+//                        if ((clazz == null) || clazz.equals( void.class )) {
+//                            return pi;
+//                        }
+//                    }
+//                    break;
+//                }
+//            }
         }
         return null;
     }
