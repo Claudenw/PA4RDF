@@ -24,6 +24,7 @@ import org.apache.jena.util.iterator.ExtendedIterator;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.xenei.jena.entities.annotations.Predicate;
 import org.xenei.jena.entities.testing.abst.TestPropertyRenamingInterface;
 import org.xenei.jena.entities.testing.iface.TestInterface;
 
@@ -104,7 +105,7 @@ public class ResourceEntityProxyTest {
         Assert.assertEquals( "removeBar", pi.getMethodName() );
         Assert.assertEquals( namespaceStr, pi.getNamespace() );
         Assert.assertEquals( namespaceStr + "bar", pi.getUriString() );
-        Assert.assertEquals( null, pi.getValueClass() );
+        Assert.assertEquals( Predicate.UNSET.class, pi.getValueClass() );
 
         // BAZ test
 
@@ -150,7 +151,7 @@ public class ResourceEntityProxyTest {
         Assert.assertEquals( "removeFlag", pi.getMethodName() );
         Assert.assertEquals( namespaceStr, pi.getNamespace() );
         Assert.assertEquals( namespaceStr + "flag", pi.getUriString() );
-        Assert.assertEquals( null, pi.getValueClass() );
+        Assert.assertEquals( Predicate.UNSET.class, pi.getValueClass() );
     }
 
     @Test
@@ -184,7 +185,7 @@ public class ResourceEntityProxyTest {
         Assert.assertEquals( "removeFoomer2", pi.getMethodName() );
         Assert.assertEquals( namespace, pi.getNamespace() );
         Assert.assertEquals( namespace + "foo2", pi.getUriString() );
-        Assert.assertEquals( null, pi.getValueClass() );
+        Assert.assertEquals( Predicate.UNSET.class, pi.getValueClass() );
 
         // BAZ test
 
@@ -230,7 +231,7 @@ public class ResourceEntityProxyTest {
         Assert.assertEquals( "removeFoomer3", pi.getMethodName() );
         Assert.assertEquals( namespace, pi.getNamespace() );
         Assert.assertEquals( namespace + "foo3", pi.getUriString() );
-        Assert.assertEquals( null, pi.getValueClass() );
+        Assert.assertEquals( Predicate.UNSET.class, pi.getValueClass() );
     }
 
     @Test

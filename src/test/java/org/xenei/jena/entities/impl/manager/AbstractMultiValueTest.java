@@ -14,7 +14,7 @@ import org.junit.Test;
 import org.xenei.jena.entities.impl.ObjectHandler;
 import org.xenei.jena.entities.impl.PredicateInfoImpl;
 import org.xenei.jena.entities.impl.handlers.EntityHandler;
-import org.xenei.jena.entities.impl.handlers.ListHandler;
+import org.xenei.jena.entities.impl.handlers.CollectionHandler;
 import org.xenei.jena.entities.impl.handlers.LiteralHandler;
 import org.xenei.jena.entities.impl.handlers.ResourceHandler;
 import org.xenei.jena.entities.impl.handlers.UriHandler;
@@ -582,7 +582,7 @@ public abstract class AbstractMultiValueTest extends BaseAbstractManagerTest {
     public void testLst() {
         PredicateInfoImpl pi = (PredicateInfoImpl) subjectInfo.getPredicateInfo( "getLst", Collection.class );
         ObjectHandler handler = new LiteralHandler( TypeMapper.getInstance().getTypeByClass( String.class ) );
-        handler = new ListHandler(  handler,  List.class );
+        handler = new CollectionHandler(  handler,  List.class );
         Assert.assertEquals( handler, pi.getObjectHandler( manager ) );
         Assert.assertEquals( "getLst", pi.getMethodName() );
         Assert.assertEquals( Collection.class, pi.getValueClass() );

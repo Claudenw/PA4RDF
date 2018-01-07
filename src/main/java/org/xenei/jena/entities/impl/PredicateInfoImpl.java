@@ -49,7 +49,7 @@ import org.xenei.jena.entities.PredicateInfo;
 import org.xenei.jena.entities.annotations.Subject;
 import org.xenei.jena.entities.annotations.URI;
 import org.xenei.jena.entities.impl.handlers.EntityHandler;
-import org.xenei.jena.entities.impl.handlers.ListHandler;
+import org.xenei.jena.entities.impl.handlers.CollectionHandler;
 import org.xenei.jena.entities.impl.handlers.LiteralHandler;
 import org.xenei.jena.entities.impl.handlers.ResourceHandler;
 import org.xenei.jena.entities.impl.handlers.UriHandler;
@@ -156,7 +156,7 @@ public class PredicateInfoImpl implements PredicateInfo {
             EffectivePredicate ep = new EffectivePredicate( pred );
             ep.collectionType( null );
             ObjectHandler handler = PredicateInfoImpl.getHandler( entityManager, returnType, ep );
-            return new ListHandler( handler, pred.collectionType() );            
+            return new CollectionHandler( handler, pred.collectionType() );            
         }
         
         if (pred.type().getAnnotation( Subject.class ) != null) {
@@ -347,6 +347,7 @@ public class PredicateInfoImpl implements PredicateInfo {
     }
 
     private Object execReadCollection(final ObjectHandler objectHandler, final Resource resource, final Property p) {
+
         if (RDFList.class.equals( this.concreteType )) {
             return execReadSingle( objectHandler, resource, p );
         }
@@ -354,7 +355,7 @@ public class PredicateInfoImpl implements PredicateInfo {
         try {
 
             final NodeIterator iter = resource.getModel().listObjectsOfProperty( resource, p );
-
+            
             final ExtendedIterator<Object> oIter = iter.mapWith( new Function<RDFNode, Object>() {
 
                 @Override
@@ -362,6 +363,13 @@ public class PredicateInfoImpl implements PredicateInfo {
                     return objectHandler.parseObject( rdfNode );
                 }
             } );
+            
+            if (objectHandler instanceof CollectionHandler)
+            {
+                return ((CollectionHandler)objectHandler).makeCollection( oIter );
+            }
+            
+            
             if (List.class.isAssignableFrom( valueClass )) {
                 return oIter.toList();
             } else if (Set.class.isAssignableFrom( valueClass )) {
@@ -453,12 +461,12 @@ public class PredicateInfoImpl implements PredicateInfo {
             Collection<RDFNode> nodes = objectHandler.asCollection( predicate.emptyIsNull(), args[0]); 
             for (RDFNode value : nodes)
             {
+                /* remove the old data */
+                for (final Statement stmt : stmtLst) {
+                    objectHandler.removeObject( stmt, value );
+                }
                 if (value != null)
                 {
-                    /* remove the old data */
-                    for (final Statement stmt : stmtLst) {
-                        objectHandler.removeObject( stmt, value );
-                    }                    
                     resource.addProperty( p, value );                                        
                 }   
             }

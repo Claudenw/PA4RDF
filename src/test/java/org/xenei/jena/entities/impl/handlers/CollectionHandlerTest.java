@@ -5,6 +5,7 @@ import static org.junit.Assert.assertEquals;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 
 import org.apache.jena.datatypes.xsd.XSDDatatype;
@@ -12,6 +13,7 @@ import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.rdf.model.RDFList;
 import org.apache.jena.rdf.model.RDFNode;
+import org.apache.jena.rdf.model.Literal;
 import org.apache.jena.rdf.model.ResourceFactory;
 import org.junit.Assert;
 import org.junit.Before;
@@ -19,16 +21,14 @@ import org.junit.Test;
 import org.xenei.jena.entities.EntityManager;
 import org.xenei.jena.entities.EntityManagerFactory;
 
-public class ListHandlerTest extends AbstractObjectHandlerTest {
-    EntityManager em;
-    Integer instance;
-    String[] args = { "Hello", "World" };
+public class CollectionHandlerTest extends AbstractObjectHandlerTest {
+    private EntityManager em;
+    private String[] args = { "Hello", "World" };
 
     @Before
     public void setup() {
         em = EntityManagerFactory.create();
-        underTest = new ListHandler( new LiteralHandler( XSDDatatype.XSDstring ), List.class );
-
+        underTest = new CollectionHandler( new LiteralHandler( XSDDatatype.XSDstring ), List.class );
     }
 
     @Override
@@ -36,23 +36,21 @@ public class ListHandlerTest extends AbstractObjectHandlerTest {
     public void testCreateRDFNode() {
         final RDFNode n = underTest.createRDFNode( args );
         Assert.assertNotNull( n );
-        Assert.assertTrue( n.canAs( RDFList.class ) );
-        final List<RDFNode> lst = n.as( RDFList.class ).asJavaList();
-        assertEquals( 2, lst.size() );
-        assertEquals( args[0], lst.get( 0 ).asLiteral().toString() );
-        assertEquals( args[1], lst.get( 1 ).asLiteral().toString() );
+        Assert.assertTrue( n instanceof Literal );
+        Assert.assertTrue(  n.asLiteral().getDatatype().equals(  XSDDatatype.XSDstring ) );        
     }
 
     @Test
-    public void testCreateRDFNode_List() {
-
-        final RDFNode n = underTest.createRDFNode( Arrays.asList( args ) );
-        Assert.assertNotNull( n );
-        Assert.assertTrue( n.canAs( RDFList.class ) );
-        final List<RDFNode> lst = n.as( RDFList.class ).asJavaList();
-        assertEquals( 2, lst.size() );
-        assertEquals( args[0], lst.get( 0 ).asLiteral().toString() );
-        assertEquals( args[1], lst.get( 1 ).asLiteral().toString() );
+    public void testMakeCollection() {
+        Iterator<String> oIter = Arrays.asList( args ).iterator();
+        Object o = ((CollectionHandler)underTest).makeCollection( oIter );
+        Assert.assertTrue( o instanceof List);
+        List<?> lst = (List)o;
+        assertEquals( args.length, lst.size() );
+        for (int i=0;i<args.length;i++)
+        {
+            assertEquals( "Error at "+i,args[i], lst.get( i ));    
+        }
     }
 
     @Override

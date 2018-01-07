@@ -289,8 +289,7 @@ public class CollectionValueEntityTests {
     public void testRdf() {
         final RDFNode cc = ResourceFactory.createResource( "cc" );
 
-        final RDFNode dd = ResourceFactory.createResource( "dd" );
-        ;
+        final RDFNode dd = ResourceFactory.createResource( "dd" );        
 
         tc.addRDF( cc );
         Assert.assertTrue( tc.hasRDF( cc ) );

@@ -10,7 +10,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.xenei.jena.entities.PredicateInfo;
 import org.xenei.jena.entities.annotations.URI;
-import org.xenei.jena.entities.impl.handlers.ListHandler;
+import org.xenei.jena.entities.impl.handlers.CollectionHandler;
 import org.xenei.jena.entities.impl.handlers.ResourceHandler;
 import org.xenei.jena.entities.impl.handlers.UriHandler;
 import org.xenei.jena.entities.testing.iface.SimpleURICollectionInterface;
@@ -30,10 +30,10 @@ public abstract class AbstractSimpleURICollectionTest extends AbstractMethodPars
     protected final Method removerR2;
     protected final Method existential2;
 
-    protected final ListHandler lhRLst = new ListHandler( ResourceHandler.INSTANCE, List.class );
-    protected final ListHandler lhULst = new ListHandler( UriHandler.INSTANCE, List.class );
-    protected final ListHandler lhRIter = new ListHandler( ResourceHandler.INSTANCE, ExtendedIterator.class );
-    protected final ListHandler lhUIter = new ListHandler( UriHandler.INSTANCE, ExtendedIterator.class );
+    protected final CollectionHandler lhRLst = new CollectionHandler( ResourceHandler.INSTANCE, List.class );
+    protected final CollectionHandler lhULst = new CollectionHandler( UriHandler.INSTANCE, List.class );
+    protected final CollectionHandler lhRIter = new CollectionHandler( ResourceHandler.INSTANCE, ExtendedIterator.class );
+    protected final CollectionHandler lhUIter = new CollectionHandler( UriHandler.INSTANCE, ExtendedIterator.class );
 
     static {
         EntityManagerImpl.registerTypes();

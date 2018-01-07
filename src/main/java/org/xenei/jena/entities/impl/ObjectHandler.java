@@ -20,6 +20,7 @@ import org.apache.jena.rdf.model.Statement;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.stream.Collectors;
 
 /**
@@ -69,7 +70,8 @@ public interface ObjectHandler {
      */
     void removeObject(Statement stmt, RDFNode value);
     
-    default Collection<RDFNode> asCollection( boolean emptyisNull, Object obj ) {
+    @SuppressWarnings("unchecked")
+    default Collection<RDFNode> asCollection( boolean emptyIsNull, Object obj ) {
         Collection<Object> objs = null;
         if (obj instanceof Collection)
         {
@@ -79,7 +81,14 @@ public interface ObjectHandler {
             objs = new ArrayList<Object>(  Arrays.asList( obj ) );
         } else {
             objs = new ArrayList<Object>();
-            objs.add(  obj  );
+            if (isEmpty(obj) && emptyIsNull)
+            {
+                objs.add(null);
+            }
+            else 
+            {
+                objs.add(  obj  );
+            }
         }
         return objs.stream().map( o -> createRDFNode(o)).collect(  Collectors.toList() );
     }
