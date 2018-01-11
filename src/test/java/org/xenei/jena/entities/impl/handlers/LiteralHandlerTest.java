@@ -9,7 +9,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 public class LiteralHandlerTest extends AbstractObjectHandlerTest {
-     RDFNode node;
+    RDFNode node;
     Integer instance;
 
     @Before

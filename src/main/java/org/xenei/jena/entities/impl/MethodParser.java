@@ -192,8 +192,11 @@ public class MethodParser {
                 return;
             }
 
+            if (predicate.actionType().isType( method )) {
             final Set<Class<?>> interfaces = findAbstracts( method.getDeclaringClass() );
-
+           
+                
+            
             switch (predicate.actionType()) {
             case SETTER:
                 final Integer i = addCount.get( method.getName() );
@@ -203,23 +206,18 @@ public class MethodParser {
                 break;
 
             case EXISTENTIAL:
-                if (method.getParameterTypes().length <= 1) {
                     parseExistential( interfaces, method );
-                }
                 break;
 
             case GETTER:
-                if (method.getParameterTypes().length == 0) {
-                    parseGetter( interfaces, method );
-                }
+                    parseGetter( interfaces, method, predicate );
                 break;
 
             case REMOVER:
-                if (method.getParameterTypes().length <= 1) {
                     parseRemover( interfaces, method );
-                }
                 break;
 
+            }
             }
 
         }
@@ -276,7 +274,7 @@ public class MethodParser {
             }
         }
 
-        private void parseGetter(final Set<Class<?>> abstracts, final Method method) throws MissingAnnotation {
+        private void parseGetter(final Set<Class<?>> abstracts, final Method method, final EffectivePredicate predicate) throws MissingAnnotation {
             // predicate for getter method includes predicate infor for setter
             // method.
             final EffectivePredicate ep = new EffectivePredicate( method );
@@ -292,6 +290,7 @@ public class MethodParser {
                     return;
                 }
             }
+            
         }
 
         private void parseRemover(final Set<Class<?>> abstracts, final Method method) throws MissingAnnotation {

@@ -9,11 +9,11 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.apache.jena.datatypes.xsd.XSDDatatype;
+import org.apache.jena.rdf.model.Literal;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.rdf.model.RDFList;
 import org.apache.jena.rdf.model.RDFNode;
-import org.apache.jena.rdf.model.Literal;
 import org.apache.jena.rdf.model.ResourceFactory;
 import org.junit.Assert;
 import org.junit.Before;
@@ -23,7 +23,7 @@ import org.xenei.jena.entities.EntityManagerFactory;
 
 public class CollectionHandlerTest extends AbstractObjectHandlerTest {
     private EntityManager em;
-    private String[] args = { "Hello", "World" };
+    private final String[] args = { "Hello", "World" };
 
     @Before
     public void setup() {
@@ -42,10 +42,10 @@ public class CollectionHandlerTest extends AbstractObjectHandlerTest {
 
     @Test
     public void testMakeCollection() {
-        Iterator<String> oIter = Arrays.asList( args ).iterator();
-        Object o = ((CollectionHandler)underTest).makeCollection( oIter );
+        final Iterator<String> oIter = Arrays.asList( args ).iterator();
+        final Object o = ((CollectionHandler)underTest).makeCollection( oIter );
         Assert.assertTrue( o instanceof List);
-        List<?> lst = (List)o;
+        final List<?> lst = (List)o;
         assertEquals( args.length, lst.size() );
         for (int i=0;i<args.length;i++)
         {

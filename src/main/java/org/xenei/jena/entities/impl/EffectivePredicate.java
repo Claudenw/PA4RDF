@@ -51,23 +51,38 @@ public class EffectivePredicate {
     private List<Method> postExec = null;
     private final ActionType actionType;
 
-    public EffectivePredicate(final EffectivePredicate ep) {
-        
-        upcase = ep.upcase;
-        name = ep.name;
-        namespace = ep.namespace;
-        literalType = ep.literalType;
-        type = ep.type;
-        internalType = ep.internalType;
+    public EffectivePredicate(final EffectivePredicate ep) {        
+        actionType = ep.actionType;
         collectionType = ep.collectionType;
         emptyIsNull = ep.emptyIsNull;
         impl = ep.impl;
+        internalType = ep.internalType;
+        literalType = ep.literalType;
+        name = ep.name;
+        namespace = ep.namespace;
         if (ep.postExec != null) {
             postExec = new ArrayList<Method>( ep.postExec );
         }
-        actionType = ep.actionType;
+        type = ep.type;
+        upcase = ep.upcase;
     }
 
+    public EffectivePredicate(ActionType actionType, Class<?> collectionType, boolean emptyIsNull, 
+            boolean impl, Class<?> internalType, RDFDatatype literalType, String name, 
+            String namespace, List<Method> postExec, Class<?> type, boolean upcase) { 
+        this.actionType = actionType;
+        this.collectionType = collectionType;
+        this.emptyIsNull = emptyIsNull;
+        this.impl = impl;
+        this.internalType = internalType;
+        this.literalType = literalType;
+        this.name = name;
+        this.namespace = namespace;
+        this.postExec = postExec;
+        this.type = type;
+        this.upcase = upcase;
+        
+    }
     public EffectivePredicate(final Method method) {
         
         if (method != null) {
@@ -119,8 +134,8 @@ public class EffectivePredicate {
                 }
                 break;
             }
-
-            final Subject s = method.getDeclaringClass().getAnnotation( Subject.class );
+           
+            final Subject s = method.getDeclaringClass().getAnnotation( Subject.class );           
             if (s != null) {
                 this.namespace = s.namespace();
             }
@@ -375,6 +390,15 @@ public class EffectivePredicate {
     @Override
     public int hashCode() {
         return actionType==null?super.hashCode():actionType.hashCode();
+    }
+    
+    public String formattedString() {
+        return String.format(
+                "EffectivePredicate[ %n\tAction: %s%n\tCollection: %s%n\temptyIsNull: %s%n\t"
+                + "Impl: %s%n\tInternalType: %s%n\tLiteralType %s%n\tName: %s%n\tNamespace: %s%n\t"
+                + "Type: %s%n\tUpcase: %s%n\tPostExce: %s%n]",
+                actionType, collectionType, emptyIsNull, impl, internalType, literalType, name,
+                namespace, type, upcase, postExec );
     }
 
 }

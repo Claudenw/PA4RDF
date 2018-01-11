@@ -51,12 +51,16 @@ public class EntityHandler extends AbstractObjectHandler {
 
     @Override
     public boolean equals(final Object o) {
-        return o instanceof EntityHandler;
+        if (o instanceof EntityHandler)
+        {
+            return ((EntityHandler)o).valueClass.equals(  valueClass );
+        }
+        return false;
     }
 
     @Override
     public int hashCode() {
-        return toString().hashCode();
+        return valueClass.hashCode();
     }
 
     @Override
@@ -84,7 +88,7 @@ public class EntityHandler extends AbstractObjectHandler {
 
     @Override
     public String toString() {
-        return "EntityHandler";
+        return String.format( "EntityHandler[ %s ]", valueClass );
     }
 
 }
