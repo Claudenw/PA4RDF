@@ -1,4 +1,4 @@
-package org.xenei.jena.entities.impl.parser;
+package org.xenei.jena.entities.impl.parser.impl;
 
 import org.xenei.jena.entities.annotations.Predicate;
 import org.xenei.jena.entities.testing.impl.SimpleSubjectImpl;

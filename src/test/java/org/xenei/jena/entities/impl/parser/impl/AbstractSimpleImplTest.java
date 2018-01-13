@@ -1,4 +1,4 @@
-package org.xenei.jena.entities.impl.parser;
+package org.xenei.jena.entities.impl.parser.impl;
 
 import java.lang.reflect.Method;
 
@@ -12,6 +12,7 @@ import org.xenei.jena.entities.impl.EntityManagerImpl;
 import org.xenei.jena.entities.impl.TypeChecker;
 import org.xenei.jena.entities.impl.handlers.LiteralHandler;
 import org.xenei.jena.entities.impl.handlers.VoidHandler;
+import org.xenei.jena.entities.impl.parser.AbstractMethodParserTest;
 import org.xenei.jena.entities.testing.impl.SimpleSubjectImpl;
 
 abstract public class AbstractSimpleImplTest extends AbstractMethodParserTest {

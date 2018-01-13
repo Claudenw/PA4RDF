@@ -1,4 +1,4 @@
-package org.xenei.jena.entities.impl.parser;
+package org.xenei.jena.entities.impl.parser.collectionValue;
 
 import java.lang.reflect.Method;
 import java.util.List;
@@ -19,6 +19,7 @@ import org.xenei.jena.entities.impl.handlers.EntityHandler;
 import org.xenei.jena.entities.impl.handlers.LiteralHandler;
 import org.xenei.jena.entities.impl.handlers.ResourceHandler;
 import org.xenei.jena.entities.impl.handlers.UriHandler;
+import org.xenei.jena.entities.impl.parser.AbstractMethodParserTest;
 import org.xenei.jena.entities.testing.iface.CollectionValueInterface;
 import org.xenei.jena.entities.testing.iface.TestInterface;
 

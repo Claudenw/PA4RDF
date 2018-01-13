@@ -1,4 +1,4 @@
-package org.xenei.jena.entities.impl.parser;
+package org.xenei.jena.entities.impl.parser.collection;
 
 import org.xenei.jena.entities.testing.impl.CollectionInterfaceImpl;
 

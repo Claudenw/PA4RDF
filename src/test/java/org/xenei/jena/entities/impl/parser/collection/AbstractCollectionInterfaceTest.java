@@ -1,4 +1,4 @@
-package org.xenei.jena.entities.impl.parser;
+package org.xenei.jena.entities.impl.parser.collection;
 
 import java.lang.reflect.Method;
 import java.util.List;
@@ -13,6 +13,7 @@ import org.xenei.jena.entities.impl.EntityManagerImpl;
 import org.xenei.jena.entities.impl.TypeChecker;
 import org.xenei.jena.entities.impl.handlers.LiteralHandler;
 import org.xenei.jena.entities.impl.handlers.VoidHandler;
+import org.xenei.jena.entities.impl.parser.AbstractMethodParserTest;
 import org.xenei.jena.entities.testing.iface.CollectionInterface;
 
 public abstract class AbstractCollectionInterfaceTest extends AbstractMethodParserTest {
