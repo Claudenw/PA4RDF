@@ -1,7 +1,6 @@
 package org.xenei.jena.entities.impl.predicate.collectionValue;
 
 import org.apache.jena.util.iterator.ExtendedIterator;
-import org.xenei.jena.entities.impl.predicate.REVIEW.REVIEW_AbstractMultiValueTest;
 import org.xenei.jena.entities.testing.iface.MultiValueInterface;
 
 public class MultiValueInterfaceTest extends AbstractCollectionValueInterfaceTest {
@@ -9,7 +8,7 @@ public class MultiValueInterfaceTest extends AbstractCollectionValueInterfaceTes
     public MultiValueInterfaceTest() throws NoSuchMethodException, SecurityException {
         super( MultiValueInterface.class );
     }
-    
+
     protected MultiValueInterfaceTest( Class<?> underTest) throws NoSuchMethodException, SecurityException {
         super( underTest );
     }
@@ -39,7 +38,7 @@ public class MultiValueInterfaceTest extends AbstractCollectionValueInterfaceTes
         builder.setCollectionType( ExtendedIterator.class );
     }
 
-    
+
     @Override
     protected void updateGetDbl() {
         builder.setCollectionType( ExtendedIterator.class );

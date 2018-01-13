@@ -1,6 +1,5 @@
 package org.xenei.jena.entities.impl.predicate.collectionValue;
 
-import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Queue;
 import java.util.Set;
@@ -8,21 +7,13 @@ import java.util.Set;
 import org.apache.jena.datatypes.xsd.XSDDatatype;
 import org.apache.jena.rdf.model.Literal;
 import org.apache.jena.rdf.model.RDFNode;
-import org.junit.Assert;
 import org.junit.Test;
-import org.xenei.jena.entities.PredicateInfo;
 import org.xenei.jena.entities.annotations.URI;
 import org.xenei.jena.entities.impl.ActionType;
 import org.xenei.jena.entities.impl.EntityManagerImpl;
 import org.xenei.jena.entities.impl.datatype.CharacterDatatype;
 import org.xenei.jena.entities.impl.datatype.LongDatatype;
-import org.xenei.jena.entities.impl.handlers.CollectionHandler;
-import org.xenei.jena.entities.impl.handlers.EntityHandler;
-import org.xenei.jena.entities.impl.handlers.LiteralHandler;
-import org.xenei.jena.entities.impl.handlers.ResourceHandler;
-import org.xenei.jena.entities.impl.handlers.UriHandler;
 import org.xenei.jena.entities.impl.predicate.AbstractPredicateTest;
-import org.xenei.jena.entities.testing.iface.CollectionValueInterface;
 import org.xenei.jena.entities.testing.iface.TestInterface;
 
 public abstract class AbstractCollectionValueInterfaceTest extends AbstractPredicateTest {
@@ -37,7 +28,7 @@ public abstract class AbstractCollectionValueInterfaceTest extends AbstractPredi
         builder.setNamespace( "http://localhost/test#" );
 
     }
-    
+
     @Test
     public void testAddBool() throws Exception
     {
@@ -49,10 +40,10 @@ public abstract class AbstractCollectionValueInterfaceTest extends AbstractPredi
         updateAddBool();
         assertSame( builder, interfaceClass.getMethod( "addBool", Boolean.class ) );
     }
-    
+
     protected void updateAddBool() {}
-    
-    
+
+
     @Test
     public void testGetBool()throws Exception
     {
@@ -62,10 +53,10 @@ public abstract class AbstractCollectionValueInterfaceTest extends AbstractPredi
         updateGetBool();
         assertSame( builder, interfaceClass.getMethod( "getBool" ) );
     }
-    
+
     protected void updateGetBool() {}
-    
-    
+
+
     @Test
     public void testHasBool() throws Exception
     {
@@ -77,9 +68,9 @@ public abstract class AbstractCollectionValueInterfaceTest extends AbstractPredi
         updateHasBool();
         assertSame( builder, interfaceClass.getMethod( "hasBool", Boolean.class ) );
     }
-    
+
     protected void updateHasBool() {}
-    
+
     @Test
     public void testRemoveBool() throws Exception
     {
@@ -91,10 +82,10 @@ public abstract class AbstractCollectionValueInterfaceTest extends AbstractPredi
         updateRemoveBool();
         assertSame( builder, interfaceClass.getMethod( "removeBool", Boolean.class ) );
     }
-    
+
     protected void updateRemoveBool() {}
-    
-    
+
+
     @Test
     public void testAddChar() throws Exception
     {
@@ -106,10 +97,10 @@ public abstract class AbstractCollectionValueInterfaceTest extends AbstractPredi
         updateAddChar();
         assertSame( builder, interfaceClass.getMethod( "addChar", Character.class ) );
     }
-    
+
     protected void updateAddChar() {}
-    
-    
+
+
     @Test
     public void testGetChar()throws Exception
     {
@@ -119,10 +110,10 @@ public abstract class AbstractCollectionValueInterfaceTest extends AbstractPredi
         updateGetChar();
         assertSame( builder, interfaceClass.getMethod( "getChar" ) );
     }
-    
+
     protected void updateGetChar() {}
-    
-    
+
+
     @Test
     public void testHasChar() throws Exception
     {
@@ -134,9 +125,9 @@ public abstract class AbstractCollectionValueInterfaceTest extends AbstractPredi
         updateHasChar();
         assertSame( builder, interfaceClass.getMethod( "hasChar", Character.class ) );
     }
-    
+
     protected void updateHasChar() {}
-    
+
     @Test
     public void testRemoveChar() throws Exception
     {
@@ -148,9 +139,9 @@ public abstract class AbstractCollectionValueInterfaceTest extends AbstractPredi
         updateRemoveChar();
         assertSame( builder, interfaceClass.getMethod( "removeChar", Character.class ) );
     }
-    
+
     protected void updateRemoveChar() {}
-    
+
     @Test
     public void testAddDbl() throws Exception
     {
@@ -162,9 +153,9 @@ public abstract class AbstractCollectionValueInterfaceTest extends AbstractPredi
         updateAddDbl();
         assertSame( builder, interfaceClass.getMethod( "addDbl", Double.class ) );
     }
-    
+
     protected void updateAddDbl() {}
-      
+
     @Test
     public void testGetDbl()throws Exception
     {
@@ -174,10 +165,10 @@ public abstract class AbstractCollectionValueInterfaceTest extends AbstractPredi
         updateGetDbl();
         assertSame( builder, interfaceClass.getMethod( "getDbl" ) );
     }
-    
+
     protected void updateGetDbl() {}
-    
-    
+
+
     @Test
     public void testHasDbl() throws Exception
     {
@@ -189,9 +180,9 @@ public abstract class AbstractCollectionValueInterfaceTest extends AbstractPredi
         updateHasDbl();
         assertSame( builder, interfaceClass.getMethod( "hasDbl", Double.class ) );
     }
-    
+
     protected void updateHasDbl() {}
-    
+
     @Test
     public void testRemoveDbl() throws Exception
     {
@@ -203,9 +194,9 @@ public abstract class AbstractCollectionValueInterfaceTest extends AbstractPredi
         updateRemoveDbl();
         assertSame( builder, interfaceClass.getMethod( "removeDbl", Double.class ) );
     }
-    
+
     protected void updateRemoveDbl() {}  
-    
+
     @Test
     public void testAddEnt() throws Exception
     {
@@ -216,9 +207,9 @@ public abstract class AbstractCollectionValueInterfaceTest extends AbstractPredi
         updateAddEnt();
         assertSame( builder, interfaceClass.getMethod( "addEnt", TestInterface.class ) );
     }
-    
+
     protected void updateAddEnt() {}
-      
+
     @Test
     public void testGetEnt()throws Exception
     {
@@ -228,10 +219,10 @@ public abstract class AbstractCollectionValueInterfaceTest extends AbstractPredi
         updateGetEnt();
         assertSame( builder, interfaceClass.getMethod( "getEnt" ) );
     }
-    
+
     protected void updateGetEnt() {}
-    
-    
+
+
     @Test
     public void testHasEnt() throws Exception
     {
@@ -242,9 +233,9 @@ public abstract class AbstractCollectionValueInterfaceTest extends AbstractPredi
         updateHasEnt();
         assertSame( builder, interfaceClass.getMethod( "hasEnt", TestInterface.class ) );
     }
-    
+
     protected void updateHasEnt() {}
-    
+
     @Test
     public void testRemoveEnt() throws Exception
     {
@@ -255,7 +246,7 @@ public abstract class AbstractCollectionValueInterfaceTest extends AbstractPredi
         updateRemoveEnt();
         assertSame( builder, interfaceClass.getMethod( "removeEnt", TestInterface.class ) );
     }
-    
+
     protected void updateRemoveEnt() {}
 
     @Test
@@ -269,9 +260,9 @@ public abstract class AbstractCollectionValueInterfaceTest extends AbstractPredi
         updateAddFlt();
         assertSame( builder, interfaceClass.getMethod( "addFlt", Float.class ) );
     }
-    
+
     protected void updateAddFlt() {}
-      
+
     @Test
     public void testGetFlt()throws Exception
     {
@@ -281,10 +272,10 @@ public abstract class AbstractCollectionValueInterfaceTest extends AbstractPredi
         updateGetFlt();
         assertSame( builder, interfaceClass.getMethod( "getFlt" ) );
     }
-    
+
     protected void updateGetFlt() {}
-    
-    
+
+
     @Test
     public void testHasFlt() throws Exception
     {
@@ -296,9 +287,9 @@ public abstract class AbstractCollectionValueInterfaceTest extends AbstractPredi
         updateHasFlt();
         assertSame( builder, interfaceClass.getMethod( "hasFlt", Float.class ) );
     }
-    
+
     protected void updateHasFlt() {}
-    
+
     @Test
     public void testRemoveFlt() throws Exception
     {
@@ -310,7 +301,7 @@ public abstract class AbstractCollectionValueInterfaceTest extends AbstractPredi
         updateRemoveFlt();
         assertSame( builder, interfaceClass.getMethod( "removeFlt", Float.class ) );
     }
-    
+
     protected void updateRemoveFlt() {}
 
     @Test
@@ -324,9 +315,9 @@ public abstract class AbstractCollectionValueInterfaceTest extends AbstractPredi
         updateAddInt();
         assertSame( builder, interfaceClass.getMethod( "addInt", Integer.class ) );
     }
-    
+
     protected void updateAddInt() {}
-      
+
     @Test
     public void testGetInt()throws Exception
     {
@@ -336,10 +327,10 @@ public abstract class AbstractCollectionValueInterfaceTest extends AbstractPredi
         updateGetInt();
         assertSame( builder, interfaceClass.getMethod( "getInt" ) );
     }
-    
+
     protected void updateGetInt() {}
-    
-    
+
+
     @Test
     public void testHasInt() throws Exception
     {
@@ -351,9 +342,9 @@ public abstract class AbstractCollectionValueInterfaceTest extends AbstractPredi
         updateHasInt();
         assertSame( builder, interfaceClass.getMethod( "hasInt", Integer.class ) );
     }
-    
+
     protected void updateHasInt() {}
-    
+
     @Test
     public void testRemoveInt() throws Exception
     {
@@ -365,7 +356,7 @@ public abstract class AbstractCollectionValueInterfaceTest extends AbstractPredi
         updateRemoveInt();
         assertSame( builder, interfaceClass.getMethod( "removeInt", Integer.class ) );
     }
-    
+
     protected void updateRemoveInt() {}
 
     @Test
@@ -379,9 +370,9 @@ public abstract class AbstractCollectionValueInterfaceTest extends AbstractPredi
         updateAddLng();
         assertSame( builder, interfaceClass.getMethod( "addLng", Long.class ) );
     }
-    
+
     protected void updateAddLng() {}
-      
+
     @Test
     public void testGetLng()throws Exception
     {
@@ -391,10 +382,10 @@ public abstract class AbstractCollectionValueInterfaceTest extends AbstractPredi
         updateGetLng();
         assertSame( builder, interfaceClass.getMethod( "getLng" ) );
     }
-    
+
     protected void updateGetLng() {}
-    
-    
+
+
     @Test
     public void testHasLng() throws Exception
     {
@@ -406,9 +397,9 @@ public abstract class AbstractCollectionValueInterfaceTest extends AbstractPredi
         updateHasLng();
         assertSame( builder, interfaceClass.getMethod( "hasLng", Long.class ) );
     }
-    
+
     protected void updateHasLng() {}
-    
+
     @Test
     public void testRemoveLng() throws Exception
     {
@@ -420,7 +411,7 @@ public abstract class AbstractCollectionValueInterfaceTest extends AbstractPredi
         updateRemoveLng();
         assertSame( builder, interfaceClass.getMethod( "removeLng", Long.class ) );
     }
-    
+
     protected void updateRemoveLng() {}
 
     @Test
@@ -433,9 +424,9 @@ public abstract class AbstractCollectionValueInterfaceTest extends AbstractPredi
         updateAddRDF();
         assertSame( builder, interfaceClass.getMethod( "addRDF", RDFNode.class ) );
     }
-    
+
     protected void updateAddRDF() {}
-      
+
     @Test
     public void testGetRDF()throws Exception
     {
@@ -445,10 +436,10 @@ public abstract class AbstractCollectionValueInterfaceTest extends AbstractPredi
         updateGetRDF();
         assertSame( builder, interfaceClass.getMethod( "getRDF" ) );
     }
-    
+
     protected void updateGetRDF() {}
-    
-    
+
+
     @Test
     public void testHasRDF() throws Exception
     {
@@ -459,9 +450,9 @@ public abstract class AbstractCollectionValueInterfaceTest extends AbstractPredi
         updateHasRDF();
         assertSame( builder, interfaceClass.getMethod( "hasRDF", RDFNode.class ) );
     }
-    
+
     protected void updateHasRDF() {}
-    
+
     @Test
     public void testRemoveRDF() throws Exception
     {
@@ -472,7 +463,7 @@ public abstract class AbstractCollectionValueInterfaceTest extends AbstractPredi
         updateRemoveRDF();
         assertSame( builder, interfaceClass.getMethod( "removeRDF", RDFNode.class ) );
     }
-    
+
     protected void updateRemoveRDF() {}
 
     @Test
@@ -486,9 +477,9 @@ public abstract class AbstractCollectionValueInterfaceTest extends AbstractPredi
         updateAddStr();
         assertSame( builder, interfaceClass.getMethod( "addStr", String.class ) );
     }
-    
+
     protected void updateAddStr() {}
-      
+
     @Test
     public void testGetStr()throws Exception
     {
@@ -498,10 +489,10 @@ public abstract class AbstractCollectionValueInterfaceTest extends AbstractPredi
         updateGetStr();
         assertSame( builder, interfaceClass.getMethod( "getStr" ) );
     }
-    
+
     protected void updateGetStr() {}
-    
-    
+
+
     @Test
     public void testHasStr() throws Exception
     {
@@ -513,9 +504,9 @@ public abstract class AbstractCollectionValueInterfaceTest extends AbstractPredi
         updateHasStr();
         assertSame( builder, interfaceClass.getMethod( "hasStr", String.class ) );
     }
-    
+
     protected void updateHasStr() {}
-    
+
     @Test
     public void testRemoveStr() throws Exception
     {
@@ -527,7 +518,7 @@ public abstract class AbstractCollectionValueInterfaceTest extends AbstractPredi
         updateRemoveStr();
         assertSame( builder, interfaceClass.getMethod( "removeStr", String.class ) );
     }
-    
+
     protected void updateRemoveStr() {}
 
     @Test
@@ -553,9 +544,9 @@ public abstract class AbstractCollectionValueInterfaceTest extends AbstractPredi
         updateAddU_S();
         assertSame( builder, interfaceClass.getMethod( "addU", String.class ) );
     }
-    
+
     protected void updateAddU_S() {}
-      
+
     @Test
     public void testGetU()throws Exception
     {
@@ -567,10 +558,10 @@ public abstract class AbstractCollectionValueInterfaceTest extends AbstractPredi
         updateGetU();
         assertSame( builder, interfaceClass.getMethod( "getU" ) );
     }
-    
+
     protected void updateGetU() {}
-    
-    
+
+
     @Test
     public void testHasU_R() throws Exception
     {
@@ -581,9 +572,9 @@ public abstract class AbstractCollectionValueInterfaceTest extends AbstractPredi
         updateHasU_R();
         assertSame( builder, interfaceClass.getMethod( "hasU", RDFNode.class ) );
     }
-    
+
     protected void updateHasU_R() {}
-    
+
     @Test
     public void testHasU_S() throws Exception
     {
@@ -594,9 +585,9 @@ public abstract class AbstractCollectionValueInterfaceTest extends AbstractPredi
         updateHasU_S();
         assertSame( builder, interfaceClass.getMethod( "hasU", String.class ) );
     }
-    
+
     protected void updateHasU_S() {}
-    
+
     @Test
     public void testRemoveU_S() throws Exception
     {
@@ -607,7 +598,7 @@ public abstract class AbstractCollectionValueInterfaceTest extends AbstractPredi
         updateRemoveU_S();
         assertSame( builder, interfaceClass.getMethod( "removeU", String.class ) );
     }
-    
+
     protected void updateRemoveU_S() {}    
 
     @Test
@@ -620,9 +611,9 @@ public abstract class AbstractCollectionValueInterfaceTest extends AbstractPredi
         updateRemoveU_R();
         assertSame( builder, interfaceClass.getMethod( "removeU", RDFNode.class ) );
     }
-    
+
     protected void updateRemoveU_R() {}    
-    
+
     @Test
     public void testAddU3_R() throws Exception
     {
@@ -646,9 +637,9 @@ public abstract class AbstractCollectionValueInterfaceTest extends AbstractPredi
         updateAddU3_S();
         assertSame( builder, interfaceClass.getMethod( "addU3", String.class ) );
     }
-    
+
     protected void updateAddU3_S() {}
-      
+
     @Test
     public void testGetU3()throws Exception
     {
@@ -660,10 +651,10 @@ public abstract class AbstractCollectionValueInterfaceTest extends AbstractPredi
         updateGetU3();
         assertSame( builder, interfaceClass.getMethod( "getU3" ) );
     }
-    
+
     protected void updateGetU3() {}
-    
-    
+
+
     @Test
     public void testHasU3_R() throws Exception
     {
@@ -674,9 +665,9 @@ public abstract class AbstractCollectionValueInterfaceTest extends AbstractPredi
         updateHasU3_R();
         assertSame( builder, interfaceClass.getMethod( "hasU3", RDFNode.class ) );
     }
-    
+
     protected void updateHasU3_R() {}
-    
+
     @Test
     public void testHasU3_S() throws Exception
     {
@@ -687,9 +678,9 @@ public abstract class AbstractCollectionValueInterfaceTest extends AbstractPredi
         updateHasU3_S();
         assertSame( builder, interfaceClass.getMethod( "hasU3", String.class ) );
     }
-    
+
     protected void updateHasU3_S() {}
-    
+
     @Test
     public void testRemoveU3_S() throws Exception
     {
@@ -700,7 +691,7 @@ public abstract class AbstractCollectionValueInterfaceTest extends AbstractPredi
         updateRemoveU3_S();
         assertSame( builder, interfaceClass.getMethod( "removeU3", String.class ) );
     }
-    
+
     protected void updateRemoveU3_S() {}    
 
     @Test
@@ -713,7 +704,7 @@ public abstract class AbstractCollectionValueInterfaceTest extends AbstractPredi
         updateRemoveU3_R();
         assertSame( builder, interfaceClass.getMethod( "removeU3", RDFNode.class ) );
     }
-    
+
     protected void updateRemoveU3_R() {} 
 
     @Test
@@ -727,7 +718,7 @@ public abstract class AbstractCollectionValueInterfaceTest extends AbstractPredi
         updateGetU4();
         assertSame( builder, interfaceClass.getMethod( "getU4" ) );
     }
-    
+
     protected void updateGetU4() {}
-    
+
 }

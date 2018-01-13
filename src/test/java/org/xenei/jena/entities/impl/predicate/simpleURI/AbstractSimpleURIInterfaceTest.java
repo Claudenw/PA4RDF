@@ -1,19 +1,10 @@
 package org.xenei.jena.entities.impl.predicate.simpleURI;
 
-import java.lang.reflect.Method;
-
 import org.apache.jena.rdf.model.RDFNode;
-import org.junit.Assert;
 import org.junit.Test;
-import org.xenei.jena.entities.PredicateInfo;
 import org.xenei.jena.entities.annotations.Predicate;
 import org.xenei.jena.entities.annotations.URI;
 import org.xenei.jena.entities.impl.ActionType;
-import org.xenei.jena.entities.impl.EntityManagerImpl;
-import org.xenei.jena.entities.impl.TypeChecker;
-import org.xenei.jena.entities.impl.handlers.ResourceHandler;
-import org.xenei.jena.entities.impl.handlers.UriHandler;
-import org.xenei.jena.entities.impl.handlers.VoidHandler;
 import org.xenei.jena.entities.impl.predicate.AbstractPredicateTest;
 import org.xenei.jena.entities.testing.iface.SimpleURIInterface;
 
@@ -26,7 +17,7 @@ public abstract class AbstractSimpleURIInterfaceTest extends AbstractPredicateTe
 
         builder.setNamespace( "http://example.com/").setName(  "u" )
         .setInternalType( RDFNode.class );
-    
+
     }
 
     @Test
@@ -37,7 +28,7 @@ public abstract class AbstractSimpleURIInterfaceTest extends AbstractPredicateTe
         assertSame( builder, interfaceClass.getMethod( "getU" ) );
 
     }
-    
+
     protected void updateGetter() throws Exception {}
 
     @Test
@@ -47,7 +38,7 @@ public abstract class AbstractSimpleURIInterfaceTest extends AbstractPredicateTe
         updateSetterS();
         assertSame( builder, interfaceClass.getMethod( "setU", String.class ) );
     }
-    
+
     protected void updateSetterS() throws Exception {}
 
     @Test

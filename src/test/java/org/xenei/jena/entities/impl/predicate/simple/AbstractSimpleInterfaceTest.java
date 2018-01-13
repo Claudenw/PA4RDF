@@ -31,7 +31,7 @@ public abstract class AbstractSimpleInterfaceTest extends AbstractPredicateTest 
     }
 
     protected void updateGetter() throws Exception {}
-    
+
     @Test
     public final void testParseSetter() throws Exception {
         builder.setActionType( ActionType.SETTER )
@@ -41,7 +41,7 @@ public abstract class AbstractSimpleInterfaceTest extends AbstractPredicateTest 
         updateSetter();
         assertSame( builder, interfaceClass.getMethod( "setX", String.class ) );
     }
-    
+
     protected void updateSetter() throws Exception {}
 
     @Test
@@ -54,7 +54,7 @@ public abstract class AbstractSimpleInterfaceTest extends AbstractPredicateTest 
     }
 
     protected void updateExistential() throws Exception {}
-    
+
     @Test
     public final void testParseRemover() throws Exception {
         builder.setActionType( ActionType.REMOVER )

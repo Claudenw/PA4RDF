@@ -1,14 +1,11 @@
 package org.xenei.jena.entities.impl.predicate.impl;
 
-import org.apache.jena.datatypes.xsd.XSDDatatype;
-import org.apache.jena.rdf.model.Literal;
 import org.apache.jena.rdf.model.RDFNode;
 import org.junit.Test;
 import org.xenei.jena.entities.annotations.Predicate;
 import org.xenei.jena.entities.annotations.URI;
 import org.xenei.jena.entities.impl.ActionType;
 import org.xenei.jena.entities.impl.predicate.AbstractPredicateTest;
-import org.xenei.jena.entities.impl.predicate.REVIEW.REVIEW_AbstractSimpleURITest;
 import org.xenei.jena.entities.testing.impl.SimpleURISubjectImpl;
 
 public class SimpleURISubjectImplTest extends AbstractPredicateTest
@@ -36,15 +33,15 @@ public class SimpleURISubjectImplTest extends AbstractPredicateTest
         .setType(  URI.class );
         assertSame( builder, interfaceClass.getMethod( "setU", String.class ) );
     }
-    
-     @Test
+
+    @Test
     public final void testParseExistential() throws Exception {
         builder.setActionType( ActionType.EXISTENTIAL )
         .setInternalType(  RDFNode.class )
         .setType(  Predicate.UNSET.class );
         assertSame( builder, interfaceClass.getMethod( "hasU" ) );
     }
-    
+
     @Test
     public final void testParseRemover() throws Exception {
         builder.setActionType( ActionType.REMOVER )

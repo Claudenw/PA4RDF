@@ -1,26 +1,17 @@
 package org.xenei.jena.entities.impl.predicate.simpleURICollection;
 
-import java.lang.reflect.Method;
 import java.util.List;
 
 import org.apache.jena.rdf.model.RDFNode;
 import org.apache.jena.util.iterator.ExtendedIterator;
-import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
-import org.xenei.jena.entities.PredicateInfo;
 import org.xenei.jena.entities.annotations.URI;
 import org.xenei.jena.entities.impl.ActionType;
-import org.xenei.jena.entities.impl.EntityManagerImpl;
-import org.xenei.jena.entities.impl.TypeChecker;
-import org.xenei.jena.entities.impl.handlers.CollectionHandler;
-import org.xenei.jena.entities.impl.handlers.ResourceHandler;
-import org.xenei.jena.entities.impl.handlers.UriHandler;
 import org.xenei.jena.entities.impl.predicate.AbstractPredicateTest;
 import org.xenei.jena.entities.testing.iface.SimpleURICollectionInterface;
 
 public abstract class AbstractSimpleURICollectionTest extends AbstractPredicateTest {
- 
+
 
     protected AbstractSimpleURICollectionTest(Class<? extends SimpleURICollectionInterface> interfaceClass)
             throws NoSuchMethodException, SecurityException {
@@ -31,7 +22,7 @@ public abstract class AbstractSimpleURICollectionTest extends AbstractPredicateT
 
     }
 
-    
+
     @Test
     public void testParseGetter() throws Exception {
         builder.setActionType( ActionType.GETTER )
@@ -42,7 +33,7 @@ public abstract class AbstractSimpleURICollectionTest extends AbstractPredicateT
         assertSame( builder, interfaceClass.getMethod( "getU" ) );
 
     }
-    
+
     protected void updateGetter() throws Exception {}
 
     @Test
@@ -55,7 +46,7 @@ public abstract class AbstractSimpleURICollectionTest extends AbstractPredicateT
     }
 
     protected void updateSetterS() throws Exception {}
-    
+
     @Test
     public void testParseSetterR() throws Exception {
         builder.setActionType( ActionType.SETTER )
@@ -77,7 +68,7 @@ public abstract class AbstractSimpleURICollectionTest extends AbstractPredicateT
     }
 
     protected void updateExtential() throws Exception {}
-    
+
     @Test
     public void testParseRemover() throws Exception {
         builder.setActionType( ActionType.REMOVER )
@@ -86,7 +77,7 @@ public abstract class AbstractSimpleURICollectionTest extends AbstractPredicateT
         updateRemover();
         assertSame( builder, interfaceClass.getMethod( "removeU", String.class ) );
     }
-    
+
     protected void updateRemover() throws Exception {}
 
     @Test
@@ -98,7 +89,7 @@ public abstract class AbstractSimpleURICollectionTest extends AbstractPredicateT
         assertSame( builder, interfaceClass.getMethod( "getU2" ) );
 
     }
-    
+
     protected void updateGetter2() throws Exception {}
 
 
@@ -122,7 +113,7 @@ public abstract class AbstractSimpleURICollectionTest extends AbstractPredicateT
     }
 
     protected void updateSetterS2() throws Exception {}
-    
+
 
     @Test
     public void testParseExistential2() throws Exception {
@@ -133,7 +124,7 @@ public abstract class AbstractSimpleURICollectionTest extends AbstractPredicateT
     }
 
     protected void updateExtential2() throws Exception {}
-    
+
 
 
     @Test
@@ -143,9 +134,9 @@ public abstract class AbstractSimpleURICollectionTest extends AbstractPredicateT
         updateRemoverR2();
         assertSame( builder, interfaceClass.getMethod( "removeU2", RDFNode.class ) );
     }
-    
+
     protected void updateRemoverR2() throws Exception {}
-    
+
     @Test
     public void testParseRemoverS2() throws Exception {
         builder.setActionType( ActionType.REMOVER )
@@ -153,7 +144,7 @@ public abstract class AbstractSimpleURICollectionTest extends AbstractPredicateT
         updateRemoverS2();
         assertSame( builder, interfaceClass.getMethod( "removeU2", String.class ) );
     }
-    
+
     protected void updateRemoverS2() throws Exception {}
 
 }

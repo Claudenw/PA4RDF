@@ -24,5 +24,5 @@ public class CollectionValueIntfImplTest extends AbstractCollectionValueInterfac
         builder.setType(  null ).setInternalType(  null ).setName(  "u4" );
     }
 
-    
+
 }

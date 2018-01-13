@@ -1,34 +1,20 @@
 package org.xenei.jena.entities.impl.predicate.singleValue;
 
-import java.lang.reflect.Method;
-
-import org.apache.jena.datatypes.TypeMapper;
 import org.apache.jena.datatypes.xsd.XSDDatatype;
 import org.apache.jena.rdf.model.Literal;
 import org.apache.jena.rdf.model.RDFNode;
-import org.junit.Assert;
 import org.junit.Test;
-import org.xenei.jena.entities.EntityManagerFactory;
 import org.xenei.jena.entities.annotations.Predicate;
 import org.xenei.jena.entities.annotations.URI;
 import org.xenei.jena.entities.impl.ActionType;
-import org.xenei.jena.entities.impl.ObjectHandler;
-import org.xenei.jena.entities.impl.PredicateInfoImpl;
 import org.xenei.jena.entities.impl.datatype.CharacterDatatype;
 import org.xenei.jena.entities.impl.datatype.LongDatatype;
-import org.xenei.jena.entities.impl.handlers.EntityHandler;
-import org.xenei.jena.entities.impl.handlers.LiteralHandler;
-import org.xenei.jena.entities.impl.handlers.ResourceHandler;
-import org.xenei.jena.entities.impl.handlers.UriHandler;
-import org.xenei.jena.entities.impl.handlers.VoidHandler;
 import org.xenei.jena.entities.impl.predicate.AbstractPredicateTest;
-import org.xenei.jena.entities.impl.predicate.REVIEW.REVIEW_BaseAbstractParserTest;
-import org.xenei.jena.entities.testing.iface.SingleValueObjectInterface;
 import org.xenei.jena.entities.testing.iface.TestInterface;
 
 public abstract class AbstractSingleValueObjectTest extends AbstractPredicateTest {
 
-    
+
     protected AbstractSingleValueObjectTest(final Class<?> classUnderTest) {
         super( classUnderTest );
         builder.setNamespace( "http://localhost/test#" );        
@@ -43,7 +29,7 @@ public abstract class AbstractSingleValueObjectTest extends AbstractPredicateTes
         .setType( Boolean.class );
         assertSame( builder, interfaceClass.getMethod( "isBool" ) );
     }
-    
+
     @Test
     public void testSetBool() throws Exception {
         builder.setActionType( ActionType.SETTER )
@@ -53,7 +39,7 @@ public abstract class AbstractSingleValueObjectTest extends AbstractPredicateTes
         .setType( Boolean.class );
         assertSame( builder, interfaceClass.getMethod( "setBool", Boolean.class ) );
     }
-    
+
     @Test
     public void testRemoveBool() throws Exception {
         builder.setActionType( ActionType.REMOVER )       
@@ -72,7 +58,7 @@ public abstract class AbstractSingleValueObjectTest extends AbstractPredicateTes
         .setType( Character.class );
         assertSame( builder, interfaceClass.getMethod( "getChar" ) );
     }
-    
+
     @Test
     public void testSetChar() throws Exception {
         builder.setActionType( ActionType.SETTER )
@@ -82,7 +68,7 @@ public abstract class AbstractSingleValueObjectTest extends AbstractPredicateTes
         .setType( Character.class );
         assertSame( builder, interfaceClass.getMethod( "setChar", Character.class ) );
     }
-    
+
     @Test
     public void testRemoveChar() throws Exception {
         builder.setActionType( ActionType.REMOVER )       
@@ -101,7 +87,7 @@ public abstract class AbstractSingleValueObjectTest extends AbstractPredicateTes
         .setType( Double.class );
         assertSame( builder, interfaceClass.getMethod( "getDbl" ) );
     }
-    
+
     @Test
     public void testSetDbl() throws Exception {
         builder.setActionType( ActionType.SETTER )
@@ -111,7 +97,7 @@ public abstract class AbstractSingleValueObjectTest extends AbstractPredicateTes
         .setType( Double.class );
         assertSame( builder, interfaceClass.getMethod( "setDbl", Double.class ) );
     }
-    
+
     @Test
     public void testRemoveDbl() throws Exception {
         builder.setActionType( ActionType.REMOVER )       
@@ -129,7 +115,7 @@ public abstract class AbstractSingleValueObjectTest extends AbstractPredicateTes
         .setType( TestInterface.class );
         assertSame( builder, interfaceClass.getMethod( "getEnt" ) );
     }
-    
+
     @Test
     public void testSetEnt() throws Exception {
         builder.setActionType( ActionType.SETTER )
@@ -138,7 +124,7 @@ public abstract class AbstractSingleValueObjectTest extends AbstractPredicateTes
         .setType( TestInterface.class );
         assertSame( builder, interfaceClass.getMethod( "setEnt", TestInterface.class ) );
     }
-    
+
     @Test
     public void testRemoveEnt() throws Exception {
         builder.setActionType( ActionType.REMOVER )       
@@ -157,7 +143,7 @@ public abstract class AbstractSingleValueObjectTest extends AbstractPredicateTes
         .setType( Float.class );
         assertSame( builder, interfaceClass.getMethod( "getFlt" ) );
     }
-    
+
     @Test
     public void testSetFlt() throws Exception {
         builder.setActionType( ActionType.SETTER )
@@ -167,7 +153,7 @@ public abstract class AbstractSingleValueObjectTest extends AbstractPredicateTes
         .setType( Float.class );
         assertSame( builder, interfaceClass.getMethod( "setFlt", Float.class ) );
     }
-    
+
     @Test
     public void testRemoveFlt() throws Exception {
         builder.setActionType( ActionType.REMOVER )       
@@ -176,7 +162,7 @@ public abstract class AbstractSingleValueObjectTest extends AbstractPredicateTes
         .setInternalType( RDFNode.class );
         assertSame( builder, interfaceClass.getMethod( "removeFlt" ) );
     }
-    
+
     @Test
     public void testGetInt() throws Exception {
         builder.setActionType( ActionType.GETTER )
@@ -186,7 +172,7 @@ public abstract class AbstractSingleValueObjectTest extends AbstractPredicateTes
         .setType( Integer.class );
         assertSame( builder, interfaceClass.getMethod( "getInt" ) );
     }
-    
+
     @Test
     public void testSetInt() throws Exception {
         builder.setActionType( ActionType.SETTER )
@@ -196,7 +182,7 @@ public abstract class AbstractSingleValueObjectTest extends AbstractPredicateTes
         .setType( Integer.class );
         assertSame( builder, interfaceClass.getMethod( "setInt", Integer.class ) );
     }
-    
+
     @Test
     public void testRemoveInt() throws Exception {
         builder.setActionType( ActionType.REMOVER )       
@@ -215,7 +201,7 @@ public abstract class AbstractSingleValueObjectTest extends AbstractPredicateTes
         .setType( Long.class );
         assertSame( builder, interfaceClass.getMethod( "getLng" ) );
     }
-    
+
     @Test
     public void testSetLng() throws Exception {
         builder.setActionType( ActionType.SETTER )
@@ -225,7 +211,7 @@ public abstract class AbstractSingleValueObjectTest extends AbstractPredicateTes
         .setType( Long.class );
         assertSame( builder, interfaceClass.getMethod( "setLng", Long.class ) );
     }
-    
+
     @Test
     public void testRemoveLng() throws Exception {
         builder.setActionType( ActionType.REMOVER )       
@@ -234,7 +220,7 @@ public abstract class AbstractSingleValueObjectTest extends AbstractPredicateTes
         .setInternalType( RDFNode.class );
         assertSame( builder, interfaceClass.getMethod( "removeLng" ) );
     }
- 
+
     @Test
     public void testGetRDF() throws Exception {
         builder.setActionType( ActionType.GETTER )
@@ -243,7 +229,7 @@ public abstract class AbstractSingleValueObjectTest extends AbstractPredicateTes
         .setType( RDFNode.class );
         assertSame( builder, interfaceClass.getMethod( "getRDF" ) );
     }
-    
+
     @Test
     public void testSetRDF() throws Exception {
         builder.setActionType( ActionType.SETTER )
@@ -252,7 +238,7 @@ public abstract class AbstractSingleValueObjectTest extends AbstractPredicateTes
         .setType( RDFNode.class );
         assertSame( builder, interfaceClass.getMethod( "setRDF", RDFNode.class ) );
     }
-    
+
     @Test
     public void testRemoveRDF() throws Exception {
         builder.setActionType( ActionType.REMOVER )       
@@ -261,7 +247,7 @@ public abstract class AbstractSingleValueObjectTest extends AbstractPredicateTes
         .setInternalType( RDFNode.class );
         assertSame( builder, interfaceClass.getMethod( "removeRDF" ) );
     }
-    
+
     @Test
     public void testGetStr() throws Exception {
         builder.setActionType( ActionType.GETTER )
@@ -271,7 +257,7 @@ public abstract class AbstractSingleValueObjectTest extends AbstractPredicateTes
         .setType( String.class );
         assertSame( builder, interfaceClass.getMethod( "getStr" ) );
     }
-    
+
     @Test
     public void testSetStr() throws Exception {
         builder.setActionType( ActionType.SETTER )
@@ -281,7 +267,7 @@ public abstract class AbstractSingleValueObjectTest extends AbstractPredicateTes
         .setType( String.class );
         assertSame( builder, interfaceClass.getMethod( "setStr", String.class ) );
     }
-    
+
     @Test
     public void testRemoveStr() throws Exception {
         builder.setActionType( ActionType.REMOVER )       
@@ -299,7 +285,7 @@ public abstract class AbstractSingleValueObjectTest extends AbstractPredicateTes
         .setType( RDFNode.class );
         assertSame( builder, interfaceClass.getMethod( "getU" ) );
     }
-    
+
     @Test
     public void testSetU_R() throws Exception {
         builder.setActionType( ActionType.SETTER )
@@ -308,7 +294,7 @@ public abstract class AbstractSingleValueObjectTest extends AbstractPredicateTes
         .setType( RDFNode.class );
         assertSame( builder, interfaceClass.getMethod( "setU", RDFNode.class ) );
     }
-    
+
     @Test
     public void testSetU_S() throws Exception {
         builder.setActionType( ActionType.SETTER )
@@ -325,7 +311,7 @@ public abstract class AbstractSingleValueObjectTest extends AbstractPredicateTes
         .setInternalType( RDFNode.class );
         assertSame( builder, interfaceClass.getMethod( "removeU" ) );
     }
-    
+
     @Test
     public void testGetU2() throws Exception {
         builder.setActionType( ActionType.GETTER )
@@ -335,7 +321,7 @@ public abstract class AbstractSingleValueObjectTest extends AbstractPredicateTes
         updateGetU2();
         assertSame( builder, interfaceClass.getMethod( "getU2" ) );
     }
-    
+
     protected void updateGetU2() {}
 }
 

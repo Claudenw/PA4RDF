@@ -1,19 +1,11 @@
 package org.xenei.jena.entities.impl.predicate.impl;
 
-import java.lang.reflect.Method;
-
 import org.apache.jena.datatypes.xsd.XSDDatatype;
 import org.apache.jena.rdf.model.Literal;
 import org.apache.jena.rdf.model.RDFNode;
-import org.junit.Assert;
 import org.junit.Test;
-import org.xenei.jena.entities.PredicateInfo;
 import org.xenei.jena.entities.annotations.Predicate;
 import org.xenei.jena.entities.impl.ActionType;
-import org.xenei.jena.entities.impl.EntityManagerImpl;
-import org.xenei.jena.entities.impl.TypeChecker;
-import org.xenei.jena.entities.impl.handlers.LiteralHandler;
-import org.xenei.jena.entities.impl.handlers.VoidHandler;
 import org.xenei.jena.entities.impl.predicate.AbstractPredicateTest;
 import org.xenei.jena.entities.testing.impl.SimpleSubjectImpl;
 
@@ -45,15 +37,15 @@ public class SimpleSubjectImplTest extends AbstractPredicateTest {
         .setType(  String.class );
         assertSame( builder, interfaceClass.getMethod( "setX", String.class ) );
     }
-    
-     @Test
+
+    @Test
     public final void testParseExistential() throws Exception {
         builder.setActionType( ActionType.EXISTENTIAL )
         .setInternalType(  RDFNode.class )
         .setType(  Predicate.UNSET.class );
         assertSame( builder, interfaceClass.getMethod( "hasX" ) );
     }
-    
+
     @Test
     public final void testParseRemover() throws Exception {
         builder.setActionType( ActionType.REMOVER )
