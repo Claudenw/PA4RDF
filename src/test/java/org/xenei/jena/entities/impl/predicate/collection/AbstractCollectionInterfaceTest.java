@@ -21,31 +21,12 @@ import org.xenei.jena.entities.testing.iface.CollectionInterface;
 public abstract class AbstractCollectionInterfaceTest extends AbstractPredicateTest {
     
 
-    protected AbstractCollectionInterfaceTest(final Class<? extends CollectionInterface> interfaceClass) throws NoSuchMethodException, SecurityException {
+    protected AbstractCollectionInterfaceTest(final Class<?> interfaceClass) throws NoSuchMethodException, SecurityException {
         super( interfaceClass );
         builder.setNamespace( "http://example.com/")
         .setName(  "x"  )
         .setInternalType(  Literal.class  )
         .setLiteralType(  XSDDatatype.XSDstring );
-       
-//        getter = interfaceClass.getMethod( "getX" );
-//        PIMap.put( getter, mockPredicateInfo( getter, "x", ActionType.GETTER, List.class, 0 ) );
-//        OMMap.put( getter, lh );
-//
-//        setter = interfaceClass.getMethod( "addX", String.class );
-//        PIMap.put( setter, mockPredicateInfo( setter, "x", ActionType.SETTER, String.class, 0 ) );
-//        OMMap.put( setter, lh );
-//
-//        remover = interfaceClass.getMethod( "removeX", String.class );
-//        PIMap.put( remover, mockPredicateInfo( remover, "x", ActionType.REMOVER, String.class, 0 ) );
-//        OMMap.put( remover, lh );
-//
-//        existential = interfaceClass.getMethod( "hasX", String.class );
-//        PIMap.put( existential, mockPredicateInfo( existential, "x", ActionType.EXISTENTIAL,
-//                TypeChecker.getPrimitiveClass( Boolean.class ), 0 ) );
-//        OMMap.put( existential, lh );
-//
-//        addCount.put( "addX", Integer.valueOf( 1 ) );
     }
     
     @Test
