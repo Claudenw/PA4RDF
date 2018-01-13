@@ -27,74 +27,11 @@ import org.xenei.jena.entities.testing.iface.TestInterface;
 
 public abstract class AbstractCollectionValueInterfaceTest extends AbstractPredicateTest {
 
-    protected Method addBool;
-    protected Method getBool;
-    protected Method hasBool;
-    protected Method removeBool;
-
-    protected Method addChar;
-    protected Method getChar;
-    protected Method hasChar;
-    protected Method removeChar;
-
-    protected Method addDbl;
-    protected Method getDbl;
-    protected Method hasDbl;
-    protected Method removeDbl;
-
-    protected Method addEnt;// (TestLngerface b);
-    protected Method getEnt;
-    protected Method hasEnt;
-    protected Method removeEnt;
-
-    protected Method addFlt;
-    protected Method getFlt;
-    protected Method hasFlt;
-    protected Method removeFlt;
-
-    protected Method addInt;
-    protected Method getInt;
-    protected Method hasInt;
-    protected Method removeInt;
-
-    protected Method addLng;
-    protected Method getLng;
-    protected Method hasLng;
-    protected Method removeLng;
-
-    protected Method addRDF;
-    protected Method getRDF;
-    protected Method hasRDF;
-    protected Method removeRDF;
-
-    protected Method addStr;
-    protected Method getStr;
-    protected Method hasStr;
-    protected Method removeStr;
-
-    protected Method addU_R;
-    protected Method addU_S;
-    protected Method getU;
-    protected Method hasU_R;
-    protected Method hasU_S;
-    protected Method removeU_R;
-    protected Method removeU_S;
-
-    protected Method addU3_R;
-    protected Method addU3_S;
-    protected Method getU3;
-    protected Method hasU3_R;
-    protected Method hasU3_S;
-    protected Method removeU3_R;
-    protected Method removeU3_S;
-
-    protected Method getU4;
-
     static {
         EntityManagerImpl.registerTypes();
     }
 
-    protected AbstractCollectionValueInterfaceTest(Class<? extends CollectionValueInterface> underTest)
+    protected AbstractCollectionValueInterfaceTest(Class<?> underTest)
             throws NoSuchMethodException, SecurityException {
         super( underTest );
         builder.setNamespace( "http://localhost/test#" );

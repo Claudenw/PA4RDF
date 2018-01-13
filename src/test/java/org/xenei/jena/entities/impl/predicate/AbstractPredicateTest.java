@@ -4,12 +4,17 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Stack;
 
 import org.apache.jena.datatypes.RDFDatatype;
+import org.apache.jena.rdf.model.RDFNode;
 import org.junit.Assert;
+import org.xenei.jena.entities.annotations.URI;
 import org.xenei.jena.entities.impl.ActionType;
 import org.xenei.jena.entities.impl.EffectivePredicate;
 import org.xenei.jena.entities.impl.EntityManagerImpl;
+import org.xenei.jena.entities.testing.iface.SingleValueObjectInterface;
+import org.xenei.jena.entities.testing.impl.SingleValueObjectImpl;
 
 public abstract class AbstractPredicateTest {
 
@@ -27,7 +32,10 @@ public abstract class AbstractPredicateTest {
     }
 
     protected void assertSame(EffectivePredicateBuilder builder, Method method) {
-        final EffectivePredicate actual = new EffectivePredicate( method );
+        assertSame( builder, new EffectivePredicate( method ), method);
+    }
+
+    protected void assertSame(EffectivePredicateBuilder builder, EffectivePredicate actual, Method method) {
         final EffectivePredicate expected = builder.build();
         if (!actual.equals( expected )) {
             System.err.println( method.toGenericString() );
@@ -36,7 +44,7 @@ public abstract class AbstractPredicateTest {
             System.err.print(  "EXPECTED " );
             System.err.println( expected.formattedString() );           
         }
-
+        
         /*
          * this.actionType = actionType;
     this.collectionType = collectionType;
@@ -61,6 +69,24 @@ public abstract class AbstractPredicateTest {
         Assert.assertEquals( method.toGenericString()+"\n Wrong postExec", expected.postExec(), actual.postExec() );
         Assert.assertEquals( method.toGenericString()+"\n Wrong type", expected.type(), actual.type() );
         Assert.assertEquals( method.toGenericString()+"\n Wrong upcase", expected.upcase(), actual.upcase() );
+    }
+    
+    protected void assertOverride(EffectivePredicateBuilder builder, Method... methods) throws Exception {
+        Method method = methods[0];
+       
+        Stack<EffectivePredicate> stack = new Stack<EffectivePredicate>();
+        for (Method m : methods)
+        {
+            stack.push(  new EffectivePredicate( m ) );
+        }
+        
+        EffectivePredicate actual = stack.pop();
+        while (!stack.isEmpty()) {
+            EffectivePredicate base = actual;
+            actual = stack.pop();
+            actual.merge(  base  );
+        }
+        assertSame( builder, actual, method);
     }
 
     public static class EffectivePredicateBuilder {
