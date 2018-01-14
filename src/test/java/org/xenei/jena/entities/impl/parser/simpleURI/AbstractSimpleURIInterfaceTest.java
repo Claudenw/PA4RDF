@@ -14,7 +14,6 @@ import org.xenei.jena.entities.impl.handlers.ResourceHandler;
 import org.xenei.jena.entities.impl.handlers.UriHandler;
 import org.xenei.jena.entities.impl.handlers.VoidHandler;
 import org.xenei.jena.entities.impl.parser.AbstractMethodParserTest;
-import org.xenei.jena.entities.testing.iface.SimpleURIInterface;
 
 public abstract class AbstractSimpleURIInterfaceTest extends AbstractMethodParserTest {
 
@@ -28,8 +27,7 @@ public abstract class AbstractSimpleURIInterfaceTest extends AbstractMethodParse
         EntityManagerImpl.registerTypes();
     }
 
-    protected AbstractSimpleURIInterfaceTest(Class<? extends SimpleURIInterface> interfaceClass)
-            throws NoSuchMethodException, SecurityException {
+    protected AbstractSimpleURIInterfaceTest(Class<?> interfaceClass) throws NoSuchMethodException, SecurityException {
         super( interfaceClass );
 
         getter = interfaceClass.getMethod( "getU" );

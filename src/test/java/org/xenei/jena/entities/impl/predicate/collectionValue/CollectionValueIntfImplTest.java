@@ -11,18 +11,17 @@ public class CollectionValueIntfImplTest extends AbstractCollectionValueInterfac
 
     @Override
     protected void updateGetU() {
-        builder.setType(  null ).setInternalType(  null );
+        builder.setType( null ).setInternalType( null );
     }
 
     @Override
     protected void updateGetU3() {
-        builder.setType(  null ).setInternalType(  null );
+        builder.setType( null ).setInternalType( null );
     }
 
     @Override
     protected void updateGetU4() {
-        builder.setType(  null ).setInternalType(  null ).setName(  "u4" );
+        builder.setType( null ).setInternalType( null ).setName( "u4" );
     }
-
 
 }

@@ -1,4 +1,4 @@
-package org.xenei.jena.entities.impl.predicate.collectionValue;
+package org.xenei.jena.entities.impl.parser.collectionValue;
 
 import org.xenei.jena.entities.testing.impl.CollectionValueSubjectImpl;
 
@@ -6,7 +6,6 @@ public class CollectionValueSubjectImplTest extends AbstractCollectionValueInter
 
     public CollectionValueSubjectImplTest() throws NoSuchMethodException, SecurityException {
         super( CollectionValueSubjectImpl.class );
-        builder.setImpl( true );
     }
 
 }

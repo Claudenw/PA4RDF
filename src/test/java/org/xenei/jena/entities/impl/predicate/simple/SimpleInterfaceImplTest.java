@@ -6,8 +6,7 @@ public class SimpleInterfaceImplTest extends AbstractSimpleInterfaceTest {
 
     public SimpleInterfaceImplTest() throws Exception {
         super( SimpleInterfaceImpl.class );
-        builder.setImpl( true )
-        .setNamespace( "" );
+        builder.setImpl( true ).setNamespace( "" );
     }
 
     @Override

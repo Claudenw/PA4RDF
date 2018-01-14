@@ -4,12 +4,14 @@ import java.util.Collection;
 
 import org.apache.jena.rdf.model.RDFNode;
 import org.apache.jena.util.iterator.ExtendedIterator;
+import org.junit.Ignore;
 import org.xenei.jena.entities.EntityManagerRequiredException;
 import org.xenei.jena.entities.annotations.Predicate;
 import org.xenei.jena.entities.annotations.URI;
 import org.xenei.jena.entities.testing.iface.MultiValueInterface;
 import org.xenei.jena.entities.testing.iface.TestInterface;
 
+@Ignore( "IMpl has new unimplemented collection types -- specfifically arrays")
 public class MultiValueImpl implements MultiValueInterface {
 
     @Override

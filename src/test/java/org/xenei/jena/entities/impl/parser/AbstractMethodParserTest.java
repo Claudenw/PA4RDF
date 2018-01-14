@@ -10,16 +10,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.jena.rdf.model.ResourceFactory;
 import org.junit.Assert;
-import org.xenei.jena.entities.EntityManager;
 import org.xenei.jena.entities.EntityManagerFactory;
 import org.xenei.jena.entities.PredicateInfo;
 import org.xenei.jena.entities.impl.ActionType;
 import org.xenei.jena.entities.impl.EntityManagerImpl;
 import org.xenei.jena.entities.impl.MethodParser;
 import org.xenei.jena.entities.impl.ObjectHandler;
-import org.xenei.jena.entities.impl.PredicateInfoImpl;
 import org.xenei.jena.entities.impl.SubjectInfoImpl;
 
 public abstract class AbstractMethodParserTest {
@@ -46,18 +45,57 @@ public abstract class AbstractMethodParserTest {
     }
 
     protected void assertSame(PredicateInfo expected, PredicateInfo actual, Method method) {
-        Assert.assertNotNull( method.toGenericString()+": Missing actual predicate info " + expected.getActionType(), actual );
-        Assert.assertNotNull( method.toGenericString()+": Missing expected predicate info " + expected.getActionType(), expected );
-        Assert.assertEquals( method.toGenericString()+": Wrong action type", expected.getActionType(), actual.getActionType() );
-        Assert.assertEquals( method.toGenericString()+": Wrong method name", expected.getMethodName(), actual.getMethodName() );
-        Assert.assertEquals( method.toGenericString()+": Wrong namespace", expected.getNamespace(), actual.getNamespace() );
-        Assert.assertEquals( method.toGenericString()+": Found unexpected postExec", expected.getPostExec().size(), actual.getPostExec().size() );
-        Assert.assertEquals( method.toGenericString()+": Wrong property", expected.getProperty(), actual.getProperty() );
-        Assert.assertEquals( method.toGenericString()+": Wrong URI string", expected.getUriString(), actual.getUriString() );
-        Assert.assertEquals( method.toGenericString()+": Wrong value class", expected.getValueClass(), actual.getValueClass() );
+        Assert.assertNotNull( method.toGenericString() + "\n Missing actual predicate info " + expected.getActionType(),
+                actual );
+        Assert.assertNotNull(
+                method.toGenericString() + "\n Missing expected predicate info " + expected.getActionType(), expected );
 
-        Assert.assertEquals( method.toGenericString()+": Wrong object handler\n", OMMap.get( method ),
-                ((PredicateInfoImpl) actual).getObjectHandler( (EntityManager) null ) );
+        checkEquals( actual, expected, method );
+
+        Assert.assertEquals( method.toGenericString() + "\n Wrong action type", expected.getActionType(),
+                actual.getActionType() );
+        Assert.assertEquals( method.toGenericString() + "\n Wrong method name", expected.getMethodName(),
+                actual.getMethodName() );
+        Assert.assertEquals( method.toGenericString() + "\n Wrong namespace", expected.getNamespace(),
+                actual.getNamespace() );
+        Assert.assertEquals( method.toGenericString() + "\n Found unexpected postExec", expected.getPostExec().size(),
+                actual.getPostExec().size() );
+        Assert.assertEquals( method.toGenericString() + "\n Wrong property", expected.getProperty(),
+                actual.getProperty() );
+        Assert.assertEquals( method.toGenericString() + "\n Wrong URI string", expected.getUriString(),
+                actual.getUriString() );
+        Assert.assertEquals( method.toGenericString() + "\n Wrong value class", expected.getValueClass(),
+                actual.getValueClass() );
+
+        // Assert.assertEquals( method.toGenericString()+"\n Wrong object
+        // handler\n", OMMap.get( method ),
+        // ((PredicateInfoImpl) actual).getObjectHandler( (EntityManager) null )
+        // );
+    }
+
+    /*
+     * this is required because the predicate info equality checks for post exec
+     * method types to be equal
+     */
+    private void checkEquals(PredicateInfo expected, PredicateInfo actual, Method method) {
+        if (!new EqualsBuilder().append( expected.getActionType(), actual.getActionType() )
+                .append( expected.getMethodName(), actual.getMethodName() )
+                .append( expected.getNamespace(), actual.getNamespace() )
+                .append( expected.getPostExec().size(), actual.getPostExec().size() )
+                .append( expected.getProperty(), actual.getProperty() )
+                .append( expected.getUriString(), actual.getUriString() )
+                .append( expected.getValueClass(), actual.getValueClass() ).build()) {
+            System.err.println( method );
+            printPredicateInfo( "EXPECTED", expected );
+            printPredicateInfo( "ACTUAL", actual );
+        }
+    }
+
+    private void printPredicateInfo(String title, PredicateInfo pi) {
+        System.err.println( String.format(
+                "%s%n\tAction Type:\t%s%n\tMethod:\\tt%s%n\tNamespace:\t%s%n\tProperty:\t%s%n\tURI:\t\t%s%n\tValue:\t\t%s%n\tPost Exec:\t%s%n",
+                title, pi.getActionType(), pi.getMethodName(), pi.getNamespace(), pi.getProperty(), pi.getUriString(),
+                pi.getValueClass(), pi.getPostExec() ) );
     }
 
     @SuppressWarnings("unchecked")

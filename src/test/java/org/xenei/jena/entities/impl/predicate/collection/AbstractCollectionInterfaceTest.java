@@ -10,57 +10,53 @@ import org.xenei.jena.entities.impl.predicate.AbstractPredicateTest;
 
 public abstract class AbstractCollectionInterfaceTest extends AbstractPredicateTest {
 
-
-    protected AbstractCollectionInterfaceTest(final Class<?> interfaceClass) throws NoSuchMethodException, SecurityException {
+    protected AbstractCollectionInterfaceTest(final Class<?> interfaceClass)
+            throws NoSuchMethodException, SecurityException {
         super( interfaceClass );
-        builder.setNamespace( "http://example.com/")
-        .setName(  "x"  )
-        .setInternalType(  Literal.class  )
-        .setLiteralType(  XSDDatatype.XSDstring );
+        builder.setNamespace( "http://example.com/" ).setName( "x" ).setInternalType( Literal.class )
+                .setLiteralType( XSDDatatype.XSDstring );
     }
 
     @Test
     public void testParseGetter() throws Exception {
-        builder.setActionType( ActionType.GETTER )
-        .setCollectionType( List.class )
-        .setInternalType( null ) 
-        .setLiteralType( null );
+        builder.setActionType( ActionType.GETTER ).setCollectionType( List.class ).setInternalType( null )
+                .setLiteralType( null );
         updateGetter();
         assertSame( builder, interfaceClass.getMethod( "getX" ) );
 
     }
 
-    protected void updateGetter() {}
+    protected void updateGetter() {
+    }
 
     @Test
     public void testParseSetter() throws Exception {
-        builder.setActionType( ActionType.SETTER )
-        .setLiteralType(  XSDDatatype.XSDstring )
-        .setType(  String.class );
+        builder.setActionType( ActionType.SETTER ).setLiteralType( XSDDatatype.XSDstring ).setType( String.class );
         updateSetter();
         assertSame( builder, interfaceClass.getMethod( "addX", String.class ) );
     }
 
-    protected void updateSetter() {}
+    protected void updateSetter() {
+    }
 
     @Test
     public void testParseExistential() throws Exception {
-        builder.setActionType( ActionType.EXISTENTIAL )
-        .setType(  String.class );
+        builder.setActionType( ActionType.EXISTENTIAL ).setType( String.class );
         updateExistential();
         assertSame( builder, interfaceClass.getMethod( "hasX", String.class ) );
     }
 
-    protected void updateExistential() {}
+    protected void updateExistential() {
+    }
 
     @Test
     public void testParseRemover() throws Exception {
-        builder.setActionType( ActionType.REMOVER )
-        .setType( String.class );
+        builder.setActionType( ActionType.REMOVER ).setType( String.class );
         updateRemover();
         assertSame( builder, interfaceClass.getMethod( "removeX", String.class ) );
     }
 
-    protected void updateRemover() {}
+    protected void updateRemover() {
+    }
 
 }

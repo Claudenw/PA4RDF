@@ -9,7 +9,7 @@ public class MultiValueInterfaceTest extends AbstractCollectionValueInterfaceTes
         super( MultiValueInterface.class );
     }
 
-    protected MultiValueInterfaceTest( Class<?> underTest) throws NoSuchMethodException, SecurityException {
+    protected MultiValueInterfaceTest(Class<?> underTest) throws NoSuchMethodException, SecurityException {
         super( underTest );
     }
 
@@ -38,7 +38,6 @@ public class MultiValueInterfaceTest extends AbstractCollectionValueInterfaceTes
         builder.setCollectionType( ExtendedIterator.class );
     }
 
-
     @Override
     protected void updateGetDbl() {
         builder.setCollectionType( ExtendedIterator.class );
@@ -48,22 +47,27 @@ public class MultiValueInterfaceTest extends AbstractCollectionValueInterfaceTes
     protected void updateGetEnt() {
         builder.setCollectionType( ExtendedIterator.class );
     }
+
     @Override
     protected void updateGetFlt() {
         builder.setCollectionType( ExtendedIterator.class );
     }
+
     @Override
     protected void updateGetInt() {
         builder.setCollectionType( ExtendedIterator.class );
     }
+
     @Override
     protected void updateGetLng() {
         builder.setCollectionType( ExtendedIterator.class );
     }
+
     @Override
     protected void updateGetRDF() {
         builder.setCollectionType( ExtendedIterator.class );
     }
+
     @Override
     protected void updateGetStr() {
         builder.setCollectionType( ExtendedIterator.class );

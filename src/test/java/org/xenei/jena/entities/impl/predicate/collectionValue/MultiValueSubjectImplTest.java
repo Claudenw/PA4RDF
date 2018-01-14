@@ -6,7 +6,7 @@ public class MultiValueSubjectImplTest extends MultiValueInterfaceTest {
 
     public MultiValueSubjectImplTest() throws NoSuchMethodException, SecurityException {
         super( MultiValueSubjectImpl.class );
-        builder.setImpl(  true  ).setNamespace( "" );
+        builder.setImpl( true ).setNamespace( "" );
     }
 
 }

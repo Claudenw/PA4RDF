@@ -11,7 +11,6 @@ import org.junit.Test;
 import org.xenei.jena.entities.PredicateInfo;
 import org.xenei.jena.entities.annotations.URI;
 import org.xenei.jena.entities.impl.ActionType;
-import org.xenei.jena.entities.impl.EntityManagerImpl;
 import org.xenei.jena.entities.impl.TypeChecker;
 import org.xenei.jena.entities.impl.handlers.CollectionHandler;
 import org.xenei.jena.entities.impl.handlers.ResourceHandler;
@@ -36,15 +35,11 @@ public abstract class AbstractSimpleURICollectionTest extends AbstractMethodPars
 
     protected final CollectionHandler lhRLst = new CollectionHandler( ResourceHandler.INSTANCE, List.class );
     protected final CollectionHandler lhULst = new CollectionHandler( UriHandler.INSTANCE, List.class );
-    protected final CollectionHandler lhRIter = new CollectionHandler( ResourceHandler.INSTANCE, ExtendedIterator.class );
+    protected final CollectionHandler lhRIter = new CollectionHandler( ResourceHandler.INSTANCE,
+            ExtendedIterator.class );
     protected final CollectionHandler lhUIter = new CollectionHandler( UriHandler.INSTANCE, ExtendedIterator.class );
 
-    static {
-        EntityManagerImpl.registerTypes();
-    }
-
-    protected AbstractSimpleURICollectionTest(Class<? extends SimpleURICollectionInterface> interfaceClass)
-            throws NoSuchMethodException, SecurityException {
+    protected AbstractSimpleURICollectionTest(Class<?> interfaceClass) throws NoSuchMethodException, SecurityException {
         super( interfaceClass );
 
         getter = SimpleURICollectionInterface.class.getMethod( "getU" );

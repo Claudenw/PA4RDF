@@ -7,14 +7,11 @@ import org.apache.jena.datatypes.xsd.XSDDatatype;
 import org.junit.Assert;
 import org.junit.Test;
 import org.xenei.jena.entities.PredicateInfo;
-import org.xenei.jena.entities.annotations.Predicate;
 import org.xenei.jena.entities.impl.ActionType;
 import org.xenei.jena.entities.impl.EntityManagerImpl;
 import org.xenei.jena.entities.impl.TypeChecker;
 import org.xenei.jena.entities.impl.handlers.LiteralHandler;
-import org.xenei.jena.entities.impl.handlers.VoidHandler;
 import org.xenei.jena.entities.impl.parser.AbstractMethodParserTest;
-import org.xenei.jena.entities.testing.iface.CollectionInterface;
 
 public abstract class AbstractCollectionInterfaceTest extends AbstractMethodParserTest {
     protected final Method getter;
@@ -28,9 +25,10 @@ public abstract class AbstractCollectionInterfaceTest extends AbstractMethodPars
         EntityManagerImpl.registerTypes();
     }
 
-    protected AbstractCollectionInterfaceTest(final Class<? extends CollectionInterface> interfaceClass) throws NoSuchMethodException, SecurityException {
+    protected AbstractCollectionInterfaceTest(final Class<?> interfaceClass)
+            throws NoSuchMethodException, SecurityException {
         super( interfaceClass );
-        
+
         getter = interfaceClass.getMethod( "getX" );
         PIMap.put( getter, mockPredicateInfo( getter, "x", ActionType.GETTER, List.class, 0 ) );
         OMMap.put( getter, lh );
@@ -50,7 +48,7 @@ public abstract class AbstractCollectionInterfaceTest extends AbstractMethodPars
 
         addCount.put( "addX", Integer.valueOf( 1 ) );
     }
-    
+
     @Test
     public void testParseGetter() throws Exception {
         // getter changes output types
@@ -93,5 +91,5 @@ public abstract class AbstractCollectionInterfaceTest extends AbstractMethodPars
         Assert.assertNull( subjectInfo.getPredicateInfo( existential ) );
         assertSame( remover );
     }
-    
+
 }

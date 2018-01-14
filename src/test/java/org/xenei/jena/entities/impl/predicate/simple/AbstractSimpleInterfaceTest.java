@@ -15,54 +15,50 @@ public abstract class AbstractSimpleInterfaceTest extends AbstractPredicateTest 
             throws NoSuchMethodException, SecurityException {
         super( interfaceClass );
 
-        builder.setNamespace( "http://example.com/").setName(  "x" );
-
+        builder.setNamespace( "http://example.com/" ).setName( "x" );
 
     }
 
     @Test
     public final void testParseGetter() throws Exception {
-        builder.setActionType( ActionType.GETTER )
-        .setInternalType(  Literal.class )
-        .setLiteralType(  XSDDatatype.XSDstring )
-        .setType(  String.class );
+        builder.setActionType( ActionType.GETTER ).setInternalType( Literal.class )
+                .setLiteralType( XSDDatatype.XSDstring ).setType( String.class );
         updateGetter();
         assertSame( builder, interfaceClass.getMethod( "getX" ) );
     }
 
-    protected void updateGetter() throws Exception {}
+    protected void updateGetter() throws Exception {
+    }
 
     @Test
     public final void testParseSetter() throws Exception {
-        builder.setActionType( ActionType.SETTER )
-        .setInternalType(  Literal.class )
-        .setLiteralType(  XSDDatatype.XSDstring )
-        .setType(  String.class );
+        builder.setActionType( ActionType.SETTER ).setInternalType( Literal.class )
+                .setLiteralType( XSDDatatype.XSDstring ).setType( String.class );
         updateSetter();
         assertSame( builder, interfaceClass.getMethod( "setX", String.class ) );
     }
 
-    protected void updateSetter() throws Exception {}
+    protected void updateSetter() throws Exception {
+    }
 
     @Test
     public final void testParseExistential() throws Exception {
-        builder.setActionType( ActionType.EXISTENTIAL )
-        .setInternalType(  RDFNode.class )
-        .setType(  Predicate.UNSET.class );
+        builder.setActionType( ActionType.EXISTENTIAL ).setInternalType( RDFNode.class )
+                .setType( Predicate.UNSET.class );
         updateExistential();
         assertSame( builder, interfaceClass.getMethod( "hasX" ) );
     }
 
-    protected void updateExistential() throws Exception {}
+    protected void updateExistential() throws Exception {
+    }
 
     @Test
     public final void testParseRemover() throws Exception {
-        builder.setActionType( ActionType.REMOVER )
-        .setInternalType(  RDFNode.class )
-        .setType(  Predicate.UNSET.class );
+        builder.setActionType( ActionType.REMOVER ).setInternalType( RDFNode.class ).setType( Predicate.UNSET.class );
         updateRemover();
         assertSame( builder, interfaceClass.getMethod( "removeX" ) );
     }
 
-    protected void updateRemover() throws Exception {}
+    protected void updateRemover() throws Exception {
+    }
 }

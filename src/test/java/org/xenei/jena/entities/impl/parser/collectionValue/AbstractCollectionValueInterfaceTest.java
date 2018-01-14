@@ -20,7 +20,6 @@ import org.xenei.jena.entities.impl.handlers.LiteralHandler;
 import org.xenei.jena.entities.impl.handlers.ResourceHandler;
 import org.xenei.jena.entities.impl.handlers.UriHandler;
 import org.xenei.jena.entities.impl.parser.AbstractMethodParserTest;
-import org.xenei.jena.entities.testing.iface.CollectionValueInterface;
 import org.xenei.jena.entities.testing.iface.TestInterface;
 
 public abstract class AbstractCollectionValueInterfaceTest extends AbstractMethodParserTest {
@@ -92,8 +91,7 @@ public abstract class AbstractCollectionValueInterfaceTest extends AbstractMetho
         EntityManagerImpl.registerTypes();
     }
 
-    protected AbstractCollectionValueInterfaceTest(Class<? extends CollectionValueInterface> underTest)
-            throws NoSuchMethodException, SecurityException {
+    protected AbstractCollectionValueInterfaceTest(Class<?> underTest) throws NoSuchMethodException, SecurityException {
         super( underTest );
         NS = "http://localhost/test#";
 
@@ -110,10 +108,10 @@ public abstract class AbstractCollectionValueInterfaceTest extends AbstractMetho
         PIMap.put( removeBool, mockPredicateInfo( removeBool, "bool", ActionType.REMOVER, Boolean.class, 0 ) );
         OMMap.put( removeBool, new LiteralHandler( XSDDatatype.XSDboolean ) );
         addCount.put( "addBool", Integer.valueOf( 1 ) );
-        
+
         addChar = underTest.getMethod( "addChar", Character.class );
         PIMap.put( addChar, mockPredicateInfo( addChar, "char", ActionType.SETTER, Character.class, 0 ) );
-        OMMap.put( addChar, new LiteralHandler( CharacterDatatype.INSTANCE ));
+        OMMap.put( addChar, new LiteralHandler( CharacterDatatype.INSTANCE ) );
         getChar = underTest.getMethod( "getChar" );
         PIMap.put( getChar, mockPredicateInfo( getChar, "char", ActionType.GETTER, List.class, 0 ) );
         OMMap.put( getChar, new LiteralHandler( CharacterDatatype.INSTANCE ) );
@@ -142,16 +140,16 @@ public abstract class AbstractCollectionValueInterfaceTest extends AbstractMetho
 
         addEnt = underTest.getMethod( "addEnt", TestInterface.class );
         PIMap.put( addEnt, mockPredicateInfo( addEnt, "ent", ActionType.SETTER, TestInterface.class, 0 ) );
-        OMMap.put( addEnt, new EntityHandler(null, TestInterface.class) );
+        OMMap.put( addEnt, new EntityHandler( null, TestInterface.class ) );
         getEnt = underTest.getMethod( "getEnt" );
         PIMap.put( getEnt, mockPredicateInfo( getEnt, "ent", ActionType.GETTER, Queue.class, 0 ) );
-        OMMap.put( getEnt, new CollectionHandler(new EntityHandler(null, TestInterface.class), Queue.class));
+        OMMap.put( getEnt, new CollectionHandler( new EntityHandler( null, TestInterface.class ), Queue.class ) );
         hasEnt = underTest.getMethod( "hasEnt", TestInterface.class );
         PIMap.put( hasEnt, mockPredicateInfo( hasEnt, "ent", ActionType.EXISTENTIAL, Boolean.class, 0 ) );
-        OMMap.put( hasEnt, new EntityHandler(null, Boolean.class) );
+        OMMap.put( hasEnt, new EntityHandler( null, Boolean.class ) );
         removeEnt = underTest.getMethod( "removeEnt", TestInterface.class );
         PIMap.put( removeEnt, mockPredicateInfo( removeEnt, "ent", ActionType.REMOVER, TestInterface.class, 0 ) );
-        OMMap.put( removeEnt, new EntityHandler(null, TestInterface.class));
+        OMMap.put( removeEnt, new EntityHandler( null, TestInterface.class ) );
         addCount.put( "addEnt", Integer.valueOf( 1 ) );
 
         addFlt = underTest.getMethod( "addFlt", Float.class );
@@ -201,7 +199,7 @@ public abstract class AbstractCollectionValueInterfaceTest extends AbstractMetho
         OMMap.put( addRDF, ResourceHandler.INSTANCE );
         getRDF = underTest.getMethod( "getRDF" );
         PIMap.put( getRDF, mockPredicateInfo( getRDF, "rDF", ActionType.GETTER, List.class, 0 ) );
-        OMMap.put( getRDF, new CollectionHandler( ResourceHandler.INSTANCE , List.class));
+        OMMap.put( getRDF, new CollectionHandler( ResourceHandler.INSTANCE, List.class ) );
         hasRDF = underTest.getMethod( "hasRDF", RDFNode.class );
         PIMap.put( hasRDF, mockPredicateInfo( hasRDF, "rDF", ActionType.EXISTENTIAL, Boolean.class, 0 ) );
         OMMap.put( hasRDF, ResourceHandler.INSTANCE );
@@ -232,7 +230,7 @@ public abstract class AbstractCollectionValueInterfaceTest extends AbstractMetho
         OMMap.put( addU_S, UriHandler.INSTANCE );
         getU = underTest.getMethod( "getU" );
         PIMap.put( getU, mockPredicateInfo( getU, "u", ActionType.GETTER, Set.class, 0 ) );
-        OMMap.put( getU, new CollectionHandler(  ResourceHandler.INSTANCE, Set.class) );
+        OMMap.put( getU, new CollectionHandler( ResourceHandler.INSTANCE, Set.class ) );
         hasU_R = underTest.getMethod( "hasU", RDFNode.class );
         PIMap.put( hasU_R, mockPredicateInfo( hasU_R, "u", ActionType.EXISTENTIAL, Boolean.class, 0 ) );
         OMMap.put( hasU_R, ResourceHandler.INSTANCE );
@@ -255,7 +253,7 @@ public abstract class AbstractCollectionValueInterfaceTest extends AbstractMetho
         OMMap.put( addU3_S, UriHandler.INSTANCE );
         getU3 = underTest.getMethod( "getU3" );
         PIMap.put( getU3, mockPredicateInfo( getU3, "u3", ActionType.GETTER, Queue.class, 0 ) );
-        OMMap.put( getU3, new CollectionHandler( ResourceHandler.INSTANCE, Queue.class) );
+        OMMap.put( getU3, new CollectionHandler( ResourceHandler.INSTANCE, Queue.class ) );
         hasU3_R = underTest.getMethod( "hasU3", RDFNode.class );
         PIMap.put( hasU3_R, mockPredicateInfo( hasU3_R, "u3", ActionType.EXISTENTIAL, Boolean.class, 0 ) );
         OMMap.put( hasU3_R, ResourceHandler.INSTANCE );
@@ -272,7 +270,7 @@ public abstract class AbstractCollectionValueInterfaceTest extends AbstractMetho
 
         getU4 = underTest.getMethod( "getU4" );
         PIMap.put( getU4, mockPredicateInfo( getU4, "u3", ActionType.GETTER, Set.class, 0 ) );
-        OMMap.put( getU4, new CollectionHandler( UriHandler.INSTANCE, Set.class) );
+        OMMap.put( getU4, new CollectionHandler( UriHandler.INSTANCE, Set.class ) );
 
     }
 
@@ -316,7 +314,7 @@ public abstract class AbstractCollectionValueInterfaceTest extends AbstractMetho
         assertSame( removeBool );
 
     }
-    
+
     @Test
     public void testParseAddChar() throws Exception {
         final PredicateInfo predicateInfo = parser.parse( addChar );
@@ -356,7 +354,7 @@ public abstract class AbstractCollectionValueInterfaceTest extends AbstractMetho
         Assert.assertNull( subjectInfo.getPredicateInfo( hasChar ) );
         assertSame( removeChar );
     }
-    
+
     @Test
     public void testParseAddDbl() throws Exception {
         final PredicateInfo predicateInfo = parser.parse( addDbl );
@@ -399,8 +397,8 @@ public abstract class AbstractCollectionValueInterfaceTest extends AbstractMetho
 
     @Test
     public void testParseAddEnt() throws Exception {
-        OMMap.put( hasEnt, new CollectionHandler( OMMap.get( hasEnt), Queue.class) );
-        OMMap.put( removeEnt, new CollectionHandler( OMMap.get( removeEnt), Queue.class) );
+        OMMap.put( hasEnt, new CollectionHandler( OMMap.get( hasEnt ), Queue.class ) );
+        OMMap.put( removeEnt, new CollectionHandler( OMMap.get( removeEnt ), Queue.class ) );
         final PredicateInfo predicateInfo = parser.parse( addEnt );
         assertSame( PIMap.get( addEnt ), predicateInfo, addEnt );
         assertSame( addEnt );
@@ -438,7 +436,7 @@ public abstract class AbstractCollectionValueInterfaceTest extends AbstractMetho
         Assert.assertNull( subjectInfo.getPredicateInfo( hasEnt ) );
         assertSame( removeEnt );
     }
-    
+
     @Test
     public void testParseAddFlt() throws Exception {
         final PredicateInfo predicateInfo = parser.parse( addFlt );
@@ -478,7 +476,7 @@ public abstract class AbstractCollectionValueInterfaceTest extends AbstractMetho
         Assert.assertNull( subjectInfo.getPredicateInfo( hasFlt ) );
         assertSame( removeFlt );
     }
-    
+
     @Test
     public void testParseAddInt() throws Exception {
         final PredicateInfo predicateInfo = parser.parse( addInt );
@@ -518,8 +516,7 @@ public abstract class AbstractCollectionValueInterfaceTest extends AbstractMetho
         Assert.assertNull( subjectInfo.getPredicateInfo( hasInt ) );
         assertSame( removeInt );
     }
-    
-    
+
     @Test
     public void testParseAddLng() throws Exception {
         final PredicateInfo predicateInfo = parser.parse( addLng );
@@ -559,12 +556,11 @@ public abstract class AbstractCollectionValueInterfaceTest extends AbstractMetho
         Assert.assertNull( subjectInfo.getPredicateInfo( hasLng ) );
         assertSame( removeLng );
     }
-    
-    
+
     @Test
     public void testParseAddRDF() throws Exception {
-        OMMap.put( hasRDF, new CollectionHandler( OMMap.get( hasRDF), List.class) );
-        OMMap.put( removeRDF, new CollectionHandler( OMMap.get( removeRDF), List.class) );
+        OMMap.put( hasRDF, new CollectionHandler( OMMap.get( hasRDF ), List.class ) );
+        OMMap.put( removeRDF, new CollectionHandler( OMMap.get( removeRDF ), List.class ) );
         final PredicateInfo predicateInfo = parser.parse( addRDF );
         assertSame( PIMap.get( addRDF ), predicateInfo, addRDF );
         assertSame( addRDF );
@@ -602,8 +598,7 @@ public abstract class AbstractCollectionValueInterfaceTest extends AbstractMetho
         Assert.assertNull( subjectInfo.getPredicateInfo( hasRDF ) );
         assertSame( removeRDF );
     }
-    
-    
+
     @Test
     public void testParseAddStr() throws Exception {
         final PredicateInfo predicateInfo = parser.parse( addStr );
@@ -643,15 +638,14 @@ public abstract class AbstractCollectionValueInterfaceTest extends AbstractMetho
         Assert.assertNull( subjectInfo.getPredicateInfo( hasStr ) );
         assertSame( removeStr );
     }
-    
-    
+
     @Test
     public void testParseAddU_R() throws Exception {
-        OMMap.put( addU_S, new CollectionHandler( OMMap.get( addU_S), Set.class) );
-        OMMap.put( hasU_R, new CollectionHandler( OMMap.get( hasU_R ), Set.class) );
-        OMMap.put( hasU_S, new CollectionHandler( OMMap.get( hasU_S ), Set.class) );
-        OMMap.put( removeU_R, new CollectionHandler( OMMap.get( removeU_R ), Set.class) );
-        OMMap.put( removeU_S, new CollectionHandler( OMMap.get( removeU_S ), Set.class) );
+        OMMap.put( addU_S, new CollectionHandler( OMMap.get( addU_S ), Set.class ) );
+        OMMap.put( hasU_R, new CollectionHandler( OMMap.get( hasU_R ), Set.class ) );
+        OMMap.put( hasU_S, new CollectionHandler( OMMap.get( hasU_S ), Set.class ) );
+        OMMap.put( removeU_R, new CollectionHandler( OMMap.get( removeU_R ), Set.class ) );
+        OMMap.put( removeU_S, new CollectionHandler( OMMap.get( removeU_S ), Set.class ) );
         final PredicateInfo predicateInfo = parser.parse( addU_R );
         assertSame( PIMap.get( addU_R ), predicateInfo, addU_R );
         assertSame( addU_R );
@@ -665,11 +659,11 @@ public abstract class AbstractCollectionValueInterfaceTest extends AbstractMetho
 
     @Test
     public void testParseAddU_S() throws Exception {
-        OMMap.put( addU_R, new CollectionHandler( OMMap.get( addU_R), Set.class) );
-        OMMap.put( hasU_R, new CollectionHandler( OMMap.get( hasU_R ), Set.class) );
-        OMMap.put( hasU_S, new CollectionHandler( OMMap.get( hasU_S ), Set.class) );
-        OMMap.put( removeU_R, new CollectionHandler( OMMap.get( removeU_R ), Set.class) );
-        OMMap.put( removeU_S, new CollectionHandler( OMMap.get( removeU_S ), Set.class) );
+        OMMap.put( addU_R, new CollectionHandler( OMMap.get( addU_R ), Set.class ) );
+        OMMap.put( hasU_R, new CollectionHandler( OMMap.get( hasU_R ), Set.class ) );
+        OMMap.put( hasU_S, new CollectionHandler( OMMap.get( hasU_S ), Set.class ) );
+        OMMap.put( removeU_R, new CollectionHandler( OMMap.get( removeU_R ), Set.class ) );
+        OMMap.put( removeU_S, new CollectionHandler( OMMap.get( removeU_S ), Set.class ) );
         final PredicateInfo predicateInfo = parser.parse( addU_S );
         assertSame( PIMap.get( addU_S ), predicateInfo, addU_S );
         assertSame( addU_R );
@@ -681,15 +675,14 @@ public abstract class AbstractCollectionValueInterfaceTest extends AbstractMetho
         assertSame( removeU_S );
     }
 
-    
     @Test
     public void testParseGetU() throws Exception {
-        OMMap.put( addU_S, new CollectionHandler( OMMap.get( addU_S), Set.class) );
-        OMMap.put( addU_R, new CollectionHandler( OMMap.get( addU_R), Set.class) );
-        OMMap.put( hasU_R, new CollectionHandler( OMMap.get( hasU_R ), Set.class) );
-        OMMap.put( hasU_S, new CollectionHandler( OMMap.get( hasU_S ), Set.class) );
-        OMMap.put( removeU_R, new CollectionHandler( OMMap.get( removeU_R ), Set.class) );
-        OMMap.put( removeU_S, new CollectionHandler( OMMap.get( removeU_S ), Set.class) );
+        OMMap.put( addU_S, new CollectionHandler( OMMap.get( addU_S ), Set.class ) );
+        OMMap.put( addU_R, new CollectionHandler( OMMap.get( addU_R ), Set.class ) );
+        OMMap.put( hasU_R, new CollectionHandler( OMMap.get( hasU_R ), Set.class ) );
+        OMMap.put( hasU_S, new CollectionHandler( OMMap.get( hasU_S ), Set.class ) );
+        OMMap.put( removeU_R, new CollectionHandler( OMMap.get( removeU_R ), Set.class ) );
+        OMMap.put( removeU_S, new CollectionHandler( OMMap.get( removeU_S ), Set.class ) );
         final PredicateInfo predicateInfo = parser.parse( getU );
         assertSame( PIMap.get( getU ), predicateInfo, getU );
         assertSame( addU_R );
@@ -713,7 +706,7 @@ public abstract class AbstractCollectionValueInterfaceTest extends AbstractMetho
         Assert.assertNull( subjectInfo.getPredicateInfo( removeU_R ) );
         Assert.assertNull( subjectInfo.getPredicateInfo( removeU_S ) );
     }
-    
+
     @Test
     public void testParseHasU_R() throws Exception {
         final PredicateInfo predicateInfo = parser.parse( hasU_R );
@@ -739,7 +732,7 @@ public abstract class AbstractCollectionValueInterfaceTest extends AbstractMetho
         assertSame( removeU_R );
         Assert.assertNull( subjectInfo.getPredicateInfo( removeU_S ) );
     }
-    
+
     @Test
     public void testParseRemoveU_S() throws Exception {
         final PredicateInfo predicateInfo = parser.parse( removeU_S );
@@ -752,14 +745,14 @@ public abstract class AbstractCollectionValueInterfaceTest extends AbstractMetho
         Assert.assertNull( subjectInfo.getPredicateInfo( removeU_R ) );
         assertSame( removeU_S );
     }
-        
+
     @Test
     public void testParseAddU3_R() throws Exception {
-        OMMap.put( addU3_S, new CollectionHandler( OMMap.get( addU3_S ), Queue.class) );
-        OMMap.put( hasU3_R, new CollectionHandler( OMMap.get( hasU3_R ), Queue.class) );
-        OMMap.put( hasU3_S, new CollectionHandler( OMMap.get( hasU3_S ), Queue.class) );
-        OMMap.put( removeU3_R, new CollectionHandler( OMMap.get( removeU3_R ), Queue.class) );
-        OMMap.put( removeU3_S, new CollectionHandler( OMMap.get( removeU3_S ), Queue.class) );
+        OMMap.put( addU3_S, new CollectionHandler( OMMap.get( addU3_S ), Queue.class ) );
+        OMMap.put( hasU3_R, new CollectionHandler( OMMap.get( hasU3_R ), Queue.class ) );
+        OMMap.put( hasU3_S, new CollectionHandler( OMMap.get( hasU3_S ), Queue.class ) );
+        OMMap.put( removeU3_R, new CollectionHandler( OMMap.get( removeU3_R ), Queue.class ) );
+        OMMap.put( removeU3_S, new CollectionHandler( OMMap.get( removeU3_S ), Queue.class ) );
         final PredicateInfo predicateInfo = parser.parse( addU3_R );
         assertSame( PIMap.get( addU3_R ), predicateInfo, addU3_R );
         assertSame( addU3_R );
@@ -773,11 +766,11 @@ public abstract class AbstractCollectionValueInterfaceTest extends AbstractMetho
 
     @Test
     public void testParseAddU3_S() throws Exception {
-        OMMap.put( addU3_R, new CollectionHandler( OMMap.get( addU3_R ), Queue.class) );
-        OMMap.put( hasU3_R, new CollectionHandler( OMMap.get( hasU3_R ), Queue.class) );
-        OMMap.put( hasU3_S, new CollectionHandler( OMMap.get( hasU3_S ), Queue.class) );
-        OMMap.put( removeU3_R, new CollectionHandler( OMMap.get( removeU3_R ), Queue.class) );
-        OMMap.put( removeU3_S, new CollectionHandler( OMMap.get( removeU3_S ), Queue.class) );
+        OMMap.put( addU3_R, new CollectionHandler( OMMap.get( addU3_R ), Queue.class ) );
+        OMMap.put( hasU3_R, new CollectionHandler( OMMap.get( hasU3_R ), Queue.class ) );
+        OMMap.put( hasU3_S, new CollectionHandler( OMMap.get( hasU3_S ), Queue.class ) );
+        OMMap.put( removeU3_R, new CollectionHandler( OMMap.get( removeU3_R ), Queue.class ) );
+        OMMap.put( removeU3_S, new CollectionHandler( OMMap.get( removeU3_S ), Queue.class ) );
         final PredicateInfo predicateInfo = parser.parse( addU3_S );
         assertSame( PIMap.get( addU3_S ), predicateInfo, addU3_S );
         assertSame( addU3_R );
@@ -791,12 +784,12 @@ public abstract class AbstractCollectionValueInterfaceTest extends AbstractMetho
 
     @Test
     public void testParseGetU3() throws Exception {
-        OMMap.put( addU3_S, new CollectionHandler( OMMap.get( addU3_S ), Queue.class) );
-        OMMap.put( addU3_R, new CollectionHandler( OMMap.get( addU3_R ), Queue.class) );
-        OMMap.put( hasU3_S, new CollectionHandler( OMMap.get( hasU3_S ), Queue.class) );
-        OMMap.put( hasU3_R, new CollectionHandler( OMMap.get( hasU3_R ), Queue.class) );
-        OMMap.put( removeU3_R, new CollectionHandler( OMMap.get( removeU3_R ), Queue.class) );
-        OMMap.put( removeU3_S, new CollectionHandler( OMMap.get( removeU3_S ), Queue.class) );
+        OMMap.put( addU3_S, new CollectionHandler( OMMap.get( addU3_S ), Queue.class ) );
+        OMMap.put( addU3_R, new CollectionHandler( OMMap.get( addU3_R ), Queue.class ) );
+        OMMap.put( hasU3_S, new CollectionHandler( OMMap.get( hasU3_S ), Queue.class ) );
+        OMMap.put( hasU3_R, new CollectionHandler( OMMap.get( hasU3_R ), Queue.class ) );
+        OMMap.put( removeU3_R, new CollectionHandler( OMMap.get( removeU3_R ), Queue.class ) );
+        OMMap.put( removeU3_S, new CollectionHandler( OMMap.get( removeU3_S ), Queue.class ) );
         final PredicateInfo predicateInfo = parser.parse( getU3 );
         assertSame( PIMap.get( getU3 ), predicateInfo, getU3 );
         assertSame( addU3_R );
@@ -846,7 +839,7 @@ public abstract class AbstractCollectionValueInterfaceTest extends AbstractMetho
         assertSame( removeU3_R );
         Assert.assertNull( subjectInfo.getPredicateInfo( removeU3_S ) );
     }
-    
+
     @Test
     public void testParseRemoveU3_S() throws Exception {
         final PredicateInfo predicateInfo = parser.parse( removeU3_S );
@@ -859,7 +852,7 @@ public abstract class AbstractCollectionValueInterfaceTest extends AbstractMetho
         Assert.assertNull( subjectInfo.getPredicateInfo( removeU3_R ) );
         assertSame( removeU3_S );
     }
-    
+
     @Test
     public void testParseGetU4() throws Exception {
         final PredicateInfo predicateInfo = parser.parse( getU4 );
@@ -868,5 +861,3 @@ public abstract class AbstractCollectionValueInterfaceTest extends AbstractMetho
     }
 
 }
-
-

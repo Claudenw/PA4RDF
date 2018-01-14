@@ -11,12 +11,12 @@ public class SimpleURICollectionImplTest extends AbstractSimpleURICollectionTest
 
     @Override
     protected void updateGetter() throws Exception {
-        builder.setType(  null ).setInternalType(  null );
+        builder.setType( null ).setInternalType( null );
     }
 
     @Override
     protected void updateGetter2() throws Exception {
-        builder.setType(  null ).setInternalType(  null );
+        builder.setType( null ).setInternalType( null );
     }
 
 }

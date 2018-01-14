@@ -6,8 +6,7 @@ public class SimpleURIInterfaceImplTest extends AbstractSimpleURIInterfaceTest {
 
     public SimpleURIInterfaceImplTest() throws Exception {
         super( SimpleURIInterfaceImpl.class );
-        builder.setImpl( true )
-        .setNamespace( "" );
+        builder.setImpl( true ).setNamespace( "" );
     }
 
 }
