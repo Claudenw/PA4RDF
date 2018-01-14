@@ -259,15 +259,26 @@ public class EffectivePredicate {
             
             if (Predicate.UNSET.class.equals( this.type ))
             {
-                if (URI.class.equals(  predicate.type ))
+                if (!actionType.allowsNull())
                 {
-                    this.type = RDFNode.class;
-                    
+                if (URI.class.equals(  predicate.type ))
+                {                    
+                    this.type = RDFNode.class;                     
                 }
                 else {
                     this.type = predicate.type;
                     this.internalType = predicate.internalType;
-                    this.literalType = predicate.literalType;
+                    this.literalType = predicate.literalType;               
+                }
+                } else {
+                    if (RDFNode.class.equals( internalType ))
+                    {
+                        if (predicate.internalType != null && !Predicate.UNSET.class.equals( predicate.internalType))
+                        {
+                            internalType = predicate.internalType;
+                            literalType = predicate.literalType;
+                        }
+                    }
                 }
             } else if (URI.class.equals(  predicate.type ) || URI.class.equals(  this.type )) {
                 // URI type is custom by annotation and not changeable.

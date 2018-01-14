@@ -26,7 +26,6 @@ public abstract class AbstractMethodParserTest {
     protected final EntityManagerImpl entityManager = (EntityManagerImpl) EntityManagerFactory.create();
     protected final Map<String, Integer> addCount = new HashMap<String, Integer>();
     protected final Map<Method, PredicateInfo> PIMap = new HashMap<Method, PredicateInfo>();
-    protected final Map<Method, ObjectHandler> OMMap = new HashMap<Method, ObjectHandler>();
     protected final SubjectInfoImpl subjectInfo;
     protected final MethodParser parser;
     protected String NS = "http://example.com/";

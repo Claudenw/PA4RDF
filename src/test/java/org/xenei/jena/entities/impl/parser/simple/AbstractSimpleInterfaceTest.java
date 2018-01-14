@@ -22,32 +22,22 @@ public abstract class AbstractSimpleInterfaceTest extends AbstractMethodParserTe
     protected final Method remover;
     protected final Method existential;
 
-    protected final static LiteralHandler lh = new LiteralHandler( XSDDatatype.XSDstring );
-
-    static {
-        EntityManagerImpl.registerTypes();
-    }
-
     protected AbstractSimpleInterfaceTest(Class<?> interfaceClass)
             throws NoSuchMethodException, SecurityException {
         super( interfaceClass );
 
         getter = interfaceClass.getMethod( "getX" );
         PIMap.put( getter, mockPredicateInfo( getter, "x", ActionType.GETTER, String.class, 0 ) );
-        OMMap.put( getter, lh );
 
         setter = interfaceClass.getMethod( "setX", String.class );
         PIMap.put( setter, mockPredicateInfo( setter, "x", ActionType.SETTER, String.class, 0 ) );
-        OMMap.put( setter, lh );
 
         remover = interfaceClass.getMethod( "removeX" );
         PIMap.put( remover, mockPredicateInfo( remover, "x", ActionType.REMOVER, Predicate.UNSET.class, 0 ) );
-        OMMap.put( remover, VoidHandler.INSTANCE );
 
         existential = interfaceClass.getMethod( "hasX" );
         PIMap.put( existential, mockPredicateInfo( existential, "x", ActionType.EXISTENTIAL,
                 TypeChecker.getPrimitiveClass( Boolean.class ), 0 ) );
-        OMMap.put( existential, VoidHandler.INSTANCE );
 
         addCount.put( "setX", Integer.valueOf( 1 ) );
 
@@ -55,9 +45,6 @@ public abstract class AbstractSimpleInterfaceTest extends AbstractMethodParserTe
 
     @Test
     public void testParseGetter() throws Exception {
-        // getter changes output types
-        OMMap.put( remover, lh );
-        OMMap.put( existential, lh );
         final PredicateInfo predicateInfo = parser.parse( getter );
         assertSame( PIMap.get( getter ), predicateInfo, getter );
         assertSame( getter );
@@ -69,9 +56,6 @@ public abstract class AbstractSimpleInterfaceTest extends AbstractMethodParserTe
 
     @Test
     public void testParseSetter() throws Exception {
-        // getter changes output types
-        OMMap.put( remover, lh );
-        OMMap.put( existential, lh );
         final PredicateInfo predicateInfo = parser.parse( setter );
         assertSame( PIMap.get( setter ), predicateInfo, setter );
         assertSame( getter );

@@ -1,9 +1,11 @@
 package org.xenei.jena.entities.impl.manager.singleValue;
 
 import org.apache.jena.datatypes.TypeMapper;
+import org.apache.jena.datatypes.xsd.XSDDatatype;
 import org.apache.jena.rdf.model.RDFNode;
 import org.junit.Assert;
 import org.junit.Test;
+import org.xenei.jena.entities.annotations.Predicate;
 import org.xenei.jena.entities.impl.ObjectHandler;
 import org.xenei.jena.entities.impl.PredicateInfoImpl;
 import org.xenei.jena.entities.impl.handlers.EntityHandler;
@@ -41,8 +43,8 @@ public abstract class AbstractSingleValueTest extends BaseAbstractManagerTest {
 
         pi = (PredicateInfoImpl) subjectInfo.getPredicateInfo( "removeBool", null );
         Assert.assertEquals( "removeBool", pi.getMethodName() );
-        Assert.assertEquals( VoidHandler.INSTANCE, pi.getObjectHandler( manager ) );
-        Assert.assertEquals( null, pi.getValueClass() );
+        Assert.assertEquals( handler, pi.getObjectHandler( manager ) );
+        Assert.assertEquals( Predicate.UNSET.class, pi.getValueClass() );
         Assert.assertEquals( BaseAbstractManagerTest.NS + "bool", pi.getUriString() );
         Assert.assertEquals( BaseAbstractManagerTest.NS, pi.getNamespace() );
 
@@ -66,7 +68,7 @@ public abstract class AbstractSingleValueTest extends BaseAbstractManagerTest {
 
     @Test
     public void testChar()
-            throws IllegalArgumentException, SecurityException, IllegalAccessException, NoSuchFieldException {
+            throws Exception {
         PredicateInfoImpl pi = (PredicateInfoImpl) subjectInfo.getPredicateInfo( "getChar", Character.class );
         final ObjectHandler handler = new LiteralHandler( TypeMapper.getInstance().getTypeByClass( Character.class ) );
 
@@ -85,8 +87,8 @@ public abstract class AbstractSingleValueTest extends BaseAbstractManagerTest {
 
         pi = (PredicateInfoImpl) subjectInfo.getPredicateInfo( "removeChar", null );
         Assert.assertEquals( "removeChar", pi.getMethodName() );
-        Assert.assertEquals( VoidHandler.INSTANCE, pi.getObjectHandler( manager ) );
-        Assert.assertEquals( null, pi.getValueClass() );
+        Assert.assertEquals( handler, pi.getObjectHandler( manager ) );
+        Assert.assertEquals( Predicate.UNSET.class, pi.getValueClass() );
         Assert.assertEquals( BaseAbstractManagerTest.NS + "char", pi.getUriString() );
         Assert.assertEquals( BaseAbstractManagerTest.NS, pi.getNamespace() );
 
@@ -109,8 +111,8 @@ public abstract class AbstractSingleValueTest extends BaseAbstractManagerTest {
     }
 
     @Test
-    public void testDbl()
-            throws IllegalArgumentException, SecurityException, IllegalAccessException, NoSuchFieldException {
+    public void testDbl() throws Exception {
+        
         PredicateInfoImpl pi = (PredicateInfoImpl) subjectInfo.getPredicateInfo( "getDbl", Double.class );
         final ObjectHandler handler = new LiteralHandler( TypeMapper.getInstance().getTypeByClass( Double.class ) );
 
@@ -129,8 +131,8 @@ public abstract class AbstractSingleValueTest extends BaseAbstractManagerTest {
 
         pi = (PredicateInfoImpl) subjectInfo.getPredicateInfo( "removeDbl", null );
         Assert.assertEquals( "removeDbl", pi.getMethodName() );
-        Assert.assertEquals( VoidHandler.INSTANCE, pi.getObjectHandler( manager ) );
-        Assert.assertEquals( null, pi.getValueClass() );
+        Assert.assertEquals( handler, pi.getObjectHandler( manager ) );
+        Assert.assertEquals( Predicate.UNSET.class, pi.getValueClass() );
         Assert.assertEquals( BaseAbstractManagerTest.NS + "dbl", pi.getUriString() );
         Assert.assertEquals( BaseAbstractManagerTest.NS, pi.getNamespace() );
 
@@ -173,14 +175,14 @@ public abstract class AbstractSingleValueTest extends BaseAbstractManagerTest {
         pi = (PredicateInfoImpl) subjectInfo.getPredicateInfo( "removeEnt", null );
         Assert.assertEquals( "removeEnt", pi.getMethodName() );
         Assert.assertEquals( VoidHandler.INSTANCE, pi.getObjectHandler( manager ) );
-        Assert.assertEquals( null, pi.getValueClass() );
+        Assert.assertEquals( Predicate.UNSET.class, pi.getValueClass() );
         Assert.assertEquals( BaseAbstractManagerTest.NS + "ent", pi.getUriString() );
         Assert.assertEquals( BaseAbstractManagerTest.NS, pi.getNamespace() );
     }
 
     @Test
     public void testFlt()
-            throws IllegalArgumentException, SecurityException, IllegalAccessException, NoSuchFieldException {
+            throws Exception {
         PredicateInfoImpl pi = (PredicateInfoImpl) subjectInfo.getPredicateInfo( "getFlt", Float.class );
         final ObjectHandler handler = new LiteralHandler( TypeMapper.getInstance().getTypeByClass( Float.class ) );
 
@@ -199,8 +201,8 @@ public abstract class AbstractSingleValueTest extends BaseAbstractManagerTest {
 
         pi = (PredicateInfoImpl) subjectInfo.getPredicateInfo( "removeFlt", null );
         Assert.assertEquals( "removeFlt", pi.getMethodName() );
-        Assert.assertEquals( VoidHandler.INSTANCE, pi.getObjectHandler( manager ) );
-        Assert.assertEquals( null, pi.getValueClass() );
+        Assert.assertEquals( handler, pi.getObjectHandler( manager ) );
+        Assert.assertEquals( Predicate.UNSET.class, pi.getValueClass() );
         Assert.assertEquals( BaseAbstractManagerTest.NS + "flt", pi.getUriString() );
         Assert.assertEquals( BaseAbstractManagerTest.NS, pi.getNamespace() );
 
@@ -224,7 +226,7 @@ public abstract class AbstractSingleValueTest extends BaseAbstractManagerTest {
 
     @Test
     public void testInt()
-            throws IllegalArgumentException, SecurityException, IllegalAccessException, NoSuchFieldException {
+            throws Exception {
 
         PredicateInfoImpl pi = (PredicateInfoImpl) subjectInfo.getPredicateInfo( "getInt", Integer.class );
         final ObjectHandler handler = new LiteralHandler( TypeMapper.getInstance().getTypeByClass( Integer.class ) );
@@ -244,8 +246,8 @@ public abstract class AbstractSingleValueTest extends BaseAbstractManagerTest {
 
         pi = (PredicateInfoImpl) subjectInfo.getPredicateInfo( "removeInt", null );
         Assert.assertEquals( "removeInt", pi.getMethodName() );
-        Assert.assertEquals( VoidHandler.INSTANCE, pi.getObjectHandler( manager ) );
-        Assert.assertEquals( null, pi.getValueClass() );
+        Assert.assertEquals( handler, pi.getObjectHandler( manager ) );
+        Assert.assertEquals( Predicate.UNSET.class, pi.getValueClass() );
         Assert.assertEquals( BaseAbstractManagerTest.NS + "int", pi.getUriString() );
         Assert.assertEquals( BaseAbstractManagerTest.NS, pi.getNamespace() );
 
@@ -269,7 +271,7 @@ public abstract class AbstractSingleValueTest extends BaseAbstractManagerTest {
 
     @Test
     public void testLng()
-            throws IllegalArgumentException, SecurityException, IllegalAccessException, NoSuchFieldException {
+            throws Exception {
         PredicateInfoImpl pi = (PredicateInfoImpl) subjectInfo.getPredicateInfo( "getLng", Long.class );
         final ObjectHandler handler = new LiteralHandler( TypeMapper.getInstance().getTypeByClass( Long.class ) );
 
@@ -288,8 +290,8 @@ public abstract class AbstractSingleValueTest extends BaseAbstractManagerTest {
 
         pi = (PredicateInfoImpl) subjectInfo.getPredicateInfo( "removeLng", null );
         Assert.assertEquals( "removeLng", pi.getMethodName() );
-        Assert.assertEquals( VoidHandler.INSTANCE, pi.getObjectHandler( manager ) );
-        Assert.assertEquals( null, pi.getValueClass() );
+        Assert.assertEquals( handler, pi.getObjectHandler( manager ) );
+        Assert.assertEquals( Predicate.UNSET.class, pi.getValueClass() );
         Assert.assertEquals( BaseAbstractManagerTest.NS + "lng", pi.getUriString() );
         Assert.assertEquals( BaseAbstractManagerTest.NS, pi.getNamespace() );
 
@@ -331,7 +333,7 @@ public abstract class AbstractSingleValueTest extends BaseAbstractManagerTest {
         pi = (PredicateInfoImpl) subjectInfo.getPredicateInfo( "removeRDF", null );
         Assert.assertEquals( "removeRDF", pi.getMethodName() );
         Assert.assertEquals( VoidHandler.INSTANCE, pi.getObjectHandler( manager ) );
-        Assert.assertEquals( null, pi.getValueClass() );
+        Assert.assertEquals( Predicate.UNSET.class, pi.getValueClass() );
         Assert.assertEquals( BaseAbstractManagerTest.NS + "rDF", pi.getUriString() );
         Assert.assertEquals( BaseAbstractManagerTest.NS, pi.getNamespace() );
     }
@@ -356,8 +358,8 @@ public abstract class AbstractSingleValueTest extends BaseAbstractManagerTest {
 
         pi = (PredicateInfoImpl) subjectInfo.getPredicateInfo( "removeStr", null );
         Assert.assertEquals( "removeStr", pi.getMethodName() );
-        Assert.assertEquals( VoidHandler.INSTANCE, pi.getObjectHandler( manager ) );
-        Assert.assertEquals( null, pi.getValueClass() );
+        Assert.assertEquals( handler, pi.getObjectHandler( manager ) );
+        Assert.assertEquals( Predicate.UNSET.class, pi.getValueClass() );
         Assert.assertEquals( BaseAbstractManagerTest.NS + "str", pi.getUriString() );
         Assert.assertEquals( BaseAbstractManagerTest.NS, pi.getNamespace() );
     }
@@ -392,7 +394,7 @@ public abstract class AbstractSingleValueTest extends BaseAbstractManagerTest {
         pi = (PredicateInfoImpl) subjectInfo.getPredicateInfo( "removeU", null );
         Assert.assertEquals( "removeU", pi.getMethodName() );
         Assert.assertEquals( VoidHandler.INSTANCE, pi.getObjectHandler( manager ) );
-        Assert.assertEquals( null, pi.getValueClass() );
+        Assert.assertEquals( Predicate.UNSET.class, pi.getValueClass() );
         Assert.assertEquals( BaseAbstractManagerTest.NS + "u", pi.getUriString() );
         Assert.assertEquals( BaseAbstractManagerTest.NS, pi.getNamespace() );
 

@@ -1,4 +1,4 @@
-package org.xenei.jena.entities.impl.manager;
+package org.xenei.jena.entities.impl.manager.collectionValue;
 
 import java.util.List;
 import java.util.Queue;
@@ -10,10 +10,12 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.xenei.jena.entities.impl.ObjectHandler;
 import org.xenei.jena.entities.impl.PredicateInfoImpl;
+import org.xenei.jena.entities.impl.handlers.CollectionHandler;
 import org.xenei.jena.entities.impl.handlers.EntityHandler;
 import org.xenei.jena.entities.impl.handlers.LiteralHandler;
 import org.xenei.jena.entities.impl.handlers.ResourceHandler;
 import org.xenei.jena.entities.impl.handlers.UriHandler;
+import org.xenei.jena.entities.impl.manager.BaseAbstractManagerTest;
 import org.xenei.jena.entities.testing.iface.TestInterface;
 
 public abstract class AbstractCollectionValueTest extends BaseAbstractManagerTest {
@@ -27,7 +29,9 @@ public abstract class AbstractCollectionValueTest extends BaseAbstractManagerTes
             throws SecurityException, NoSuchFieldException, IllegalArgumentException, IllegalAccessException {
 
         PredicateInfoImpl pi = (PredicateInfoImpl) subjectInfo.getPredicateInfo( "addBool", Boolean.class );
-        final ObjectHandler handler = new LiteralHandler( TypeMapper.getInstance().getTypeByClass( Boolean.class ) );
+        ObjectHandler handler = new LiteralHandler( TypeMapper.getInstance().getTypeByClass( Boolean.class ) );
+        handler = new CollectionHandler( handler, Set.class );
+
         Assert.assertEquals( handler, pi.getObjectHandler( manager ) );
         Assert.assertEquals( "addBool", pi.getMethodName() );
         Assert.assertEquals( Boolean.class, pi.getValueClass() );
@@ -66,8 +70,10 @@ public abstract class AbstractCollectionValueTest extends BaseAbstractManagerTes
     public void testChar()
             throws IllegalArgumentException, SecurityException, IllegalAccessException, NoSuchFieldException {
         PredicateInfoImpl pi = (PredicateInfoImpl) subjectInfo.getPredicateInfo( "getChar", List.class );
-        final ObjectHandler handler = new LiteralHandler( TypeMapper.getInstance().getTypeByClass( Character.class ) );
-        Assert.assertEquals( "getChar", pi.getMethodName() );
+         ObjectHandler handler = new LiteralHandler( TypeMapper.getInstance().getTypeByClass( Character.class ) );
+         handler = new CollectionHandler( handler, List.class );
+
+         Assert.assertEquals( "getChar", pi.getMethodName() );
         Assert.assertEquals( handler, pi.getObjectHandler( manager ) );
         Assert.assertEquals( List.class, pi.getValueClass() );
         Assert.assertEquals( BaseAbstractManagerTest.NS + "char", pi.getUriString() );
@@ -90,7 +96,7 @@ public abstract class AbstractCollectionValueTest extends BaseAbstractManagerTes
         pi = (PredicateInfoImpl) subjectInfo.getPredicateInfo( "hasChar", Character.class );
         Assert.assertEquals( "hasChar", pi.getMethodName() );
         Assert.assertEquals( handler, pi.getObjectHandler( manager ) );
-        Assert.assertEquals( Character.class, pi.getValueClass() );
+        Assert.assertEquals( Boolean.class, pi.getValueClass() );
         Assert.assertEquals( BaseAbstractManagerTest.NS + "char", pi.getUriString() );
         Assert.assertEquals( BaseAbstractManagerTest.NS, pi.getNamespace() );
 
@@ -113,7 +119,7 @@ public abstract class AbstractCollectionValueTest extends BaseAbstractManagerTes
         pi = (PredicateInfoImpl) subjectInfo.getPredicateInfo( "hasChar", c );
         Assert.assertEquals( "hasChar", pi.getMethodName() );
         Assert.assertEquals( handler, pi.getObjectHandler( manager ) );
-        Assert.assertEquals( Character.class, pi.getValueClass() );
+        Assert.assertEquals( Boolean.class, pi.getValueClass() );
         Assert.assertEquals( BaseAbstractManagerTest.NS + "char", pi.getUriString() );
         Assert.assertEquals( BaseAbstractManagerTest.NS, pi.getNamespace() );
     }
@@ -122,7 +128,9 @@ public abstract class AbstractCollectionValueTest extends BaseAbstractManagerTes
     public void testDbl()
             throws IllegalArgumentException, SecurityException, IllegalAccessException, NoSuchFieldException {
         PredicateInfoImpl pi = (PredicateInfoImpl) subjectInfo.getPredicateInfo( "getDbl", Queue.class );
-        final ObjectHandler handler = new LiteralHandler( TypeMapper.getInstance().getTypeByClass( Double.class ) );
+        ObjectHandler handler = new LiteralHandler( TypeMapper.getInstance().getTypeByClass( Double.class ) );
+        handler = new CollectionHandler( handler, Queue.class );
+        
         Assert.assertEquals( "getDbl", pi.getMethodName() );
         Assert.assertEquals( handler, pi.getObjectHandler( manager ) );
         Assert.assertEquals( Queue.class, pi.getValueClass() );
@@ -146,7 +154,7 @@ public abstract class AbstractCollectionValueTest extends BaseAbstractManagerTes
         pi = (PredicateInfoImpl) subjectInfo.getPredicateInfo( "hasDbl", Double.class );
         Assert.assertEquals( "hasDbl", pi.getMethodName() );
         Assert.assertEquals( handler, pi.getObjectHandler( manager ) );
-        Assert.assertEquals( Double.class, pi.getValueClass() );
+        Assert.assertEquals( Boolean.class, pi.getValueClass() );
         Assert.assertEquals( BaseAbstractManagerTest.NS + "dbl", pi.getUriString() );
         Assert.assertEquals( BaseAbstractManagerTest.NS, pi.getNamespace() );
 
@@ -169,7 +177,7 @@ public abstract class AbstractCollectionValueTest extends BaseAbstractManagerTes
         pi = (PredicateInfoImpl) subjectInfo.getPredicateInfo( "hasDbl", c );
         Assert.assertEquals( "hasDbl", pi.getMethodName() );
         Assert.assertEquals( handler, pi.getObjectHandler( manager ) );
-        Assert.assertEquals( Double.class, pi.getValueClass() );
+        Assert.assertEquals( Boolean.class, pi.getValueClass() );
         Assert.assertEquals( BaseAbstractManagerTest.NS + "dbl", pi.getUriString() );
         Assert.assertEquals( BaseAbstractManagerTest.NS, pi.getNamespace() );
 
@@ -179,7 +187,8 @@ public abstract class AbstractCollectionValueTest extends BaseAbstractManagerTes
     public void testEntity() {
         PredicateInfoImpl pi = (PredicateInfoImpl) subjectInfo.getPredicateInfo( "getEnt", Queue.class );
         Assert.assertEquals( "getEnt", pi.getMethodName() );
-        final ObjectHandler handler = new EntityHandler( manager, TestInterface.class );
+         ObjectHandler handler = new EntityHandler( manager, TestInterface.class );
+        handler = new CollectionHandler( handler, Queue.class );
 
         Assert.assertEquals( handler, pi.getObjectHandler( manager ) );
         Assert.assertEquals( Queue.class, pi.getValueClass() );
@@ -203,7 +212,7 @@ public abstract class AbstractCollectionValueTest extends BaseAbstractManagerTes
         pi = (PredicateInfoImpl) subjectInfo.getPredicateInfo( "hasEnt", TestInterface.class );
         Assert.assertEquals( "hasEnt", pi.getMethodName() );
         Assert.assertEquals( handler, pi.getObjectHandler( manager ) );
-        Assert.assertEquals( TestInterface.class, pi.getValueClass() );
+        Assert.assertEquals( Boolean.class, pi.getValueClass() );
         Assert.assertEquals( BaseAbstractManagerTest.NS + "ent", pi.getUriString() );
         Assert.assertEquals( BaseAbstractManagerTest.NS, pi.getNamespace() );
     }
@@ -213,7 +222,8 @@ public abstract class AbstractCollectionValueTest extends BaseAbstractManagerTes
             throws IllegalArgumentException, SecurityException, IllegalAccessException, NoSuchFieldException {
 
         PredicateInfoImpl pi = (PredicateInfoImpl) subjectInfo.getPredicateInfo( "getFlt", Set.class );
-        final ObjectHandler handler = new LiteralHandler( TypeMapper.getInstance().getTypeByClass( Float.class ) );
+        ObjectHandler handler = new LiteralHandler( TypeMapper.getInstance().getTypeByClass( Float.class ) );
+        handler = new CollectionHandler( handler, Set.class );
 
         Assert.assertEquals( "getFlt", pi.getMethodName() );
         Assert.assertEquals( handler, pi.getObjectHandler( manager ) );
@@ -238,7 +248,7 @@ public abstract class AbstractCollectionValueTest extends BaseAbstractManagerTes
         pi = (PredicateInfoImpl) subjectInfo.getPredicateInfo( "hasFlt", Float.class );
         Assert.assertEquals( "hasFlt", pi.getMethodName() );
         Assert.assertEquals( handler, pi.getObjectHandler( manager ) );
-        Assert.assertEquals( Float.class, pi.getValueClass() );
+        Assert.assertEquals( Boolean.class, pi.getValueClass() );
         Assert.assertEquals( BaseAbstractManagerTest.NS + "flt", pi.getUriString() );
         Assert.assertEquals( BaseAbstractManagerTest.NS, pi.getNamespace() );
 
@@ -261,7 +271,7 @@ public abstract class AbstractCollectionValueTest extends BaseAbstractManagerTes
         pi = (PredicateInfoImpl) subjectInfo.getPredicateInfo( "hasFlt", c );
         Assert.assertEquals( "hasFlt", pi.getMethodName() );
         Assert.assertEquals( handler, pi.getObjectHandler( manager ) );
-        Assert.assertEquals( Float.class, pi.getValueClass() );
+        Assert.assertEquals( Boolean.class, pi.getValueClass() );
         Assert.assertEquals( BaseAbstractManagerTest.NS + "flt", pi.getUriString() );
         Assert.assertEquals( BaseAbstractManagerTest.NS, pi.getNamespace() );
     }
@@ -271,7 +281,8 @@ public abstract class AbstractCollectionValueTest extends BaseAbstractManagerTes
             throws IllegalArgumentException, SecurityException, IllegalAccessException, NoSuchFieldException {
 
         PredicateInfoImpl pi = (PredicateInfoImpl) subjectInfo.getPredicateInfo( "getInt", Queue.class );
-        final ObjectHandler handler = new LiteralHandler( TypeMapper.getInstance().getTypeByClass( Integer.class ) );
+        ObjectHandler handler = new LiteralHandler( TypeMapper.getInstance().getTypeByClass( Integer.class ) );
+        handler = new CollectionHandler( handler, Queue.class );
 
         Assert.assertEquals( "getInt", pi.getMethodName() );
         Assert.assertEquals( handler, pi.getObjectHandler( manager ) );
@@ -296,7 +307,7 @@ public abstract class AbstractCollectionValueTest extends BaseAbstractManagerTes
         pi = (PredicateInfoImpl) subjectInfo.getPredicateInfo( "hasInt", Integer.class );
         Assert.assertEquals( "hasInt", pi.getMethodName() );
         Assert.assertEquals( handler, pi.getObjectHandler( manager ) );
-        Assert.assertEquals( Integer.class, pi.getValueClass() );
+        Assert.assertEquals( Boolean.class, pi.getValueClass() );
         Assert.assertEquals( BaseAbstractManagerTest.NS + "int", pi.getUriString() );
         Assert.assertEquals( BaseAbstractManagerTest.NS, pi.getNamespace() );
 
@@ -319,7 +330,7 @@ public abstract class AbstractCollectionValueTest extends BaseAbstractManagerTes
         pi = (PredicateInfoImpl) subjectInfo.getPredicateInfo( "hasInt", c );
         Assert.assertEquals( "hasInt", pi.getMethodName() );
         Assert.assertEquals( handler, pi.getObjectHandler( manager ) );
-        Assert.assertEquals( Integer.class, pi.getValueClass() );
+        Assert.assertEquals( Boolean.class, pi.getValueClass() );
         Assert.assertEquals( BaseAbstractManagerTest.NS + "int", pi.getUriString() );
         Assert.assertEquals( BaseAbstractManagerTest.NS, pi.getNamespace() );
 
@@ -329,7 +340,8 @@ public abstract class AbstractCollectionValueTest extends BaseAbstractManagerTes
     public void testLng()
             throws IllegalArgumentException, SecurityException, IllegalAccessException, NoSuchFieldException {
         PredicateInfoImpl pi = (PredicateInfoImpl) subjectInfo.getPredicateInfo( "getLng", List.class );
-        final ObjectHandler handler = new LiteralHandler( TypeMapper.getInstance().getTypeByClass( Long.class ) );
+        ObjectHandler handler = new LiteralHandler( TypeMapper.getInstance().getTypeByClass( Long.class ) );
+        handler = new CollectionHandler( handler, List.class );
 
         Assert.assertEquals( "getLng", pi.getMethodName() );
         Assert.assertEquals( handler, pi.getObjectHandler( manager ) );
@@ -354,7 +366,7 @@ public abstract class AbstractCollectionValueTest extends BaseAbstractManagerTes
         pi = (PredicateInfoImpl) subjectInfo.getPredicateInfo( "hasLng", Long.class );
         Assert.assertEquals( "hasLng", pi.getMethodName() );
         Assert.assertEquals( handler, pi.getObjectHandler( manager ) );
-        Assert.assertEquals( Long.class, pi.getValueClass() );
+        Assert.assertEquals( Boolean.class, pi.getValueClass() );
         Assert.assertEquals( BaseAbstractManagerTest.NS + "lng", pi.getUriString() );
         Assert.assertEquals( BaseAbstractManagerTest.NS, pi.getNamespace() );
 
@@ -377,7 +389,7 @@ public abstract class AbstractCollectionValueTest extends BaseAbstractManagerTes
         pi = (PredicateInfoImpl) subjectInfo.getPredicateInfo( "hasLng", c );
         Assert.assertEquals( "hasLng", pi.getMethodName() );
         Assert.assertEquals( handler, pi.getObjectHandler( manager ) );
-        Assert.assertEquals( Long.class, pi.getValueClass() );
+        Assert.assertEquals( Boolean.class, pi.getValueClass() );
         Assert.assertEquals( BaseAbstractManagerTest.NS + "lng", pi.getUriString() );
         Assert.assertEquals( BaseAbstractManagerTest.NS, pi.getNamespace() );
 
@@ -386,10 +398,10 @@ public abstract class AbstractCollectionValueTest extends BaseAbstractManagerTes
     @Test
     public void testRdf() {
         PredicateInfoImpl pi = (PredicateInfoImpl) subjectInfo.getPredicateInfo( "getRDF", List.class );
-        final ObjectHandler handler = ResourceHandler.INSTANCE;
+         ObjectHandler handler = new CollectionHandler( ResourceHandler.INSTANCE, List.class );
 
         Assert.assertEquals( "getRDF", pi.getMethodName() );
-        Assert.assertEquals( handler, pi.getObjectHandler( manager ) );
+        Assert.assertEquals( new CollectionHandler( handler, List.class ), pi.getObjectHandler( manager ) );
         Assert.assertEquals( List.class, pi.getValueClass() );
         Assert.assertEquals( BaseAbstractManagerTest.NS + "rDF", pi.getUriString() );
         Assert.assertEquals( BaseAbstractManagerTest.NS, pi.getNamespace() );
@@ -403,15 +415,15 @@ public abstract class AbstractCollectionValueTest extends BaseAbstractManagerTes
 
         pi = (PredicateInfoImpl) subjectInfo.getPredicateInfo( "removeRDF", RDFNode.class );
         Assert.assertEquals( "removeRDF", pi.getMethodName() );
-        Assert.assertEquals( handler, pi.getObjectHandler( manager ) );
+        Assert.assertEquals( new CollectionHandler( handler, List.class ), pi.getObjectHandler( manager ) );
         Assert.assertEquals( RDFNode.class, pi.getValueClass() );
         Assert.assertEquals( BaseAbstractManagerTest.NS + "rDF", pi.getUriString() );
         Assert.assertEquals( BaseAbstractManagerTest.NS, pi.getNamespace() );
 
         pi = (PredicateInfoImpl) subjectInfo.getPredicateInfo( "hasRDF", RDFNode.class );
         Assert.assertEquals( "hasRDF", pi.getMethodName() );
-        Assert.assertEquals( handler, pi.getObjectHandler( manager ) );
-        Assert.assertEquals( RDFNode.class, pi.getValueClass() );
+        Assert.assertEquals( new CollectionHandler( handler, List.class ), pi.getObjectHandler( manager ) );
+        Assert.assertEquals( Boolean.class, pi.getValueClass() );
         Assert.assertEquals( BaseAbstractManagerTest.NS + "rDF", pi.getUriString() );
         Assert.assertEquals( BaseAbstractManagerTest.NS, pi.getNamespace() );
     }
@@ -419,8 +431,10 @@ public abstract class AbstractCollectionValueTest extends BaseAbstractManagerTes
     @Test
     public void testStr() {
         PredicateInfoImpl pi = (PredicateInfoImpl) subjectInfo.getPredicateInfo( "getStr", Set.class );
-        final ObjectHandler handler = new LiteralHandler( TypeMapper.getInstance().getTypeByClass( String.class ) );
+         ObjectHandler handler = new LiteralHandler( TypeMapper.getInstance().getTypeByClass( String.class ) );
+         handler = new CollectionHandler( handler, Set.class );
 
+         
         Assert.assertEquals( "getStr", pi.getMethodName() );
         Assert.assertEquals( handler, pi.getObjectHandler( manager ) );
         Assert.assertEquals( Set.class, pi.getValueClass() );
@@ -444,7 +458,7 @@ public abstract class AbstractCollectionValueTest extends BaseAbstractManagerTes
         pi = (PredicateInfoImpl) subjectInfo.getPredicateInfo( "hasStr", String.class );
         Assert.assertEquals( "hasStr", pi.getMethodName() );
         Assert.assertEquals( handler, pi.getObjectHandler( manager ) );
-        Assert.assertEquals( String.class, pi.getValueClass() );
+        Assert.assertEquals( Boolean.class, pi.getValueClass() );
         Assert.assertEquals( BaseAbstractManagerTest.NS + "str", pi.getUriString() );
         Assert.assertEquals( BaseAbstractManagerTest.NS, pi.getNamespace() );
     }
@@ -452,8 +466,8 @@ public abstract class AbstractCollectionValueTest extends BaseAbstractManagerTes
     @Test
     public void testURI() {
         PredicateInfoImpl pi = (PredicateInfoImpl) subjectInfo.getPredicateInfo( "getU", Set.class );
-        final ObjectHandler resHandler = ResourceHandler.INSTANCE;
-        final ObjectHandler uriHandler = UriHandler.INSTANCE;
+        final ObjectHandler resHandler = new CollectionHandler( ResourceHandler.INSTANCE, Set.class );
+        final ObjectHandler uriHandler = new CollectionHandler( UriHandler.INSTANCE, Set.class );
 
         Assert.assertEquals( "getU", pi.getMethodName() );
         Assert.assertEquals( resHandler, pi.getObjectHandler( manager ) );
@@ -514,8 +528,8 @@ public abstract class AbstractCollectionValueTest extends BaseAbstractManagerTes
     @Test
     public void testURIOrdering() {
         PredicateInfoImpl pi = (PredicateInfoImpl) subjectInfo.getPredicateInfo( "getU3", Queue.class );
-        final ObjectHandler resHandler = ResourceHandler.INSTANCE;
-        final ObjectHandler uriHandler = UriHandler.INSTANCE;
+        final ObjectHandler resHandler = new CollectionHandler( ResourceHandler.INSTANCE, Set.class );
+        final ObjectHandler uriHandler = new CollectionHandler( UriHandler.INSTANCE, Set.class );
 
         Assert.assertEquals( "getU3", pi.getMethodName() );
         Assert.assertEquals( resHandler, pi.getObjectHandler( manager ) );

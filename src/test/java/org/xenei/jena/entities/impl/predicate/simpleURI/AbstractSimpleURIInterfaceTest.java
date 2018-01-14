@@ -52,7 +52,7 @@ public abstract class AbstractSimpleURIInterfaceTest extends AbstractPredicateTe
         assertSame( builder, getU, mthd );
 
         mthd = interfaceClass.getMethod( "removeU" );
-        builder.setActionType( ActionType.REMOVER );
+        builder.setActionType( ActionType.REMOVER ).setType(  Predicate.UNSET.class );
         EffectivePredicate removeX = new EffectivePredicate( mthd ).merge( setU_S );
         assertSame( builder, removeX, mthd );
 

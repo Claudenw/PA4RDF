@@ -81,38 +81,9 @@ public abstract class AbstractSimpleURICollectionTest extends AbstractMethodPars
 
     }
 
-    @Before
-    public void setup() {
-        OMMap.put( getter, lhRLst );
-
-        OMMap.put( setterR, ResourceHandler.INSTANCE );
-
-        OMMap.put( setterS, UriHandler.INSTANCE );
-
-        OMMap.put( remover, UriHandler.INSTANCE );
-
-        OMMap.put( existential, UriHandler.INSTANCE );
-
-        OMMap.put( getter2, lhRIter );
-
-        OMMap.put( setterR2, ResourceHandler.INSTANCE );
-
-        OMMap.put( setterS2, UriHandler.INSTANCE );
-
-        OMMap.put( removerS2, UriHandler.INSTANCE );
-
-        OMMap.put( removerR2, ResourceHandler.INSTANCE );
-
-        OMMap.put( existential2, UriHandler.INSTANCE );
-
-    }
-
+   
     @Test
     public void testParseGetter() throws Exception {
-        OMMap.put( setterS, lhULst );
-        OMMap.put( setterR, lhRLst );
-        OMMap.put( existential, lhULst );
-        OMMap.put( remover, lhULst );
         final PredicateInfo predicateInfo = parser.parse( getter );
         assertSame( PIMap.get( getter ), predicateInfo, getter );
         assertSame( getter );
@@ -124,9 +95,6 @@ public abstract class AbstractSimpleURICollectionTest extends AbstractMethodPars
 
     @Test
     public void testParseSetterS() throws Exception {
-        OMMap.put( setterR, lhRLst );
-        OMMap.put( existential, lhULst );
-        OMMap.put( remover, lhULst );
         final PredicateInfo predicateInfo = parser.parse( setterS );
         assertSame( PIMap.get( setterS ), predicateInfo, setterS );
         assertSame( getter );
@@ -138,9 +106,6 @@ public abstract class AbstractSimpleURICollectionTest extends AbstractMethodPars
 
     @Test
     public void testParseSetterR() throws Exception {
-        OMMap.put( setterS, lhULst );
-        OMMap.put( existential, lhULst );
-        OMMap.put( remover, lhULst );
         final PredicateInfo predicateInfo = parser.parse( setterR );
         assertSame( PIMap.get( setterR ), predicateInfo, setterR );
         assertSame( getter );
@@ -174,12 +139,7 @@ public abstract class AbstractSimpleURICollectionTest extends AbstractMethodPars
 
     @Test
     public void testParseGetter2() throws Exception {
-        OMMap.put( setterR2, lhRIter );
-        OMMap.put( setterS2, lhUIter );
-        OMMap.put( existential2, lhUIter );
-        OMMap.put( removerR2, lhRIter );
-        OMMap.put( removerS2, lhUIter );
-        final PredicateInfo predicateInfo = parser.parse( getter2 );
+         final PredicateInfo predicateInfo = parser.parse( getter2 );
         assertSame( PIMap.get( getter2 ), predicateInfo, getter2 );
         assertSame( getter2 );
         assertSame( setterR2 );
@@ -191,11 +151,7 @@ public abstract class AbstractSimpleURICollectionTest extends AbstractMethodPars
 
     @Test
     public void testParseSetterR2() throws Exception {
-        OMMap.put( setterS2, lhUIter );
-        OMMap.put( existential2, lhUIter );
-        OMMap.put( removerR2, lhRIter );
-        OMMap.put( removerS2, lhUIter );
-        final PredicateInfo predicateInfo = parser.parse( setterR2 );
+         final PredicateInfo predicateInfo = parser.parse( setterR2 );
         assertSame( PIMap.get( setterR2 ), predicateInfo, setterR2 );
         assertSame( getter2 );
         assertSame( setterR2 );
@@ -207,10 +163,6 @@ public abstract class AbstractSimpleURICollectionTest extends AbstractMethodPars
 
     @Test
     public void testParseSetterS2() throws Exception {
-        OMMap.put( setterR2, lhRIter );
-        OMMap.put( existential2, lhUIter );
-        OMMap.put( removerR2, lhRIter );
-        OMMap.put( removerS2, lhUIter );
         final PredicateInfo predicateInfo = parser.parse( setterS2 );
         assertSame( PIMap.get( setterS2 ), predicateInfo, setterS2 );
         assertSame( getter2 );

@@ -39,7 +39,7 @@ public abstract class AbstractSimpleInterfaceTest extends AbstractPredicateTest 
         assertSame( builder, setX, mthd );
 
         mthd = interfaceClass.getMethod( "hasX" );
-        builder.setActionType( ActionType.EXISTENTIAL );
+        builder.setActionType( ActionType.EXISTENTIAL ).setType(  Predicate.UNSET.class );
         EffectivePredicate hasX = new EffectivePredicate( mthd ).merge( getX );
         assertSame( builder, hasX, mthd );
 

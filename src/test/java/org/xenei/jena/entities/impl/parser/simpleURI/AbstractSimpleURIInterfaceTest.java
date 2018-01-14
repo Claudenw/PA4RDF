@@ -31,25 +31,20 @@ public abstract class AbstractSimpleURIInterfaceTest extends AbstractMethodParse
 
         getter = interfaceClass.getMethod( "getU" );
         PIMap.put( getter, mockPredicateInfo( getter, "u", ActionType.GETTER, RDFNode.class, 0 ) );
-        OMMap.put( getter, ResourceHandler.INSTANCE );
-
+       
         setterR = interfaceClass.getMethod( "setU", RDFNode.class );
         PIMap.put( setterR, mockPredicateInfo( setterR, "u", ActionType.SETTER, RDFNode.class, 0 ) );
-        OMMap.put( setterR, ResourceHandler.INSTANCE );
-
+       
         setterS = interfaceClass.getMethod( "setU", String.class );
         PIMap.put( setterS, mockPredicateInfo( setterS, "u", ActionType.SETTER, String.class, 0 ) );
-        OMMap.put( setterS, UriHandler.INSTANCE );
-
+       
         remover = interfaceClass.getMethod( "removeU" );
         PIMap.put( remover, mockPredicateInfo( remover, "u", ActionType.REMOVER, Predicate.UNSET.class, 0 ) );
-        OMMap.put( remover, VoidHandler.INSTANCE );
-
+       
         existential = interfaceClass.getMethod( "hasU" );
         PIMap.put( existential, mockPredicateInfo( existential, "u", ActionType.EXISTENTIAL,
                 TypeChecker.getPrimitiveClass( Boolean.class ), 0 ) );
-        OMMap.put( existential, VoidHandler.INSTANCE );
-
+       
         addCount.put( "setU", Integer.valueOf( 2 ) );
     }
 
@@ -60,8 +55,8 @@ public abstract class AbstractSimpleURIInterfaceTest extends AbstractMethodParse
         assertSame( getter );
         assertSame( setterS );
         assertSame( setterR );
-        Assert.assertNull( subjectInfo.getPredicateInfo( existential ) );
-        Assert.assertNull( subjectInfo.getPredicateInfo( remover ) );
+        assertSame( existential );
+        assertSame( remover );
 
     }
 
@@ -72,8 +67,8 @@ public abstract class AbstractSimpleURIInterfaceTest extends AbstractMethodParse
         assertSame( getter );
         assertSame( setterS );
         assertSame( setterR );
-        Assert.assertNull( subjectInfo.getPredicateInfo( existential ) );
-        Assert.assertNull( subjectInfo.getPredicateInfo( remover ) );
+        assertSame( existential );
+        assertSame( remover );
     }
 
     @Test
@@ -83,8 +78,8 @@ public abstract class AbstractSimpleURIInterfaceTest extends AbstractMethodParse
         assertSame( getter );
         assertSame( setterS );
         assertSame( setterR );
-        Assert.assertNull( subjectInfo.getPredicateInfo( existential ) );
-        Assert.assertNull( subjectInfo.getPredicateInfo( remover ) );
+        assertSame( existential );
+        assertSame( remover );
     }
 
     @Test

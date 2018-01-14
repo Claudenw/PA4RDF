@@ -11,6 +11,7 @@ import org.xenei.jena.entities.EntityManager;
 import org.xenei.jena.entities.EntityManagerFactory;
 import org.xenei.jena.entities.MissingAnnotation;
 import org.xenei.jena.entities.ResourceWrapper;
+import org.xenei.jena.entities.impl.EntityManagerImpl;
 import org.xenei.jena.entities.impl.SubjectInfoImpl;
 
 abstract public class BaseAbstractManagerTest {
@@ -20,10 +21,14 @@ abstract public class BaseAbstractManagerTest {
     protected EntityManager manager;
     protected Model model;
 
+    static {
+        EntityManagerImpl.registerTypes();
+    }
+
     protected BaseAbstractManagerTest(final Class<?> classUnderTest) {
         this.classUnderTest = classUnderTest;
     }
-
+    
     @Before
     public void setup() throws MissingAnnotation {
         model = ModelFactory.createDefaultModel();

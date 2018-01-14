@@ -72,7 +72,7 @@ public abstract class AbstractSingleValueObjectTest extends AbstractPredicateTes
         assertSame( builder, othr, mthd );
 
         mthd = interfaceClass.getMethod( "removeBool" );
-        builder.setActionType( ActionType.REMOVER );
+        builder.setActionType( ActionType.REMOVER ).setType(  Predicate.UNSET.class );
         othr = new EffectivePredicate( mthd ).merge( base );
         assertSame( builder, othr, mthd );
 
@@ -86,7 +86,7 @@ public abstract class AbstractSingleValueObjectTest extends AbstractPredicateTes
         assertSame( builder, othr, mthd );
 
         mthd = interfaceClass.getMethod( "removeChar" );
-        builder.setActionType( ActionType.REMOVER );
+        builder.setActionType( ActionType.REMOVER ).setType(  Predicate.UNSET.class );
         othr = new EffectivePredicate( mthd ).merge( base );
         assertSame( builder, othr, mthd );
 
@@ -100,7 +100,7 @@ public abstract class AbstractSingleValueObjectTest extends AbstractPredicateTes
         assertSame( builder, othr, mthd );
 
         mthd = interfaceClass.getMethod( "removeDbl" );
-        builder.setActionType( ActionType.REMOVER );
+        builder.setActionType( ActionType.REMOVER ).setType(  Predicate.UNSET.class );
         othr = new EffectivePredicate( mthd ).merge( base );
         assertSame( builder, othr, mthd );
 
@@ -114,7 +114,7 @@ public abstract class AbstractSingleValueObjectTest extends AbstractPredicateTes
         assertSame( builder, othr, mthd );
 
         mthd = interfaceClass.getMethod( "removeEnt" );
-        builder.setActionType( ActionType.REMOVER );
+        builder.setActionType( ActionType.REMOVER ).setType(  Predicate.UNSET.class );
         othr = new EffectivePredicate( mthd ).merge( base );
         assertSame( builder, othr, mthd );
 
@@ -130,7 +130,7 @@ public abstract class AbstractSingleValueObjectTest extends AbstractPredicateTes
         assertSame( builder, othr, mthd );
 
         mthd = interfaceClass.getMethod( "removeFlt" );
-        builder.setActionType( ActionType.REMOVER );
+        builder.setActionType( ActionType.REMOVER ).setType(  Predicate.UNSET.class );
         othr = new EffectivePredicate( mthd ).merge( base );
         assertSame( builder, othr, mthd );
 
@@ -145,7 +145,7 @@ public abstract class AbstractSingleValueObjectTest extends AbstractPredicateTes
         assertSame( builder, othr, mthd );
 
         mthd = interfaceClass.getMethod( "removeInt" );
-        builder.setActionType( ActionType.REMOVER );
+        builder.setActionType( ActionType.REMOVER ).setType(  Predicate.UNSET.class );
         othr = new EffectivePredicate( mthd ).merge( base );
         assertSame( builder, othr, mthd );
 
@@ -159,7 +159,7 @@ public abstract class AbstractSingleValueObjectTest extends AbstractPredicateTes
         assertSame( builder, othr, mthd );
 
         mthd = interfaceClass.getMethod( "removeLng" );
-        builder.setActionType( ActionType.REMOVER );
+        builder.setActionType( ActionType.REMOVER ).setType(  Predicate.UNSET.class );
         othr = new EffectivePredicate( mthd ).merge( base );
         assertSame( builder, othr, mthd );
 
@@ -173,7 +173,7 @@ public abstract class AbstractSingleValueObjectTest extends AbstractPredicateTes
         assertSame( builder, othr, mthd );
 
         mthd = interfaceClass.getMethod( "removeRDF" );
-        builder.setActionType( ActionType.REMOVER );
+        builder.setActionType( ActionType.REMOVER ).setType(  Predicate.UNSET.class );
         othr = new EffectivePredicate( mthd ).merge( base );
         assertSame( builder, othr, mthd );
 
@@ -188,7 +188,7 @@ public abstract class AbstractSingleValueObjectTest extends AbstractPredicateTes
         assertSame( builder, othr, mthd );
 
         mthd = interfaceClass.getMethod( "removeStr" );
-        builder.setActionType( ActionType.REMOVER );
+        builder.setActionType( ActionType.REMOVER ).setType(  Predicate.UNSET.class );
         othr = new EffectivePredicate( mthd ).merge( base );
         assertSame( builder, othr, mthd );
 
@@ -202,7 +202,7 @@ public abstract class AbstractSingleValueObjectTest extends AbstractPredicateTes
         assertSame( builder, othr, mthd );
 
         mthd = interfaceClass.getMethod( "removeU" );
-        builder.setActionType( ActionType.REMOVER );
+        builder.setActionType( ActionType.REMOVER ).setType(  Predicate.UNSET.class );
         othr = new EffectivePredicate( mthd ).merge( base );
         assertSame( builder, othr, mthd );
 
