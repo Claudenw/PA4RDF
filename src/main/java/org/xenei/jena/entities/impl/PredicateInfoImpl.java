@@ -29,6 +29,8 @@ import java.util.Set;
 import java.util.function.Function;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.jena.datatypes.RDFDatatype;
 import org.apache.jena.datatypes.TypeMapper;
 import org.apache.jena.rdf.model.NodeIterator;
@@ -42,6 +44,7 @@ import org.apache.jena.rdf.model.StmtIterator;
 import org.apache.jena.shared.Lock;
 import org.apache.jena.util.iterator.ExtendedIterator;
 import org.apache.jena.util.iterator.WrappedIterator;
+import org.junit.Assert;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xenei.jena.entities.EntityManager;
@@ -63,6 +66,7 @@ import org.xenei.jena.entities.impl.handlers.VoidHandler;
  * LongDatatype that parses Longs and always returns a long.
  */
 public class PredicateInfoImpl implements PredicateInfo {
+    
     /**
      * The type that this predicate is expected to create.
      */
@@ -87,6 +91,8 @@ public class PredicateInfoImpl implements PredicateInfo {
 //     * The map annotations on this method indexed by Annotation class.
 //     */
 //    private final Map<Class<?>, Annotation> annotations;
+    
+    private final int hashCode;
 
     /**
      * Create a sorted list of registered data types.
@@ -232,6 +238,11 @@ public class PredicateInfoImpl implements PredicateInfo {
 //                concreteType = valueClass;
 //            }
         }
+         hashCode = new HashCodeBuilder()
+                 .append(  predicate.actionType() )
+                 .append(  methodName )
+                 .append(  valueClass  )
+                 .build();
     }
 
     /**
@@ -244,6 +255,7 @@ public class PredicateInfoImpl implements PredicateInfo {
         this.predicate = new EffectivePredicate( pi.predicate );
         this.property = pi.property;
         this.valueClass = pi.valueClass;
+        this.hashCode = pi.hashCode;
         //this.annotations = new HashMap<Class<?>, Annotation>( pi.annotations );
     }
 
@@ -568,5 +580,30 @@ public class PredicateInfoImpl implements PredicateInfo {
 //    public Collection<Annotation> getAnnotations() {
 //        return Collections.unmodifiableCollection( annotations.values() );
 //    }
+    
+    @Override
+    public boolean equals( Object o )
+    {
+        if (o instanceof PredicateInfo)
+        {
+            PredicateInfo other = (PredicateInfo) o;
+            return new EqualsBuilder()
+            .append( getActionType(), other.getActionType() )
+            .append( getMethodName(), other.getMethodName())
+            .append( getNamespace(), other.getNamespace())
+            .append( getPostExec(), other.getPostExec())
+            .append( getProperty(),  other.getProperty() )
+            .append(  getUriString(),  other.getUriString() )
+            .append(  getValueClass(),  other.getValueClass() )
+            .build();
+        }
+        return false;
+    }
+    
+    @Override
+    public int hashCode()
+    {
+        return hashCode;
+    }
     
 }

@@ -1,4 +1,4 @@
-package org.xenei.jena.entities.impl.manager;
+package org.xenei.jena.entities.impl.manager.singleValue;
 
 import org.apache.jena.datatypes.TypeMapper;
 import org.apache.jena.rdf.model.RDFNode;
@@ -11,6 +11,7 @@ import org.xenei.jena.entities.impl.handlers.LiteralHandler;
 import org.xenei.jena.entities.impl.handlers.ResourceHandler;
 import org.xenei.jena.entities.impl.handlers.UriHandler;
 import org.xenei.jena.entities.impl.handlers.VoidHandler;
+import org.xenei.jena.entities.impl.manager.BaseAbstractManagerTest;
 import org.xenei.jena.entities.testing.iface.TestInterface;
 
 public abstract class AbstractSingleValueTest extends BaseAbstractManagerTest {

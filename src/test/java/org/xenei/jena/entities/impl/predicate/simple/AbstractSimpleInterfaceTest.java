@@ -1,21 +1,52 @@
 package org.xenei.jena.entities.impl.predicate.simple;
 
+import java.lang.reflect.Method;
+
 import org.apache.jena.datatypes.xsd.XSDDatatype;
 import org.apache.jena.rdf.model.Literal;
 import org.apache.jena.rdf.model.RDFNode;
 import org.junit.Test;
 import org.xenei.jena.entities.annotations.Predicate;
 import org.xenei.jena.entities.impl.ActionType;
+import org.xenei.jena.entities.impl.EffectivePredicate;
 import org.xenei.jena.entities.impl.predicate.AbstractPredicateTest;
 import org.xenei.jena.entities.testing.iface.SimpleInterface;
 
 public abstract class AbstractSimpleInterfaceTest extends AbstractPredicateTest {
 
-    protected AbstractSimpleInterfaceTest(Class<? extends SimpleInterface> interfaceClass)
+    protected AbstractSimpleInterfaceTest(Class<?> interfaceClass)
             throws NoSuchMethodException, SecurityException {
         super( interfaceClass );
 
         builder.setNamespace( "http://example.com/" ).setName( "x" );
+
+    }
+
+    /*
+     * order Predicate : Getter Predicate : Other
+     * 
+     * Class method order with same name.
+     * 
+     * 
+     */
+    public void processOrderTest() throws NoSuchMethodException, SecurityException {
+        EffectivePredicate getX = new EffectivePredicate( interfaceClass.getMethod( "getX" ) );
+        builder.setInternalType( Literal.class ).setLiteralType( XSDDatatype.XSDstring ).setType( String.class );
+
+        Method mthd = interfaceClass.getMethod( "setX", String.class );
+        EffectivePredicate setX = new EffectivePredicate( mthd ).merge( getX );
+        builder.setActionType( ActionType.SETTER );
+        assertSame( builder, setX, mthd );
+
+        mthd = interfaceClass.getMethod( "hasX" );
+        builder.setActionType( ActionType.EXISTENTIAL );
+        EffectivePredicate hasX = new EffectivePredicate( mthd ).merge( getX );
+        assertSame( builder, hasX, mthd );
+
+        mthd = interfaceClass.getMethod( "removeX" );
+        builder.setActionType( ActionType.REMOVER );
+        EffectivePredicate removeX = new EffectivePredicate( mthd ).merge( getX );
+        assertSame( builder, removeX, mthd );
 
     }
 

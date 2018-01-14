@@ -1,4 +1,4 @@
-package org.xenei.jena.entities.impl.manager;
+package org.xenei.jena.entities.impl.manager.singleValue;
 
 import org.xenei.jena.entities.testing.abst.SingleValueObjectAnnotatedAbst;
 

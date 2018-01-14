@@ -78,7 +78,6 @@ public class MethodParser {
 
                 case GETTER:
                     parseGetter( method, predicate );
-
                     break;
 
                 case REMOVER:

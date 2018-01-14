@@ -28,7 +28,7 @@ public abstract class AbstractSimpleInterfaceTest extends AbstractMethodParserTe
         EntityManagerImpl.registerTypes();
     }
 
-    protected AbstractSimpleInterfaceTest(Class<? extends SimpleInterface> interfaceClass)
+    protected AbstractSimpleInterfaceTest(Class<?> interfaceClass)
             throws NoSuchMethodException, SecurityException {
         super( interfaceClass );
 

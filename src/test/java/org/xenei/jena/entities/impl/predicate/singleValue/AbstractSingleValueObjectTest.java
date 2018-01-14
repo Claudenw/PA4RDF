@@ -1,12 +1,16 @@
 package org.xenei.jena.entities.impl.predicate.singleValue;
 
+import java.lang.reflect.Method;
+
 import org.apache.jena.datatypes.xsd.XSDDatatype;
 import org.apache.jena.rdf.model.Literal;
 import org.apache.jena.rdf.model.RDFNode;
+import org.apache.jena.util.iterator.ExtendedIterator;
 import org.junit.Test;
 import org.xenei.jena.entities.annotations.Predicate;
 import org.xenei.jena.entities.annotations.URI;
 import org.xenei.jena.entities.impl.ActionType;
+import org.xenei.jena.entities.impl.EffectivePredicate;
 import org.xenei.jena.entities.impl.datatype.CharacterDatatype;
 import org.xenei.jena.entities.impl.datatype.LongDatatype;
 import org.xenei.jena.entities.impl.predicate.AbstractPredicateTest;
@@ -17,6 +21,195 @@ public abstract class AbstractSingleValueObjectTest extends AbstractPredicateTes
     protected AbstractSingleValueObjectTest(final Class<?> classUnderTest) {
         super( classUnderTest );
         builder.setNamespace( "http://localhost/test#" );
+    }
+
+    /*
+     * order Predicate : Getter Predicate : Other
+     * 
+     * Class method order with same name.
+     * 
+     * 
+     * 
+     * 
+     * 
+     * @Predicate void setBool(Boolean b);
+     * 
+     * @Predicate void setChar(Character b);
+     * 
+     * @Predicate void setDbl(Double b);
+     * 
+     * @Predicate void setEnt(TestInterface b);
+     * 
+     * @Predicate void setFlt(Float b);
+     * 
+     * @Predicate void setInt(Integer b);
+     * 
+     * @Predicate void setLng(Long b);
+     * 
+     * @Predicate void setRDF(RDFNode b);
+     * 
+     * @Predicate void setStr(String b);
+     * 
+     * @Predicate void setSubPredicate(SubPredicate subPredicate);
+     * 
+     * @Predicate void setU(@URI String b);
+     * 
+     * @Predicate(type = URI.class, name = "u") String getU2();
+     * 
+     * 
+     */
+    @Override
+    public void processOrderTest() throws NoSuchMethodException, SecurityException {
+
+        // bool
+        EffectivePredicate base = new EffectivePredicate( interfaceClass.getMethod( "setBool", Boolean.class ) );
+        builder.setType( Boolean.class ).setName( "bool" ).setInternalType( Literal.class )
+                .setLiteralType( XSDDatatype.XSDboolean );
+
+        Method mthd = interfaceClass.getMethod( "isBool" );
+        EffectivePredicate othr = new EffectivePredicate( mthd ).merge( base );
+        builder.setActionType( ActionType.GETTER );
+        assertSame( builder, othr, mthd );
+
+        mthd = interfaceClass.getMethod( "removeBool" );
+        builder.setActionType( ActionType.REMOVER );
+        othr = new EffectivePredicate( mthd ).merge( base );
+        assertSame( builder, othr, mthd );
+
+        // char
+        base = new EffectivePredicate( interfaceClass.getMethod( "setChar", Character.class ) );
+        builder.setType( Character.class ).setName( "char" ).setLiteralType( CharacterDatatype.INSTANCE );
+
+        mthd = interfaceClass.getMethod( "getChar" );
+        othr = new EffectivePredicate( mthd ).merge( base );
+        builder.setActionType( ActionType.GETTER );
+        assertSame( builder, othr, mthd );
+
+        mthd = interfaceClass.getMethod( "removeChar" );
+        builder.setActionType( ActionType.REMOVER );
+        othr = new EffectivePredicate( mthd ).merge( base );
+        assertSame( builder, othr, mthd );
+
+        // dbl
+        base = new EffectivePredicate( interfaceClass.getMethod( "setDbl", Double.class ) );
+        builder.setType( Double.class ).setName( "dbl" ).setLiteralType( XSDDatatype.XSDdouble );
+
+        mthd = interfaceClass.getMethod( "getDbl" );
+        othr = new EffectivePredicate( mthd ).merge( base );
+        builder.setActionType( ActionType.GETTER );
+        assertSame( builder, othr, mthd );
+
+        mthd = interfaceClass.getMethod( "removeDbl" );
+        builder.setActionType( ActionType.REMOVER );
+        othr = new EffectivePredicate( mthd ).merge( base );
+        assertSame( builder, othr, mthd );
+
+        // ent
+        base = new EffectivePredicate( interfaceClass.getMethod( "setEnt", TestInterface.class ) );
+        builder.setType( TestInterface.class ).setName( "ent" ).setInternalType( RDFNode.class ).setLiteralType( null );
+
+        mthd = interfaceClass.getMethod( "getEnt" );
+        othr = new EffectivePredicate( mthd ).merge( base );
+        builder.setActionType( ActionType.GETTER );
+        assertSame( builder, othr, mthd );
+
+        mthd = interfaceClass.getMethod( "removeEnt" );
+        builder.setActionType( ActionType.REMOVER );
+        othr = new EffectivePredicate( mthd ).merge( base );
+        assertSame( builder, othr, mthd );
+
+        // flt
+        base = new EffectivePredicate( interfaceClass.getMethod( "setFlt", Float.class ) );
+        builder.setType( Float.class ).setName( "flt" ).setInternalType( Literal.class )
+                .setLiteralType( XSDDatatype.XSDfloat );
+        ;
+
+        mthd = interfaceClass.getMethod( "getFlt" );
+        othr = new EffectivePredicate( mthd ).merge( base );
+        builder.setActionType( ActionType.GETTER );
+        assertSame( builder, othr, mthd );
+
+        mthd = interfaceClass.getMethod( "removeFlt" );
+        builder.setActionType( ActionType.REMOVER );
+        othr = new EffectivePredicate( mthd ).merge( base );
+        assertSame( builder, othr, mthd );
+
+        // int
+        base = new EffectivePredicate( interfaceClass.getMethod( "setInt", Integer.class ) );
+        builder.setType( Integer.class ).setName( "int" ).setLiteralType( XSDDatatype.XSDint );
+        ;
+
+        mthd = interfaceClass.getMethod( "getInt" );
+        othr = new EffectivePredicate( mthd ).merge( base );
+        builder.setActionType( ActionType.GETTER );
+        assertSame( builder, othr, mthd );
+
+        mthd = interfaceClass.getMethod( "removeInt" );
+        builder.setActionType( ActionType.REMOVER );
+        othr = new EffectivePredicate( mthd ).merge( base );
+        assertSame( builder, othr, mthd );
+
+        // lng
+        base = new EffectivePredicate( interfaceClass.getMethod( "setLng", Long.class ) );
+        builder.setType( Long.class ).setName( "lng" ).setLiteralType( LongDatatype.INSTANCE );
+
+        mthd = interfaceClass.getMethod( "getLng" );
+        othr = new EffectivePredicate( mthd ).merge( base );
+        builder.setActionType( ActionType.GETTER );
+        assertSame( builder, othr, mthd );
+
+        mthd = interfaceClass.getMethod( "removeLng" );
+        builder.setActionType( ActionType.REMOVER );
+        othr = new EffectivePredicate( mthd ).merge( base );
+        assertSame( builder, othr, mthd );
+
+        // RDF
+        base = new EffectivePredicate( interfaceClass.getMethod( "setRDF", RDFNode.class ) );
+        builder.setType( RDFNode.class ).setName( "rDF" ).setInternalType( RDFNode.class ).setLiteralType( null );
+
+        mthd = interfaceClass.getMethod( "getRDF" );
+        othr = new EffectivePredicate( mthd ).merge( base );
+        builder.setActionType( ActionType.GETTER );
+        assertSame( builder, othr, mthd );
+
+        mthd = interfaceClass.getMethod( "removeRDF" );
+        builder.setActionType( ActionType.REMOVER );
+        othr = new EffectivePredicate( mthd ).merge( base );
+        assertSame( builder, othr, mthd );
+
+        // str
+        base = new EffectivePredicate( interfaceClass.getMethod( "setStr", String.class ) );
+        builder.setType( String.class ).setName( "str" ).setInternalType( Literal.class )
+                .setLiteralType( XSDDatatype.XSDstring );
+
+        mthd = interfaceClass.getMethod( "getStr" );
+        othr = new EffectivePredicate( mthd ).merge( base );
+        builder.setActionType( ActionType.GETTER );
+        assertSame( builder, othr, mthd );
+
+        mthd = interfaceClass.getMethod( "removeStr" );
+        builder.setActionType( ActionType.REMOVER );
+        othr = new EffectivePredicate( mthd ).merge( base );
+        assertSame( builder, othr, mthd );
+
+        // U
+        base = new EffectivePredicate( interfaceClass.getMethod( "getU" ) );
+        builder.setType( RDFNode.class ).setName( "u" ).setInternalType( RDFNode.class ).setLiteralType( null );
+
+        mthd = interfaceClass.getMethod( "setU", RDFNode.class );
+        othr = new EffectivePredicate( mthd ).merge( base );
+        builder.setActionType( ActionType.SETTER );
+        assertSame( builder, othr, mthd );
+
+        mthd = interfaceClass.getMethod( "removeU" );
+        builder.setActionType( ActionType.REMOVER );
+        othr = new EffectivePredicate( mthd ).merge( base );
+        assertSame( builder, othr, mthd );
+
+        // U2
+        base = new EffectivePredicate( interfaceClass.getMethod( "getU2" ) );
+        builder.setType( RDFNode.class ).setCollectionType( ExtendedIterator.class ).setName( "u2" );
+
     }
 
     @Test

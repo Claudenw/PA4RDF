@@ -256,12 +256,32 @@ public class EffectivePredicate {
             upcase = predicate.upcase();
             setName( StringUtils.isBlank( predicate.name() ) ? name : predicate.name() );
             namespace = StringUtils.isBlank( predicate.namespace() ) ? namespace : predicate.namespace();
-            literalType = notNull( literalType, predicate.literalType );
-            if ( !actionType.allowsNull() )
+            
+            if (Predicate.UNSET.class.equals( this.type ))
             {
-                type = notNull( type, predicate.type() );
-                internalType = notNull( predicate.internalType, internalType );
-            }            
+                if (URI.class.equals(  predicate.type ))
+                {
+                    this.type = RDFNode.class;
+                    
+                }
+                else {
+                    this.type = predicate.type;
+                    this.internalType = predicate.internalType;
+                    this.literalType = predicate.literalType;
+                }
+            } else if (URI.class.equals(  predicate.type ) || URI.class.equals(  this.type )) {
+                // URI type is custom by annotation and not changeable.
+            } else {
+                if ( !actionType.allowsNull() )
+                {
+                    type = notNull( type, predicate.type() );
+                    internalType = notNull( internalType, predicate.internalType );
+                    literalType = notNull( literalType, predicate.literalType );
+                    setInternalType();
+                }
+
+            }
+
             collectionType = notNull( predicate.collectionType, collectionType );
             impl |= predicate.impl;
         }

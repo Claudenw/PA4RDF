@@ -23,10 +23,9 @@ public abstract class AbstractSimpleURIInterfaceTest extends AbstractMethodParse
     protected final Method remover;
     protected final Method existential;
 
-    static {
-        EntityManagerImpl.registerTypes();
-    }
-
+    /*
+     * setter string is annotated with predicate 
+     */
     protected AbstractSimpleURIInterfaceTest(Class<?> interfaceClass) throws NoSuchMethodException, SecurityException {
         super( interfaceClass );
 
@@ -61,8 +60,8 @@ public abstract class AbstractSimpleURIInterfaceTest extends AbstractMethodParse
         assertSame( getter );
         assertSame( setterS );
         assertSame( setterR );
-        assertSame( existential );
-        assertSame( remover );
+        Assert.assertNull( subjectInfo.getPredicateInfo( existential ) );
+        Assert.assertNull( subjectInfo.getPredicateInfo( remover ) );
 
     }
 
@@ -73,8 +72,8 @@ public abstract class AbstractSimpleURIInterfaceTest extends AbstractMethodParse
         assertSame( getter );
         assertSame( setterS );
         assertSame( setterR );
-        assertSame( existential );
-        assertSame( remover );
+        Assert.assertNull( subjectInfo.getPredicateInfo( existential ) );
+        Assert.assertNull( subjectInfo.getPredicateInfo( remover ) );
     }
 
     @Test
@@ -84,8 +83,8 @@ public abstract class AbstractSimpleURIInterfaceTest extends AbstractMethodParse
         assertSame( getter );
         assertSame( setterS );
         assertSame( setterR );
-        assertSame( existential );
-        assertSame( remover );
+        Assert.assertNull( subjectInfo.getPredicateInfo( existential ) );
+        Assert.assertNull( subjectInfo.getPredicateInfo( remover ) );
     }
 
     @Test

@@ -7,7 +7,10 @@ import java.util.List;
 import java.util.Stack;
 
 import org.apache.jena.datatypes.RDFDatatype;
+import org.apache.jena.datatypes.xsd.XSDDatatype;
+import org.apache.jena.rdf.model.Literal;
 import org.junit.Assert;
+import org.junit.Test;
 import org.xenei.jena.entities.impl.ActionType;
 import org.xenei.jena.entities.impl.EffectivePredicate;
 import org.xenei.jena.entities.impl.EntityManagerImpl;
@@ -82,6 +85,16 @@ public abstract class AbstractPredicateTest {
         }
         assertSame( builder, actual, method );
     }
+    
+/*
+ * order Predicate : Getter Predicate : Other
+     * 
+     * Class method order with same name.
+     * 
+     * 
+     */
+    @Test
+    public abstract void processOrderTest() throws NoSuchMethodException, SecurityException;
 
     public static class EffectivePredicateBuilder {
         private boolean upcase = false;
