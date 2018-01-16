@@ -49,6 +49,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xenei.jena.entities.EntityManager;
 import org.xenei.jena.entities.PredicateInfo;
+import org.xenei.jena.entities.annotations.Predicate;
 import org.xenei.jena.entities.annotations.Subject;
 import org.xenei.jena.entities.annotations.URI;
 import org.xenei.jena.entities.impl.handlers.EntityHandler;
@@ -151,22 +152,24 @@ public class PredicateInfoImpl implements PredicateInfo {
      */
     public static ObjectHandler getHandler(final EntityManager entityManager, final Class<?> returnType,
             final EffectivePredicate pred) {
-        // it is a literal
-        if (pred.literalType() != null)
-        {
-            return new LiteralHandler( pred.literalType() );
-        }
+        
                 
-        if (pred.isCollection())
+        if (pred.isCollection() )
         {
             EffectivePredicate ep = new EffectivePredicate( pred );
             ep.collectionType( null );
             ObjectHandler handler = PredicateInfoImpl.getHandler( entityManager, returnType, ep );
-            return new CollectionHandler( handler, pred.collectionType() );            
+            return new CollectionHandler( handler, pred.collectionType().equals( Predicate.UNSET.class ) ? Collection.class : pred.collectionType() );            
+        }
+        
+     // it is a literal
+        if (pred.literalType() != null)
+        {
+            return new LiteralHandler( pred.literalType() );
         }
         
         if (pred.type().getAnnotation( Subject.class ) != null) {
-            return new EntityHandler( entityManager, returnType );
+            return new EntityHandler( entityManager, pred.type() );
         }
         
         if (RDFNode.class.isAssignableFrom( pred.type() )) {
@@ -179,7 +182,6 @@ public class PredicateInfoImpl implements PredicateInfo {
                 
         return VoidHandler.INSTANCE;
     }
-
     /**
      * Constructor.
      * 

@@ -51,6 +51,10 @@ public class EffectivePredicate {
     private List<Method> postExec = null;
     private final ActionType actionType;
 
+    /**
+     * Copy constructor.
+     * @param ep the Effective predicate to copy.
+     */
     public EffectivePredicate(final EffectivePredicate ep) {        
         actionType = ep.actionType;
         collectionType = ep.collectionType;
@@ -67,6 +71,20 @@ public class EffectivePredicate {
         upcase = ep.upcase;
     }
 
+    /**
+     * Constructor. 
+     * @param actionType The action type (may not be null)
+     * @param collectionType The collection class type (may be null)
+     * @param emptyIsNull True if empty values should be considered as null resources.
+     * @param impl True if the predicate fronts a concrete implementation. 
+     * @param internalType The class type of the object in the graph.
+     * @param literalType The internal type of Class type is Literal.
+     * @param name The name for the predicate.
+     * @param namespace the namespace for the predicate
+     * @param postExec a list of methods to execute at end of processing (may be null)
+     * @param type The class that is used in the user/api interface.
+     * @param upcase true if the first character of the name should be upper case.
+     */
     public EffectivePredicate(ActionType actionType, Class<?> collectionType, boolean emptyIsNull, 
             boolean impl, Class<?> internalType, RDFDatatype literalType, String name, 
             String namespace, List<Method> postExec, Class<?> type, boolean upcase) { 
@@ -83,6 +101,11 @@ public class EffectivePredicate {
         this.upcase = upcase;
         
     }
+    
+    /**
+     * Constructor.
+     * @param method The method to build the effective predicate from.
+     */
     public EffectivePredicate(final Method method) {
         
         if (method != null) {
@@ -135,6 +158,10 @@ public class EffectivePredicate {
                 break;
             }
            
+            if (this.collectionType == null && ActionType.isMultiple( method ))
+            {
+                this.collectionType = Predicate.UNSET.class;
+            }
             final Subject s = method.getDeclaringClass().getAnnotation( Subject.class );           
             if (s != null) {
                 this.namespace = s.namespace();
@@ -179,6 +206,12 @@ public class EffectivePredicate {
         }
     }
 
+    /**
+     * Check that the predicate is valid. 
+     * 
+     * Checks that type and internaleType are set and that literalType is set as required.
+     * Throws RuntimeException if there are any issues.
+     */
     public void checkValid() {
         /* type may not be null and may only be unset in the REMOVER action type */
         if ((this.type == null) ||
@@ -195,6 +228,9 @@ public class EffectivePredicate {
         }        
     }
 
+    /**
+     * Set the internal type and literal type if necessary base on the type.
+     */
     private void setInternalType() {
         if (this.internalType != null || type == null) {
             return;
@@ -212,20 +248,36 @@ public class EffectivePredicate {
         }
     }
 
+    /**
+     * 
+     * @return get the action type.
+     */
     public ActionType actionType() {
         return actionType;
     }
 
+    /**
+     * May be empty but not null.
+     * @return get the post exec method list.  
+     */
     public List<Method> postExec() {
         return notNull( postExec, Collections.emptyList() );
     }
 
+    /**
+     * Add a methods to the post exec processing.
+     * @param peMethods the collection of methods to add 
+     */
     public void addPostExec(Collection<Method> peMethods) {
         for (final Method m : peMethods) {
             addPostExec( m );
         }
     }
 
+    /**
+     * Add a single method to the post exec processing.
+     * @param peMethod the method to add
+     */
     public void addPostExec(Method peMethod) {
         if (postExec == null) {
             postExec = new ArrayList<Method>();
@@ -235,10 +287,17 @@ public class EffectivePredicate {
         }
     }
 
+    /**
+     * @return true if empty values should be considered as null.
+     */
     public boolean emptyIsNull() {
         return emptyIsNull;
     }
 
+    /**
+     * 
+     * @return true if the method is a concreate method.
+     */
     public boolean impl() {
         return impl;
     }
@@ -247,10 +306,22 @@ public class EffectivePredicate {
         return literalType;
     }
 
-    private <T> T notNull(T opt, T orig) {
-        return (opt == null || Predicate.UNSET.class.equals( opt )) ? orig : opt;
+    /**
+     * Return a value if it is not null.
+     * if opt is Predicate.UNSET.class it is considered as null.
+     * @param opt the item to check.
+     * @param dflt the default if opt is null.
+     * @return opt or null.
+     */
+    private <T> T notNull(T opt, T dflt) {
+        return (opt == null || Predicate.UNSET.class.equals( opt )) ? dflt : opt;
     }
 
+    /**
+     * Merge another effective predicate into this on.
+     * @param predicate the other predicate to merge.
+     * @return this predicate for chaining.
+     */
     public EffectivePredicate merge(final EffectivePredicate predicate) {
         if (predicate != null) {
             upcase = predicate.upcase();
@@ -299,10 +370,19 @@ public class EffectivePredicate {
         return this;
     }
 
+    /**
+     * Determine if this is a collection.  it is a collection of the collection type is not null.
+     * @return true if this is a collection.
+     */
     public boolean isCollection() {
         return collectionType != null;
     }
 
+    /**
+     * Merge a predicate into this effective predicate.
+     * @param predicate the predicate to merge
+     * @return this predicate for chaining.
+     */
     public EffectivePredicate merge(final Predicate predicate) {
         if (predicate != null) {
             upcase = predicate.upcase();
@@ -322,14 +402,27 @@ public class EffectivePredicate {
         return this;
     }
 
+    /**
+     * 
+     * @return Get the name of the predicate this method represents in the graph.
+     */
     public String name() {
         return name;
     }
 
+    /**
+     * 
+     * @return Get the namespace for the predicate this method represents.
+     */
     public String namespace() {
         return namespace;
     }
 
+    /**
+     * Set the name for the predicate this method represents.
+     * The value of the name may be modified by the upcase flag.
+     * @param name the name to set the predicate to.
+     */
     public void setName(final String name) {
         if (StringUtils.isNotBlank( name )) {
             final String s = name.substring( 0, 1 );
@@ -344,7 +437,7 @@ public class EffectivePredicate {
     /**
      * Get the User type. This is the type of object that should be returned
      * (getter) or accepted (other cases). If the actual type is a collection
-     * then this is the type containted by the collection.
+     * then this is the type contained by the collection.
      * 
      * @return the type.
      */
@@ -352,23 +445,43 @@ public class EffectivePredicate {
         return type;
     }
 
+    /**
+     * Set the user type.
+     * @param type the class for the user type.
+     */
     public void type(Class<?> type) {
         this.type = type;
         setInternalType();
     }
 
+    /**
+     * 
+     * @return The internal type stored in the graph. 
+     */
     public Class<?> internalType() {
         return internalType;
     }
 
+    /**
+     * 
+     * @return The collection type or null if not set.
+     */
     public Class<?> collectionType() {
         return collectionType;
     }
     
+    /**
+     * Set the collection type.
+     * @param collectionType ollection type.
+     */
     public void collectionType( Class<?> collectionType) {
         this.collectionType = collectionType;
     }
 
+    /**
+     * 
+     * @return true if type is null or Predicate.UNSET.class
+     */
     public boolean isTypeNotSet() {
         return type == null || type.equals( Predicate.UNSET.class );
     }
@@ -423,6 +536,9 @@ public class EffectivePredicate {
         return actionType==null?super.hashCode():actionType.hashCode();
     }
     
+    /**
+     * @return a formatted string suitable for logging information.
+     */
     public String formattedString() {
         return String.format(
                 "EffectivePredicate[ %n\tAction: %s%n\tCollection: %s%n\temptyIsNull: %s%n\t"

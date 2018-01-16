@@ -57,15 +57,6 @@ public enum ActionType {
         this.maxArgs = maxArgs;
     }
 
-    public boolean isMultipleFN( final String namePrefix)
-    {
-        int pos = Arrays.asList( prefixes ).indexOf( namePrefix );
-        if (pos >= 0 )
-        {
-            return flags[pos];
-        }
-        return false;
-    }
     /**
      * Return true if the method is backed by multiple entries in the graph.
      * @param method the method to check
@@ -79,7 +70,7 @@ public enum ActionType {
                     || Collection.class.isAssignableFrom( method.getReturnType() );
 
         case SETTER:
-            return method.getName().startsWith( "set" );
+            return method.getName().startsWith( "add" );
 
         case EXISTENTIAL:
         case REMOVER:
@@ -179,25 +170,6 @@ public enum ActionType {
             retval[i] = prefixes[i]+nameSuffix;
         }
         return retval;
-    }
-    
-    /**
-     * Create method names used for multiple entries from the the name suffix of the function name.
-     * 
-     * @param nameSuffix
-     *            the suffix for the name.
-     * @return an array of potential multiple method names.
-     */
-    public String[] functionNamesMultiple(final String nameSuffix) {
-        List<String> retval = new ArrayList<String>();
-        for (int i=0;i<flags.length;i++)
-        {
-            if (flags[i])
-            {
-                retval.add(  prefixes[i]+nameSuffix );
-            }
-        }
-        return retval.toArray( new String[ retval.size()] );
     }
     
     /**

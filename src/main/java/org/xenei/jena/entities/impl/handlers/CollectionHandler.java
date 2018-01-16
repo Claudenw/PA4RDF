@@ -17,6 +17,7 @@ import org.apache.jena.rdf.model.RDFList;
 import org.apache.jena.rdf.model.RDFNode;
 import org.apache.jena.util.iterator.ExtendedIterator;
 import org.apache.jena.util.iterator.WrappedIterator;
+import org.xenei.jena.entities.annotations.Predicate;
 import org.xenei.jena.entities.impl.ObjectHandler;
 
 
@@ -38,6 +39,7 @@ public class CollectionHandler extends AbstractObjectHandler {
     private final Type type; 
 
     private Constructor<?> constructor;
+    
 
     /**
      * Create a collection handler that returns the associated type.
@@ -49,6 +51,7 @@ public class CollectionHandler extends AbstractObjectHandler {
         this.innerHandler = innerHandler;
         if (Collection.class.isAssignableFrom( returnType))
         {
+
             type = Type.Collection;
             try {
                 constructor = returnType.getConstructor( );
@@ -58,6 +61,7 @@ public class CollectionHandler extends AbstractObjectHandler {
             }
             String cType="";
             try {
+                constructor = ArrayList.class.getConstructor();
 
                 if (List.class.isAssignableFrom(  returnType ))
                 {
@@ -77,19 +81,20 @@ public class CollectionHandler extends AbstractObjectHandler {
                     constructor = LinkedList.class.getConstructor();
                     return;
                 }
-                throw new IllegalStateException( "Can not find implementation for "+returnType );
-
+                cType = "ArrayList";
+                constructor = ArrayList.class.getConstructor();
+                return;
             } catch (NoSuchMethodException | SecurityException e) {
                 throw new IllegalStateException( "Can not find no argument constructor for "+cType, e );
             }
-        } else
+        } else {
             if (Iterator.class.isAssignableFrom( returnType ))
             {
                 type = Type.Iterator;
             } else {
                 throw new IllegalArgumentException( returnType+" is not a supported collection type");
             }
-
+        }
     }
 
     @Override

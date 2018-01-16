@@ -78,7 +78,12 @@ public class SubjectInfoImpl implements SubjectInfo {
             
         case REMOVER:
         case EXISTENTIAL:
-            idx = pi.getEffectivePredicate().type();
+            if (URI.class.equals(pi.getEffectivePredicate().type()))
+            {
+                idx = String.class;
+            } else {
+                idx = pi.getEffectivePredicate().type();
+            }
             break;
         }
         
@@ -166,6 +171,10 @@ public class SubjectInfoImpl implements SubjectInfo {
             {
                 idx = Predicate.UNSET.class;
             }
+            if (URI.class.equals(  clazz  ))
+            {
+                idx = String.class;
+            }
             PredicateInfo retval = map.get( idx );
             if (retval != null)
             {
@@ -175,8 +184,8 @@ public class SubjectInfoImpl implements SubjectInfo {
                 {
                     switch (entry.getValue().getActionType())
                     {
+                    case REMOVER:
                   case SETTER:
-                  case REMOVER:
                   case EXISTENTIAL:
                   if (TypeChecker.canBeSetFrom( entry.getKey(), idx )) {
                       return entry.getValue();
