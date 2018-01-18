@@ -92,8 +92,7 @@ public class MethodParser {
             if (TypeChecker.canBeSetFrom( Boolean.class, method.getReturnType() )
                     && (method.getParameterTypes().length <= 1)) {
                 predicate.checkValid();
-                final Class<?> valueType = method.getReturnType();
-                subjectInfo.add( new PredicateInfoImpl( entityManager, predicate, method, valueType ) );
+                subjectInfo.add( new PredicateInfoImpl( entityManager, predicate, method, method.getReturnType() ) );
             }
         }
 
@@ -174,10 +173,31 @@ public class MethodParser {
                 }
             }
         }
+        
+        /**
+         * Parse a remove method.
+         * 
+         * @param method
+         *            the remove method.
+         * @param predicate
+         *            the current effective predicate
+         */
+        private void parseRemover(final Method method, final EffectivePredicate predicate) {
+            predicate.checkValid();
+            final PredicateInfoImpl pii = new PredicateInfoImpl( entityManager, predicate, method, predicate.type() );
+            subjectInfo.add( pii );
+        }
+
     }
 
     private class ImplementedMethodParser {
 
+        /**
+         * Parse and Implemented method
+         * @param method the Method that we are to parse
+         * @param predicate the predicate for the method.
+         * @throws MissingAnnotation
+         */
         private void parse(final Method method, final EffectivePredicate predicate) throws MissingAnnotation {
 
             /*
@@ -192,9 +212,16 @@ public class MethodParser {
             }
 
             if (predicate.actionType().isType( method )) {
+                // merge in the interface effective predicates
             final Set<Class<?>> interfaces = findAbstracts( method.getDeclaringClass() );
-           
+            for (final Method m : findMethod( interfaces, method )) {
                 
+                final SubjectInfo si = entityManager.parse( m.getDeclaringClass() );
+                final PredicateInfo pi = si.getPredicateInfo( m );
+                if (pi != null) {
+                    predicate.mergeParent( pi.getEffectivePredicate() );
+                }
+            }
             
             switch (predicate.actionType()) {
             case SETTER:
@@ -205,15 +232,18 @@ public class MethodParser {
                 break;
 
             case EXISTENTIAL:
-                    parseExistential( interfaces, method );
+                if (TypeChecker.canBeSetFrom( Boolean.class, method.getReturnType() )
+                        && (method.getParameterTypes().length <= 1)) {
+                    parseExistential( method, predicate );
+                }
                 break;
 
             case GETTER:
-                    parseGetter( interfaces, method, predicate );
+                    parseGetter( method, predicate );
                 break;
 
             case REMOVER:
-                    parseRemover( interfaces, method );
+                    parseRemover( method, predicate );
                 break;
 
             }
@@ -257,46 +287,19 @@ public class MethodParser {
             }
         }
 
-        private void parseExistential(final Set<Class<?>> abstracts, final Method method) {
-            for (final Method m : findMethod( abstracts, method )) {
-                // we only parse boolean results
-                if (TypeChecker.canBeSetFrom( Boolean.class, m.getReturnType() )
-                        && (m.getParameterTypes().length <= 1)) {
-                    final SubjectInfo si = entityManager.getSubjectInfo( m.getDeclaringClass() );
-                    final PredicateInfoImpl pi = (PredicateInfoImpl) si.getPredicateInfo( m );
-                    if (pi != null) {
-                        final PredicateInfoImpl pi2 = new PredicateInfoImpl( pi );
-                        subjectInfo.add( pi2 );
-                        return;
-                    }
-                }
-            }
+        private void parseExistential(final Method method, final EffectivePredicate predicate) {        
+                predicate.checkValid();
+                subjectInfo.add( new PredicateInfoImpl( entityManager, predicate, method, method.getReturnType() ) );        
         }
 
-        private void parseGetter(final Set<Class<?>> abstracts, final Method method, final EffectivePredicate predicate) throws MissingAnnotation {
-
-            for (final Method m : findMethod( abstracts, method )) {
-                    
-                final SubjectInfo si = entityManager.parse( m.getDeclaringClass() );
-                final PredicateInfo pi = si.getPredicateInfo( m );
-                if (pi != null) {
-                    predicate.mergeParent( pi.getEffectivePredicate() );
-                }
-            }
+        private void parseGetter(final Method method, final EffectivePredicate predicate) throws MissingAnnotation {
             predicate.checkValid();
-            subjectInfo.add( new PredicateInfoImpl( entityManager, predicate, method, method.getReturnType() ) );
-         
+            subjectInfo.add( new PredicateInfoImpl( entityManager, predicate, method, method.getReturnType() ) );    
         }
 
-        private void parseRemover(final Set<Class<?>> abstracts, final Method method) throws MissingAnnotation {
-            for (final Method m : findMethod( abstracts, method )) {
-                final SubjectInfo si = entityManager.getSubjectInfo( m.getDeclaringClass() );
-                final PredicateInfoImpl pi = (PredicateInfoImpl) si.getPredicateInfo( m );
-                if (pi != null) {
-                    subjectInfo.add( new PredicateInfoImpl( pi ) );
-                    return;
-                }
-            }
+        private void parseRemover(final Method method, final EffectivePredicate predicate) throws MissingAnnotation {
+            predicate.checkValid();
+            subjectInfo.add( new PredicateInfoImpl( entityManager, predicate, method, predicate.type() ) );
         }
 
         /**
@@ -688,21 +691,7 @@ public class MethodParser {
         return pi;
     }
 
-    /**
-     * Parse a remove method.
-     * 
-     * @param method
-     *            the remove method.
-     * @param predicate
-     *            the current effective predicate
-     */
-    private void parseRemover(final Method method, final EffectivePredicate predicate) {
-        final Class<?> valueClass = predicate.type();
-        predicate.checkValid();
-        final PredicateInfoImpl pii = new PredicateInfoImpl( entityManager, predicate, method, valueClass );
-        subjectInfo.add( pii );
-    }
-
+    
     /**
      * Process the other setters associated with the method.
      * 
