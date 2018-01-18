@@ -514,7 +514,7 @@ public class EntityManagerImpl implements EntityManager {
      * @return The SubjectInfo for the class.
      * @throws MissingAnnotation
      */
-    private SubjectInfoImpl parse(final Class<?> clazz) throws MissingAnnotation {
+    /* package private*/ SubjectInfoImpl parse(final Class<?> clazz) throws MissingAnnotation {
         SubjectInfoImpl subjectInfo = (SubjectInfoImpl) classInfo.get( clazz );
 
         if (subjectInfo == null) {

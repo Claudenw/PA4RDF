@@ -517,7 +517,7 @@ public abstract class AbstractCollectionValueTest extends BaseAbstractManagerTes
         pi = (PredicateInfoImpl) subjectInfo.getPredicateInfo( "getU2", List.class );
         Assert.assertEquals( "getU2", pi.getMethodName() );
         Assert.assertEquals( new CollectionHandler( UriHandler.INSTANCE, List.class ), pi.getObjectHandler( manager ) );
-        Assert.assertEquals( URI.class, pi.getValueClass() );
+        Assert.assertEquals( List.class, pi.getValueClass() );
         Assert.assertEquals( BaseAbstractManagerTest.NS + "u", pi.getUriString() );
         Assert.assertEquals( BaseAbstractManagerTest.NS, pi.getNamespace() );
     }

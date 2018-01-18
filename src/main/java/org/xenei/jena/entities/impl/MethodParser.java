@@ -274,22 +274,18 @@ public class MethodParser {
         }
 
         private void parseGetter(final Set<Class<?>> abstracts, final Method method, final EffectivePredicate predicate) throws MissingAnnotation {
-            /* predicate for getter method includes predicate info for setter
-             method. */
-            final EffectivePredicate ep = new EffectivePredicate( method ).merge( predicate );
 
             for (final Method m : findMethod( abstracts, method )) {
-                final PredicateInfoImpl pi = (PredicateInfoImpl) MethodParser.this.parse( m, ep );
+                    
+                final SubjectInfo si = entityManager.parse( m.getDeclaringClass() );
+                final PredicateInfo pi = si.getPredicateInfo( m );
                 if (pi != null) {
-                    final PredicateInfoImpl newPi = new PredicateInfoImpl( pi );
-
-                    newPi.getEffectivePredicate().addPostExec( ep.postExec() );
-
-                    subjectInfo.add( newPi );
-                    return;
+                    predicate.mergeParent( pi.getEffectivePredicate() );
                 }
             }
-            
+            predicate.checkValid();
+            subjectInfo.add( new PredicateInfoImpl( entityManager, predicate, method, method.getReturnType() ) );
+         
         }
 
         private void parseRemover(final Set<Class<?>> abstracts, final Method method) throws MissingAnnotation {

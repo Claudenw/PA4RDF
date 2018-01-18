@@ -231,7 +231,7 @@ public class EffectivePredicate {
     /**
      * Set the internal type and literal type if necessary base on the type.
      */
-    private void setInternalType() {
+    /* package private */void setInternalType() {
         if (this.internalType != null || type == null) {
             return;
         }
@@ -371,6 +371,70 @@ public class EffectivePredicate {
         return this;
     }
 
+    
+    /**
+     * Merge from another effective predicate that is considered an ancestor to this one.
+     * @param predicate the other predicate to merge.
+     * @return this predicate for chaining.
+     */
+    public EffectivePredicate mergeParent(final EffectivePredicate predicate) {
+        if (predicate != null) {
+            upcase = predicate.upcase();
+            // use effective predicate name if specified
+            name( StringUtils.isBlank( predicate.name() ) ? name : predicate.name() );
+            namespace = StringUtils.isBlank( predicate.namespace() ) ? namespace : predicate.namespace();
+            
+            if (Predicate.UNSET.class.equals( this.type ))
+            {
+                if (!actionType.allowsNull())
+                {
+                if (URI.class.equals(  predicate.type ))
+                {                    
+                    this.type = RDFNode.class;                     
+                }
+                else {
+                    this.type = predicate.type;
+                    this.internalType = predicate.internalType;
+                    this.literalType = predicate.literalType;               
+                }
+                } else {
+                    if (RDFNode.class.equals( internalType ))
+                    {
+                        if (predicate.internalType != null && !Predicate.UNSET.class.equals( predicate.internalType))
+                        {
+                            internalType = predicate.internalType;
+                            literalType = predicate.literalType;
+                        }
+                    }
+                }
+            } else if ( URI.class.equals( predicate.type )) {
+                // URI type is custom by annotation and not changeable.
+                this.type = URI.class;
+                internalType = notNull( internalType, predicate.internalType );
+                literalType = notNull( literalType, predicate.literalType );
+                setInternalType();
+
+            } else {
+                if ( !actionType.allowsNull() )
+                {
+                    type = notNull( type, predicate.type() );
+                    internalType = notNull( internalType, predicate.internalType );
+                    literalType = notNull( literalType, predicate.literalType );
+                    setInternalType();
+                }
+
+            }
+            for (Method m : predicate.postExec())
+            {
+                addPostExec( m );
+            }
+
+            collectionType = notNull( collectionType, predicate.collectionType );
+            impl |= predicate.impl;
+            
+        }
+        return this;
+    }
     /**
      * Determine if this is a collection.  it is a collection of the collection type is not null.
      * @return true if this is a collection.
