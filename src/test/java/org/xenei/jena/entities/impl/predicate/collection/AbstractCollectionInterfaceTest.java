@@ -38,7 +38,7 @@ public abstract class AbstractCollectionInterfaceTest extends AbstractPredicateT
         assertSame( builder, setX, mthd );
 
         mthd = interfaceClass.getMethod( "hasX", String.class );
-        builder.setActionType( ActionType.EXISTENTIAL ).setCollectionType(  null );
+        builder.setActionType( ActionType.EXISTENTIAL ).setCollectionType(  Predicate.UNSET.class );
         EffectivePredicate hasX = new EffectivePredicate( mthd ).merge( base );
         assertSame( builder, hasX, mthd );
 
@@ -63,7 +63,8 @@ public abstract class AbstractCollectionInterfaceTest extends AbstractPredicateT
 
     @Test
     public void testParseSetter() throws Exception {
-        builder.setActionType( ActionType.SETTER ).setLiteralType( XSDDatatype.XSDstring ).setType( String.class );
+        builder.setActionType( ActionType.SETTER ).setLiteralType( XSDDatatype.XSDstring ).setType( String.class )
+        .setCollectionType(  Predicate.UNSET.class );
         updateSetter();
         assertSame( builder, interfaceClass.getMethod( "addX", String.class ) );
     }
@@ -73,7 +74,8 @@ public abstract class AbstractCollectionInterfaceTest extends AbstractPredicateT
 
     @Test
     public void testParseExistential() throws Exception {
-        builder.setActionType( ActionType.EXISTENTIAL ).setType( String.class );
+        builder.setActionType( ActionType.EXISTENTIAL ).setType( String.class )
+        .setCollectionType(  Predicate.UNSET.class );       
         updateExistential();
         assertSame( builder, interfaceClass.getMethod( "hasX", String.class ) );
     }
@@ -83,7 +85,8 @@ public abstract class AbstractCollectionInterfaceTest extends AbstractPredicateT
 
     @Test
     public void testParseRemover() throws Exception {
-        builder.setActionType( ActionType.REMOVER ).setType( String.class );
+        builder.setActionType( ActionType.REMOVER ).setType( String.class )
+        .setCollectionType(  Predicate.UNSET.class );   
         updateRemover();
         assertSame( builder, interfaceClass.getMethod( "removeX", String.class ) );
     }

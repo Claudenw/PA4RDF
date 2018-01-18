@@ -6,6 +6,7 @@ public class SingleValueObjectAnnotatedAbstTest extends AbstractSingleValueTest 
 
     public SingleValueObjectAnnotatedAbstTest() {
         super( SingleValueObjectAnnotatedAbst.class );
+        NS = "http://localhost/test#";
     }
 
 }

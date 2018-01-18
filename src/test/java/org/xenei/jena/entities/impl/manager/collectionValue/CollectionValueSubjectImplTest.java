@@ -6,6 +6,7 @@ public class CollectionValueSubjectImplTest extends AbstractCollectionValueTest 
 
     public CollectionValueSubjectImplTest() {
         super( CollectionValueSubjectImpl.class );
+        NS = "http://localhost/test#";
     }
 
 }

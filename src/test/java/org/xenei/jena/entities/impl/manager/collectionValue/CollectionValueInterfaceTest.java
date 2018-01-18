@@ -6,6 +6,7 @@ public class CollectionValueInterfaceTest extends AbstractCollectionValueTest {
 
     public CollectionValueInterfaceTest() {
         super( CollectionValueInterface.class );
+        NS = "http://localhost/test#";
     }
 
 }

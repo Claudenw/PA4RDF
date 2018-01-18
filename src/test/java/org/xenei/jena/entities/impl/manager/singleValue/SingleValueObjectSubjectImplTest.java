@@ -6,6 +6,7 @@ public class SingleValueObjectSubjectImplTest extends AbstractSingleValueTest {
 
     public SingleValueObjectSubjectImplTest() {
         super( SingleValueObjectImpl.class );
+        NS = "http://localhost/test#";
     }
 
 }

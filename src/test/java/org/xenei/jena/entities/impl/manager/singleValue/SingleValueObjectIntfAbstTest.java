@@ -6,6 +6,7 @@ public class SingleValueObjectIntfAbstTest extends AbstractSingleValueTest {
 
     public SingleValueObjectIntfAbstTest() {
         super( SingleValueObjectIntfAbst.class );
+        NS = "http://localhost/test#";
     }
 
 }

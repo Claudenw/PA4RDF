@@ -103,7 +103,7 @@ public abstract class AbstractSimpleURICollectionTest extends AbstractPredicateT
 
     @Test
     public void testParseSetterS() throws Exception {
-        builder.setActionType( ActionType.SETTER ).setName( "u" ).setType( URI.class );
+        builder.setActionType( ActionType.SETTER ).setName( "u" ).setCollectionType( Predicate.UNSET.class ).setType( URI.class );
         updateSetterS();
         assertSame( builder, interfaceClass.getMethod( "addU", String.class ) );
     }
@@ -113,7 +113,7 @@ public abstract class AbstractSimpleURICollectionTest extends AbstractPredicateT
 
     @Test
     public void testParseSetterR() throws Exception {
-        builder.setActionType( ActionType.SETTER ).setName( "u" ).setType( RDFNode.class );
+        builder.setActionType( ActionType.SETTER ).setName( "u" ).setCollectionType( Predicate.UNSET.class ).setType( RDFNode.class );
         updateSetterR();
         assertSame( builder, interfaceClass.getMethod( "addU", RDFNode.class ) );
     }
@@ -123,7 +123,7 @@ public abstract class AbstractSimpleURICollectionTest extends AbstractPredicateT
 
     @Test
     public void testParseExistential() throws Exception {
-        builder.setActionType( ActionType.EXISTENTIAL ).setName( "u" ).setType( URI.class );
+        builder.setActionType( ActionType.EXISTENTIAL ).setName( "u" ).setCollectionType( Predicate.UNSET.class ).setType( URI.class );
         updateExtential();
         assertSame( builder, interfaceClass.getMethod( "hasU", String.class ) );
     }
@@ -133,7 +133,7 @@ public abstract class AbstractSimpleURICollectionTest extends AbstractPredicateT
 
     @Test
     public void testParseRemover() throws Exception {
-        builder.setActionType( ActionType.REMOVER ).setName( "u" ).setType( URI.class );
+        builder.setActionType( ActionType.REMOVER ).setName( "u" ).setCollectionType( Predicate.UNSET.class ).setType( URI.class );
         updateRemover();
         assertSame( builder, interfaceClass.getMethod( "removeU", String.class ) );
     }
@@ -155,7 +155,8 @@ public abstract class AbstractSimpleURICollectionTest extends AbstractPredicateT
 
     @Test
     public void testParseSetterR2() throws Exception {
-        builder.setActionType( ActionType.SETTER ).setType( RDFNode.class ).setName( "u2" );
+        builder.setActionType( ActionType.SETTER ).setType( RDFNode.class )
+        .setCollectionType( Predicate.UNSET.class ).setName( "u2" );
         updateSetterR();
         assertSame( builder, interfaceClass.getMethod( "addU2", RDFNode.class ) );
     }
@@ -165,7 +166,7 @@ public abstract class AbstractSimpleURICollectionTest extends AbstractPredicateT
 
     @Test
     public void testParseSetterS2() throws Exception {
-        builder.setActionType( ActionType.SETTER ).setType( URI.class ).setName( "u2" );
+        builder.setActionType( ActionType.SETTER ).setType( URI.class ).setCollectionType( Predicate.UNSET.class ).setName( "u2" );
         updateSetterS2();
         assertSame( builder, interfaceClass.getMethod( "addU2", String.class ) );
     }
@@ -175,7 +176,7 @@ public abstract class AbstractSimpleURICollectionTest extends AbstractPredicateT
 
     @Test
     public void testParseExistential2() throws Exception {
-        builder.setActionType( ActionType.EXISTENTIAL ).setType( URI.class ).setName( "u2" );
+        builder.setActionType( ActionType.EXISTENTIAL ).setType( URI.class ).setCollectionType( Predicate.UNSET.class ).setName( "u2" );
         updateExtential2();
         assertSame( builder, interfaceClass.getMethod( "hasU2", String.class ) );
     }
@@ -185,7 +186,7 @@ public abstract class AbstractSimpleURICollectionTest extends AbstractPredicateT
 
     @Test
     public void testParseRemoverR2() throws Exception {
-        builder.setActionType( ActionType.REMOVER ).setType( RDFNode.class ).setName( "u2" );
+        builder.setActionType( ActionType.REMOVER ).setType( RDFNode.class ).setCollectionType( Predicate.UNSET.class ).setName( "u2" );
         updateRemoverR2();
         assertSame( builder, interfaceClass.getMethod( "removeU2", RDFNode.class ) );
     }
@@ -195,7 +196,7 @@ public abstract class AbstractSimpleURICollectionTest extends AbstractPredicateT
 
     @Test
     public void testParseRemoverS2() throws Exception {
-        builder.setActionType( ActionType.REMOVER ).setType( URI.class ).setName( "u2" );
+        builder.setActionType( ActionType.REMOVER ).setType( URI.class ).setCollectionType( Predicate.UNSET.class ).setName( "u2" );
         updateRemoverS2();
         assertSame( builder, interfaceClass.getMethod( "removeU2", String.class ) );
     }
