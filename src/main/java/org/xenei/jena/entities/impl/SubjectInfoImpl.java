@@ -16,12 +16,16 @@ package org.xenei.jena.entities.impl;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.jena.rdf.model.Property;
 import org.apache.jena.rdf.model.RDFNode;
 import org.xenei.jena.entities.PredicateInfo;
@@ -31,6 +35,8 @@ import org.xenei.jena.entities.annotations.Subject;
 import org.xenei.jena.entities.annotations.URI;
 
 public class SubjectInfoImpl implements SubjectInfo {
+    
+    private final static Log LOG = LogFactory.getLog( SubjectInfoImpl.class );
     /**
      * The class that we parsed.
      */
@@ -38,7 +44,7 @@ public class SubjectInfoImpl implements SubjectInfo {
     /**
      * The predicates for the parsed class
      */
-    private final Map<String, Map<Class<?>, PredicateInfo>> predicateInfo = new HashMap<String, Map<Class<?>, PredicateInfo>>();
+    private final PredicateMap predicateInfo =  new PredicateMap();
 
     public SubjectInfoImpl(final Class<?> implementedClass) {
         this.implementedClass = implementedClass;
@@ -124,22 +130,6 @@ public class SubjectInfoImpl implements SubjectInfo {
             }
         }
         return null;
-//        if (m.isVarArgs() || (m.getParameterTypes().length > 1)) {
-//            return null;
-//        }
-//        if (m.getParameterTypes().length == 0) {
-//            // must be a getter or single value remove
-//            return getPredicateInfo( m.getName(), m.getReturnType() );
-//        } else {
-//            Class<?> typeClass = m.getParameterTypes()[0];
-//            
-////            for (final Annotation a : m.getParameterAnnotations()[0]) {
-////                if (a instanceof URI) {
-////                    typeClass = URI.class;
-////                }
-////            }
-//            return getPredicateInfo( m.getName(), typeClass );
-//        }
     }
 
     private PredicateInfo getPredicateInfo(final String function) {
@@ -307,5 +297,64 @@ public class SubjectInfoImpl implements SubjectInfo {
         }
         return set;
     }
+    
+    /**
+     * Normalize the predicate info objects based on the collections.
+     * Call after last method is added. 
+     * This method scans the collection of predicate info objects and gathers the methods for a single
+     * predicate.  It then normalizes the predicate info for each method so that the getter/setter specific
+     * information is available in the other methods.
+     */
+    public void normalize() {
+        Map<String, List<PredicateInfo>> byPredicate = new HashMap<String,List<PredicateInfo>>();
+        
+        for (String methodName : predicateInfo.keySet())
+        {
+            ActionType actionType = ActionType.parse( methodName );
+            String key = actionType.extractName( methodName );
+            List<PredicateInfo> lst = byPredicate.get( key );
+            if (lst == null)
+            {
+                lst = new ArrayList<PredicateInfo>();
+                byPredicate.put(  key, lst );
+            }
+            lst.addAll(  predicateInfo.get( methodName ).values() );
+        }
+        
+        for (List<PredicateInfo> lst : byPredicate.values())
+        {
+            if (lst.get( 0 ).getEffectivePredicate().isCollection())
+            {
+                EffectivePredicate master = null;
+                
+                for (PredicateInfo info : lst)
+                {
+                    Class<?> collectionType = info.getEffectivePredicate().collectionType();
+                    if ((! Predicate.UNSET.class.equals( collectionType)) &&
+                            collectionType != null &&
+                            ! Collection.class.equals( collectionType )  
+                            ) {
+                        master = info.getEffectivePredicate();
+                    }
+                }
+                if (master == null)
+                {
+                    LOG.error(  "Unable to normalize: "+lst.get( 0 ).getMethodName() );
+                }
+                else {
+                    for (PredicateInfo info : lst)
+                    {
+                        info.getEffectivePredicate().collectionType( master.collectionType() );
+                    }
+                }
+            }
+        }
+    }
 
+    private class PredicateMap extends HashMap<String, Map<Class<?>, PredicateInfo>>{
+
+        /**
+         * 
+         */
+        private static final long serialVersionUID = 1L;};
 }

@@ -556,6 +556,9 @@ public class EntityManagerImpl implements EntityManager {
                 parser.parse( method );
             }
             
+            /* make sure all methods have all data */
+            subjectInfo.normalize();
+            
             /* save the result */
             classInfo.put( clazz, subjectInfo );
         }

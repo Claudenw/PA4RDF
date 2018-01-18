@@ -150,10 +150,10 @@ public class EffectivePredicate {
                 }
                 break;
             case GETTER:
-                if (!MethodParser.isCollection( method )) {
-                    this.type = method.getReturnType();
-                } else {
+                if (MethodParser.isCollection( method )) {
                     this.collectionType = method.getReturnType();
+                } else {
+                    this.type = method.getReturnType();
                 }
                 break;
             }
@@ -195,7 +195,7 @@ public class EffectivePredicate {
             }
             if (StringUtils.isBlank( name )) {
                 try {
-                    setName( actionType.extractName( method.getName() ) );
+                    name( actionType.extractName( method.getName() ) );
                 } catch (final IllegalArgumentException e) {
                     // expected when not an action method.
                 }
@@ -325,7 +325,8 @@ public class EffectivePredicate {
     public EffectivePredicate merge(final EffectivePredicate predicate) {
         if (predicate != null) {
             upcase = predicate.upcase();
-            setName( StringUtils.isBlank( predicate.name() ) ? name : predicate.name() );
+            // use effective predicate name if specified
+            name( StringUtils.isBlank( predicate.name() ) ? name : predicate.name() );
             namespace = StringUtils.isBlank( predicate.namespace() ) ? namespace : predicate.namespace();
             
             if (Predicate.UNSET.class.equals( this.type ))
@@ -386,7 +387,9 @@ public class EffectivePredicate {
     public EffectivePredicate merge(final Predicate predicate) {
         if (predicate != null) {
             upcase = predicate.upcase();
-            setName( StringUtils.isBlank( predicate.name() ) ? name : predicate.name() );
+            // use predicate name if specified
+            name( StringUtils.isBlank( predicate.name() ) ? name : predicate.name() );
+            
             namespace = StringUtils.isBlank( predicate.namespace() ) ? namespace : predicate.namespace();
             if (StringUtils.isNotBlank( predicate.literalType() )) {
                 final TypeMapper typeMapper = TypeMapper.getInstance();
@@ -423,7 +426,7 @@ public class EffectivePredicate {
      * The value of the name may be modified by the upcase flag.
      * @param name the name to set the predicate to.
      */
-    public void setName(final String name) {
+    public void name(final String name) {
         if (StringUtils.isNotBlank( name )) {
             final String s = name.substring( 0, 1 );
             if (upcase()) {
