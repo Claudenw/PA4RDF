@@ -174,9 +174,13 @@ public class CachingGraph extends GraphBase implements Graph {
      *            If the subject table is already loaded it is returned
      *            otherwise it is created by reading from the remote system.
      * 
-     * @return the subject table.
+     * @return the subject table or null if the subject is a Literal.
      */
     public SubjectTable getTable(Node subject) {
+        if (subject.isLiteral())
+        {
+            return null;
+        }
         final SoftReference<SubjectTable> tblRef = map.get( subject );
         SubjectTable tbl = null;
         if (tblRef != null) {
@@ -194,9 +198,12 @@ public class CachingGraph extends GraphBase implements Graph {
             // SoftReference<SubjectTable> tblRef =
             // map.get(triplePattern.getSubject());
             final SubjectTable tbl = getTable( triplePattern.getSubject() );
-
-            final Graph graph = tbl.asGraph();
-            return WrappedIterator.create( new CachingGraphIterator( graph.find( triplePattern ), tbl ) );
+            if (tbl != null)
+            {
+                final Graph graph = tbl.asGraph();
+                return WrappedIterator.create( new CachingGraphIterator( graph.find( triplePattern ), tbl ) );
+            }
+            return WrappedIterator.emptyIterator();
         } else {
             /*
              * we need to pull in all the subjects from the parent graph and add

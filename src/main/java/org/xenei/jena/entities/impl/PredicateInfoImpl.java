@@ -161,6 +161,10 @@ public class PredicateInfoImpl implements PredicateInfo {
             return new CollectionHandler( handler, pred.collectionType().equals( Predicate.UNSET.class ) ? Collection.class : pred.collectionType() );            
         }
         
+        if (pred.type().equals( URI.class )) {
+            return UriHandler.INSTANCE;
+        }
+          
      // it is a literal
         if (pred.literalType() != null)
         {
@@ -175,10 +179,7 @@ public class PredicateInfoImpl implements PredicateInfo {
             return ResourceHandler.INSTANCE;
         }
         
-        if (pred.type().equals( URI.class )) {
-            return UriHandler.INSTANCE;
-        }
-                
+              
         return VoidHandler.INSTANCE;
     }
     /**
@@ -292,10 +293,13 @@ public class PredicateInfoImpl implements PredicateInfo {
             retval = execRead( objectHandler, resource, p );
             break;
         case SETTER:
-            if (method.getName().startsWith( "set" )) {
-                retval = execSet( entityManager, objectHandler, resource, p, args );
-            } else {
+            if (ActionType.isMultiple( method ))
+            {
                 retval = execAdd( objectHandler, resource, p, args );
+            }
+            else 
+            {
+                retval = execSet( entityManager, objectHandler, resource, p, args );
             }
             break;
         case REMOVER:
@@ -399,7 +403,7 @@ public class PredicateInfoImpl implements PredicateInfo {
 
                 @Override
                 public Object apply(final RDFNode rdfNode) {
-                    return objectHandler.parseObject( rdfNode );
+                    return ((CollectionHandler)objectHandler).parseInnerObject( rdfNode );
                 }
             } );
         } finally {

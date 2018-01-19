@@ -14,47 +14,47 @@ import org.xenei.jena.entities.testing.iface.TestInterface;
 
 public abstract class AbstractSingleValueObjectTest extends AbstractMethodParserTest {
 
-    private final Method isBool;
-    private final Method setBool;
-    private final Method removeBool;
+    protected final Method isBool;
+    protected final Method setBool;
+    protected final Method removeBool;
 
-    private final Method getChar;
-    private final Method setChar;
-    private final Method removeChar;
+    protected final Method getChar;
+    protected final Method setChar;
+    protected final Method removeChar;
 
-    private final Method getDbl;
-    private final Method setDbl;
-    private final Method removeDbl;
+    protected final Method getDbl;
+    protected final Method setDbl;
+    protected final Method removeDbl;
 
-    private final Method getEnt;
-    private final Method setEnt;
-    private final Method removeEnt;
+    protected final Method getEnt;
+    protected final Method setEnt;
+    protected final Method removeEnt;
 
-    private final Method getFlt;
-    private final Method setFlt;
-    private final Method removeFlt;
+    protected final Method getFlt;
+    protected final Method setFlt;
+    protected final Method removeFlt;
 
-    private final Method getInt;
-    private final Method setInt;
-    private final Method removeInt;
+    protected final Method getInt;
+    protected final Method setInt;
+    protected final Method removeInt;
 
-    private final Method getLng;
-    private final Method setLng;
-    private final Method removeLng;
+    protected final Method getLng;
+    protected final Method setLng;
+    protected final Method removeLng;
 
-    private final Method getRDF;
-    private final Method setRDF;
-    private final Method removeRDF;
+    protected final Method getRDF;
+    protected final Method setRDF;
+    protected final Method removeRDF;
 
-    private final Method getStr;
-    private final Method setStr;
-    private final Method removeStr;
+    protected final Method getStr;
+    protected final Method setStr;
+    protected final Method removeStr;
 
-    private final Method getU;
-    private final Method setU_S;
-    private final Method setU_R;
-    private final Method removeU;
-    private final Method getU2;
+    protected final Method getU;
+    protected final Method setU_S;
+    protected final Method setU_R;
+    protected final Method removeU;
+    protected final Method getU2;
 
     protected AbstractSingleValueObjectTest(final Class<?> interfaceClass)
             throws NoSuchMethodException, SecurityException {
@@ -422,63 +422,6 @@ public abstract class AbstractSingleValueObjectTest extends AbstractMethodParser
         Assert.assertNull( subjectInfo.getPredicateInfo( setStr ) );
         assertSame( removeStr );
     }
-    // @Test
-    // public void testURI() throws Exception {
-    // Method m = classUnderTest.getMethod( "getU" );
-    // PredicateInfoImpl pi = (PredicateInfoImpl) parser.parse( m );
-    //
-    // final ObjectHandler uriHandler = UriHandler.INSTANCE;
-    // final ObjectHandler rdfHandler = ResourceHandler.INSTANCE;
-    //
-    // Assert.assertEquals( "getU", pi.getMethodName() );
-    // Assert.assertEquals( rdfHandler, pi.getObjectHandler( entityManager ) );
-    // Assert.assertEquals( RDFNode.class, pi.getValueClass() );
-    // Assert.assertEquals( AbstractSingleValueObjectTest.NS + "u",
-    // pi.getUriString() );
-    // Assert.assertEquals( AbstractSingleValueObjectTest.NS, pi.getNamespace()
-    // );
-    //
-    // m = classUnderTest.getMethod( "setU", String.class );
-    // pi = (PredicateInfoImpl) parser.parse( m );
-    // Assert.assertEquals( "setU", pi.getMethodName() );
-    // Assert.assertEquals( uriHandler, pi.getObjectHandler( entityManager ) );
-    // Assert.assertEquals( String.class, pi.getValueClass() );
-    // Assert.assertEquals( AbstractSingleValueObjectTest.NS + "u",
-    // pi.getUriString() );
-    // Assert.assertEquals( AbstractSingleValueObjectTest.NS, pi.getNamespace()
-    // );
-    //
-    // m = classUnderTest.getMethod( "setU", RDFNode.class );
-    // pi = (PredicateInfoImpl) parser.parse( m );
-    // Assert.assertEquals( "setU", pi.getMethodName() );
-    // Assert.assertEquals( rdfHandler, pi.getObjectHandler( entityManager ) );
-    // Assert.assertEquals( RDFNode.class, pi.getValueClass() );
-    // Assert.assertEquals( AbstractSingleValueObjectTest.NS + "u",
-    // pi.getUriString() );
-    // Assert.assertEquals( AbstractSingleValueObjectTest.NS, pi.getNamespace()
-    // );
-    //
-    // m = classUnderTest.getMethod( "removeU" );
-    // pi = (PredicateInfoImpl) parser.parse( m );
-    // Assert.assertEquals( "removeU", pi.getMethodName() );
-    // Assert.assertEquals( VoidHandler.INSTANCE, pi.getObjectHandler(
-    // entityManager ) );
-    // Assert.assertEquals( null, pi.getValueClass() );
-    // Assert.assertEquals( AbstractSingleValueObjectTest.NS + "u",
-    // pi.getUriString() );
-    // Assert.assertEquals( AbstractSingleValueObjectTest.NS, pi.getNamespace()
-    // );
-    //
-    // m = classUnderTest.getMethod( "getU2" );
-    // pi = (PredicateInfoImpl) parser.parse( m );
-    // Assert.assertEquals( "getU2", pi.getMethodName() );
-    // Assert.assertEquals( uriHandler, pi.getObjectHandler( entityManager ) );
-    // Assert.assertEquals( String.class, pi.getValueClass() );
-    // Assert.assertEquals( AbstractSingleValueObjectTest.NS + "u",
-    // pi.getUriString() );
-    // Assert.assertEquals( AbstractSingleValueObjectTest.NS, pi.getNamespace()
-    // );
-    // }
 
     @Test
     public void testGetU() throws MissingAnnotation {

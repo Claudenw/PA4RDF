@@ -3,6 +3,7 @@ package org.xenei.jena.entities.impl.handlers;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -128,6 +129,12 @@ public class CollectionHandler extends AbstractObjectHandler {
         return node;
     }
 
+
+    public Object parseInnerObject(RDFNode node) {
+        return innerHandler.parseObject( node );
+    }
+
+    
     public Object makeCollection( Iterator<?> oIter ) {
         switch (type)
         {
@@ -137,7 +144,8 @@ public class CollectionHandler extends AbstractObjectHandler {
             try {
                 @SuppressWarnings("unchecked")
                 final Collection<Object> col = (Collection<Object>) constructor.newInstance( );
-                col.addAll(  WrappedIterator.create( oIter ).toList() );
+                List<?> lst = WrappedIterator.create( oIter ).toList();
+                col.addAll(  lst );
                 return col;
             } catch (InstantiationException | IllegalAccessException | IllegalArgumentException
                     | InvocationTargetException e) {
@@ -170,5 +178,28 @@ public class CollectionHandler extends AbstractObjectHandler {
     @Override
     public String toString() {
         return String.format(  "CollectionHandler{ inner:%s return:%s}", innerHandler, returnType );
+    }
+    
+    @Override
+    public Collection<RDFNode> asCollection( boolean emptyIsNull, Object obj ) {
+        Collection<Object> objs = null;
+        if (obj instanceof Collection)
+        {
+            objs = (Collection<Object>) obj;
+        } else if (obj.getClass().isArray())
+        {
+            objs = new ArrayList<Object>(  Arrays.asList( obj ) );
+        } else {
+            objs = new ArrayList<Object>();
+            if (innerHandler.isEmpty(obj) && emptyIsNull)
+            {
+                objs.add(null);
+            }
+            else 
+            {
+                objs.add(  obj  );
+            }
+        }
+        return objs.stream().map( o -> createRDFNode(o)).collect(  Collectors.toList() );
     }
 }

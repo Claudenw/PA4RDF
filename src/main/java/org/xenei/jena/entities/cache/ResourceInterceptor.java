@@ -21,27 +21,14 @@ public class ResourceInterceptor implements MethodInterceptor {
 
     private final ModelInterceptor modelInterceptor;
 
-    // private final static Method MUST_HAVE_MODEL;
-    //
-    // static {
-    // try
-    // {
-    // MUST_HAVE_MODEL = ResourceImpl.class.getMethod("mustHaveModel");
-    // } catch (NoSuchMethodException | SecurityException e)
-    // {
-    // throw new IllegalStateException( e );
-    // }
-    // }
-
     /**
      * Constructor.
      * 
+     * @param modelInterceptor  The model interceptor to use.
      * @param res
      *            the resource
-     * @param entityManagerImpl
-     *            TODO
      */
-    public ResourceInterceptor(ModelInterceptor modelInterceptor, SubjectTable tbl, Resource res) {
+    public ResourceInterceptor(ModelInterceptor modelInterceptor, Resource res) {
         this.modelInterceptor = modelInterceptor;
         this.res = res;
     }

@@ -95,8 +95,7 @@ public class ModelInterceptor implements MethodInterceptor {
         if (retval instanceof Resource && !(retval instanceof Intercepted)) {
             final Resource r = (Resource) retval;
             final Class<?> clazz = retval.getClass();
-            final SubjectTable tbl = graph.getTable( r.asNode() );
-            final ResourceInterceptor interceptor = new ResourceInterceptor( this, tbl, r );
+            final ResourceInterceptor interceptor = new ResourceInterceptor( this, r );
             final Enhancer e = new Enhancer();
             final List<Class<?>> lst = new ArrayList<Class<?>>( Arrays.asList( clazz.getInterfaces() ) );
             lst.add( Intercepted.class );

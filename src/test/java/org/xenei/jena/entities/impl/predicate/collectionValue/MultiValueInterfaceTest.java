@@ -9,6 +9,7 @@ import org.apache.jena.datatypes.xsd.XSDDatatype;
 import org.apache.jena.rdf.model.Literal;
 import org.apache.jena.rdf.model.RDFNode;
 import org.apache.jena.util.iterator.ExtendedIterator;
+import org.xenei.jena.entities.annotations.Predicate;
 import org.xenei.jena.entities.impl.ActionType;
 import org.xenei.jena.entities.impl.EffectivePredicate;
 import org.xenei.jena.entities.impl.datatype.CharacterDatatype;
@@ -81,7 +82,7 @@ public class MultiValueInterfaceTest extends AbstractCollectionValueInterfaceTes
 
         mthd = interfaceClass.getMethod( "hasBool", Boolean.class );
         othr = new EffectivePredicate( mthd ).merge( base );
-        builder.setActionType( ActionType.EXISTENTIAL ).setCollectionType( null );
+        builder.setActionType( ActionType.EXISTENTIAL ).setCollectionType( Predicate.UNSET.class );
         assertSame( builder, othr, mthd );
 
         mthd = interfaceClass.getMethod( "removeBool", Boolean.class );
@@ -100,7 +101,7 @@ public class MultiValueInterfaceTest extends AbstractCollectionValueInterfaceTes
 
         mthd = interfaceClass.getMethod( "hasChar", Character.class  );
         othr = new EffectivePredicate( mthd ).merge( base );
-        builder.setActionType( ActionType.EXISTENTIAL ).setCollectionType( null );
+        builder.setActionType( ActionType.EXISTENTIAL ).setCollectionType( Predicate.UNSET.class );
         assertSame( builder, othr, mthd );
 
         mthd = interfaceClass.getMethod( "removeChar", Character.class );
@@ -119,7 +120,7 @@ public class MultiValueInterfaceTest extends AbstractCollectionValueInterfaceTes
 
         mthd = interfaceClass.getMethod( "hasDbl", Double.class );
         othr = new EffectivePredicate( mthd ).merge( base );
-        builder.setActionType( ActionType.EXISTENTIAL ).setCollectionType( null );
+        builder.setActionType( ActionType.EXISTENTIAL ).setCollectionType( Predicate.UNSET.class );
         assertSame( builder, othr, mthd );
 
         mthd = interfaceClass.getMethod( "removeDbl", Double.class );
@@ -138,7 +139,7 @@ public class MultiValueInterfaceTest extends AbstractCollectionValueInterfaceTes
 
         mthd = interfaceClass.getMethod( "hasEnt", TestInterface.class );
         othr = new EffectivePredicate( mthd ).merge( base );
-        builder.setActionType( ActionType.EXISTENTIAL ).setCollectionType( null );
+        builder.setActionType( ActionType.EXISTENTIAL ).setCollectionType( Predicate.UNSET.class );
         assertSame( builder, othr, mthd );
 
         mthd = interfaceClass.getMethod( "removeEnt", TestInterface.class );
@@ -158,7 +159,7 @@ public class MultiValueInterfaceTest extends AbstractCollectionValueInterfaceTes
 
         mthd = interfaceClass.getMethod( "hasFlt", Float.class  );
         othr = new EffectivePredicate( mthd ).merge( base );
-        builder.setActionType( ActionType.EXISTENTIAL ).setCollectionType( null );
+        builder.setActionType( ActionType.EXISTENTIAL ).setCollectionType( Predicate.UNSET.class );
         assertSame( builder, othr, mthd );
 
         mthd = interfaceClass.getMethod( "removeFlt", Float.class  );
@@ -177,7 +178,7 @@ public class MultiValueInterfaceTest extends AbstractCollectionValueInterfaceTes
 
         mthd = interfaceClass.getMethod( "hasInt", Integer.class );
         othr = new EffectivePredicate( mthd ).merge( base );
-        builder.setActionType( ActionType.EXISTENTIAL ).setCollectionType( null );
+        builder.setActionType( ActionType.EXISTENTIAL ).setCollectionType( Predicate.UNSET.class );
         assertSame( builder, othr, mthd );
 
         mthd = interfaceClass.getMethod( "removeInt", Integer.class );
@@ -196,7 +197,7 @@ public class MultiValueInterfaceTest extends AbstractCollectionValueInterfaceTes
 
         mthd = interfaceClass.getMethod( "hasLng", Long.class );
         othr = new EffectivePredicate( mthd ).merge( base );
-        builder.setActionType( ActionType.EXISTENTIAL ).setCollectionType( null );
+        builder.setActionType( ActionType.EXISTENTIAL ).setCollectionType( Predicate.UNSET.class );
         assertSame( builder, othr, mthd );
         
         mthd = interfaceClass.getMethod( "removeLng", Long.class );
@@ -215,7 +216,7 @@ public class MultiValueInterfaceTest extends AbstractCollectionValueInterfaceTes
 
         mthd = interfaceClass.getMethod( "hasRDF", RDFNode.class );
         othr = new EffectivePredicate( mthd ).merge( base );
-        builder.setActionType( ActionType.EXISTENTIAL ).setCollectionType( null );
+        builder.setActionType( ActionType.EXISTENTIAL ).setCollectionType( Predicate.UNSET.class );
         assertSame( builder, othr, mthd );
 
         mthd = interfaceClass.getMethod( "removeRDF", RDFNode.class );
@@ -235,7 +236,7 @@ public class MultiValueInterfaceTest extends AbstractCollectionValueInterfaceTes
 
         mthd = interfaceClass.getMethod( "hasStr", String.class );
         othr = new EffectivePredicate( mthd ).merge( base );
-        builder.setActionType( ActionType.EXISTENTIAL ).setCollectionType( null );
+        builder.setActionType( ActionType.EXISTENTIAL ).setCollectionType( Predicate.UNSET.class );
         assertSame( builder, othr, mthd );
 
         mthd = interfaceClass.getMethod( "removeStr", String.class );

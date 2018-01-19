@@ -8,6 +8,7 @@ import org.apache.jena.tdb.store.GraphTxnTDB;
 import org.apache.jena.tdb.sys.TDBMaker;
 import org.apache.jena.tdb.transaction.DatasetGraphTransaction;
 import org.apache.jena.testing_framework.AbstractGraphProducer;
+import org.junit.Ignore;
 import org.junit.runner.RunWith;
 import org.xenei.junit.contract.Contract;
 import org.xenei.junit.contract.ContractExclude;
@@ -15,6 +16,7 @@ import org.xenei.junit.contract.ContractImpl;
 import org.xenei.junit.contract.ContractSuite;
 import org.xenei.junit.contract.IProducer;
 
+@Ignore( "Not working with current contract tests")
 @RunWith(ContractSuite.class)
 @ContractImpl(GraphTxnTDB.class)
 @ContractExclude(value = GraphContractTest.class, methods = { "testPartialUpdate" })
