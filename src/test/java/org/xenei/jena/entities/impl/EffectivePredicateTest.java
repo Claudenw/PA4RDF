@@ -171,8 +171,8 @@ public class EffectivePredicateTest {
         assertEquals( "http://localhost/test#", underTest.namespace() );
         assertEquals( "lst", underTest.name() );
         assertTrue( underTest.postExec().isEmpty() );
-        assertFalse( underTest.isCollection() );
-        assertNull( underTest.collectionType() );
+        assertTrue( underTest.isCollection() );
+        assertEquals( Predicate.UNSET.class, underTest.collectionType() );
         assertFalse( underTest.impl() );
         assertFalse( underTest.emptyIsNull() );
         assertFalse( underTest.upcase() );
@@ -188,8 +188,8 @@ public class EffectivePredicateTest {
         assertEquals( "http://localhost/test#", underTest.namespace() );
         assertEquals( "lst", underTest.name() );
         assertTrue( underTest.postExec().isEmpty() );
-        assertFalse( underTest.isCollection() );
-        assertNull( underTest.collectionType() );
+        assertTrue( underTest.isCollection() );
+        assertEquals( Predicate.UNSET.class, underTest.collectionType() );
         assertFalse( underTest.impl() );
         assertFalse( underTest.emptyIsNull() );
         assertFalse( underTest.upcase() );
