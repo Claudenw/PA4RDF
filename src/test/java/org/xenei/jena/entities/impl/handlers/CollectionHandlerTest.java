@@ -1,6 +1,7 @@
 package org.xenei.jena.entities.impl.handlers;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -45,7 +46,7 @@ public class CollectionHandlerTest extends AbstractObjectHandlerTest {
         final Iterator<String> oIter = Arrays.asList( args ).iterator();
         final Object o = ((CollectionHandler)underTest).makeCollection( oIter );
         Assert.assertTrue( o instanceof List);
-        final List<?> lst = (List)o;
+        final List<?> lst = (List<?>)o;
         assertEquals( args.length, lst.size() );
         for (int i=0;i<args.length;i++)
         {
@@ -77,9 +78,8 @@ public class CollectionHandlerTest extends AbstractObjectHandlerTest {
         Assert.assertTrue( underTest.isEmpty( new HashSet<String>() ) );
     }
 
-    @Override
     @Test
-    public void testParseObject() {
+    public void testParseObject_RDFList() {
         final Model model = ModelFactory.createDefaultModel();
         final RDFNode[] nodes = { ResourceFactory.createPlainLiteral( "Hello" ),
                 ResourceFactory.createPlainLiteral( "World" ) };
@@ -92,4 +92,17 @@ public class CollectionHandlerTest extends AbstractObjectHandlerTest {
         assertEquals( args[0], lst2.get( 0 ).toString() );
         assertEquals( args[1], lst2.get( 1 ).toString() );
     }
+
+
+    @Override
+    @Test
+    public void testParseObject() {
+        final Object o = underTest.parseObject( ResourceFactory.createPlainLiteral( "Hello" ) );
+        Assert.assertNotNull( o );
+        Assert.assertTrue( o instanceof String );
+        assertEquals("Hello", o );
+        
+    }
+    
+
 }

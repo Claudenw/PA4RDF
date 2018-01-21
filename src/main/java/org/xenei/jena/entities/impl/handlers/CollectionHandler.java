@@ -127,7 +127,7 @@ public class CollectionHandler extends AbstractObjectHandler {
             final RDFList lst = node.as( RDFList.class );
             return lst.asJavaList().stream().map( r -> innerHandler.parseObject( r ) ).collect( Collectors.toList() );
         }
-        return node;
+        return innerHandler.parseObject( node );        
     }
 
 
