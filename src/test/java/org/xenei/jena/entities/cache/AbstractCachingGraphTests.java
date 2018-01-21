@@ -15,11 +15,13 @@ import org.apache.jena.graph.Node;
 import org.apache.jena.graph.NodeFactory;
 import org.apache.jena.graph.Triple;
 import org.apache.jena.query.ARQ;
+import org.apache.jena.query.QuerySolution;
 import org.apache.jena.query.ReadWrite;
 import org.apache.jena.rdf.model.Literal;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.Resource;
 import org.apache.jena.rdfconnection.RDFConnection;
+import org.apache.jena.testing_framework.NodeCreateUtils;
 import org.apache.jena.vocabulary.DC_11;
 import org.apache.jena.vocabulary.OWL;
 import org.apache.jena.vocabulary.RDF;
@@ -74,29 +76,28 @@ public abstract class AbstractCachingGraphTests {
     }
 
     @Test
-    @Ignore
+    //@Ignore
     public void testLoadTableAnonymous() {
         final Model model = connection.fetch();
         Resource r = model.createResource();
-        final Resource anon = model.createResource();
+        Resource anon = model.createResource();
         final Literal lit = model.createTypedLiteral( "Testing System" );
 
         r.addProperty( DC_11.creator, lit );
         r.addProperty( RDF.type, OWL.Thing );
         r.addProperty( DC_11.publisher, anon );
         connection.put( model );
-        ARQ.getContext().set( ARQ.inputGraphBNodeLabels, true );
+        ARQ.enableBlankNodeResultLabels(true);
+        //ARQ.getContext().set( ARQ.inputGraphBNodeLabels, true );
 
-        final SelectBuilder sb = new SelectBuilder().addVar( "s" );
+        final SelectBuilder sb = new SelectBuilder().addVar( "s" ).addVar( "o" );
 
-        final ExprFactory exprF = sb.getExprFactory();
-        sb.addWhere( "?s", "?p", "?o" ).addFilter( exprF.isBlank( "?s" ) );
+        sb.addWhere( "?s", DC_11.publisher, "?o" );
 
-        r = connection.query( sb.build() ).execSelect().next().getResource( "s" );
-
-        connection.fetch().listStatements().forEachRemaining( stmt -> System.out.println( stmt ) );
-
-        r = connection.fetch().listStatements().next().getResource();
+        QuerySolution qs = connection.query( sb.build() ).execSelect().next();
+        r = qs.getResource( "s" );
+        anon = qs.getResource( "o" );
+        
         final SubjectTable table = graph.getTable( r.asNode() );
 
         assertEquals( r.asNode(), table.getSubject() );
@@ -115,13 +116,11 @@ public abstract class AbstractCachingGraphTests {
 
     }
 
-    @Ignore
+    //@Ignore
     @Test
     public void testAnonymousLinkages() {
         final Model model = connection.fetch();
-        final Node a1 = node( "_1" );
-        final Node a2 = node( "_2" );
-        node( "P3" );
+      
         final Node p2 = node( "P2" );
         final Node foo = node( "'foo'" );
         final Graph g = model.getGraph();
@@ -129,11 +128,18 @@ public abstract class AbstractCachingGraphTests {
         graphWith( g, "S P O; S P1 _1; _1 P2 _2; _2 P3 _3; _3 P4 'foo'" );
         txnCommit( g );
         connection.put( model );
+        
+        final SelectBuilder sb = new SelectBuilder().addVar( "s" ).addVar( "o" ).addWhere( "?s", p2, "?o" );
+
+        QuerySolution qs = connection.query( sb.build() ).execSelect().next();
+        Node a1 = qs.getResource(  "s"  ).asNode();
+        Node a2 = qs.getResource( "o" ).asNode();
 
         Set<Triple> answ;
         answ = graph.find( Node.ANY, node( "P4" ), foo ).toSet();
         assertEquals( 1, answ.size() );
         answ = graph.find( node( "S" ), Node.ANY, Node.ANY ).toSet();
+        assertEquals( 2, answ.size() );
         answ = graph.find( a1, p2, Node.ANY ).toSet();
         assertEquals( 1, answ.size() );
         assertEquals( a2, answ.iterator().next().getObject() );

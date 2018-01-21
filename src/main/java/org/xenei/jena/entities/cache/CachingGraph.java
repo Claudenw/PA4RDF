@@ -17,6 +17,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.jena.arq.querybuilder.ExprFactory;
 import org.apache.jena.arq.querybuilder.SelectBuilder;
+import org.apache.jena.ext.com.google.common.collect.Iterators;
 import org.apache.jena.graph.Capabilities;
 import org.apache.jena.graph.FrontsNode;
 import org.apache.jena.graph.Graph;
@@ -36,6 +37,7 @@ import org.apache.jena.query.ResultSet;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.rdf.model.Property;
+import org.apache.jena.rdf.model.RDFNode;
 import org.apache.jena.rdf.model.Resource;
 import org.apache.jena.sparql.core.Quad;
 import org.apache.jena.sparql.core.Var;
@@ -45,7 +47,6 @@ import org.apache.jena.sparql.path.Path;
 import org.apache.jena.sparql.path.PathFactory;
 import org.apache.jena.util.iterator.ClosableIterator;
 import org.apache.jena.util.iterator.ExtendedIterator;
-import org.apache.jena.util.iterator.IteratorIterator;
 import org.apache.jena.util.iterator.NiceIterator;
 import org.apache.jena.util.iterator.WrappedIterator;
 import org.xenei.jena.entities.impl.EntityManagerImpl;
@@ -195,8 +196,6 @@ public class CachingGraph extends GraphBase implements Graph {
     @Override
     protected ExtendedIterator<Triple> graphBaseFind(Triple triplePattern) {
         if (triplePattern.getSubject().isConcrete()) {
-            // SoftReference<SubjectTable> tblRef =
-            // map.get(triplePattern.getSubject());
             final SubjectTable tbl = getTable( triplePattern.getSubject() );
             if (tbl != null)
             {
@@ -204,7 +203,27 @@ public class CachingGraph extends GraphBase implements Graph {
                 return WrappedIterator.create( new CachingGraphIterator( graph.find( triplePattern ), tbl ) );
             }
             return WrappedIterator.emptyIterator();
-        } else {
+        
+//        } if (triplePattern.getSubject().isVariable() || Node.ANY.equals( triplePattern.getSubject()) ) {
+//        	/**
+//        	 * If we don't have a valid value for the subject query the main graph.
+//        	 */
+//        	SelectBuilder sb = new SelectBuilder().addWhere(  triplePattern  );
+//        	ExprFactory expF = sb.getExprFactory();
+//        				sb.addVar(  "??1" )
+//        				.addBind(  expF.asExpr( triplePattern.getSubject()), "??1" );
+//        				
+//        				
+//        	ResultSet rs = entityManager.execute( sb.build() ).execSelect();
+//        	while (rs.hasNext())
+//        	{
+//        		QuerySolution qs = rs.next();
+//        		SubjectTable st = getTable( qs.get(  rs.getResultVars().get( 0 ) ).asNode());
+//        		
+//        	}
+//                        
+        }else {
+        
             /*
              * we need to pull in all the subjects from the parent graph and add
              * them to our graph as we find them.
@@ -217,7 +236,8 @@ public class CachingGraph extends GraphBase implements Graph {
 
             final Iterator<Iterator<Triple>> iter = WrappedIterator.create( blockIterator )
                     .mapWith( tbl -> new CachingGraphIterator( tbl.asGraph().find( triplePattern ), tbl ) );
-            return WrappedIterator.create( new IteratorIterator( iter ) );
+        
+           return WrappedIterator.create( /*new IteratorIterator( iter )*/ Iterators.concat( iter ) );
         }
     }
 
@@ -441,11 +461,19 @@ public class CachingGraph extends GraphBase implements Graph {
             if (stbl != null) {
                 final SubjectTable tbl = stbl.get();
                 if (tbl != null) {
+                	if (LOG.isDebugEnabled())
+                	{
+                	 LOG.debug(  "returning "+tbl );
+                	}
                     return tbl;
                 }
             }
 
             final TableLoader loader = new TableLoader( subj.asNode() );
+            if (LOG.isDebugEnabled())
+            {
+             LOG.debug(  "loaded "+loader.getTable() );
+            }
             return loader.getTable();
         }
 
@@ -468,6 +496,7 @@ public class CachingGraph extends GraphBase implements Graph {
                 sb.addWhere( subject, P, O ).addBind( NodeValue.makeNode( subject ), S );
             }
             final TransactionHolder txn = new TransactionHolder( entityManager.getConnection(), ReadWrite.READ );
+               
             try (QueryExecution qe = entityManager.execute( sb.build() )) {
                 Iterator<QuerySolution> rs = qe.execSelect();
 
@@ -478,7 +507,7 @@ public class CachingGraph extends GraphBase implements Graph {
                 while (rs.hasNext()) {
                     final QuerySolution qs = rs.next();
                     if (qs.getResource( "s" ) == null || qs.getResource( "p" ) == null || qs.get( "o" ) == null) {
-                        System.out.println( "Found Null" );
+                        LOG.warn( "Found Null in solution: "+qs );
                     }
                     model.add( qs.getResource( "s" ), qs.getResource( "p" ).as( Property.class ), qs.get( "o" ) );
                     if (!subject.isBlank() && qs.get( "o" ).isAnon()) {
@@ -598,6 +627,7 @@ public class CachingGraph extends GraphBase implements Graph {
         private final Iterator<Triple> delegate;
         private final SubjectTable tbl;
         private Triple last;
+        private final Log LOG = LogFactory.getLog( CachingGraphIterator.class ); 
 
         public CachingGraphIterator(Iterator<Triple> delegate, SubjectTable tbl) {
             this.delegate = delegate;
@@ -617,12 +647,20 @@ public class CachingGraph extends GraphBase implements Graph {
 
         @Override
         public boolean hasNext() {
+        	if (LOG.isDebugEnabled())
+        	{
+        	    LOG.debug( tbl.toString()+"\nhasNext = "+delegate.hasNext() );
+        	}
             return delegate.hasNext();
         }
 
         @Override
         public Triple next() {
             last = delegate.next();
+            if (LOG.isDebugEnabled())
+            {
+            	LOG.debug(  tbl.toString()+"\nReturning "+last );
+            }
             return last;
         }
 

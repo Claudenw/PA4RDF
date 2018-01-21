@@ -15,7 +15,7 @@ import org.xenei.junit.contract.ContractImpl;
 import org.xenei.junit.contract.ContractSuite;
 import org.xenei.junit.contract.IProducer;
 
-@Ignore( "Missing correct test suite")
+//@Ignore( "Missing correct test suite")
 @RunWith(ContractSuite.class)
 @ContractImpl(CachingGraph.class)
 @ContractExclude(value = GraphContractTest.class, methods = { "testContains_Node_Node_Node_Concrete_BlankPredicate",
