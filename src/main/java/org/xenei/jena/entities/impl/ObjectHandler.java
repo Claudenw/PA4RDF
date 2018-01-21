@@ -73,6 +73,10 @@ public interface ObjectHandler {
     @SuppressWarnings("unchecked")
     default Collection<RDFNode> asCollection( boolean emptyIsNull, Object obj ) {
         Collection<Object> objs = null;
+        if (obj == null)
+        {
+            return Collections.emptyList();
+        }
         if (obj instanceof Collection)
         {
             objs = (Collection<Object>) obj;

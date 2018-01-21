@@ -5,6 +5,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -183,6 +184,10 @@ public class CollectionHandler extends AbstractObjectHandler {
     @Override
     public Collection<RDFNode> asCollection( boolean emptyIsNull, Object obj ) {
         Collection<Object> objs = null;
+        if (obj == null)
+        {
+            return Collections.emptyList();
+        }
         if (obj instanceof Collection)
         {
             objs = (Collection<Object>) obj;

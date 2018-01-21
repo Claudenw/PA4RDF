@@ -2,8 +2,10 @@ package org.xenei.jena.entities.impl.handlers;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import java.lang.reflect.Method;
+import java.util.Collection;
 
 import org.junit.Test;
 import org.xenei.jena.entities.impl.ObjectHandler;
@@ -55,4 +57,19 @@ public abstract class AbstractObjectHandlerTest {
         assertEquals( String.format(  "%s must override %s", underTest.getClass(), m ),
                 underTest.getClass(), m.getDeclaringClass());
     }
+    
+    @Test
+    public final void testAsCollection_True_Null() throws NoSuchMethodException, SecurityException {
+        assertNotNull( "underTest must be set", underTest);
+        Collection<?> collection = underTest.asCollection( true, null );
+        assertTrue( collection.isEmpty() );
+    }
+
+    @Test
+    public final void testAsCollection_False_Null() throws NoSuchMethodException, SecurityException {
+        assertNotNull( "underTest must be set", underTest);
+        Collection<?> collection = underTest.asCollection( false, null );
+        assertTrue( collection.isEmpty() );
+    }
+
 }
