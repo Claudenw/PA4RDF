@@ -32,7 +32,15 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.Spliterator;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.DelayQueue;
+import java.util.concurrent.Delayed;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.TimeUnit;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -52,6 +60,7 @@ import org.apache.jena.rdf.model.ResourceFactory;
 import org.apache.jena.rdfconnection.RDFConnection;
 import org.apache.jena.sparql.core.Quad;
 import org.apache.jena.sparql.syntax.ElementNamedGraph;
+import org.apache.jena.util.iterator.WrappedIterator;
 import org.apache.jena.vocabulary.RDF;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -70,6 +79,8 @@ import org.xenei.jena.entities.impl.datatype.LongDatatype;
 import net.sf.cglib.proxy.Enhancer;
 import net.sf.cglib.proxy.MethodInterceptor;
 
+import java.util.concurrent.ThreadPoolExecutor;
+
 /**
  * An implementation of the EntityManager interface.
  * 
@@ -86,6 +97,8 @@ public class EntityManagerImpl implements EntityManager {
     protected final CachingModel cachingModel;
 
     private final Node modelName;
+    
+    private final ExecutorService execService;
 
     static {
         registerTypes();
@@ -118,9 +131,11 @@ public class EntityManagerImpl implements EntityManager {
     public EntityManagerImpl(RDFConnection connection) {
         this.modelName = Quad.defaultGraphIRI;
         this.connection = connection;
+        DelayedBlockingQueue queue = new DelayedBlockingQueue();
+        this.execService = new ThreadPoolExecutor( 1, 5, 30, TimeUnit.SECONDS, queue.asRunnableQueue() );      
+        listeners = Collections.synchronizedList( new ArrayList<WeakReference<Listener>>() );
         this.cachingModel = CachingModel.makeInstance( this );
 
-        listeners = Collections.synchronizedList( new ArrayList<WeakReference<Listener>>() );
         classInfo = new HashMap<Class<?>, SubjectInfo>() {
 
             /**
@@ -170,9 +185,15 @@ public class EntityManagerImpl implements EntityManager {
     private EntityManagerImpl(EntityManagerImpl base, Node modelName) {
         this.modelName = modelName == null ? Quad.defaultGraphIRI : modelName;
         this.connection = base.connection;
-        this.cachingModel = CachingModel.makeInstance( this );
+        this.execService = base.execService;
         this.listeners = base.listeners;
         this.classInfo = base.classInfo;
+        this.cachingModel = CachingModel.makeInstance( this );
+    }
+    
+    public ExecutorService getExecutorService()
+    {
+        return execService;
     }
 
     @Override
@@ -745,4 +766,246 @@ public class EntityManagerImpl implements EntityManager {
         return String.format( "EntityManager[%s]", modelName );
     }
 
+    
+    public interface DR extends Delayed, Runnable {
+    
+        public static DR make( Runnable r )
+        {
+            if (r instanceof DR)
+            {
+                return (DR)r;
+            }
+            Impl impl = new Impl(r);
+            if (r instanceof Delayed)
+            {
+                impl.expires = ((Delayed) r).getDelay( TimeUnit.MILLISECONDS );
+            }
+            return impl;
+        }
+        
+        public static DR make( Runnable r, long expires )
+        {
+            if (r instanceof DR)
+            {
+                if (expires == ((DR)r).getDelay( TimeUnit.MILLISECONDS ))
+                {
+                    return (DR)r;
+                }
+            }
+            return new Impl(r, expires);
+        }
+        
+        public class Impl implements DR {
+       
+            private Runnable r;
+            private long expires;
+            
+            private Impl( Runnable r)
+            {
+                this(r,System.currentTimeMillis());
+            }
+
+            private Impl( Runnable r ,long expires)
+            {
+                this.r = r;
+                this.expires = expires;
+            }
+
+            @Override
+            public long getDelay(TimeUnit unit) {
+                return unit.convert( expires-System.currentTimeMillis(), TimeUnit.MILLISECONDS );
+            }
+    
+            @Override
+            public int compareTo(Delayed o) {
+                return Long.compare(  getDelay( TimeUnit.MILLISECONDS), o.getDelay(  TimeUnit.MILLISECONDS ) );
+            }
+    
+            @Override
+            public void run() {
+                r.run();
+            }
+            
+            @Override
+            public boolean equals( Object o )
+            {
+                if (o instanceof Impl)
+                {
+                    return r.equals( ((Impl )o).equals(  r  ));
+                }
+                return false;
+            }
+            
+            @Override
+            public int hashCode() {
+                return r.hashCode();
+            }
+                        
+        }
+    }
+    
+    
+    public class DelayedBlockingQueue extends DelayQueue<DR>  {
+        
+        public BlockingQueue<Runnable> asRunnableQueue() {
+            return new BlockingQueue<Runnable>(){
+                DelayedBlockingQueue dbq = DelayedBlockingQueue.this;
+                public boolean add(Runnable e) {
+                    return dbq.add( DR.make( e ));
+                }
+
+                
+                private List<DR> makeList( Collection<? extends Runnable> coll)
+                {
+                   return coll.stream().map( r -> DR.make( r ) ).collect( Collectors.toList() ) ;
+                }
+                
+                
+                public boolean addAll(Collection<? extends Runnable> arg0) {
+                    return dbq.addAll(makeList( arg0 ) );
+                }
+
+                public void clear() {
+                    dbq.clear();
+                }
+
+                public boolean contains(Object o) {
+                    if (o instanceof Runnable) { 
+                        return dbq.contains( DR.make( (Runnable)o ) );
+                    } 
+                    return false;
+                }
+
+                public boolean containsAll(Collection<?> arg0) {
+                    List<DR> lst = new ArrayList<DR>();
+                    for (Object o : arg0)
+                    {
+                        if (o instanceof Runnable)
+                        {
+                            lst.add(  DR.make(  (Runnable)o ) );
+                        }
+                        else {
+                            return false;
+                        }
+                    }
+                
+                    return dbq.containsAll( lst );
+                }
+
+                public int drainTo(Collection<? super Runnable> c, int maxElements) {
+                    return dbq.drainTo( c, maxElements );
+                }
+
+                public int drainTo(Collection<? super Runnable> c) {
+                    return dbq.drainTo( c );
+                }
+
+                public Runnable element() {
+                    return dbq.element();
+                }                
+
+                public void forEach(Consumer<? super Runnable> arg0) {
+                    dbq.forEach( arg0 );
+                }
+               
+                public boolean isEmpty() {
+                    return dbq.isEmpty();
+                }
+
+                public Iterator<Runnable> iterator() {
+                    return WrappedIterator.create( dbq.iterator() ).mapWith( dr -> (Runnable)dr );
+                }
+
+                public boolean offer(Runnable e, long timeout, TimeUnit unit) throws InterruptedException {
+                    return dbq.offer( DR.make( e ), timeout, unit );
+                }
+
+                public boolean offer(Runnable e) {
+                    return dbq.offer( DR.make( e ) );
+                }
+
+//                public Stream<Runnable> parallelStream() {
+//                    return dbq.parallelStream().map(  dr -> (Runnable)dr );
+//                }
+
+                public Runnable peek() {
+                    return dbq.peek();
+                }
+
+                public Runnable poll() {
+                    return dbq.poll();
+                }
+
+                public Runnable poll(long timeout, TimeUnit unit) throws InterruptedException {
+                    return dbq.poll( timeout, unit );
+                }
+
+                public void put(Runnable e) throws InterruptedException {
+                    dbq.put( DR.make(e) );
+                }
+
+                public int remainingCapacity() {
+                    return dbq.remainingCapacity();
+                }
+
+                public Runnable remove() {
+                    return dbq.remove();
+                }
+
+                public boolean remove(Object o) {
+                    if (o instanceof Runnable)
+                    {
+                        return dbq.remove( DR.make(  (Runnable)o) );
+                    }
+                    return false;
+                }
+
+                public boolean removeAll(Collection<?> arg0) {
+                    List<DR> lst = new ArrayList<DR>();
+                    for (Object o : arg0)
+                    {
+                        if (o instanceof Runnable)
+                        {
+                            lst.add(  DR.make(  (Runnable)o ) );
+                        }
+                        
+                    }               
+                    return dbq.removeAll( lst );
+                }
+
+//                public boolean removeIf(java.util.function.Predicate<? super Runnable> arg0) {
+//                    return dbq.removeIf( arg0 );
+//                }
+
+                public boolean retainAll(Collection<?> arg0) {
+                    return dbq.retainAll( arg0 );
+                }
+
+                public int size() {
+                    return dbq.size();
+                }
+               
+//                public Stream<Runnable> stream() {
+//                    return dbq.stream().map(  dr -> (Runnable) dr );
+//                }
+
+                public Runnable take() throws InterruptedException {
+                    return dbq.take();
+                }
+
+                public Object[] toArray() {
+                    return dbq.toArray();
+                }
+
+                public <T> T[] toArray(T[] arg0) {
+                    return dbq.toArray( arg0 );
+                }
+                
+        };
+        
+        
+        
+    }
+        
+    }
 }

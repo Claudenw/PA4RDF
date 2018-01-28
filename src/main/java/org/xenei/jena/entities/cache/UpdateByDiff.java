@@ -55,6 +55,11 @@ public class UpdateByDiff {
         }
         clear();
     }
+    
+    public synchronized boolean has( Node node )
+    {
+        return snapshots.containsKey( node  );
+    }
 
     private UpdateRequest generateUpdate(String graphName) {
 

@@ -33,13 +33,15 @@ public class ModelInterceptor implements MethodInterceptor {
     private static final Method SYNC;
     private static final Method ADOPT;
     private static final Method CLEAR;
-
+    private static final Method REFRESH;
+    
     static {
 
         try {
             SYNC = CachingModel.class.getMethod( "sync" );
             ADOPT = CachingModel.class.getMethod( "adopt", Resource.class );
             CLEAR = CachingModel.class.getMethod( "clear" );
+            REFRESH = CachingModel.class.getMethod( "refresh" );
         } catch (NoSuchMethodException | SecurityException e) {
             throw new IllegalStateException( e );
         }
@@ -55,7 +57,7 @@ public class ModelInterceptor implements MethodInterceptor {
      */
     public ModelInterceptor(EntityManagerImpl entityManager) {
         this.graph = new CachingGraph( entityManager );
-        this.model = ModelFactory.createModelForGraph( graph );
+        this.model = ModelFactory.createModelForGraph( graph );        
         this.resourceCache = new HashMap<Byte, List<SoftReference<Resource>>>();
 
     }
@@ -69,6 +71,11 @@ public class ModelInterceptor implements MethodInterceptor {
 
         if (SYNC.equals( method )) {
             graph.sync( false );
+            return null;
+        }
+        
+        if (REFRESH.equals( method  )) {
+            graph.refresh();
             return null;
         }
 

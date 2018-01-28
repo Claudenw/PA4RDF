@@ -109,4 +109,46 @@ public class CachingGraphTests {
         assertEquals( 1, answ.size() );
         assertEquals( a2, answ.iterator().next().getObject() );
     }
+    
+    @Test
+    public void testRefresh() throws InterruptedException {
+        final Resource r = model.createResource( "urn:myRes" );
+        final Resource anon = model.createResource();
+        final Literal lit = model.createTypedLiteral( "Testing System" );
+
+        r.addProperty( DC_11.creator, lit );
+        r.addProperty( RDF.type, OWL.Thing );
+        r.addProperty( DC_11.publisher, anon );
+
+        SubjectTable table = graph.getTable( r.asNode() );
+        
+        // update the model behind the graph
+        
+        final Literal title = model.createTypedLiteral( "The title" );
+        r.addProperty(  DC_11.title, title );
+        
+        graph.refresh();
+        
+        Thread.sleep(  1000  );
+        
+        table = graph.getTable( r.asNode() );
+        assertEquals( r.asNode(), table.getSubject() );
+
+        Set<Node> values = table.getValues( RDF.type );
+        assertEquals( 1, values.size() );
+        assertEquals( OWL.Thing.asNode(), values.iterator().next() );
+
+        values = table.getValues( DC_11.creator );
+        assertEquals( 1, values.size() );
+        assertEquals( lit.asNode(), values.iterator().next() );
+
+        values = table.getValues( DC_11.publisher );
+        assertEquals( 1, values.size() );
+        assertEquals( anon.asNode(), values.iterator().next() );
+        
+        values = table.getValues( DC_11.title );
+        assertEquals( 1, values.size() );
+        assertEquals( title.asNode(), values.iterator().next() );
+
+    }
 }

@@ -1,8 +1,10 @@
 package org.xenei.jena.entities.cache;
 
 import java.lang.ref.SoftReference;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -55,7 +57,7 @@ import org.xenei.jena.entities.impl.TransactionHolder;
 /**
  * A graph that caches remote data.
  * <p>
- * Rhis implementation caches predicates and objects for each subject that is
+ * This implementation caches predicates and objects for each subject that is
  * retrieved from the remote system.
  * </p>
  * <p>
@@ -74,7 +76,7 @@ public class CachingGraph extends GraphBase implements Graph {
     private static final Var O = Var.alloc( "o" );
     private final UpdateByDiff updater;
     private final TxnHandler txnHandler;
-
+    
     static {
         ARQ.getContext().set( ARQ.inputGraphBNodeLabels, true );
     }
@@ -123,12 +125,45 @@ public class CachingGraph extends GraphBase implements Graph {
         map.clear();
         updater.clear();
     }
+    
+    /**
+     * refresh non-modified data from the graph
+     */
+    public void refresh() {
+        SubjectTable st = null;
+        for (Node key : map.keySet())
+        {
+            synchronized( map )
+            {
+                final SoftReference<SubjectTable> sr = map.get( key );
+                st = sr == null ? null : sr.get();
+                if (st == null)
+                {
+                    map.remove(  key  );
+                }
+            }
+            if (st != null && !updater.has(key))
+            {
+               entityManager.getExecutorService().execute( new Runnable(){
+
+                @Override
+                public void run() {
+                    if (! updater.has( key ))
+                    {
+                        new TableLoader( key ).refresh();
+                    }
+                }} );
+            }
+        }
+    }
 
     /**
      * Sync the caching graph with the remote graph. predicates and objects for
      * every subject is read from the remote graph. Local changes are discarded.
+     * @param foreground If true the sync is run on this thread, otherwise it is scheduled
+     *  using the executor service.
      */
-    public void sync(boolean singleThreaded) {
+    public void sync(boolean foreground) {
         final List<Node> changed = updater.sync( entityManager, graphWriteNode );
         if (!changed.isEmpty()) {
 
@@ -143,7 +178,7 @@ public class CachingGraph extends GraphBase implements Graph {
                             map.remove( subject );
                         } else {
                             if (st.getSubject().equals( subject )) {
-                                new TableLoader( subject );
+                                new TableLoader( subject ).refresh();
                             }
                         }
                     }
@@ -151,17 +186,13 @@ public class CachingGraph extends GraphBase implements Graph {
                 }
             };
 
-            // if (singleThreaded)
-            // {
-            r.run();
-            // } else
-            // {
-            //
-            // final Thread t = new Thread(r,
-            // "sync - " + System.currentTimeMillis());
-            //
-            // t.start();
-            // }
+             if (foreground)
+             {
+                 r.run();
+             } else
+             {
+                 entityManager.getExecutorService().execute( EntityManagerImpl.DR.make( r ) );
+             }
         }
 
     }
@@ -188,9 +219,14 @@ public class CachingGraph extends GraphBase implements Graph {
             tbl = tblRef.get();
         }
         if (tbl == null || tbl.isEmpty()) {
-            tbl = new TableLoader( subject ).getTable();
+            tbl = runTableLoader( subject );
         }
         return tbl;
+    }
+    
+    private SubjectTable runTableLoader( Node subject )
+    {
+        return new TableLoader( subject ).load();
     }
 
     @Override
@@ -203,25 +239,7 @@ public class CachingGraph extends GraphBase implements Graph {
                 return WrappedIterator.create( new CachingGraphIterator( graph.find( triplePattern ), tbl ) );
             }
             return WrappedIterator.emptyIterator();
-        
-//        } if (triplePattern.getSubject().isVariable() || Node.ANY.equals( triplePattern.getSubject()) ) {
-//        	/**
-//        	 * If we don't have a valid value for the subject query the main graph.
-//        	 */
-//        	SelectBuilder sb = new SelectBuilder().addWhere(  triplePattern  );
-//        	ExprFactory expF = sb.getExprFactory();
-//        				sb.addVar(  "??1" )
-//        				.addBind(  expF.asExpr( triplePattern.getSubject()), "??1" );
-//        				
-//        				
-//        	ResultSet rs = entityManager.execute( sb.build() ).execSelect();
-//        	while (rs.hasNext())
-//        	{
-//        		QuerySolution qs = rs.next();
-//        		SubjectTable st = getTable( qs.get(  rs.getResultVars().get( 0 ) ).asNode());
-//        		
-//        	}
-//                        
+                       
         }else {
         
             /*
@@ -252,7 +270,7 @@ public class CachingGraph extends GraphBase implements Graph {
             tbl = tblRef.get();
         }
         if (tbl == null) {
-            tbl = new TableLoader( t.getSubject() ).getTable();
+            tbl = runTableLoader( t.getSubject() );
         }
         updater.register( tbl );
         tbl.addValue( t.getPredicate(), t.getObject() );
@@ -269,7 +287,7 @@ public class CachingGraph extends GraphBase implements Graph {
             tbl = tblRef.get();
         }
         if (tbl == null) {
-            tbl = new TableLoader( t.getSubject() ).getTable();
+            tbl = runTableLoader( t.getSubject() );
         }
         updater.register( tbl );
         tbl.removeValue( t.getPredicate(), t.getObject() );
@@ -468,24 +486,21 @@ public class CachingGraph extends GraphBase implements Graph {
                     return tbl;
                 }
             }
-
-            final TableLoader loader = new TableLoader( subj.asNode() );
-            if (LOG.isDebugEnabled())
-            {
-             LOG.debug(  "loaded "+loader.getTable() );
-            }
-            return loader.getTable();
+            return runTableLoader( subj.asNode() );
         }
 
     }
 
-    private class TableLoader implements Runnable {
-        private final SubjectTableImpl subjectTable;
+    private class TableLoader {
+        
         private final Model model;
         private final Queue<Triple> queue;
-
-        private TableLoader(Node subject) {
+        private final Node subject;
+        private final Set<Node> aliases;
+        
+        private TableLoader(Node subject) {        
             LOG.debug( "Building table for: " + subject );
+            this.subject = subject;
             queue = new LinkedList<Triple>();
             model = ModelFactory.createDefaultModel();
             final SelectBuilder sb = new SelectBuilder().addVar( S ).addVar( P ).addVar( O );
@@ -515,37 +530,90 @@ public class CachingGraph extends GraphBase implements Graph {
                         queue.add( t );
                     }
                 }
+               aliases = executeQueue();
+                
             } finally {
                 txn.end();
             }
-            subjectTable = new SubjectTableImpl( subject, model );
-            map.put( subject, new SoftReference<SubjectTable>( subjectTable ) );
-            if (!queue.isEmpty()) {
-                // this should be in a thread
-                run();
-            }
         }
-
-        public SubjectTable getTable() {
+        
+        public SubjectTable load() {
+           SubjectTable subjectTable = new SubjectTableImpl( subject, model );
+           SoftReference<SubjectTable> sr = new SoftReference<SubjectTable>( subjectTable );
+            map.put( subject, sr );  
+            for (Node n : aliases)
+            {
+                map.put(  n, sr );
+            }
+            if (LOG.isDebugEnabled())
+            {
+                LOG.debug(  "loaded "+subjectTable );
+            }
             return subjectTable;
         }
+        
+        public void refresh() {
+           SubjectTable subjectTable = null;
+           SoftReference<SubjectTable> sr = map.get( subject );
+           if (sr != null)
+           {
+               subjectTable = sr.get();
+           }
+           if (subjectTable == null)
+           {
+               if (LOG.isDebugEnabled())
+               {
+                   LOG.debug(  "refresh of "+subject+" resulted in reload" );
+               }
+               load();
+           }
+           else {
+               subjectTable.reset( model.getGraph() );
+               for (Node n :  map.keySet())
+               {
+                   if (n.equals(  subject ))
+                   {
+                       continue;
+                   }
+                   SoftReference<SubjectTable> sr2 = map.get( n );
+                   if (sr2 == null)
+                   {
+                       map.remove( n );
+                   } else if (  sr.equals( sr2 ) && ! aliases.contains( n ))
+                   {
+                       map.remove( n );
+                   }
+               }
+               for (Node n : aliases)
+               {
+                   map.put( n, sr );
+               }
+               
+               if (LOG.isDebugEnabled())
+               {
+                   LOG.debug(  "refreshed "+subjectTable );
+               }
+           }
+        }
 
-        @Override
-        public void run() {
+        private Set<Node> executeQueue() {
             final Stack<Triple> stack = new Stack<Triple>();
+            Set<Node> results = new HashSet<Node>();
             while (!queue.isEmpty()) {
                 stack.clear();
                 stack.push( queue.poll() );
-                process( stack );
+                results.addAll( process( stack ) );
                 stack.pop();
                 if (!stack.isEmpty()) {
                     throw new IllegalStateException( "Stack was not clear" );
                 }
             }
+            return results;           
         }
 
-        private void process(Stack<Triple> triples) {
+        private Set<Node> process(Stack<Triple> triples) {
             final Triple t = triples.peek();
+            Set<Node> results = new HashSet<Node>();
             triples.size();
             if (!map.containsKey( t.getObject() )) {
                 final SelectBuilder sb = new SelectBuilder().addVar( S ).addVar( P ).addVar( O ).addWhere( S, P, O );
@@ -565,12 +633,12 @@ public class CachingGraph extends GraphBase implements Graph {
                     while (rs.hasNext()) {
                         final QuerySolution qs = rs.next();
                         model.add( qs.getResource( "s" ), qs.getResource( "p" ).as( Property.class ), qs.get( "o" ) );
-                        map.put( qs.getResource( "s" ).asNode(), new SoftReference<SubjectTable>( subjectTable ) );
+                        results.add( qs.getResource( "s" ).asNode() );
                         if (qs.get( "o" ).isAnon()) {
                             final Triple t3 = new Triple( qs.getResource( "s" ).asNode(),
                                     qs.getResource( "p" ).asNode(), qs.get( "o" ).asNode() );
                             triples.push( t3 );
-                            process( triples );
+                            results.addAll( process( triples ));
                             triples.pop();
                         }
                     }
@@ -578,7 +646,7 @@ public class CachingGraph extends GraphBase implements Graph {
                     txn.end();
                 }
             }
-
+            return results;
         }
     }
 
