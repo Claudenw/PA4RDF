@@ -9,6 +9,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.xenei.jena.entities.testing.bad.UnannotatedInterface;
 import org.xenei.jena.entities.testing.iface.TwoValueSimpleInterface;
+import org.xenei.pa4rdf.bean.exceptions.MissingAnnotation;
 
 public class DirectInheritanceTest {
     private Model m;

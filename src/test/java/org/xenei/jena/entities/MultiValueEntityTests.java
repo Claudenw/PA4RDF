@@ -28,6 +28,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.xenei.jena.entities.testing.abst.MultiValueAnnotatedAbst;
 import org.xenei.jena.entities.testing.iface.TestInterface;
+import org.xenei.pa4rdf.bean.exceptions.MissingAnnotation;
 
 public class MultiValueEntityTests {
 

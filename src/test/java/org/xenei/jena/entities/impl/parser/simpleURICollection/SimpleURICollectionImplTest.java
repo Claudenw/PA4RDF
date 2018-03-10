@@ -1,6 +1,6 @@
 package org.xenei.jena.entities.impl.parser.simpleURICollection;
 
-import org.xenei.jena.entities.testing.impl.SimpleURICollectionImpl;
+import org.xenei.pa4rdf.bean.test.impl.SimpleURICollectionImpl;
 
 public class SimpleURICollectionImplTest extends AbstractSimpleURICollectionTest {
 

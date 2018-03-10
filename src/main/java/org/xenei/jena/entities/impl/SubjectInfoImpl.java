@@ -28,11 +28,14 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.jena.rdf.model.Property;
 import org.apache.jena.rdf.model.RDFNode;
-import org.xenei.jena.entities.PredicateInfo;
-import org.xenei.jena.entities.SubjectInfo;
-import org.xenei.jena.entities.annotations.Predicate;
-import org.xenei.jena.entities.annotations.Subject;
-import org.xenei.jena.entities.annotations.URI;
+import org.xenei.pa4rdf.bean.PredicateInfo;
+import org.xenei.pa4rdf.bean.SubjectInfo;
+import org.xenei.pa4rdf.bean.annotations.Predicate;
+import org.xenei.pa4rdf.bean.annotations.Subject;
+import org.xenei.pa4rdf.bean.annotations.URI;
+import org.xenei.pa4rdf.bean.impl.ActionType;
+import org.xenei.pa4rdf.bean.impl.EffectivePredicate;
+import org.xenei.pa4rdf.bean.impl.TypeChecker;
 
 public class SubjectInfoImpl implements SubjectInfo {
     
@@ -64,7 +67,7 @@ public class SubjectInfoImpl implements SubjectInfo {
      * @param pi
      *            The predicateInfo to add.
      */
-    public void add(final PredicateInfoImpl pi) {
+    public void add(final PredicateInfo pi) {
         if (pi == null) {
             throw new IllegalArgumentException( "PredicateInfo may not be null" );
         }

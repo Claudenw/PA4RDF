@@ -9,10 +9,10 @@ import org.junit.Before;
 import org.junit.Test;
 import org.xenei.jena.entities.EntityManager;
 import org.xenei.jena.entities.EntityManagerFactory;
-import org.xenei.jena.entities.MissingAnnotation;
-import org.xenei.jena.entities.ResourceWrapper;
 import org.xenei.jena.entities.impl.EntityManagerImpl;
 import org.xenei.jena.entities.impl.SubjectInfoImpl;
+import org.xenei.pa4rdf.bean.ResourceWrapper;
+import org.xenei.pa4rdf.bean.exceptions.MissingAnnotation;
 
 abstract public class BaseAbstractManagerTest {
     protected SubjectInfoImpl subjectInfo;

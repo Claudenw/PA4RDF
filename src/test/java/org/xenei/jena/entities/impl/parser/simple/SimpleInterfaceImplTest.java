@@ -2,9 +2,9 @@ package org.xenei.jena.entities.impl.parser.simple;
 
 import org.junit.Assert;
 import org.junit.Test;
-import org.xenei.jena.entities.PredicateInfo;
-import org.xenei.jena.entities.impl.ActionType;
-import org.xenei.jena.entities.testing.impl.SimpleInterfaceImpl;
+import org.xenei.pa4rdf.bean.PredicateInfo;
+import org.xenei.pa4rdf.bean.impl.ActionType;
+import org.xenei.pa4rdf.bean.test.impl.SimpleInterfaceImpl;
 
 public class SimpleInterfaceImplTest extends AbstractSimpleInterfaceTest {
 

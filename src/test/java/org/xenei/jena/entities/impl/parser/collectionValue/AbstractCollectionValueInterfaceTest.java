@@ -9,18 +9,18 @@ import org.apache.jena.datatypes.xsd.XSDDatatype;
 import org.apache.jena.rdf.model.RDFNode;
 import org.junit.Assert;
 import org.junit.Test;
-import org.xenei.jena.entities.PredicateInfo;
-import org.xenei.jena.entities.annotations.URI;
-import org.xenei.jena.entities.impl.ActionType;
 import org.xenei.jena.entities.impl.EntityManagerImpl;
-import org.xenei.jena.entities.impl.datatype.CharacterDatatype;
-import org.xenei.jena.entities.impl.handlers.CollectionHandler;
-import org.xenei.jena.entities.impl.handlers.EntityHandler;
-import org.xenei.jena.entities.impl.handlers.LiteralHandler;
-import org.xenei.jena.entities.impl.handlers.ResourceHandler;
-import org.xenei.jena.entities.impl.handlers.UriHandler;
 import org.xenei.jena.entities.impl.parser.AbstractMethodParserTest;
 import org.xenei.jena.entities.testing.iface.TestInterface;
+import org.xenei.pa4rdf.bean.PredicateInfo;
+import org.xenei.pa4rdf.bean.annotations.URI;
+import org.xenei.pa4rdf.bean.datatypes.CharacterDatatype;
+import org.xenei.pa4rdf.bean.handlers.CollectionHandler;
+import org.xenei.pa4rdf.bean.handlers.EntityHandler;
+import org.xenei.pa4rdf.bean.handlers.LiteralHandler;
+import org.xenei.pa4rdf.bean.handlers.ResourceHandler;
+import org.xenei.pa4rdf.bean.handlers.UriHandler;
+import org.xenei.pa4rdf.bean.impl.ActionType;
 
 public abstract class AbstractCollectionValueInterfaceTest extends AbstractMethodParserTest {
 

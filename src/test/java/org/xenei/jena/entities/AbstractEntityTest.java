@@ -8,6 +8,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.xenei.jena.entities.testing.abst.AbstractEntity;
+import org.xenei.pa4rdf.bean.exceptions.MissingAnnotation;
 
 public class AbstractEntityTest {
     private Model m;

@@ -24,7 +24,9 @@ import org.apache.jena.rdf.model.AnonId;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.Resource;
 import org.apache.jena.rdfconnection.RDFConnection;
-import org.xenei.jena.entities.annotations.Subject;
+import org.xenei.pa4rdf.bean.SubjectInfo;
+import org.xenei.pa4rdf.bean.annotations.Subject;
+import org.xenei.pa4rdf.bean.exceptions.MissingAnnotation;
 
 /**
  * An Entity Manager to manage instances of entities annotated with the Subject
@@ -35,7 +37,7 @@ import org.xenei.jena.entities.annotations.Subject;
  * The EntityManager handles all client interactions with the Jena Model using
  * the annotated classes.
  *
- * @see org.xenei.jena.entities.annotations.Subject
+ * @see org.xenei.pa4rdf.bean.annotations.Subject
  */
 public interface EntityManager {
 

@@ -48,16 +48,19 @@ import org.junit.Assert;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xenei.jena.entities.EntityManager;
-import org.xenei.jena.entities.PredicateInfo;
-import org.xenei.jena.entities.annotations.Predicate;
-import org.xenei.jena.entities.annotations.Subject;
-import org.xenei.jena.entities.annotations.URI;
-import org.xenei.jena.entities.impl.handlers.EntityHandler;
-import org.xenei.jena.entities.impl.handlers.CollectionHandler;
-import org.xenei.jena.entities.impl.handlers.LiteralHandler;
-import org.xenei.jena.entities.impl.handlers.ResourceHandler;
-import org.xenei.jena.entities.impl.handlers.UriHandler;
-import org.xenei.jena.entities.impl.handlers.VoidHandler;
+import org.xenei.pa4rdf.bean.PredicateInfo;
+import org.xenei.pa4rdf.bean.annotations.Predicate;
+import org.xenei.pa4rdf.bean.annotations.Subject;
+import org.xenei.pa4rdf.bean.annotations.URI;
+import org.xenei.pa4rdf.bean.handlers.CollectionHandler;
+import org.xenei.pa4rdf.bean.handlers.EntityHandler;
+import org.xenei.pa4rdf.bean.handlers.LiteralHandler;
+import org.xenei.pa4rdf.bean.handlers.ObjectHandler;
+import org.xenei.pa4rdf.bean.handlers.ResourceHandler;
+import org.xenei.pa4rdf.bean.handlers.UriHandler;
+import org.xenei.pa4rdf.bean.handlers.VoidHandler;
+import org.xenei.pa4rdf.bean.impl.ActionType;
+import org.xenei.pa4rdf.bean.impl.EffectivePredicate;
 
 /**
  * The parsed information about a predicate method.

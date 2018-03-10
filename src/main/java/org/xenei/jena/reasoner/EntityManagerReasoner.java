@@ -24,9 +24,9 @@ import org.apache.jena.reasoner.TriplePattern;
 import org.apache.jena.util.iterator.ExtendedIterator;
 import org.apache.jena.util.iterator.NiceIterator;
 import org.xenei.jena.entities.EntityManager;
-import org.xenei.jena.entities.PredicateInfo;
-import org.xenei.jena.entities.SubjectInfo;
-import org.xenei.jena.entities.impl.ActionType;
+import org.xenei.pa4rdf.bean.PredicateInfo;
+import org.xenei.pa4rdf.bean.SubjectInfo;
+import org.xenei.pa4rdf.bean.impl.ActionType;
 
 /**
  * A reasoner that attempts to perform the same duplicate checking that the

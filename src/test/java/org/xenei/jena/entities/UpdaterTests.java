@@ -5,8 +5,8 @@ import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.rdf.model.Resource;
 import org.junit.Before;
 import org.junit.Test;
-import org.xenei.jena.entities.annotations.Predicate;
-import org.xenei.jena.entities.annotations.Subject;
+import org.xenei.pa4rdf.bean.annotations.Predicate;
+import org.xenei.pa4rdf.bean.annotations.Subject;
 
 import junit.framework.Assert;
 

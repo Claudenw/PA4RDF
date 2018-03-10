@@ -32,13 +32,16 @@ import java.util.Stack;
 
 import org.apache.jena.rdf.model.RDFList;
 import org.apache.jena.rdf.model.RDFNode;
-import org.xenei.jena.entities.MissingAnnotation;
-import org.xenei.jena.entities.PredicateInfo;
-import org.xenei.jena.entities.SubjectInfo;
-import org.xenei.jena.entities.annotations.Predicate;
-import org.xenei.jena.entities.annotations.Subject;
-import org.xenei.jena.entities.annotations.URI;
-import org.xenei.jena.entities.impl.handlers.UriHandler;
+import org.xenei.pa4rdf.bean.PredicateInfo;
+import org.xenei.pa4rdf.bean.SubjectInfo;
+import org.xenei.pa4rdf.bean.annotations.Predicate;
+import org.xenei.pa4rdf.bean.annotations.Subject;
+import org.xenei.pa4rdf.bean.annotations.URI;
+import org.xenei.pa4rdf.bean.exceptions.MissingAnnotation;
+import org.xenei.pa4rdf.bean.handlers.UriHandler;
+import org.xenei.pa4rdf.bean.impl.ActionType;
+import org.xenei.pa4rdf.bean.impl.EffectivePredicate;
+import org.xenei.pa4rdf.bean.impl.TypeChecker;
 
 /**
  * An implementation of the EntityManager interface.

@@ -12,11 +12,12 @@ import org.junit.Before;
 import org.junit.Test;
 import org.xenei.jena.entities.EntityManager;
 import org.xenei.jena.entities.EntityManagerFactory;
-import org.xenei.jena.entities.SubjectInfo;
-import org.xenei.jena.entities.impl.handlers.LiteralHandler;
-import org.xenei.jena.entities.impl.handlers.ResourceHandler;
-import org.xenei.jena.entities.impl.handlers.UriHandler;
 import org.xenei.jena.entities.testing.abst.SingleValueMixedTypeTestClass;
+import org.xenei.pa4rdf.bean.SubjectInfo;
+import org.xenei.pa4rdf.bean.handlers.LiteralHandler;
+import org.xenei.pa4rdf.bean.handlers.ObjectHandler;
+import org.xenei.pa4rdf.bean.handlers.ResourceHandler;
+import org.xenei.pa4rdf.bean.handlers.UriHandler;
 
 public class SingleValueMixedTypeParserTest {
 

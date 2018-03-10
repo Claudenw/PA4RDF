@@ -9,16 +9,16 @@ import org.apache.jena.datatypes.TypeMapper;
 import org.apache.jena.rdf.model.RDFNode;
 import org.junit.Assert;
 import org.junit.Test;
-import org.xenei.jena.entities.annotations.URI;
-import org.xenei.jena.entities.impl.ObjectHandler;
 import org.xenei.jena.entities.impl.PredicateInfoImpl;
-import org.xenei.jena.entities.impl.handlers.CollectionHandler;
-import org.xenei.jena.entities.impl.handlers.EntityHandler;
-import org.xenei.jena.entities.impl.handlers.LiteralHandler;
-import org.xenei.jena.entities.impl.handlers.ResourceHandler;
-import org.xenei.jena.entities.impl.handlers.UriHandler;
 import org.xenei.jena.entities.impl.manager.BaseAbstractManagerTest;
 import org.xenei.jena.entities.testing.iface.TestInterface;
+import org.xenei.pa4rdf.bean.annotations.URI;
+import org.xenei.pa4rdf.bean.handlers.CollectionHandler;
+import org.xenei.pa4rdf.bean.handlers.EntityHandler;
+import org.xenei.pa4rdf.bean.handlers.LiteralHandler;
+import org.xenei.pa4rdf.bean.handlers.ObjectHandler;
+import org.xenei.pa4rdf.bean.handlers.ResourceHandler;
+import org.xenei.pa4rdf.bean.handlers.UriHandler;
 
 public abstract class AbstractCollectionValueTest extends BaseAbstractManagerTest {
 

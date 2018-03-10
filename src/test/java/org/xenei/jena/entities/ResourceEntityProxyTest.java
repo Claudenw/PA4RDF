@@ -24,9 +24,13 @@ import org.apache.jena.util.iterator.ExtendedIterator;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.xenei.jena.entities.annotations.Predicate;
 import org.xenei.jena.entities.testing.abst.TestPropertyRenamingInterface;
 import org.xenei.jena.entities.testing.iface.TestInterface;
+import org.xenei.pa4rdf.bean.PredicateInfo;
+import org.xenei.pa4rdf.bean.ResourceWrapper;
+import org.xenei.pa4rdf.bean.SubjectInfo;
+import org.xenei.pa4rdf.bean.annotations.Predicate;
+import org.xenei.pa4rdf.bean.exceptions.MissingAnnotation;
 
 public class ResourceEntityProxyTest {
 

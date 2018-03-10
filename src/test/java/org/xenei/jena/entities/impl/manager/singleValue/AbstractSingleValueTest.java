@@ -5,16 +5,16 @@ import org.apache.jena.datatypes.xsd.XSDDatatype;
 import org.apache.jena.rdf.model.RDFNode;
 import org.junit.Assert;
 import org.junit.Test;
-import org.xenei.jena.entities.annotations.Predicate;
-import org.xenei.jena.entities.impl.ObjectHandler;
 import org.xenei.jena.entities.impl.PredicateInfoImpl;
-import org.xenei.jena.entities.impl.handlers.EntityHandler;
-import org.xenei.jena.entities.impl.handlers.LiteralHandler;
-import org.xenei.jena.entities.impl.handlers.ResourceHandler;
-import org.xenei.jena.entities.impl.handlers.UriHandler;
-import org.xenei.jena.entities.impl.handlers.VoidHandler;
 import org.xenei.jena.entities.impl.manager.BaseAbstractManagerTest;
 import org.xenei.jena.entities.testing.iface.TestInterface;
+import org.xenei.pa4rdf.bean.annotations.Predicate;
+import org.xenei.pa4rdf.bean.handlers.EntityHandler;
+import org.xenei.pa4rdf.bean.handlers.LiteralHandler;
+import org.xenei.pa4rdf.bean.handlers.ObjectHandler;
+import org.xenei.pa4rdf.bean.handlers.ResourceHandler;
+import org.xenei.pa4rdf.bean.handlers.UriHandler;
+import org.xenei.pa4rdf.bean.handlers.VoidHandler;
 
 public abstract class AbstractSingleValueTest extends BaseAbstractManagerTest {
 

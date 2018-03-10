@@ -23,6 +23,8 @@ import org.junit.Test;
 import org.xenei.jena.entities.testing.abst.CollectionValueAnnoatedAbst;
 import org.xenei.jena.entities.testing.abst.MultiValueAnnotatedAbst;
 import org.xenei.jena.entities.testing.bad.UnannotatedInterface;
+import org.xenei.pa4rdf.bean.SubjectInfo;
+import org.xenei.pa4rdf.bean.exceptions.MissingAnnotation;
 
 public class EntityManagerTest {
 

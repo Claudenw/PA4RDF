@@ -2,9 +2,9 @@ package org.xenei.jena.entities.impl.parser.singleValue;
 
 import org.junit.Assert;
 import org.junit.Test;
-import org.xenei.jena.entities.MissingAnnotation;
-import org.xenei.jena.entities.PredicateInfo;
-import org.xenei.jena.entities.testing.impl.SingleValueObjectImpl;
+import org.xenei.pa4rdf.bean.PredicateInfo;
+import org.xenei.pa4rdf.bean.exceptions.MissingAnnotation;
+import org.xenei.pa4rdf.bean.test.impl.SingleValueObjectImpl;
 
 public class SingleValueObjectImplTest extends AbstractSingleValueObjectTest {
 

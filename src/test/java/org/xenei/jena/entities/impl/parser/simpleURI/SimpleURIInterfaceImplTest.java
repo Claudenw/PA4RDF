@@ -2,8 +2,8 @@ package org.xenei.jena.entities.impl.parser.simpleURI;
 
 import org.junit.Assert;
 import org.junit.Test;
-import org.xenei.jena.entities.PredicateInfo;
-import org.xenei.jena.entities.testing.impl.SimpleURIInterfaceImpl;
+import org.xenei.pa4rdf.bean.PredicateInfo;
+import org.xenei.pa4rdf.bean.test.impl.SimpleURIInterfaceImpl;
 
 public class SimpleURIInterfaceImplTest extends AbstractSimpleURIInterfaceTest {
 

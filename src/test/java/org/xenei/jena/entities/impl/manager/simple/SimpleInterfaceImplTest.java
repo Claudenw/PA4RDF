@@ -1,7 +1,7 @@
 package org.xenei.jena.entities.impl.manager.simple;
 
-import org.xenei.jena.entities.impl.ActionType;
-import org.xenei.jena.entities.testing.impl.SimpleInterfaceImpl;
+import org.xenei.pa4rdf.bean.impl.ActionType;
+import org.xenei.pa4rdf.bean.test.impl.SimpleInterfaceImpl;
 
 public class SimpleInterfaceImplTest extends AbstractSimpleInterfaceTest {
 

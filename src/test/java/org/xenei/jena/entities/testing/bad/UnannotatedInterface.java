@@ -1,7 +1,7 @@
 package org.xenei.jena.entities.testing.bad;
 
 import org.apache.jena.rdf.model.Model;
-import org.xenei.jena.entities.annotations.Subject;
+import org.xenei.pa4rdf.bean.annotations.Subject;
 
 /**
  * A class that will fail.

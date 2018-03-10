@@ -65,16 +65,17 @@ import org.apache.jena.vocabulary.RDF;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xenei.jena.entities.EntityManager;
-import org.xenei.jena.entities.MissingAnnotation;
-import org.xenei.jena.entities.ResourceWrapper;
-import org.xenei.jena.entities.SubjectInfo;
-import org.xenei.jena.entities.annotations.Predicate;
-import org.xenei.jena.entities.annotations.Subject;
 import org.xenei.jena.entities.cache.CachingModel;
 import org.xenei.jena.entities.cache.ModelInterceptor.Intercepted;
-import org.xenei.jena.entities.impl.datatype.CharDatatype;
-import org.xenei.jena.entities.impl.datatype.CharacterDatatype;
-import org.xenei.jena.entities.impl.datatype.LongDatatype;
+import org.xenei.pa4rdf.bean.ResourceWrapper;
+import org.xenei.pa4rdf.bean.SubjectInfo;
+import org.xenei.pa4rdf.bean.annotations.Predicate;
+import org.xenei.pa4rdf.bean.annotations.Subject;
+import org.xenei.pa4rdf.bean.datatypes.CharDatatype;
+import org.xenei.pa4rdf.bean.datatypes.CharacterDatatype;
+import org.xenei.pa4rdf.bean.datatypes.LongDatatype;
+import org.xenei.pa4rdf.bean.exceptions.MissingAnnotation;
+import org.xenei.pa4rdf.bean.impl.ActionType;
 
 import net.sf.cglib.proxy.Enhancer;
 import net.sf.cglib.proxy.MethodInterceptor;
@@ -100,30 +101,7 @@ public class EntityManagerImpl implements EntityManager {
     
     private final ExecutorService execService;
 
-    static {
-        registerTypes();
-    }
-
-    /**
-     * Register the datatypes used by the entity manger specifically xsd:long :
-     * java.util.Long xsd:string : java.util.Character xsd:string :
-     * java.lang.char
-     * 
-     * and finally resetting xsd:string to java.lang.String
-     */
-    public static void registerTypes() {
-        // handle the string types
-        // preserve string class and put it back later.
-        final RDFDatatype stype = TypeMapper.getInstance().getTypeByClass( String.class );
-
-        TypeMapper.getInstance().registerDatatype( CharacterDatatype.INSTANCE );
-        TypeMapper.getInstance().registerDatatype( CharDatatype.INSTANCE );
-        TypeMapper.getInstance().registerDatatype( LongDatatype.INSTANCE );
-        // put the string type back so that it is the registered type for
-        // xsd:string
-        TypeMapper.getInstance().registerDatatype( stype );
-
-    }
+    
 
     /**
      * Constructor.

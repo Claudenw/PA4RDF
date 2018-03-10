@@ -1,6 +1,6 @@
 package org.xenei.jena.entities.impl.parser.collectionValue;
 
-import org.xenei.jena.entities.testing.impl.CollectionValueSubjectImpl;
+import org.xenei.pa4rdf.bean.test.impl.CollectionValueSubjectImpl;
 
 public class CollectionValueSubjectImplTest extends AbstractCollectionValueInterfaceTest {
 

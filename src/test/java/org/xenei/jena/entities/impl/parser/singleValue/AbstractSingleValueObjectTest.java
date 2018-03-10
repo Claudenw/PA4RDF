@@ -5,12 +5,12 @@ import java.lang.reflect.Method;
 import org.apache.jena.rdf.model.RDFNode;
 import org.junit.Assert;
 import org.junit.Test;
-import org.xenei.jena.entities.MissingAnnotation;
-import org.xenei.jena.entities.PredicateInfo;
-import org.xenei.jena.entities.annotations.Predicate;
-import org.xenei.jena.entities.impl.ActionType;
 import org.xenei.jena.entities.impl.parser.AbstractMethodParserTest;
 import org.xenei.jena.entities.testing.iface.TestInterface;
+import org.xenei.pa4rdf.bean.PredicateInfo;
+import org.xenei.pa4rdf.bean.annotations.Predicate;
+import org.xenei.pa4rdf.bean.exceptions.MissingAnnotation;
+import org.xenei.pa4rdf.bean.impl.ActionType;
 
 public abstract class AbstractSingleValueObjectTest extends AbstractMethodParserTest {
 

@@ -1,6 +1,6 @@
 package org.xenei.jena.entities.impl.parser.simpleURI;
 
-import org.xenei.jena.entities.testing.impl.SimpleURISubjectImpl;
+import org.xenei.pa4rdf.bean.test.impl.SimpleURISubjectImpl;
 
 public class SimpleURISubjectImplTest extends AbstractSimpleURIInterfaceTest {
     public SimpleURISubjectImplTest() throws NoSuchMethodException, SecurityException {

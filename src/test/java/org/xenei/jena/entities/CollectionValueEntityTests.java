@@ -25,6 +25,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.xenei.jena.entities.testing.abst.CollectionValueAnnoatedAbst;
 import org.xenei.jena.entities.testing.iface.TestInterface;
+import org.xenei.pa4rdf.bean.exceptions.MissingAnnotation;
 
 public class CollectionValueEntityTests {
 

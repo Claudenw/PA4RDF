@@ -3,9 +3,9 @@ package org.xenei.jena.entities.impl.parser.simpleURICollection;
 import static org.junit.Assert.*;
 
 import org.junit.Test;
-import org.xenei.jena.entities.MissingAnnotation;
-import org.xenei.jena.entities.PredicateInfo;
-import org.xenei.jena.entities.testing.impl.SimpleURICollectionSubjectImpl;
+import org.xenei.pa4rdf.bean.PredicateInfo;
+import org.xenei.pa4rdf.bean.exceptions.MissingAnnotation;
+import org.xenei.pa4rdf.bean.test.impl.SimpleURICollectionSubjectImpl;
 
 public class SimpleURICollectionSubjectImplTest extends AbstractSimpleURICollectionTest {
     public SimpleURICollectionSubjectImplTest() throws NoSuchMethodException, SecurityException {

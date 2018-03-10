@@ -6,12 +6,12 @@ import java.util.List;
 import org.apache.jena.datatypes.xsd.XSDDatatype;
 import org.junit.Assert;
 import org.junit.Test;
-import org.xenei.jena.entities.PredicateInfo;
-import org.xenei.jena.entities.impl.ActionType;
 import org.xenei.jena.entities.impl.EntityManagerImpl;
-import org.xenei.jena.entities.impl.TypeChecker;
-import org.xenei.jena.entities.impl.handlers.LiteralHandler;
 import org.xenei.jena.entities.impl.parser.AbstractMethodParserTest;
+import org.xenei.pa4rdf.bean.PredicateInfo;
+import org.xenei.pa4rdf.bean.handlers.LiteralHandler;
+import org.xenei.pa4rdf.bean.impl.ActionType;
+import org.xenei.pa4rdf.bean.impl.TypeChecker;
 
 public abstract class AbstractCollectionInterfaceTest extends AbstractMethodParserTest {
     protected final Method getter;

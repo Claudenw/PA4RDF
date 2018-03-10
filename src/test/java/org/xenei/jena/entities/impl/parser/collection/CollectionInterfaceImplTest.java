@@ -2,8 +2,8 @@ package org.xenei.jena.entities.impl.parser.collection;
 
 import org.junit.Assert;
 import org.junit.Test;
-import org.xenei.jena.entities.PredicateInfo;
-import org.xenei.jena.entities.testing.impl.CollectionInterfaceImpl;
+import org.xenei.pa4rdf.bean.PredicateInfo;
+import org.xenei.pa4rdf.bean.test.fullMagic.CollectionInterfaceImpl;
 
 public class CollectionInterfaceImplTest extends AbstractCollectionInterfaceTest {
     public CollectionInterfaceImplTest() throws Exception {

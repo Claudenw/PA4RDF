@@ -1,7 +1,7 @@
 package org.xenei.jena.entities.impl.parser.simple;
 
 
-import org.xenei.jena.entities.testing.impl.SimpleSubjectImpl;
+import org.xenei.pa4rdf.bean.test.impl.SimpleSubjectImpl;
 
 public class SimpleSubjectImplTest extends AbstractSimpleInterfaceTest {
     public SimpleSubjectImplTest() throws NoSuchMethodException, SecurityException {

@@ -8,15 +8,15 @@ import org.apache.jena.util.iterator.ExtendedIterator;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.xenei.jena.entities.PredicateInfo;
-import org.xenei.jena.entities.annotations.URI;
-import org.xenei.jena.entities.impl.ActionType;
-import org.xenei.jena.entities.impl.TypeChecker;
-import org.xenei.jena.entities.impl.handlers.CollectionHandler;
-import org.xenei.jena.entities.impl.handlers.ResourceHandler;
-import org.xenei.jena.entities.impl.handlers.UriHandler;
 import org.xenei.jena.entities.impl.parser.AbstractMethodParserTest;
 import org.xenei.jena.entities.testing.iface.SimpleURICollectionInterface;
+import org.xenei.pa4rdf.bean.PredicateInfo;
+import org.xenei.pa4rdf.bean.annotations.URI;
+import org.xenei.pa4rdf.bean.handlers.CollectionHandler;
+import org.xenei.pa4rdf.bean.handlers.ResourceHandler;
+import org.xenei.pa4rdf.bean.handlers.UriHandler;
+import org.xenei.pa4rdf.bean.impl.ActionType;
+import org.xenei.pa4rdf.bean.impl.TypeChecker;
 
 public abstract class AbstractSimpleURICollectionTest extends AbstractMethodParserTest {
 

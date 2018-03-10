@@ -20,10 +20,11 @@ import java.lang.reflect.Modifier;
 import org.apache.commons.proxy.exception.InvokerException;
 import org.apache.jena.rdf.model.Resource;
 import org.xenei.jena.entities.EntityManager;
-import org.xenei.jena.entities.PredicateInfo;
-import org.xenei.jena.entities.ResourceWrapper;
-import org.xenei.jena.entities.SubjectInfo;
-import org.xenei.jena.entities.annotations.Predicate;
+import org.xenei.pa4rdf.bean.PredicateInfo;
+import org.xenei.pa4rdf.bean.ResourceWrapper;
+import org.xenei.pa4rdf.bean.SubjectInfo;
+import org.xenei.pa4rdf.bean.annotations.Predicate;
+import org.xenei.pa4rdf.bean.impl.TypeChecker;
 
 import net.sf.cglib.proxy.MethodInterceptor;
 import net.sf.cglib.proxy.MethodProxy;

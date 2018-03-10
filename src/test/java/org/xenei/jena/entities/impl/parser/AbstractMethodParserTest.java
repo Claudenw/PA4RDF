@@ -14,12 +14,12 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.jena.rdf.model.ResourceFactory;
 import org.junit.Assert;
 import org.xenei.jena.entities.EntityManagerFactory;
-import org.xenei.jena.entities.PredicateInfo;
-import org.xenei.jena.entities.impl.ActionType;
 import org.xenei.jena.entities.impl.EntityManagerImpl;
 import org.xenei.jena.entities.impl.MethodParser;
-import org.xenei.jena.entities.impl.ObjectHandler;
 import org.xenei.jena.entities.impl.SubjectInfoImpl;
+import org.xenei.pa4rdf.bean.PredicateInfo;
+import org.xenei.pa4rdf.bean.handlers.ObjectHandler;
+import org.xenei.pa4rdf.bean.impl.ActionType;
 
 public abstract class AbstractMethodParserTest {
 

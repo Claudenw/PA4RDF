@@ -1,8 +1,8 @@
 package org.xenei.jena.entities.impl.parser.collectionValue;
 
 import org.apache.jena.util.iterator.ExtendedIterator;
-import org.xenei.jena.entities.impl.ActionType;
 import org.xenei.jena.entities.testing.iface.MultiValueInterface;
+import org.xenei.pa4rdf.bean.impl.ActionType;
 
 public class MultiValueInterfaceTest extends AbstractCollectionValueInterfaceTest {
 

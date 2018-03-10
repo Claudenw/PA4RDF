@@ -3,7 +3,7 @@ package org.xenei.jena.entities.impl.manager;
 import org.apache.jena.rdf.model.Resource;
 import org.junit.Assert;
 import org.junit.Test;
-import org.xenei.jena.entities.testing.impl.SimpleInterfaceImpl;
+import org.xenei.pa4rdf.bean.test.impl.SimpleInterfaceImpl;
 
 public class PostExecTest extends BaseAbstractManagerTest {
     public PostExecTest() {

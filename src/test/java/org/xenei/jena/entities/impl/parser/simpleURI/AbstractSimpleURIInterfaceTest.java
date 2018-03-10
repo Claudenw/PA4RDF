@@ -5,15 +5,15 @@ import java.lang.reflect.Method;
 import org.apache.jena.rdf.model.RDFNode;
 import org.junit.Assert;
 import org.junit.Test;
-import org.xenei.jena.entities.PredicateInfo;
-import org.xenei.jena.entities.annotations.Predicate;
-import org.xenei.jena.entities.impl.ActionType;
 import org.xenei.jena.entities.impl.EntityManagerImpl;
-import org.xenei.jena.entities.impl.TypeChecker;
-import org.xenei.jena.entities.impl.handlers.ResourceHandler;
-import org.xenei.jena.entities.impl.handlers.UriHandler;
-import org.xenei.jena.entities.impl.handlers.VoidHandler;
 import org.xenei.jena.entities.impl.parser.AbstractMethodParserTest;
+import org.xenei.pa4rdf.bean.PredicateInfo;
+import org.xenei.pa4rdf.bean.annotations.Predicate;
+import org.xenei.pa4rdf.bean.handlers.ResourceHandler;
+import org.xenei.pa4rdf.bean.handlers.UriHandler;
+import org.xenei.pa4rdf.bean.handlers.VoidHandler;
+import org.xenei.pa4rdf.bean.impl.ActionType;
+import org.xenei.pa4rdf.bean.impl.TypeChecker;
 
 public abstract class AbstractSimpleURIInterfaceTest extends AbstractMethodParserTest {
 

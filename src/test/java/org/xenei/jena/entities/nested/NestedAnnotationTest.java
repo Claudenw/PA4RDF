@@ -5,8 +5,8 @@ import org.apache.jena.rdf.model.ModelFactory;
 import org.junit.Test;
 import org.xenei.jena.entities.EntityManager;
 import org.xenei.jena.entities.EntityManagerFactory;
-import org.xenei.jena.entities.annotations.Predicate;
-import org.xenei.jena.entities.annotations.Subject;
+import org.xenei.pa4rdf.bean.annotations.Predicate;
+import org.xenei.pa4rdf.bean.annotations.Subject;
 
 /**
  * This is a test for the case where an abstract class implements a method that
