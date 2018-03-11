@@ -5,7 +5,7 @@
     <artifactId>PA4RDF</artifactId>
     <version>2.0-SNAPSHOT</version>
   </parent>
-  <artifactId>PA4RDF-rdfdiffpatch</artifactId>
+  <artifactId>PA4RDF-diffpatch</artifactId>
   <dependencies>
 		<dependency>
 			<groupId>com.googlecode.java-diff-utils</groupId>
@@ -31,4 +31,6 @@
 			<artifactId>commons-collections4</artifactId>
 		</dependency>
 	</dependencies>
+  <name>PA4RDF - diff patch routines</name>
+  <description>Diff Patch code for PA code.</description>
 </project>
