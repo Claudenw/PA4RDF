@@ -1,4 +1,4 @@
-package org.xenei.jena.entities.cache;
+package org.xenei.pa4rdf.cache;
 
 import java.util.Set;
 

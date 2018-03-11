@@ -1,4 +1,4 @@
-package org.xenei.jena.entities.cache;
+package org.xenei.pa4rdf.cache;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -17,10 +17,8 @@ import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.sparql.core.Quad;
 import org.apache.jena.update.UpdateRequest;
 import org.apache.jena.util.iterator.WrappedIterator;
-import org.xenei.jena.entities.EntityManager;
-import org.xenei.jena.entities.impl.TransactionHolder;
-import org.xenei.rdf_diff_patch.PatchFactory;
-import org.xenei.rdf_diff_patch.UpdateFactory;
+import org.xenei.pa4rdf.diffpatch.PatchFactory;
+import org.xenei.pa4rdf.diffpatch.UpdateFactory;
 
 import difflib.Patch;
 
@@ -83,19 +81,19 @@ public class UpdateByDiff {
     /**
      * Synchronize the data.
      * 
-     * @param entityManager
+     * @param queryExecutor
      * @param graphNode
      * @return true if any changes were made.
      */
-    public synchronized List<Node> sync(EntityManager entityManager, Node graphNode) {
+    public synchronized List<Node> sync(QueryExecutor queryExecutor, Node graphNode) {
         final UpdateRequest req = generateUpdate( graphNode.getURI() );
         if (!req.iterator().hasNext()) {
             return Collections.emptyList();
         }
-        final TransactionHolder th = new TransactionHolder( entityManager.getConnection(), ReadWrite.WRITE );
+        final TransactionHolder th = new TransactionHolder( queryExecutor.getConnection(), ReadWrite.WRITE );
         try {
             final List<Node> retval = new ArrayList<Node>( snapshots.keySet() );
-            entityManager.getConnection().update( req );
+            queryExecutor.getConnection().update( req );
             th.commit();
             snapshots.clear();
             tables.clear();

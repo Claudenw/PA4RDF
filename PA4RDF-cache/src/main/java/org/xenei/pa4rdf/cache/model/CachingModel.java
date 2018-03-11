@@ -1,4 +1,4 @@
-package org.xenei.jena.entities.cache;
+package org.xenei.pa4rdf.cache.model;
 
 import java.lang.ref.SoftReference;
 import java.lang.ref.WeakReference;
@@ -8,9 +8,8 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.Resource;
-import org.xenei.jena.entities.cache.ModelInterceptor.Intercepted;
-import org.xenei.jena.entities.impl.EntityManagerImpl;
-import org.xenei.jena.entities.impl.EntityManagerImpl.DR;
+import org.xenei.pa4rdf.cache.DelayedRunnable;
+import org.xenei.pa4rdf.cache.model.ModelInterceptor.Intercepted;
 
 import net.sf.cglib.proxy.Enhancer;
 
@@ -21,13 +20,12 @@ public interface CachingModel extends Model {
      * @param entityManager the entity manager to use
      * @return the CachingModel in the entitiyManager.
      */
-    public static CachingModel makeInstance(EntityManagerImpl entityManager) {
-        final ModelInterceptor interceptor = new ModelInterceptor( entityManager );
+    public static CachingModel makeInstance(ModelInterceptor interceptor, ExecutorService executorService) {
         final Enhancer e = new Enhancer();
         e.setInterfaces( new Class[] { CachingModel.class, Intercepted.class } );
         e.setCallback( interceptor );
         CachingModel cModel = (CachingModel) e.create();        
-        new ModelRefresh( cModel, entityManager.getExecutorService());
+        new ModelRefresh( cModel, executorService);
         return cModel;
     }
 
@@ -61,7 +59,7 @@ public interface CachingModel extends Model {
      * @author claude
      *
      */
-    public static class ModelRefresh implements DR
+    public static class ModelRefresh implements DelayedRunnable
     {       
         private WeakReference<CachingModel> sr;
         private long expires;

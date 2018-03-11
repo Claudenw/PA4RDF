@@ -1,4 +1,4 @@
-package org.xenei.jena.entities.cache;
+package org.xenei.pa4rdf.cache.model;
 
 import java.lang.ref.SoftReference;
 import java.lang.reflect.Method;
@@ -8,11 +8,16 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
 
+import org.apache.jena.graph.Node;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.rdf.model.Resource;
-import org.xenei.jena.entities.impl.EntityManagerImpl;
+import org.xenei.pa4rdf.bean.EntityFactory;
+import org.xenei.pa4rdf.cache.QueryExecutor;
+import org.xenei.pa4rdf.cache.ResourceInterceptor;
+import org.xenei.pa4rdf.cache.graph.CachingGraph;
 
 import net.sf.cglib.proxy.Enhancer;
 import net.sf.cglib.proxy.MethodInterceptor;
@@ -55,8 +60,8 @@ public class ModelInterceptor implements MethodInterceptor {
      * @param entityManagerImpl
      *            TODO
      */
-    public ModelInterceptor(EntityManagerImpl entityManager) {
-        this.graph = new CachingGraph( entityManager );
+    public ModelInterceptor(QueryExecutor queryExecutor, ExecutorService execService) {
+        this.graph = new CachingGraph(  queryExecutor,  execService );
         this.model = ModelFactory.createModelForGraph( graph );        
         this.resourceCache = new HashMap<Byte, List<SoftReference<Resource>>>();
 

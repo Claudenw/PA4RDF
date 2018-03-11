@@ -1,6 +1,14 @@
-package org.xenei.jena.entities.cache;
+package org.xenei.pa4rdf.cache.graph;
+
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import org.apache.jena.fuseki.embedded.FusekiServer;
+import org.apache.jena.graph.Node;
+import org.apache.jena.graph.NodeFactory;
+import org.apache.jena.query.Dataset;
+import org.apache.jena.query.DatasetFactory;
+import org.apache.jena.rdfconnection.RDFConnection;
 import org.apache.jena.rdfconnection.RDFConnectionFactory;
 import org.apache.jena.sparql.core.DatasetGraph;
 import org.apache.jena.sparql.core.DatasetGraphFactory;
@@ -8,13 +16,16 @@ import org.apache.jena.system.Txn;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
-import org.xenei.jena.entities.EntityManagerFactory;
-import org.xenei.jena.entities.impl.EntityManagerImpl;
+import org.xenei.pa4rdf.cache.QueryExecutor;
+import org.xenei.pa4rdf.cache.impl.QueryExecutorImpl;
 
 public class CachingGraphRemoteTests extends AbstractCachingGraphTests {
     public static FusekiServer server;
     private static DatasetGraph serverdsg = DatasetGraphFactory.createTxnMem();
 
+    private ExecutorService execService = Executors.newFixedThreadPool(5);
+
+    
     @BeforeClass
     public static void beforeClass() {
         server = FusekiServer.make( 3030, "/ds", serverdsg );
@@ -31,9 +42,8 @@ public class CachingGraphRemoteTests extends AbstractCachingGraphTests {
         // Clear up data in server servers
         Txn.executeWrite( serverdsg, () -> serverdsg.clear() );
         connection = RDFConnectionFactory.connect( "http://localhost:3030/ds" );
-
-        final EntityManagerImpl entityManager = (EntityManagerImpl) EntityManagerFactory.create( connection );
-        graph = new CachingGraph( entityManager );
+        QueryExecutor executor = new QueryExecutorImpl( connection, modelName );
+        graph = new CachingGraph( executor, execService  );
     }
 
     // @Test

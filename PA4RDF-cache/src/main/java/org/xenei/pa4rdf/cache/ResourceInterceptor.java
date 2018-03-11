@@ -1,10 +1,12 @@
-package org.xenei.jena.entities.cache;
+package org.xenei.pa4rdf.cache;
 
 import java.lang.reflect.Method;
 
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.Resource;
-import org.xenei.jena.entities.cache.ModelInterceptor.Intercepted;
+import org.xenei.pa4rdf.cache.model.CachingModel;
+import org.xenei.pa4rdf.cache.model.ModelInterceptor;
+import org.xenei.pa4rdf.cache.model.ModelInterceptor.Intercepted;
 
 import net.sf.cglib.proxy.Enhancer;
 import net.sf.cglib.proxy.MethodInterceptor;

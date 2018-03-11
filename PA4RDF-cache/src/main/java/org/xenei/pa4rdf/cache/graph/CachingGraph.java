@@ -1,4 +1,4 @@
-package org.xenei.jena.entities.cache;
+package org.xenei.pa4rdf.cache.graph;
 
 import java.lang.ref.SoftReference;
 import java.util.ArrayList;
@@ -13,6 +13,7 @@ import java.util.NoSuchElementException;
 import java.util.Queue;
 import java.util.Set;
 import java.util.Stack;
+import java.util.concurrent.ExecutorService;
 import java.util.function.Consumer;
 
 import org.apache.commons.logging.Log;
@@ -51,8 +52,12 @@ import org.apache.jena.util.iterator.ClosableIterator;
 import org.apache.jena.util.iterator.ExtendedIterator;
 import org.apache.jena.util.iterator.NiceIterator;
 import org.apache.jena.util.iterator.WrappedIterator;
-import org.xenei.jena.entities.impl.EntityManagerImpl;
-import org.xenei.jena.entities.impl.TransactionHolder;
+import org.xenei.pa4rdf.bean.EntityFactory;
+import org.xenei.pa4rdf.cache.DelayedRunnable;
+import org.xenei.pa4rdf.cache.QueryExecutor;
+import org.xenei.pa4rdf.cache.SubjectTable;
+import org.xenei.pa4rdf.cache.TransactionHolder;
+import org.xenei.pa4rdf.cache.UpdateByDiff;
 
 /**
  * A graph that caches remote data.
@@ -68,14 +73,14 @@ import org.xenei.jena.entities.impl.TransactionHolder;
 public class CachingGraph extends GraphBase implements Graph {
     private final static Log LOG = LogFactory.getLog( CachingGraph.class );
     private final Map<Node, SoftReference<SubjectTable>> map;
-    private final EntityManagerImpl entityManager;
-    private final Node graphNode;
+    private final QueryExecutor queryExecutor;
     private final Node graphWriteNode;
     private static final Var S = Var.alloc( "s" );
     private static final Var P = Var.alloc( "p" );
     private static final Var O = Var.alloc( "o" );
     private final UpdateByDiff updater;
     private final TxnHandler txnHandler;
+    private final ExecutorService execService;
     
     static {
         ARQ.getContext().set( ARQ.inputGraphBNodeLabels, true );
@@ -87,14 +92,14 @@ public class CachingGraph extends GraphBase implements Graph {
      * @param connection
      *            the connection to the remote system.
      */
-    public CachingGraph(EntityManagerImpl entityManager) {
-        this.entityManager = entityManager;
-        this.graphNode = entityManager.getModelName();
-        this.graphWriteNode = (graphNode.equals( Quad.unionGraph )) ? Quad.defaultGraphIRI : graphNode;
+    public CachingGraph(QueryExecutor queryExecutor, ExecutorService execService) {
+        this.queryExecutor =  queryExecutor;
+        this.graphWriteNode = (queryExecutor.getModelName().equals( Quad.unionGraph )) ? Quad.defaultGraphIRI : queryExecutor.getModelName();
         this.map = Collections.synchronizedMap( new HashMap<Node, SoftReference<SubjectTable>>() );
         this.updater = new UpdateByDiff();
         this.txnHandler = new TxnHandler();
         this.gem = new EventManager();
+        this.execService = execService;
     }
 
     @Override
@@ -144,7 +149,7 @@ public class CachingGraph extends GraphBase implements Graph {
             }
             if (st != null && !updater.has(key))
             {
-               entityManager.getExecutorService().execute( new Runnable(){
+               execService.execute( new Runnable(){
 
                 @Override
                 public void run() {
@@ -164,7 +169,7 @@ public class CachingGraph extends GraphBase implements Graph {
      *  using the executor service.
      */
     public void sync(boolean foreground) {
-        final List<Node> changed = updater.sync( entityManager, graphWriteNode );
+        final List<Node> changed = updater.sync( queryExecutor, graphWriteNode );
         if (!changed.isEmpty()) {
 
             final Runnable r = new Runnable() {
@@ -191,7 +196,7 @@ public class CachingGraph extends GraphBase implements Graph {
                  r.run();
              } else
              {
-                 entityManager.getExecutorService().execute( EntityManagerImpl.DR.make( r ) );
+                 execService.execute( DelayedRunnable.make( r ) );
              }
         }
 
@@ -436,7 +441,7 @@ public class CachingGraph extends GraphBase implements Graph {
              * do this because we may have deleted items that have not yet been
              * deleted in the remote system.
              */
-            rs = entityManager.execute( sb.build() ).execSelect();
+            rs = queryExecutor.execute( sb.build() ).execSelect();
             subj = null;
         }
 
@@ -510,9 +515,9 @@ public class CachingGraph extends GraphBase implements Graph {
             } else {
                 sb.addWhere( subject, P, O ).addBind( NodeValue.makeNode( subject ), S );
             }
-            final TransactionHolder txn = new TransactionHolder( entityManager.getConnection(), ReadWrite.READ );
+            final TransactionHolder txn = new TransactionHolder( queryExecutor.getConnection(), ReadWrite.READ );
                
-            try (QueryExecution qe = entityManager.execute( sb.build() )) {
+            try (QueryExecution qe = queryExecutor.execute( sb.build() )) {
                 Iterator<QuerySolution> rs = qe.execSelect();
 
                 if (subject.isBlank()) {
@@ -627,9 +632,9 @@ public class CachingGraph extends GraphBase implements Graph {
                 }
                 t2 = triples.firstElement();
                 sb.addWhere( t2.getSubject(), p, S );
-                final TransactionHolder txn = new TransactionHolder( entityManager.getConnection(), ReadWrite.READ );
+                final TransactionHolder txn = new TransactionHolder( queryExecutor.getConnection(), ReadWrite.READ );
                 try {
-                    final ResultSet rs = entityManager.execute( sb.build() ).execSelect();
+                    final ResultSet rs = queryExecutor.execute( sb.build() ).execSelect();
                     while (rs.hasNext()) {
                         final QuerySolution qs = rs.next();
                         model.add( qs.getResource( "s" ), qs.getResource( "p" ).as( Property.class ), qs.get( "o" ) );
