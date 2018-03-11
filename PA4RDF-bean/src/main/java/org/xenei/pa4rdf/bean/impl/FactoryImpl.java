@@ -70,7 +70,7 @@ public class FactoryImpl implements EntityFactory
 		final Resource resolvedResource = resolveResource(source);
 
 		final MethodInterceptor interceptor = new ResourceEntityProxy(this,
-				resolvedResource, subjectInfo);
+				resolvedResource);
 
 		final Enhancer e = new Enhancer();
 		if (!subjectInfo.getImplementedClass().isInterface())

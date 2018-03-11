@@ -52,7 +52,7 @@ public class PredicateInfoTest
 	{
 
 		assertTrue(PredicateInfo.isPredicate(X.class.getMethod("get")));
-		assertFalse(PredicateInfo.isPredicate(X.class.getMethod("getS")));
+		assertFalse(PredicateInfo.isPredicate(X.class.getMethod("getNotPredicate")));
 	}
 
 	@Test
@@ -188,6 +188,10 @@ public class PredicateInfoTest
 		public int get()
 		{
 			return 1;
+		}
+		
+		public String getNotPredicate() {
+			return "Not Predicate";
 		}
 	}
 

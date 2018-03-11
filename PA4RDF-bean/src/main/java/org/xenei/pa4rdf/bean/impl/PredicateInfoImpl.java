@@ -49,6 +49,7 @@ import org.xenei.pa4rdf.bean.annotations.Predicate;
 import org.xenei.pa4rdf.bean.annotations.Subject;
 import org.xenei.pa4rdf.bean.annotations.URI;
 import org.xenei.pa4rdf.bean.handlers.CollectionHandler;
+import org.xenei.pa4rdf.bean.handlers.EntityHandler;
 import org.xenei.pa4rdf.bean.handlers.LiteralHandler;
 import org.xenei.pa4rdf.bean.handlers.ObjectHandler;
 import org.xenei.pa4rdf.bean.handlers.ResourceHandler;

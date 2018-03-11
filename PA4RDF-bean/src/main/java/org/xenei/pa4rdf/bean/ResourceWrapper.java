@@ -15,6 +15,8 @@
 
 package org.xenei.pa4rdf.bean;
 
+import org.apache.jena.rdf.model.Property;
+import org.apache.jena.rdf.model.RDFNode;
 import org.apache.jena.rdf.model.Resource;
 import org.xenei.pa4rdf.bean.annotations.Predicate;
 import org.xenei.pa4rdf.bean.annotations.Subject;
@@ -49,4 +51,19 @@ public interface ResourceWrapper
 	 */
 	@Predicate
 	public SubjectInfo getSubjectInfo();
+	
+	public void setLiteral( Property property, Object value);
+	public void addLiteral( Property property, Object value);
+	public <T> T getLiteral( Property property, Class<T> clazz );
+	
+	public RDFNode getResource( Property property );	
+	public void setResource( Property property, RDFNode resource );
+	public void setResource( Property property, ResourceWrapper wrapper );
+	public void addResource( Property property, RDFNode resource );
+	public void addResource( Property property, ResourceWrapper wrapper );
+	
+	public <T> T getEntity( Property p, Class<T> clazz );
+	public <T> T addEntity( Property p, Class<T> clazz );
+	public <T> void setEntity( Property p, Class<T> clazz, T entity );
+	
 }
