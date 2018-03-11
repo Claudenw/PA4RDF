@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 
-package org.xenei.jena.entities;
+package org.xenei.pa4rdf.entityManager;
 
 import java.util.Collection;
 
@@ -24,9 +24,11 @@ import org.apache.jena.rdf.model.AnonId;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.Resource;
 import org.apache.jena.rdfconnection.RDFConnection;
+import org.xenei.pa4rdf.bean.EntityFactory;
 import org.xenei.pa4rdf.bean.SubjectInfo;
 import org.xenei.pa4rdf.bean.annotations.Subject;
 import org.xenei.pa4rdf.bean.exceptions.MissingAnnotation;
+import org.xenei.pa4rdf.cache.QueryExecutor;
 
 /**
  * An Entity Manager to manage instances of entities annotated with the Subject
@@ -39,7 +41,7 @@ import org.xenei.pa4rdf.bean.exceptions.MissingAnnotation;
  *
  * @see org.xenei.pa4rdf.bean.annotations.Subject
  */
-public interface EntityManager {
+public interface EntityManager extends EntityFactory, QueryExecutor {
 
     /**
      * Get the subject annotation for the class.
@@ -54,17 +56,6 @@ public interface EntityManager {
      * @return the Subject annotation or null if no annotation is found.
      */
     public Subject getSubject(final Class<?> clazz);
-
-    /**
-     * Get the SubjectInfo for the class.
-     *
-     * @param clazz
-     *            The class to get SubjectInfo for.
-     * @return The SubjectInfo
-     * @throws IllegalArgumentException
-     *             if clazz is not properly annotated with Subject annotations.
-     */
-    public SubjectInfo getSubjectInfo(Class<?> clazz);
 
     /**
      * Determine if target has all the properties required in the Subject( type
@@ -123,52 +114,52 @@ public interface EntityManager {
      */
     public void parseClasses(String[] packageNames) throws MissingAnnotation;
 
-    /**
-     * Make an instance of clazz from source.
-     *
-     * If source does not pass isInstance() check additional properties are
-     * added as required.
-     *
-     *
-     * @see #isInstance(Object, Class)
-     * @param source
-     *            Must either implement Resource or ResourceWrapper interfaces.
-     * @param primaryClass
-     *            The class of the object to be returned.
-     * @param secondaryClasses
-     *            A lost of other classes that are implemented.
-     * @param <T>
-     *            the instance type to return.
-     * @return primaryClass instance that also implements ResourceWrapper.
-     * @throws MissingAnnotation
-     *             if any of the classes do not have Subject annotations.
-     * @throws IllegalArgumentException
-     *             if source implements neither Resource nor ResourceWrapper.
-     */
-    public <T> T make(Object source, Class<T> primaryClass, Class<?>... secondaryClasses) throws MissingAnnotation;
+//    /**
+//     * Make an instance of clazz from source.
+//     *
+//     * If source does not pass isInstance() check additional properties are
+//     * added as required.
+//     *
+//     *
+//     * @see #isInstance(Object, Class)
+//     * @param source
+//     *            Must either implement Resource or ResourceWrapper interfaces.
+//     * @param primaryClass
+//     *            The class of the object to be returned.
+//     * @param secondaryClasses
+//     *            A lost of other classes that are implemented.
+//     * @param <T>
+//     *            the instance type to return.
+//     * @return primaryClass instance that also implements ResourceWrapper.
+//     * @throws MissingAnnotation
+//     *             if any of the classes do not have Subject annotations.
+//     * @throws IllegalArgumentException
+//     *             if source implements neither Resource nor ResourceWrapper.
+//     */
+//    public <T> T make(Object source, Class<T> primaryClass, Class<?>... secondaryClasses) throws MissingAnnotation;
 
-    /**
-     * Read an instance of clazz from source.
-     *
-     * Does not verify that the resource passes the isInstance() check.
-     *
-     * @see #isInstance(Object, Class)
-     * @param source
-     *            Must either implement Resource or ResourceWrapper interfaces.
-     * @param primaryClass
-     *            The class of the object to be returned.
-     * @param secondaryClasses
-     *            AList lost of other classes that are implemented.
-     * @param <T>
-     *            the instance type to return.
-     * @return primaryClass instance that also implements ResourceWrapper.
-     * @throws MissingAnnotation
-     *             if any of the classes do not have Subject annotations.
-     * @throws IllegalArgumentException
-     *             if source implements neither Resource nor ResourceWrapper.
-     */
-    public <T> T read(Object source, Class<T> primaryClass, Class<?>... secondaryClasses)
-            throws MissingAnnotation, IllegalArgumentException;
+//    /**
+//     * Read an instance of clazz from source.
+//     *
+//     * Does not verify that the resource passes the isInstance() check.
+//     *
+//     * @see #isInstance(Object, Class)
+//     * @param source
+//     *            Must either implement Resource or ResourceWrapper interfaces.
+//     * @param primaryClass
+//     *            The class of the object to be returned.
+//     * @param secondaryClasses
+//     *            AList lost of other classes that are implemented.
+//     * @param <T>
+//     *            the instance type to return.
+//     * @return primaryClass instance that also implements ResourceWrapper.
+//     * @throws MissingAnnotation
+//     *             if any of the classes do not have Subject annotations.
+//     * @throws IllegalArgumentException
+//     *             if source implements neither Resource nor ResourceWrapper.
+//     */
+//    public <T> T read(Object source, Class<T> primaryClass, Class<?>... secondaryClasses)
+//            throws MissingAnnotation, IllegalArgumentException;
 
     /**
      * Read an instance of clazz from Object source. If source does not have the
@@ -246,13 +237,6 @@ public interface EntityManager {
     public void close();
 
     /**
-     * Get the model name this entity manager is working against.
-     * 
-     * @return
-     */
-    public Node getModelName();
-
-    /**
      * Get an Entity manager that executes on the specific named Model.
      * 
      * If the model does not exist in the dataset it is created.
@@ -273,15 +257,7 @@ public interface EntityManager {
      */
     public EntityManager getDefaultManager();
 
-    /**
-     * Execute a query. The query will be modified to apply to the specific
-     * graph represented by this EntityManager.
-     * 
-     * @param query
-     *            The query to execute.
-     * @return The query execution for the query
-     */
-    public QueryExecution execute(Query query);
+    
 
     /**
      * Sync the system with the remote data store. If there are pending updates
@@ -334,10 +310,6 @@ public interface EntityManager {
      */
     public boolean hasResource(String uri);
 
-    /**
-     * @return The RDFConnection that this entity manager is using.
-     */
-    public RDFConnection getConnection();
 
     /**
      * Get the internal model.

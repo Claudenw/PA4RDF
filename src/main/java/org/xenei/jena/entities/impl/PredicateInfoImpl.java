@@ -61,6 +61,7 @@ import org.xenei.pa4rdf.bean.handlers.UriHandler;
 import org.xenei.pa4rdf.bean.handlers.VoidHandler;
 import org.xenei.pa4rdf.bean.impl.ActionType;
 import org.xenei.pa4rdf.bean.impl.EffectivePredicate;
+import org.xenei.pa4rdf.entityManager.impl.EntityManagerImpl;
 
 /**
  * The parsed information about a predicate method.

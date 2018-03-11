@@ -6,7 +6,6 @@ import org.apache.jena.datatypes.TypeMapper;
 import org.apache.jena.datatypes.xsd.XSDDatatype;
 import org.junit.Assert;
 import org.junit.Test;
-import org.xenei.jena.entities.impl.EntityManagerImpl;
 import org.xenei.jena.entities.impl.PredicateInfoImpl;
 import org.xenei.jena.entities.impl.manager.BaseAbstractManagerTest;
 import org.xenei.jena.entities.impl.parser.AbstractMethodParserTest;
@@ -18,6 +17,7 @@ import org.xenei.pa4rdf.bean.handlers.ObjectHandler;
 import org.xenei.pa4rdf.bean.handlers.VoidHandler;
 import org.xenei.pa4rdf.bean.impl.ActionType;
 import org.xenei.pa4rdf.bean.impl.TypeChecker;
+import org.xenei.pa4rdf.entityManager.impl.EntityManagerImpl;
 
 public abstract class AbstractSimpleInterfaceTest extends BaseAbstractManagerTest
 {

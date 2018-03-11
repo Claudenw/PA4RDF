@@ -25,8 +25,35 @@ public interface EntityFactory
 		return INSTANCE.makeInstance(r, clazz);
 	}
 
-	SubjectInfo getSubjectInfo(Class<?> clazz);
+	/**
+     * Get the SubjectInfo for the class.
+     *
+     * @param clazz
+     *            The class to get SubjectInfo for.
+     * @return The SubjectInfo
+     * @throws IllegalArgumentException
+     *             if clazz is not properly annotated with Subject annotations.
+     */
+	public SubjectInfo getSubjectInfo(Class<?> clazz);
 
+	  /**
+   * Read an instance of clazz from source.
+   *
+   * Does not verify that the resource passes the isInstance() check.
+   *
+   * @see #isInstance(Object, Class)
+   * @param source
+   *            Must either implement Resource or ResourceWrapper interfaces.
+   * @param class
+   *            The class of the object to be returned.
+   * @param <T>
+   *            the instance type to return.
+   * @return primaryClass instance that also implements ResourceWrapper.
+   * @throws MissingAnnotation
+   *             if any of the classes do not have Subject annotations.
+   * @throws IllegalArgumentException
+   *             if source implements neither Resource nor ResourceWrapper.
+   */
 	<T> T makeInstance(Object source, Class<T> clazz) throws MissingAnnotation;
 
 	/**
@@ -39,7 +66,7 @@ public interface EntityFactory
 	 * @return The SubjectInfo for the class.
 	 * @throws MissingAnnotation
 	 */
-	SubjectInfo parse(final Class<?> clazz) throws MissingAnnotation;
+	public SubjectInfo parse(final Class<?> clazz) throws MissingAnnotation;
 
 	/**
 	 * reset internals to initial state.

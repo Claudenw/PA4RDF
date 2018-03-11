@@ -313,6 +313,9 @@
 	<modules>
 		<module>PA4RDF-bean</module>
 		<module>PA4RDF-cache</module>
+		<module>PA4RDF-reasoner</module>
+		<module>PA4RDF-entityManager</module>
+		<module>PA4RDF-diffpatch</module>
 	</modules>
 	<dependencyManagement>
 		<dependencies>
@@ -361,6 +364,7 @@
 				<groupId>org.xenei</groupId>
 				<artifactId>junit-contracts</artifactId>
 				<version>0.2.0</version>
+				<scope>test</scope>
 			</dependency>
 			<dependency>
 				<groupId>org.apache.jena</groupId>
@@ -368,20 +372,52 @@
 				<version>${jena_version}</version>
 			</dependency>
 			<dependency>
+			<groupId>org.apache.jena</groupId>
+			<artifactId>jena-core</artifactId>
+			<version>${jena_version}</version>
+			<classifier>tests</classifier>
+			<scope>test</scope>
+		</dependency>
+			<dependency>
 				<groupId>org.mockito</groupId>
 				<artifactId>mockito-all</artifactId>
 				<version>1.9.5</version>
 				<scope>test</scope>
 			</dependency>
 			<dependency>
-				<groupId>org.apache.jena</groupId>
-				<artifactId>jena-fuseki-embedded</artifactId>
-				<version>${jena_version}</version>
-			</dependency>
-			<dependency>
 				<groupId>org.xenei</groupId>
 				<artifactId>rdf-diff-patch</artifactId>
 				<version>0.0.1-SNAPSHOT</version>
+			</dependency>
+			<dependency>
+				<groupId>org.xenei</groupId>
+				<artifactId>PA4RDF-bean</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.xenei</groupId>
+				<artifactId>PA4RDF-diffpatch</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.xenei</groupId>
+				<artifactId>PA4RDF-cache</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.jena</groupId>
+				<artifactId>jena-arq</artifactId>
+				<version>${jena_version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.googlecode.java-diff-utils</groupId>
+				<artifactId>diffutils</artifactId>
+				<version>1.3.0</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.commons</groupId>
+				<artifactId>commons-collections4</artifactId>
+				<version>4.0</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>

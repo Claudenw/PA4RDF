@@ -12,7 +12,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.xenei.jena.entities.impl;
+package org.xenei.pa4rdf.entityManager.impl;
 
 import java.io.File;
 import java.io.IOException;
@@ -64,9 +64,7 @@ import org.apache.jena.util.iterator.WrappedIterator;
 import org.apache.jena.vocabulary.RDF;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.xenei.jena.entities.EntityManager;
-import org.xenei.jena.entities.cache.CachingModel;
-import org.xenei.jena.entities.cache.ModelInterceptor.Intercepted;
+import org.xenei.pa4rdf.bean.EntityFactory;
 import org.xenei.pa4rdf.bean.ResourceWrapper;
 import org.xenei.pa4rdf.bean.SubjectInfo;
 import org.xenei.pa4rdf.bean.annotations.Predicate;
@@ -76,6 +74,13 @@ import org.xenei.pa4rdf.bean.datatypes.CharacterDatatype;
 import org.xenei.pa4rdf.bean.datatypes.LongDatatype;
 import org.xenei.pa4rdf.bean.exceptions.MissingAnnotation;
 import org.xenei.pa4rdf.bean.impl.ActionType;
+import org.xenei.pa4rdf.bean.impl.FactoryImpl;
+import org.xenei.pa4rdf.cache.DelayedBlockingQueue;
+import org.xenei.pa4rdf.cache.QueryExecutor;
+import org.xenei.pa4rdf.cache.impl.QueryExecutorImpl;
+import org.xenei.pa4rdf.cache.model.CachingModel;
+import org.xenei.pa4rdf.cache.model.ModelInterceptor;
+import org.xenei.pa4rdf.entityManager.EntityManager;
 
 import net.sf.cglib.proxy.Enhancer;
 import net.sf.cglib.proxy.MethodInterceptor;
@@ -87,69 +92,68 @@ import java.util.concurrent.ThreadPoolExecutor;
  * 
  */
 public class EntityManagerImpl implements EntityManager {
+	
+	
     private static Logger LOG = LoggerFactory.getLogger( EntityManagerImpl.class );
 
-    private final Map<Class<?>, SubjectInfo> classInfo;
+    private final EntityFactory factory;
 
     private final List<WeakReference<Listener>> listeners;
 
-    private final RDFConnection connection;
-
     protected final CachingModel cachingModel;
-
-    private final Node modelName;
     
     private final ExecutorService execService;
 
-    
+    private QueryExecutor queryExecutor;
 
     /**
      * Constructor.
      */
     public EntityManagerImpl(RDFConnection connection) {
-        this.modelName = Quad.defaultGraphIRI;
-        this.connection = connection;
+    	this.factory = new FactoryImpl();
+    	this.queryExecutor = new QueryExecutorImpl( connection, Quad.defaultGraphIRI);
         DelayedBlockingQueue queue = new DelayedBlockingQueue();
         this.execService = new ThreadPoolExecutor( 1, 5, 30, TimeUnit.SECONDS, queue.asRunnableQueue() );      
         listeners = Collections.synchronizedList( new ArrayList<WeakReference<Listener>>() );
-        this.cachingModel = CachingModel.makeInstance( this );
+        ModelInterceptor mi = new ModelInterceptor(queryExecutor, execService);
+        this.cachingModel = CachingModel.makeInstance( mi, execService );
 
-        classInfo = new HashMap<Class<?>, SubjectInfo>() {
-
-            /**
-             * 
-             */
-            private static final long serialVersionUID = 8181650326448307726L;
-
-            private void notifyListeners(SubjectInfo value) {
-                synchronized (listeners) {
-                    final Iterator<WeakReference<Listener>> iter = listeners.iterator();
-                    while (iter.hasNext()) {
-                        final WeakReference<Listener> listener = iter.next();
-                        final Listener l = listener.get();
-                        if (l == null) {
-                            iter.remove();
-                        } else {
-                            l.onParseClass( value );
-                        }
-                    }
-                }
-            }
-
-            @Override
-            public SubjectInfo put(Class<?> key, SubjectInfo value) {
-                notifyListeners( value );
-                return super.put( key, value );
-            }
-
-            @Override
-            public void putAll(Map<? extends Class<?>, ? extends SubjectInfo> m) {
-                for (final SubjectInfo si : m.values()) {
-                    notifyListeners( si );
-                }
-                super.putAll( m );
-            }
-        };
+//        classInfo = new HashMap<Class<?>, SubjectInfo>() {
+//
+//            /**
+//             * 
+//             */
+//            private static final long serialVersionUID = 8181650326448307726L;
+//
+//            private void notifyListeners(SubjectInfo value) {
+//                synchronized (listeners) {
+//                    final Iterator<WeakReference<Listener>> iter = listeners.iterator();
+//                    while (iter.hasNext()) {
+//                        final WeakReference<Listener> listener = iter.next();
+//                        final Listener l = listener.get();
+//                        if (l == null) {
+//                            iter.remove();
+//                        } else {
+//                            l.onParseClass( value );
+//                        }
+//                    }
+//                }
+//            }
+//
+//            @Override
+//            public SubjectInfo put(Class<?> key, SubjectInfo value) {
+//                notifyListeners( value );
+//                return super.put( key, value );
+//            }
+//
+//            @Override
+//            public void putAll(Map<? extends Class<?>, ? extends SubjectInfo> m) {
+//                for (final SubjectInfo si : m.values()) {
+//                    notifyListeners( si );
+//                }
+//                super.putAll( m );
+//            }
+//        };
         try {
             parse( ResourceWrapper.class );
         } catch (final MissingAnnotation e) {
@@ -161,12 +165,12 @@ public class EntityManagerImpl implements EntityManager {
      * Constructor.
      */
     private EntityManagerImpl(EntityManagerImpl base, Node modelName) {
-        this.modelName = modelName == null ? Quad.defaultGraphIRI : modelName;
-        this.connection = base.connection;
+        this.queryExecutor = new QueryExecutorImpl( base.getConnection(), modelName );
         this.execService = base.execService;
         this.listeners = base.listeners;
-        this.classInfo = base.classInfo;
-        this.cachingModel = CachingModel.makeInstance( this );
+        this.factory = base.factory;
+        ModelInterceptor mi = new ModelInterceptor(queryExecutor, execService);
+        this.cachingModel = CachingModel.makeInstance( mi, execService );
     }
     
     public ExecutorService getExecutorService()
@@ -176,7 +180,7 @@ public class EntityManagerImpl implements EntityManager {
 
     @Override
     public RDFConnection getConnection() {
-        return connection;
+        return queryExecutor.getConnection();
     }
 
     @Override
@@ -190,8 +194,8 @@ public class EntityManagerImpl implements EntityManager {
         if (!defaultName.equals( modelNameStr ) && !Quad.unionGraph.getURI().equals( modelNameStr )) {
             final AskBuilder askBuilder = new AskBuilder().addGraph( modelName,
                     new AskBuilder().addWhere( "?s", "?p", "?o" ) );
-            if (!connection.queryAsk( askBuilder.build() )) {
-                connection.load( modelNameStr, ModelFactory.createDefaultModel() );
+            if (!queryExecutor.getConnection().queryAsk( askBuilder.build() )) {
+                queryExecutor.getConnection().load( modelNameStr, ModelFactory.createDefaultModel() );
             }
         }
         return new EntityManagerImpl( this, modelName );
@@ -204,14 +208,13 @@ public class EntityManagerImpl implements EntityManager {
 
     @Override
     public Node getModelName() {
-        return modelName;
+        return queryExecutor.getModelName();
     }
 
     @Override
     public void reset() {
         cachingModel.clear();
-        classInfo.clear();
-        registerTypes();
+        factory.reset_();
         try {
             parse( ResourceWrapper.class );
         } catch (final MissingAnnotation e) {
@@ -400,7 +403,7 @@ public class EntityManagerImpl implements EntityManager {
             return true;
         }
         final AskBuilder builder = new AskBuilder().addWhere( r, null, null );
-        return connection.queryAsk( builder.build() );
+        return queryExecutor.getConnection().queryAsk( builder.build() );
     }
 
     private Resource getResource(final Object target) throws IllegalArgumentException {
@@ -503,67 +506,6 @@ public class EntityManagerImpl implements EntityManager {
         return true;
     }
 
-    /**
-     * Parse the class if necessary.
-     * 
-     * The first time the class is seen it is parsed, after that a cached
-     * version is returned.
-     * 
-     * @param clazz
-     * @return The SubjectInfo for the class.
-     * @throws MissingAnnotation
-     */
-    /* package private*/ SubjectInfoImpl parse(final Class<?> clazz) throws MissingAnnotation {
-        SubjectInfoImpl subjectInfo = (SubjectInfoImpl) classInfo.get( clazz );
-
-        if (subjectInfo == null) {
-            EntityManagerImpl.LOG.info( "Parsing {}", clazz );
-            subjectInfo = new SubjectInfoImpl( clazz );
-
-            final MethodParser parser = new MethodParser( this, subjectInfo, countAdders( clazz.getMethods() ) );
-
-            /*
-             * Parse getter annotated methods.  All others put into annotated list to parse later.
-             * Parsing getters provides us with extra information about the methods (like the return type)
-             */
-            boolean foundAnnotation = false;
-            final List<Method> annotated = new ArrayList<Method>();
-            for (final Method method : clazz.getMethods()) {
-                try {
-                    final ActionType actionType = ActionType.parse( method.getName() );
-                    if (method.getAnnotation( Predicate.class ) != null) {
-                        foundAnnotation = true;
-                        if (ActionType.GETTER == actionType) {
-                            parser.parse( method );
-                        } else {
-                            annotated.add( method );
-                        }
-                    }
-                } catch (final IllegalArgumentException expected) {
-                    // not an action type ignore method
-                }
-
-            }
-            if (!foundAnnotation) {
-                throw new MissingAnnotation( "No annotated methods in " + clazz.getCanonicalName() );
-            }
-
-            /*
-             * Now parse all the annotated non-getter methods
-             */
-            for (final Method method : annotated) {
-                parser.parse( method );
-            }
-            
-            /* make sure all methods have all data */
-            subjectInfo.normalize();
-            
-            /* save the result */
-            classInfo.put( clazz, subjectInfo );
-        }
-        return subjectInfo;
-    }
-
     @Override
     public void parseClasses(final String packageName) throws MissingAnnotation {
         parseClasses( new String[] { packageName } );
@@ -590,63 +532,63 @@ public class EntityManagerImpl implements EntityManager {
                     String.format( "Unable to parse all %s See log for more details", Arrays.asList( packageNames ) ) );
         }
     }
+//
+//    @Override
+//    public <T> T make(final Object source, final Class<T> primaryClass, final Class<?>... secondaryClasses)
+//            throws MissingAnnotation {
+//        Resource r = addInstanceProperties( getResource( source ), primaryClass );
+//        for (final Class<?> c : secondaryClasses) {
+//            r = addInstanceProperties( r, c );
+//        }
+//        return read( r, primaryClass, secondaryClasses );
+//    }
 
-    @Override
-    public <T> T make(final Object source, final Class<T> primaryClass, final Class<?>... secondaryClasses)
-            throws MissingAnnotation {
-        Resource r = addInstanceProperties( getResource( source ), primaryClass );
-        for (final Class<?> c : secondaryClasses) {
-            r = addInstanceProperties( r, c );
-        }
-        return read( r, primaryClass, secondaryClasses );
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.xenei.jena.entities.impl.EntityManager#read(org.apache.jena.rdf.model
-     * .Resource, java.lang.Class, java.lang.Class)
-     */
-    @Override
-    @SuppressWarnings("unchecked")
-    public <T> T read(final Object source, final Class<T> primaryClass, final Class<?>... secondaryClasses)
-            throws MissingAnnotation, IllegalArgumentException {
-        final List<Class<?>> classes = new ArrayList<Class<?>>();
-        SubjectInfoImpl subjectInfo;
-        subjectInfo = parse( primaryClass );
-
-        if (primaryClass.isInterface()) {
-            classes.add( primaryClass );
-        }
-        for (final Class<?> cla : secondaryClasses) {
-            if (!classes.contains( cla )) {
-                parse( cla );
-                classes.add( cla );
-            }
-        }
-        if (!classes.contains( ResourceWrapper.class )) {
-            classes.add( ResourceWrapper.class );
-        }
-        final Resource resolvedResource = getResource( source );
-        if (resolvedResource instanceof Intercepted) {
-            classes.add( Intercepted.class );
-        }
-        final MethodInterceptor interceptor = new ResourceEntityProxy( this, resolvedResource, subjectInfo );
-        final Class<?>[] classArray = new Class<?>[classes.size()];
-
-        final Enhancer e = new Enhancer();
-        if (!primaryClass.isInterface()) {
-            e.setSuperclass( primaryClass );
-        }
-        e.setInterfaces( classes.toArray( classArray ) );
-        e.setCallback( interceptor );
-        return (T) e.create();
-    }
+//    /*
+//     * (non-Javadoc)
+//     * 
+//     * @see
+//     * org.xenei.jena.entities.impl.EntityManager#read(org.apache.jena.rdf.model
+//     * .Resource, java.lang.Class, java.lang.Class)
+//     */
+//    @Override
+//    @SuppressWarnings("unchecked")
+//    public <T> T read(final Object source, final Class<T> primaryClass, final Class<?>... secondaryClasses)
+//            throws MissingAnnotation, IllegalArgumentException {
+//        final List<Class<?>> classes = new ArrayList<Class<?>>();
+//        SubjectInfoImpl subjectInfo;
+//        subjectInfo = parse( primaryClass );
+//
+//        if (primaryClass.isInterface()) {
+//            classes.add( primaryClass );
+//        }
+//        for (final Class<?> cla : secondaryClasses) {
+//            if (!classes.contains( cla )) {
+//                parse( cla );
+//                classes.add( cla );
+//            }
+//        }
+//        if (!classes.contains( ResourceWrapper.class )) {
+//            classes.add( ResourceWrapper.class );
+//        }
+//        final Resource resolvedResource = getResource( source );
+//        if (resolvedResource instanceof Intercepted) {
+//            classes.add( Intercepted.class );
+//        }
+//        final MethodInterceptor interceptor = new ResourceEntityProxy( this, resolvedResource, subjectInfo );
+//        final Class<?>[] classArray = new Class<?>[classes.size()];
+//
+//        final Enhancer e = new Enhancer();
+//        if (!primaryClass.isInterface()) {
+//            e.setSuperclass( primaryClass );
+//        }
+//        e.setInterfaces( classes.toArray( classArray ) );
+//        e.setCallback( interceptor );
+//        return (T) e.create();
+//    }
 
     @Override
     public void close() {
-        connection.close();
+        queryExecutor.getConnection().close();
     }
 
     /**
@@ -695,10 +637,10 @@ public class EntityManagerImpl implements EntityManager {
         return target;
     }
 
-    @Override
-    public Collection<SubjectInfo> getSubjects() {
-        return classInfo.values();
-    }
+//    @Override
+//    public Collection<SubjectInfo> getSubjects() {
+//        return classInfo.values();
+//    }
 
     @Override
     public void registerListener(Listener listener) {
@@ -729,261 +671,42 @@ public class EntityManagerImpl implements EntityManager {
         return cachingModel;
     }
 
-    @Override
-    public QueryExecution execute(Query query) {
-        final Query q = query.cloneQuery();
-        if (!modelName.equals( Quad.defaultGraphIRI )) {
-            final ElementNamedGraph eng = new ElementNamedGraph( modelName, q.getQueryPattern() );
-            q.setQueryPattern( eng );
-        }
-        return connection.query( q );
-    }
-
+    
     @Override
     public String toString() {
-        return String.format( "EntityManager[%s]", modelName );
-    }
-
-    
-    public interface DR extends Delayed, Runnable {
-    
-        public static DR make( Runnable r )
-        {
-            if (r instanceof DR)
-            {
-                return (DR)r;
-            }
-            Impl impl = new Impl(r);
-            if (r instanceof Delayed)
-            {
-                impl.expires = ((Delayed) r).getDelay( TimeUnit.MILLISECONDS );
-            }
-            return impl;
-        }
-        
-        public static DR make( Runnable r, long expires )
-        {
-            if (r instanceof DR)
-            {
-                if (expires == ((DR)r).getDelay( TimeUnit.MILLISECONDS ))
-                {
-                    return (DR)r;
-                }
-            }
-            return new Impl(r, expires);
-        }
-        
-        public class Impl implements DR {
-       
-            private Runnable r;
-            private long expires;
-            
-            private Impl( Runnable r)
-            {
-                this(r,System.currentTimeMillis());
-            }
-
-            private Impl( Runnable r ,long expires)
-            {
-                this.r = r;
-                this.expires = expires;
-            }
-
-            @Override
-            public long getDelay(TimeUnit unit) {
-                return unit.convert( expires-System.currentTimeMillis(), TimeUnit.MILLISECONDS );
-            }
-    
-            @Override
-            public int compareTo(Delayed o) {
-                return Long.compare(  getDelay( TimeUnit.MILLISECONDS), o.getDelay(  TimeUnit.MILLISECONDS ) );
-            }
-    
-            @Override
-            public void run() {
-                r.run();
-            }
-            
-            @Override
-            public boolean equals( Object o )
-            {
-                if (o instanceof Impl)
-                {
-                    return r.equals( ((Impl )o).equals(  r  ));
-                }
-                return false;
-            }
-            
-            @Override
-            public int hashCode() {
-                return r.hashCode();
-            }
-                        
-        }
+        return String.format( "EntityManager[%s]", queryExecutor.getModelName() );
     }
     
-    
-    public class DelayedBlockingQueue extends DelayQueue<DR>  {
-        
-        public BlockingQueue<Runnable> asRunnableQueue() {
-            return new BlockingQueue<Runnable>(){
-                DelayedBlockingQueue dbq = DelayedBlockingQueue.this;
-                public boolean add(Runnable e) {
-                    return dbq.add( DR.make( e ));
-                }
+    @Override
+	public <T> T makeInstance(Object source, Class<T> clazz)
+			throws MissingAnnotation
+	{
+		return factory.makeInstance(source, clazz);
+	}
 
-                
-                private List<DR> makeList( Collection<? extends Runnable> coll)
-                {
-                   return coll.stream().map( r -> DR.make( r ) ).collect( Collectors.toList() ) ;
-                }
-                
-                
-                public boolean addAll(Collection<? extends Runnable> arg0) {
-                    return dbq.addAll(makeList( arg0 ) );
-                }
+	@Override
+	public SubjectInfo parse(Class<?> clazz) throws MissingAnnotation
+	{
+		return factory.parse( clazz );
+	}
+	
+	@Override
+	public void reset_()
+	{
+		// TODO Auto-generated method stub
+		
+	}
 
-                public void clear() {
-                    dbq.clear();
-                }
+	@Override
+	public QueryExecution execute(Query query)
+	{
+		return queryExecutor.execute(query);
+	}
 
-                public boolean contains(Object o) {
-                    if (o instanceof Runnable) { 
-                        return dbq.contains( DR.make( (Runnable)o ) );
-                    } 
-                    return false;
-                }
-
-                public boolean containsAll(Collection<?> arg0) {
-                    List<DR> lst = new ArrayList<DR>();
-                    for (Object o : arg0)
-                    {
-                        if (o instanceof Runnable)
-                        {
-                            lst.add(  DR.make(  (Runnable)o ) );
-                        }
-                        else {
-                            return false;
-                        }
-                    }
-                
-                    return dbq.containsAll( lst );
-                }
-
-                public int drainTo(Collection<? super Runnable> c, int maxElements) {
-                    return dbq.drainTo( c, maxElements );
-                }
-
-                public int drainTo(Collection<? super Runnable> c) {
-                    return dbq.drainTo( c );
-                }
-
-                public Runnable element() {
-                    return dbq.element();
-                }                
-
-                public void forEach(Consumer<? super Runnable> arg0) {
-                    dbq.forEach( arg0 );
-                }
-               
-                public boolean isEmpty() {
-                    return dbq.isEmpty();
-                }
-
-                public Iterator<Runnable> iterator() {
-                    return WrappedIterator.create( dbq.iterator() ).mapWith( dr -> (Runnable)dr );
-                }
-
-                public boolean offer(Runnable e, long timeout, TimeUnit unit) throws InterruptedException {
-                    return dbq.offer( DR.make( e ), timeout, unit );
-                }
-
-                public boolean offer(Runnable e) {
-                    return dbq.offer( DR.make( e ) );
-                }
-
-//                public Stream<Runnable> parallelStream() {
-//                    return dbq.parallelStream().map(  dr -> (Runnable)dr );
-//                }
-
-                public Runnable peek() {
-                    return dbq.peek();
-                }
-
-                public Runnable poll() {
-                    return dbq.poll();
-                }
-
-                public Runnable poll(long timeout, TimeUnit unit) throws InterruptedException {
-                    return dbq.poll( timeout, unit );
-                }
-
-                public void put(Runnable e) throws InterruptedException {
-                    dbq.put( DR.make(e) );
-                }
-
-                public int remainingCapacity() {
-                    return dbq.remainingCapacity();
-                }
-
-                public Runnable remove() {
-                    return dbq.remove();
-                }
-
-                public boolean remove(Object o) {
-                    if (o instanceof Runnable)
-                    {
-                        return dbq.remove( DR.make(  (Runnable)o) );
-                    }
-                    return false;
-                }
-
-                public boolean removeAll(Collection<?> arg0) {
-                    List<DR> lst = new ArrayList<DR>();
-                    for (Object o : arg0)
-                    {
-                        if (o instanceof Runnable)
-                        {
-                            lst.add(  DR.make(  (Runnable)o ) );
-                        }
-                        
-                    }               
-                    return dbq.removeAll( lst );
-                }
-
-//                public boolean removeIf(java.util.function.Predicate<? super Runnable> arg0) {
-//                    return dbq.removeIf( arg0 );
-//                }
-
-                public boolean retainAll(Collection<?> arg0) {
-                    return dbq.retainAll( arg0 );
-                }
-
-                public int size() {
-                    return dbq.size();
-                }
-               
-//                public Stream<Runnable> stream() {
-//                    return dbq.stream().map(  dr -> (Runnable) dr );
-//                }
-
-                public Runnable take() throws InterruptedException {
-                    return dbq.take();
-                }
-
-                public Object[] toArray() {
-                    return dbq.toArray();
-                }
-
-                public <T> T[] toArray(T[] arg0) {
-                    return dbq.toArray( arg0 );
-                }
-                
-        };
-        
-        
-        
-    }
-        
-    }
+	@Override
+	public Collection<SubjectInfo> getSubjects()
+	{
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

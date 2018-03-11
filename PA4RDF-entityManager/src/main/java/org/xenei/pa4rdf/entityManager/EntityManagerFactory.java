@@ -13,14 +13,14 @@
  * limitations under the License.
  */
 
-package org.xenei.jena.entities;
+package org.xenei.pa4rdf.entityManager;
 
 import org.apache.jena.query.Dataset;
 import org.apache.jena.query.DatasetFactory;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdfconnection.RDFConnection;
 import org.apache.jena.rdfconnection.RDFConnectionFactory;
-import org.xenei.jena.entities.impl.EntityManagerImpl;
+import org.xenei.pa4rdf.entityManager.impl.EntityManagerImpl;
 
 /**
  * Factory to create EntityManagers.

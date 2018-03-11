@@ -1,4 +1,4 @@
-package org.xenei.jena.entities;
+package org.xenei.pa4rdf.entityManager;
 
 /**
  * A RuntimeException that indicates the class should have been constructed by

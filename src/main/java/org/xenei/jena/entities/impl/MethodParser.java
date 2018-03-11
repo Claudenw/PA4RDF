@@ -42,6 +42,7 @@ import org.xenei.pa4rdf.bean.handlers.UriHandler;
 import org.xenei.pa4rdf.bean.impl.ActionType;
 import org.xenei.pa4rdf.bean.impl.EffectivePredicate;
 import org.xenei.pa4rdf.bean.impl.TypeChecker;
+import org.xenei.pa4rdf.entityManager.impl.EntityManagerImpl;
 
 /**
  * An implementation of the EntityManager interface.

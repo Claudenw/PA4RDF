@@ -25,6 +25,7 @@ import org.xenei.pa4rdf.bean.ResourceWrapper;
 import org.xenei.pa4rdf.bean.SubjectInfo;
 import org.xenei.pa4rdf.bean.annotations.Predicate;
 import org.xenei.pa4rdf.bean.impl.TypeChecker;
+import org.xenei.pa4rdf.entityManager.impl.EntityManagerImpl;
 
 import net.sf.cglib.proxy.MethodInterceptor;
 import net.sf.cglib.proxy.MethodProxy;
