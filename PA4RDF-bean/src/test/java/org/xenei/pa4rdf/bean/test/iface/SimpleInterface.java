@@ -4,14 +4,15 @@ import org.xenei.pa4rdf.bean.annotations.Predicate;
 import org.xenei.pa4rdf.bean.annotations.Subject;
 
 @Subject(namespace = "http://example.com/")
-public interface SimpleInterface {
-    String getX();
+public interface SimpleInterface
+{
+	String getX();
 
-    boolean hasX();
+	boolean hasX();
 
-    void removeX();
+	void removeX();
 
-    @Predicate
-    void setX(String x);
+	@Predicate
+	void setX(String x);
 
 }

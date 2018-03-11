@@ -24,7 +24,8 @@ import org.xenei.pa4rdf.bean.annotations.Subject;
  * 
  */
 @Subject(namespace = "http://xenei.org/jena/entities/resourceWrapper#")
-public interface ResourceWrapper {
+public interface ResourceWrapper
+{
 	/**
 	 * Get the wrapped resource.
 	 * 

@@ -18,10 +18,13 @@ import org.xenei.pa4rdf.bean.annotations.Subject;
 import org.xenei.pa4rdf.bean.test.iface.CollectionValueInterface;
 
 @Subject(namespace = "http://localhost/test#")
-public abstract class CollectionValueIntfAbst implements CollectionValueInterface {
+public abstract class CollectionValueIntfAbst
+		implements CollectionValueInterface
+{
 
-    public String getSomething() {
-        return "Something";
-    }
+	public String getSomething()
+	{
+		return "Something";
+	}
 
 }

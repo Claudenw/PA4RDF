@@ -21,15 +21,18 @@ import org.apache.jena.rdf.model.Statement;
  * An Abstract ObjectHandler that creates provided default implementations.
  * 
  */
-public abstract class AbstractObjectHandler implements ObjectHandler {
+public abstract class AbstractObjectHandler implements ObjectHandler
+{
 
 	/**
 	 * Default implementation of removeObject.
 	 */
 	@Override
-	public void removeObject(Statement stmt, RDFNode value) {
-		if (value == null || stmt.getObject().equals( value )) {
-			stmt.getSubject().getModel().remove( stmt );
+	public void removeObject(Statement stmt, RDFNode value)
+	{
+		if (value == null || stmt.getObject().equals(value))
+		{
+			stmt.getSubject().getModel().remove(stmt);
 		}
 	}
 }

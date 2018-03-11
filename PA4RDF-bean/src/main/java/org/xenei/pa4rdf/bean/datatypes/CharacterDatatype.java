@@ -21,14 +21,17 @@ import org.apache.jena.datatypes.xsd.impl.XSDBaseStringType;
  * An instance of XSDBaseStringType that converts Character class objects into
  * single character strings and back again.
  */
-public class CharacterDatatype extends XSDBaseStringType {
+public class CharacterDatatype extends XSDBaseStringType
+{
 
 	public static final CharacterDatatype INSTANCE = new CharacterDatatype();
+
 	/**
 	 * constructor
 	 */
-	private CharacterDatatype() {
-		super( "string", Character.class );        
+	private CharacterDatatype()
+	{
+		super("string", Character.class);
 	}
 
 	/**
@@ -40,13 +43,16 @@ public class CharacterDatatype extends XSDBaseStringType {
 	 *             if lexical is more than one character
 	 */
 	@Override
-	public Object parseValidated(final String lexical) {
+	public Object parseValidated(final String lexical)
+	{
 		final String val = lexical.trim();
-		if (val.length() != 1) {
-			throw new DatatypeFormatException( lexical, this, "more than 1 character" );
+		if (val.length() != 1)
+		{
+			throw new DatatypeFormatException(lexical, this,
+					"more than 1 character");
 		}
 
-		return new Character( val.charAt( 0 ) );
+		return new Character(val.charAt(0));
 	}
 
 }

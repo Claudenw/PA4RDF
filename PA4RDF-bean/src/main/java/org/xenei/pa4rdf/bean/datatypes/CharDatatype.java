@@ -21,22 +21,30 @@ import org.apache.jena.datatypes.xsd.impl.XSDBaseStringType;
  * An instance of XSDBaseStringType that converts char.class objects into single
  * character strings and back again.
  */
-public class CharDatatype extends XSDBaseStringType {
+public class CharDatatype extends XSDBaseStringType
+{
 
 	public static CharDatatype INSTANCE = new CharDatatype();
 
-	private CharDatatype() {
-		super( "string", null );
-		try {
-			this.javaClass = (Class<?>) Character.class.getField( "TYPE" ).get( null );
-		} catch (final IllegalArgumentException e) {
-			throw new RuntimeException( e );
-		} catch (final SecurityException e) {
-			throw new RuntimeException( e );
-		} catch (final IllegalAccessException e) {
-			throw new RuntimeException( e );
-		} catch (final NoSuchFieldException e) {
-			throw new RuntimeException( e );
+	private CharDatatype()
+	{
+		super("string", null);
+		try
+		{
+			this.javaClass = (Class<?>) Character.class.getField("TYPE")
+					.get(null);
+		} catch (final IllegalArgumentException e)
+		{
+			throw new RuntimeException(e);
+		} catch (final SecurityException e)
+		{
+			throw new RuntimeException(e);
+		} catch (final IllegalAccessException e)
+		{
+			throw new RuntimeException(e);
+		} catch (final NoSuchFieldException e)
+		{
+			throw new RuntimeException(e);
 		}
 	}
 
@@ -49,13 +57,16 @@ public class CharDatatype extends XSDBaseStringType {
 	 *             if lexical is more than one character
 	 */
 	@Override
-	public Object parseValidated(final String lexical) {
+	public Object parseValidated(final String lexical)
+	{
 		final String val = lexical.trim();
-		if (val.length() != 1) {
-			throw new DatatypeFormatException( lexical, this, "more than 1 character" );
+		if (val.length() != 1)
+		{
+			throw new DatatypeFormatException(lexical, this,
+					"more than 1 character");
 		}
 
-		return new Character( val.charAt( 0 ) ).charValue();
+		return new Character(val.charAt(0)).charValue();
 	}
 
 }

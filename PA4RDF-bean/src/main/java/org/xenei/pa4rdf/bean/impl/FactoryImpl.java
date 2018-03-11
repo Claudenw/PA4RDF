@@ -27,101 +27,136 @@ import net.sf.cglib.proxy.MethodInterceptor;
 
 public class FactoryImpl implements EntityFactory
 {
-	static {
-        Init.registerTypes();
-    }
+	static
+	{
+		Init.registerTypes();
+	}
 
-	private  static final Log LOG = LogFactory.getLog(FactoryImpl.class);
+	private static final Log LOG = LogFactory.getLog(FactoryImpl.class);
 
-	private final Map<Class<?>, SubjectInfo> subjectInfoMap = new HashMap<Class<?>,SubjectInfo>();
+	private final Map<Class<?>, SubjectInfo> subjectInfoMap = new HashMap<Class<?>, SubjectInfo>();
 
 	@Override
-	public <T> T makeInstance( Object source, Class<T> clazz ) throws MissingAnnotation
+	public void reset_()
 	{
-		return makeInstance( source, parse( clazz ));
+		Init.registerTypes();
+		subjectInfoMap.clear();
+	}
+
+	@Override
+	public <T> T makeInstance(Object source, Class<T> clazz)
+			throws MissingAnnotation
+	{
+		return makeInstance(source, parse(clazz));
 	}
 
 	@SuppressWarnings("unchecked")
-	public <T> T makeInstance( Object source, SubjectInfoImpl subjectInfo ) throws MissingAnnotation
+	public <T> T makeInstance(Object source, SubjectInfoImpl subjectInfo)
+			throws MissingAnnotation
 	{
-		final Set<Class<?>> classes = new LinkedHashSet<Class<?>>( subjectInfo.getMagicInterfaces().size()+2);
-		if (subjectInfo.getImplementedClass().isInterface()) {
-			classes.add( subjectInfo.getImplementedClass() );
-		}		
-
-		for (final Class<?> cla : subjectInfo.getMagicInterfaces()) {
-			parse( cla );
-			classes.add( cla );
+		final Set<Class<?>> classes = new LinkedHashSet<Class<?>>(
+				subjectInfo.getMagicInterfaces().size() + 2);
+		if (subjectInfo.getImplementedClass().isInterface())
+		{
+			classes.add(subjectInfo.getImplementedClass());
 		}
 
-		if (!classes.contains( ResourceWrapper.class )) {
-			classes.add( ResourceWrapper.class );
+		for (final Class<?> cla : subjectInfo.getMagicInterfaces())
+		{
+			parse(cla);
+			classes.add(cla);
 		}
-		final Resource resolvedResource = resolveResource( source );
 
-		final MethodInterceptor interceptor = new ResourceEntityProxy( this, resolvedResource, subjectInfo );
+		if (!classes.contains(ResourceWrapper.class))
+		{
+			classes.add(ResourceWrapper.class);
+		}
+		final Resource resolvedResource = resolveResource(source);
+
+		final MethodInterceptor interceptor = new ResourceEntityProxy(this,
+				resolvedResource, subjectInfo);
 
 		final Enhancer e = new Enhancer();
-		if (!subjectInfo.getImplementedClass().isInterface()) {
-			e.setSuperclass( subjectInfo.getImplementedClass() );
+		if (!subjectInfo.getImplementedClass().isInterface())
+		{
+			e.setSuperclass(subjectInfo.getImplementedClass());
 		}
-		e.setInterfaces( classes.toArray( new Class<?>[classes.size()] ) );
-		e.setCallback( interceptor );
+		e.setInterfaces(classes.toArray(new Class<?>[classes.size()]));
+		e.setCallback(interceptor);
 		return (T) e.create();
 
 	}
 
-	private Resource resolveResource(final Object target) throws IllegalArgumentException {
+	private Resource resolveResource(final Object target)
+			throws IllegalArgumentException
+	{
 		Resource r;
-		if (target instanceof ResourceWrapper) {
+		if (target instanceof ResourceWrapper)
+		{
 			r = ((ResourceWrapper) target).getResource();
-		} else if (target instanceof Resource) {
+		} else if (target instanceof Resource)
+		{
 			r = (Resource) target;
-		} else if (target instanceof RDFNode) {
+		} else if (target instanceof RDFNode)
+		{
 			r = ((RDFNode) target).asResource();
-		} else if (target instanceof FrontsNode) {
-			r = ModelFactory.createDefaultModel().createResource(((FrontsNode)target).asNode().getURI());
-		} else {
+		} else if (target instanceof FrontsNode)
+		{
+			r = ModelFactory.createDefaultModel()
+					.createResource(((FrontsNode) target).asNode().getURI());
+		} else
+		{
 
-			throw new IllegalArgumentException(
-					String.format( "%s does not implement Resource, ResourceWrapper, RDFNode, or FrontsNode", target.getClass() ) );
+			throw new IllegalArgumentException(String.format(
+					"%s does not implement Resource, ResourceWrapper, RDFNode, or FrontsNode",
+					target.getClass()));
 		}
 		if (r.getModel() == null)
 		{
 			final Model m = ModelFactory.createDefaultModel();
-			r = m.createResource( r.getURI() );
+			r = m.createResource(r.getURI());
 		}
 		return r;
 	}
 
 	@Override
-	public SubjectInfo getSubjectInfo(Class<?> clazz) 
+	public SubjectInfo getSubjectInfo(Class<?> clazz)
 	{
 		return subjectInfoMap.get(clazz);
 	}
 
-	private boolean isAdd(final Method m) {
-		try {
-			if (ActionType.parse( m.getName() ) == ActionType.SETTER) {
+	private boolean isAdd(final Method m)
+	{
+		try
+		{
+			if (ActionType.parse(m.getName()) == ActionType.SETTER)
+			{
 				final Class<?> parms[] = m.getParameterTypes();
 				return (parms != null) && (parms.length == 1);
 			}
-		} catch (final IllegalArgumentException expected) {
+		} catch (final IllegalArgumentException expected)
+		{
 			// do nothing
 		}
 		return false;
 	}
-	private Map<String, Integer> countAdders(final Method[] methods) {
+
+	private Map<String, Integer> countAdders(final Method[] methods)
+	{
 		final Map<String, Integer> addCount = new HashMap<String, Integer>();
-		for (final Method m : methods) {
-			if (isAdd( m )) {
-				Integer i = addCount.get( m.getName() );
-				if (i == null) {
+		for (final Method m : methods)
+		{
+			if (isAdd(m))
+			{
+				Integer i = addCount.get(m.getName());
+				if (i == null)
+				{
 					i = 1;
-				} else {
+				} else
+				{
 					i = i + 1;
 				}
-				addCount.put( m.getName(), i );
+				addCount.put(m.getName(), i);
 			}
 		}
 		return addCount;
@@ -138,60 +173,72 @@ public class FactoryImpl implements EntityFactory
 	 * @throws MissingAnnotation
 	 */
 	@Override
-	public SubjectInfoImpl parse(final Class<?> clazz) throws MissingAnnotation {
-		SubjectInfoImpl subjectInfo = (SubjectInfoImpl) getSubjectInfo( clazz );
+	public SubjectInfoImpl parse(final Class<?> clazz) throws MissingAnnotation
+	{
+		SubjectInfoImpl subjectInfo = (SubjectInfoImpl) getSubjectInfo(clazz);
 
-		if (subjectInfo == null) {
+		if (subjectInfo == null)
+		{
 			if (LOG.isDebugEnabled())
 			{
-				LOG.info( "Parsing "+clazz );
+				LOG.info("Parsing " + clazz);
 			}
-			subjectInfo = new SubjectInfoImpl( clazz );
+			subjectInfo = new SubjectInfoImpl(clazz);
 
-			final MethodParser parser = new MethodParser( this, subjectInfo, countAdders( clazz.getMethods() ) );
+			final MethodParser parser = new MethodParser(this, subjectInfo,
+					countAdders(clazz.getMethods()));
 
 			/*
-			 * Parse getter annotated methods.  All others put into annotated list to parse later.
-			 * Parsing getters provides us with extra information about the methods (like the return type)
+			 * Parse getter annotated methods. All others put into annotated
+			 * list to parse later. Parsing getters provides us with extra
+			 * information about the methods (like the return type)
 			 */
 			boolean foundAnnotation = false;
 			final List<Method> annotated = new ArrayList<Method>();
-			for (final Method method : clazz.getMethods()) {
-				try {
-					final ActionType actionType = ActionType.parse( method.getName() );
-					if (PredicateInfoImpl.isPredicate(method) || subjectInfo.isMagicBean()) {
+			for (final Method method : clazz.getMethods())
+			{
+				try
+				{
+					final ActionType actionType = ActionType
+							.parse(method.getName());
+					if (PredicateInfoImpl.isPredicate(method)
+							|| subjectInfo.isMagicBean())
+					{
 						foundAnnotation = true;
-						if (ActionType.GETTER == actionType) {
-							parser.parse( method );
-						} else {
-							annotated.add( method );
+						if (ActionType.GETTER == actionType)
+						{
+							parser.parse(method);
+						} else
+						{
+							annotated.add(method);
 						}
 					}
-				} catch (final IllegalArgumentException expected) {
+				} catch (final IllegalArgumentException expected)
+				{
 					// not an action type ignore meannotationClassthod
 				}
 
 			}
-			if (!foundAnnotation) {
-				throw new MissingAnnotation( "No annotated methods in " + clazz.getCanonicalName() );
+			if (!foundAnnotation)
+			{
+				throw new MissingAnnotation(
+						"No annotated methods in " + clazz.getCanonicalName());
 			}
 
 			/*
 			 * Now parse all the annotated non-getter methods
 			 */
-			for (final Method method : annotated) {
-				parser.parse( method );
+			for (final Method method : annotated)
+			{
+				parser.parse(method);
 			}
 
 			/* make sure all methods have all data */
 			subjectInfo.normalize();
 
 			/* save the result */
-			subjectInfoMap.put( clazz, subjectInfo );
+			subjectInfoMap.put(clazz, subjectInfo);
 		}
 		return subjectInfo;
 	}
-
-
-
 }

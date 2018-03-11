@@ -24,8 +24,10 @@ import org.xenei.pa4rdf.bean.exceptions.MissingAnnotation;
  * RDFResources and visa versa.
  * 
  */
-public class EntityHandler extends AbstractObjectHandler {
+public class EntityHandler extends AbstractObjectHandler
+{
 	private final Class<?> valueClass;
+
 	/**
 	 * Constructor.
 	 * 
@@ -34,7 +36,9 @@ public class EntityHandler extends AbstractObjectHandler {
 	 * @param valueClass
 	 *            The Subject annotated class to create.
 	 */
-	public EntityHandler(final EntityFactory entityFactory, final Class<?> valueClass) {
+	public EntityHandler(final EntityFactory entityFactory,
+			final Class<?> valueClass)
+	{
 		this.valueClass = valueClass;
 	}
 
@@ -42,26 +46,30 @@ public class EntityHandler extends AbstractObjectHandler {
 	 * Create an RDFNode representation for the subject class.
 	 */
 	@Override
-	public RDFNode createRDFNode(final Object obj) {
+	public RDFNode createRDFNode(final Object obj)
+	{
 		return obj == null ? null : ((ResourceWrapper) obj).getResource();
 	}
 
 	@Override
-	public boolean equals(final Object o) {
+	public boolean equals(final Object o)
+	{
 		if (o instanceof EntityHandler)
 		{
-			return ((EntityHandler)o).valueClass.equals(  valueClass );
+			return ((EntityHandler) o).valueClass.equals(valueClass);
 		}
 		return false;
 	}
 
 	@Override
-	public int hashCode() {
+	public int hashCode()
+	{
 		return valueClass.hashCode();
 	}
 
 	@Override
-	public boolean isEmpty(final Object obj) {
+	public boolean isEmpty(final Object obj)
+	{
 		return obj == null;
 	}
 
@@ -75,17 +83,21 @@ public class EntityHandler extends AbstractObjectHandler {
 	 * @return the instance of the valueClass.
 	 */
 	@Override
-	public Object parseObject(final RDFNode node) {
-		try {
-			return EntityFactory.read( node.asResource(), valueClass );
-		} catch (final MissingAnnotation e) {
-			throw new RuntimeException( e );
+	public Object parseObject(final RDFNode node)
+	{
+		try
+		{
+			return EntityFactory.read(node.asResource(), valueClass);
+		} catch (final MissingAnnotation e)
+		{
+			throw new RuntimeException(e);
 		}
 	}
 
 	@Override
-	public String toString() {
-		return String.format( "EntityHandler[ %s ]", valueClass );
+	public String toString()
+	{
+		return String.format("EntityHandler[ %s ]", valueClass);
 	}
 
 }

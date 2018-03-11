@@ -29,7 +29,8 @@ import org.xenei.pa4rdf.bean.impl.EffectivePredicate;
  * This class should contain enough information to make translation from graph
  * to instance variables possible.
  */
-public interface PredicateInfo {
+public interface PredicateInfo
+{
 
 	/**
 	 * @return the action type for the predicate.
@@ -83,6 +84,7 @@ public interface PredicateInfo {
 
 	/**
 	 * Get the effective predicate for this method.
+	 * 
 	 * @return the effective predicate.
 	 */
 	public EffectivePredicate getEffectivePredicate();

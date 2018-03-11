@@ -23,27 +23,28 @@ import org.xenei.pa4rdf.bean.annotations.Subject;
  * returns from other annotated classes and interfaces
  */
 @Subject(namespace = "http://localhost/test#")
-public abstract class TestInterface {
+public abstract class TestInterface
+{
 
-    @Predicate
-    abstract public void addBaz(String str);
+	@Predicate
+	abstract public void addBaz(String str);
 
-    abstract public String getBar();
+	abstract public String getBar();
 
-    abstract public ExtendedIterator<String> getBaz();
+	abstract public ExtendedIterator<String> getBaz();
 
-    abstract public Boolean isFlag();
+	abstract public Boolean isFlag();
 
-    abstract public void removeBar();
+	abstract public void removeBar();
 
-    abstract public void removeBaz(String str);
+	abstract public void removeBaz(String str);
 
-    abstract public void removeFlag();
+	abstract public void removeFlag();
 
-    @Predicate
-    abstract public void setBar(String value);
+	@Predicate
+	abstract public void setBar(String value);
 
-    @Predicate
-    abstract public void setFlag(Boolean state);
+	@Predicate
+	abstract public void setFlag(Boolean state);
 
 }

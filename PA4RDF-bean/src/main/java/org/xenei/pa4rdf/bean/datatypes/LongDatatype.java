@@ -23,12 +23,14 @@ import org.apache.jena.datatypes.xsd.impl.XSDBaseNumericType;
  * The standard Jena numeric data types covert longs to integer if they fall
  * below the Integer.MAX_VALUE limit.
  */
-public class LongDatatype extends XSDBaseNumericType {
+public class LongDatatype extends XSDBaseNumericType
+{
 
 	public static LongDatatype INSTANCE = new LongDatatype();
 
-	private LongDatatype() {
-		super( "long", Long.class );
+	private LongDatatype()
+	{
+		super("long", Long.class);
 	}
 
 	/**
@@ -36,8 +38,9 @@ public class LongDatatype extends XSDBaseNumericType {
 	 * @return Number
 	 */
 	@Override
-	protected Number suitableInteger(String lexical) {
-		return Long.parseLong( lexical );
+	protected Number suitableInteger(String lexical)
+	{
+		return Long.parseLong(lexical);
 	}
 
 }

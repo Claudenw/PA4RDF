@@ -19,13 +19,16 @@ import org.apache.jena.rdf.model.RDFNode;
 /**
  * An ObjectHandler that always returns null.
  */
-public class VoidHandler extends AbstractObjectHandler {
+public class VoidHandler extends AbstractObjectHandler
+{
 
 	public static final VoidHandler INSTANCE = new VoidHandler();
 
-	private VoidHandler() {
+	private VoidHandler()
+	{
 
 	}
+
 	/**
 	 * Convert the object to null
 	 * 
@@ -34,22 +37,26 @@ public class VoidHandler extends AbstractObjectHandler {
 	 * @return null
 	 */
 	@Override
-	public RDFNode createRDFNode(final Object obj) {
+	public RDFNode createRDFNode(final Object obj)
+	{
 		return null;
 	}
 
 	@Override
-	public boolean equals(final Object o) {
+	public boolean equals(final Object o)
+	{
 		return o instanceof VoidHandler;
 	}
 
 	@Override
-	public int hashCode() {
+	public int hashCode()
+	{
 		return toString().hashCode();
 	}
 
 	@Override
-	public boolean isEmpty(final Object obj) {
+	public boolean isEmpty(final Object obj)
+	{
 		return true;
 	}
 
@@ -61,12 +68,14 @@ public class VoidHandler extends AbstractObjectHandler {
 	 * @return null.
 	 */
 	@Override
-	public Object parseObject(final RDFNode node) {
+	public Object parseObject(final RDFNode node)
+	{
 		return null;
 	}
 
 	@Override
-	public String toString() {
+	public String toString()
+	{
 		return "VoidHandler";
 	}
 

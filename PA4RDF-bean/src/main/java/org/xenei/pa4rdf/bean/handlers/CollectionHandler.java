@@ -19,15 +19,20 @@ import org.apache.jena.rdf.model.RDFList;
 import org.apache.jena.rdf.model.RDFNode;
 import org.apache.jena.util.iterator.WrappedIterator;
 
-
 /**
  * Create and Manipulate RDFList objects or get/set for Collections or Arrays.
  * 
- * The get/set options should not be confused with add/contains/remove functionality
+ * The get/set options should not be confused with add/contains/remove
+ * functionality
  *
  */
-public class CollectionHandler extends AbstractObjectHandler {
-	private enum Type { Collection, Iterator };
+public class CollectionHandler extends AbstractObjectHandler
+{
+	private enum Type
+	{
+		Collection, Iterator
+	};
+
 	/**
 	 * The class type that we are going to return
 	 */
@@ -35,46 +40,51 @@ public class CollectionHandler extends AbstractObjectHandler {
 
 	private final ObjectHandler innerHandler;
 
-	private final Type type; 
+	private final Type type;
 
 	private Constructor<?> constructor;
 
-
 	/**
 	 * Create a collection handler that returns the associated type.
+	 * 
 	 * @param innerHandler
 	 * @param returnType
 	 */
-	public CollectionHandler(final ObjectHandler innerHandler, Class<?> returnType) {
+	public CollectionHandler(final ObjectHandler innerHandler,
+			Class<?> returnType)
+	{
 		this.returnType = returnType;
 		this.innerHandler = innerHandler;
-		if (Collection.class.isAssignableFrom( returnType))
+		if (Collection.class.isAssignableFrom(returnType))
 		{
 
 			type = Type.Collection;
-			try {
-				constructor = returnType.getConstructor( );
+			try
+			{
+				constructor = returnType.getConstructor();
 				return;
-			} catch (NoSuchMethodException | SecurityException acceptable) {
+			} catch (NoSuchMethodException | SecurityException acceptable)
+			{
 				// do nothing
 			}
-			String cType="";
-			try {
+			String cType = "";
+			try
+			{
 				constructor = ArrayList.class.getConstructor();
 
-				if (List.class.isAssignableFrom(  returnType ))
+				if (List.class.isAssignableFrom(returnType))
 				{
 					cType = "ArrayList";
 					constructor = ArrayList.class.getConstructor();
 					return;
-				} 
-				if (Set.class.isAssignableFrom( returnType ))
+				}
+				if (Set.class.isAssignableFrom(returnType))
 				{
 					cType = "HashSet";
 					constructor = HashSet.class.getConstructor();
 					return;
-				} 
-				if (Queue.class.isAssignableFrom( returnType ))
+				}
+				if (Queue.class.isAssignableFrom(returnType))
 				{
 					cType = "LinkedList";
 					constructor = LinkedList.class.getConstructor();
@@ -83,103 +93,129 @@ public class CollectionHandler extends AbstractObjectHandler {
 				cType = "ArrayList";
 				constructor = ArrayList.class.getConstructor();
 				return;
-			} catch (NoSuchMethodException | SecurityException e) {
-				throw new IllegalStateException( "Can not find no argument constructor for "+cType, e );
+			} catch (NoSuchMethodException | SecurityException e)
+			{
+				throw new IllegalStateException(
+						"Can not find no argument constructor for " + cType, e);
 			}
-		} else {
-			if (Iterator.class.isAssignableFrom( returnType ))
+		} else
+		{
+			if (Iterator.class.isAssignableFrom(returnType))
 			{
 				type = Type.Iterator;
-			} else {
-				throw new IllegalArgumentException( returnType+" is not a supported collection type");
+			} else
+			{
+				throw new IllegalArgumentException(
+						returnType + " is not a supported collection type");
 			}
 		}
 	}
 
 	@Override
-	public RDFNode createRDFNode(Object obj) {
-		return innerHandler.createRDFNode( obj );
+	public RDFNode createRDFNode(Object obj)
+	{
+		return innerHandler.createRDFNode(obj);
 	}
 
 	@Override
-	public boolean isEmpty(Object obj) {
-		if (obj == null) {
+	public boolean isEmpty(Object obj)
+	{
+		if (obj == null)
+		{
 			return true;
 		}
-		if (obj.getClass().isArray()) {
+		if (obj.getClass().isArray())
+		{
 			final Object[] ary = (Object[]) obj;
 			return ary.length == 0;
-		} else if (obj instanceof Collection) {
+		} else if (obj instanceof Collection)
+		{
 			final Collection<?> col = (Collection<?>) obj;
 			return col.size() == 0;
-		} else if (obj instanceof RDFNode) {
-			return ((RDFNode) obj).as( RDFList.class ).isEmpty();
+		} else if (obj instanceof RDFNode)
+		{
+			return ((RDFNode) obj).as(RDFList.class).isEmpty();
 		}
-		throw new IllegalArgumentException( String.format( "%s is not an RDFList or convertable object type", obj ) );
+		throw new IllegalArgumentException(String.format(
+				"%s is not an RDFList or convertable object type", obj));
 	}
 
 	@Override
-	public Object parseObject(RDFNode node) {
-		if (node.canAs( RDFList.class )) {
-			final RDFList lst = node.as( RDFList.class );
-			return lst.asJavaList().stream().map( r -> innerHandler.parseObject( r ) ).collect( Collectors.toList() );
+	public Object parseObject(RDFNode node)
+	{
+		if (node.canAs(RDFList.class))
+		{
+			final RDFList lst = node.as(RDFList.class);
+			return lst.asJavaList().stream()
+					.map(r -> innerHandler.parseObject(r))
+					.collect(Collectors.toList());
 		}
-		return innerHandler.parseObject( node );        
+		return innerHandler.parseObject(node);
 	}
 
-
-	public Object parseInnerObject(RDFNode node) {
-		return innerHandler.parseObject( node );
+	public Object parseInnerObject(RDFNode node)
+	{
+		return innerHandler.parseObject(node);
 	}
 
-
-	public Object makeCollection( Iterator<?> oIter ) {
+	public Object makeCollection(Iterator<?> oIter)
+	{
 		switch (type)
 		{
 			case Iterator:
 				return oIter;
-			case Collection:           
-				try {
+			case Collection:
+				try
+				{
 					@SuppressWarnings("unchecked")
-					final Collection<Object> col = (Collection<Object>) constructor.newInstance( );
-					final List<?> lst = WrappedIterator.create( oIter ).toList();
-					col.addAll(  lst );
+					final Collection<Object> col = (Collection<Object>) constructor
+							.newInstance();
+					final List<?> lst = WrappedIterator.create(oIter).toList();
+					col.addAll(lst);
 					return col;
-				} catch (InstantiationException | IllegalAccessException | IllegalArgumentException
-						| InvocationTargetException e) {
-					throw new IllegalStateException( constructor+" call to no arg constructor failed", e);
+				} catch (InstantiationException | IllegalAccessException
+						| IllegalArgumentException
+						| InvocationTargetException e)
+				{
+					throw new IllegalStateException(
+							constructor + " call to no arg constructor failed",
+							e);
 				}
 
 		}
-		throw new IllegalStateException( type+" is not Iterator or Collection");
+		throw new IllegalStateException(
+				type + " is not Iterator or Collection");
 
-
-	}   
+	}
 
 	@Override
-	public boolean equals(final Object o) {
-		if (o instanceof CollectionHandler) {
+	public boolean equals(final Object o)
+	{
+		if (o instanceof CollectionHandler)
+		{
 			final CollectionHandler other = (CollectionHandler) o;
-			return new EqualsBuilder()
-					.append(  returnType, other.returnType )
-					.append( innerHandler, other.innerHandler )                   
-					.build();            
+			return new EqualsBuilder().append(returnType, other.returnType)
+					.append(innerHandler, other.innerHandler).build();
 		}
 		return false;
 	}
 
 	@Override
-	public int hashCode() {
+	public int hashCode()
+	{
 		return innerHandler.hashCode();
 	}
 
 	@Override
-	public String toString() {
-		return String.format(  "CollectionHandler{ inner:%s return:%s}", innerHandler, returnType );
+	public String toString()
+	{
+		return String.format("CollectionHandler{ inner:%s return:%s}",
+				innerHandler, returnType);
 	}
 
 	@Override
-	public Collection<RDFNode> asCollection( boolean emptyIsNull, Object obj ) {
+	public Collection<RDFNode> asCollection(boolean emptyIsNull, Object obj)
+	{
 		Collection<Object> objs = null;
 		if (obj == null)
 		{
@@ -190,18 +226,19 @@ public class CollectionHandler extends AbstractObjectHandler {
 			objs = (Collection<Object>) obj;
 		} else if (obj.getClass().isArray())
 		{
-			objs = new ArrayList<Object>(  Arrays.asList( obj ) );
-		} else {
+			objs = new ArrayList<Object>(Arrays.asList(obj));
+		} else
+		{
 			objs = new ArrayList<Object>();
 			if (innerHandler.isEmpty(obj) && emptyIsNull)
 			{
 				objs.add(null);
-			}
-			else 
+			} else
 			{
-				objs.add(  obj  );
+				objs.add(obj);
 			}
 		}
-		return objs.stream().map( o -> createRDFNode(o)).collect(  Collectors.toList() );
+		return objs.stream().map(o -> createRDFNode(o))
+				.collect(Collectors.toList());
 	}
 }

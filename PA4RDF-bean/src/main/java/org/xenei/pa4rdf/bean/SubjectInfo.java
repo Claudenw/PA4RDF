@@ -24,7 +24,8 @@ import org.xenei.pa4rdf.bean.annotations.Subject;
 /**
  * Information about a subject annotated object.
  */
-public interface SubjectInfo {
+public interface SubjectInfo
+{
 
 	/**
 	 * Get the class that was annotated with the Subject annotation. e.g. the

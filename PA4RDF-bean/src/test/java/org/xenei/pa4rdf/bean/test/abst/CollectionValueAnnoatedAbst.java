@@ -25,125 +25,126 @@ import org.xenei.pa4rdf.bean.annotations.URI;
 import org.xenei.pa4rdf.bean.test.iface.TestInterface;
 
 @Subject(namespace = "http://localhost/test#")
-public abstract class CollectionValueAnnoatedAbst {
+public abstract class CollectionValueAnnoatedAbst
+{
 
-    @Predicate
-    public abstract void addBool(Boolean b);
+	@Predicate
+	public abstract void addBool(Boolean b);
 
-    @Predicate
-    public abstract void addChar(Character b);
+	@Predicate
+	public abstract void addChar(Character b);
 
-    @Predicate
-    public abstract void addDbl(Double b);
+	@Predicate
+	public abstract void addDbl(Double b);
 
-    @Predicate
-    public abstract void addEnt(TestInterface b);
+	@Predicate
+	public abstract void addEnt(TestInterface b);
 
-    @Predicate
-    public abstract void addFlt(Float b);
+	@Predicate
+	public abstract void addFlt(Float b);
 
-    @Predicate
-    public abstract void addInt(Integer b);
+	@Predicate
+	public abstract void addInt(Integer b);
 
-    @Predicate
-    public abstract void addLng(Long b);
+	@Predicate
+	public abstract void addLng(Long b);
 
-    @Predicate
-    public abstract void addRDF(RDFNode b);
+	@Predicate
+	public abstract void addRDF(RDFNode b);
 
-    @Predicate
-    public abstract void addStr(String b);
+	@Predicate
+	public abstract void addStr(String b);
 
-    public abstract void addU(RDFNode b);
+	public abstract void addU(RDFNode b);
 
-    @Predicate
-    public abstract void addU(@URI String b);
+	@Predicate
+	public abstract void addU(@URI String b);
 
-    @Predicate
-    public abstract void addU3(RDFNode b);
+	@Predicate
+	public abstract void addU3(RDFNode b);
 
-    public abstract void addU3(@URI String b);
+	public abstract void addU3(@URI String b);
 
-    public abstract Set<Boolean> getBool();
+	public abstract Set<Boolean> getBool();
 
-    public abstract List<Character> getChar();
+	public abstract List<Character> getChar();
 
-    public abstract Queue<Double> getDbl();
+	public abstract Queue<Double> getDbl();
 
-    public abstract Queue<TestInterface> getEnt();
+	public abstract Queue<TestInterface> getEnt();
 
-    public abstract Set<Float> getFlt();
+	public abstract Set<Float> getFlt();
 
-    public abstract Queue<Integer> getInt();
+	public abstract Queue<Integer> getInt();
 
-    public abstract List<Long> getLng();
+	public abstract List<Long> getLng();
 
-    public abstract List<RDFNode> getRDF();
+	public abstract List<RDFNode> getRDF();
 
-    public abstract Set<String> getStr();
+	public abstract Set<String> getStr();
 
-    @Predicate(type = RDFNode.class)
-    public abstract Set<RDFNode> getU();
+	@Predicate(type = RDFNode.class)
+	public abstract Set<RDFNode> getU();
 
-    @Predicate(type = URI.class, name = "u")
-    public abstract List<String> getU2();
+	@Predicate(type = URI.class, name = "u")
+	public abstract List<String> getU2();
 
-    @Predicate(type = RDFNode.class)
-    public abstract Queue<RDFNode> getU3();
+	@Predicate(type = RDFNode.class)
+	public abstract Queue<RDFNode> getU3();
 
-    @Predicate(type = URI.class, name = "u3")
-    public abstract Set<String> getU4();
+	@Predicate(type = URI.class, name = "u3")
+	public abstract Set<String> getU4();
 
-    public abstract Boolean hasBool(Boolean b);
+	public abstract Boolean hasBool(Boolean b);
 
-    public abstract Boolean hasChar(Character b);
+	public abstract Boolean hasChar(Character b);
 
-    public abstract Boolean hasDbl(Double b);
+	public abstract Boolean hasDbl(Double b);
 
-    public abstract Boolean hasEnt(TestInterface b);
+	public abstract Boolean hasEnt(TestInterface b);
 
-    public abstract Boolean hasFlt(Float b);
+	public abstract Boolean hasFlt(Float b);
 
-    public abstract Boolean hasInt(Integer b);
+	public abstract Boolean hasInt(Integer b);
 
-    public abstract Boolean hasLng(Long b);
+	public abstract Boolean hasLng(Long b);
 
-    public abstract Boolean hasRDF(RDFNode b);
+	public abstract Boolean hasRDF(RDFNode b);
 
-    public abstract Boolean hasStr(String b);
+	public abstract Boolean hasStr(String b);
 
-    public abstract Boolean hasU(RDFNode b);
+	public abstract Boolean hasU(RDFNode b);
 
-    public abstract Boolean hasU(@URI String b);
+	public abstract Boolean hasU(@URI String b);
 
-    public abstract Boolean hasU3(RDFNode b);
+	public abstract Boolean hasU3(RDFNode b);
 
-    public abstract Boolean hasU3(@URI String b);
+	public abstract Boolean hasU3(@URI String b);
 
-    public abstract void removeBool(Boolean b);
+	public abstract void removeBool(Boolean b);
 
-    public abstract void removeChar(Character b);
+	public abstract void removeChar(Character b);
 
-    public abstract void removeDbl(Double b);
+	public abstract void removeDbl(Double b);
 
-    public abstract void removeEnt(TestInterface b);
+	public abstract void removeEnt(TestInterface b);
 
-    public abstract void removeFlt(Float b);
+	public abstract void removeFlt(Float b);
 
-    public abstract void removeInt(Integer b);
+	public abstract void removeInt(Integer b);
 
-    public abstract void removeLng(Long b);
+	public abstract void removeLng(Long b);
 
-    public abstract void removeRDF(RDFNode b);
+	public abstract void removeRDF(RDFNode b);
 
-    public abstract void removeStr(String b);
+	public abstract void removeStr(String b);
 
-    public abstract void removeU(RDFNode b);
+	public abstract void removeU(RDFNode b);
 
-    public abstract void removeU(@URI String b);
+	public abstract void removeU(@URI String b);
 
-    public abstract void removeU3(RDFNode b);
+	public abstract void removeU3(RDFNode b);
 
-    public abstract void removeU3(@URI String b);
+	public abstract void removeU3(@URI String b);
 
 }

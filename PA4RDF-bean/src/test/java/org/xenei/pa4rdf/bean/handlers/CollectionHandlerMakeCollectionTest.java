@@ -23,52 +23,54 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
-import org.xenei.pa4rdf.bean.handlers.CollectionHandler;
-import org.xenei.pa4rdf.bean.handlers.LiteralHandler;
+
 @RunWith(value = Parameterized.class)
-public class CollectionHandlerMakeCollectionTest{
-    private final String[] args = { "Hello", "World" };
-    private final Iterator<String> oIter;
-    private final CollectionHandler underTest;
-    private final Class<?> expected;
+public class CollectionHandlerMakeCollectionTest
+{
+	private final String[] args = { "Hello", "World" };
+	private final Iterator<String> oIter;
+	private final CollectionHandler underTest;
+	private final Class<?> expected;
 
-    public CollectionHandlerMakeCollectionTest( Class<?> type, Class<?> expected )
-    {
-        this.expected = expected;
-        this.oIter = Arrays.asList( args ).iterator();
-        underTest = new CollectionHandler( new LiteralHandler( XSDDatatype.XSDstring ), type );
-    }
+	public CollectionHandlerMakeCollectionTest(Class<?> type, Class<?> expected)
+	{
+		this.expected = expected;
+		this.oIter = Arrays.asList(args).iterator();
+		underTest = new CollectionHandler(
+				new LiteralHandler(XSDDatatype.XSDstring), type);
+	}
 
-    @Test
-    public void testMakeCollection() {        
-        final Object o = underTest.makeCollection( oIter );
-        Assert.assertTrue( expected.isAssignableFrom( o.getClass() ));
-        final List<?> lst = new ArrayList<Object>();
-        lst.addAll( (Collection)o );; 
-        assertEquals( args.length, lst.size() );
-        for (int i=0;i<args.length;i++)
-        {
-            assertEquals( "Error at "+i,args[i], lst.get( i ));    
-        }
-    }
+	@Test
+	public void testMakeCollection()
+	{
+		final Object o = underTest.makeCollection(oIter);
+		Assert.assertTrue(expected.isAssignableFrom(o.getClass()));
+		final List<?> lst = new ArrayList<Object>();
+		lst.addAll((Collection) o);
+		;
+		assertEquals(args.length, lst.size());
+		for (int i = 0; i < args.length; i++)
+		{
+			assertEquals("Error at " + i, args[i], lst.get(i));
+		}
+	}
 
-    @Parameters(name = "{index}: {0}")
-    public static Collection<Object[]> data() {
-        return Arrays.asList(new Object[][]{
-            {List.class, ArrayList.class},
-            {ArrayList.class, ArrayList.class},
-            {LinkedList.class, LinkedList.class},
-            {Vector.class, Vector.class},
-            {Stack.class, Stack.class},
-            {Queue.class, Queue.class},
-            {ArrayDeque.class, ArrayDeque.class},               
-            {Set.class, HashSet.class},
-            {LinkedHashSet.class, LinkedHashSet.class }, 
-            {TreeSet.class, TreeSet.class}, 
-            {HashSet.class, HashSet.class}, 
+	@Parameters(name = "{index}: {0}")
+	public static Collection<Object[]> data()
+	{
+		return Arrays.asList(new Object[][] { { List.class, ArrayList.class },
+				{ ArrayList.class, ArrayList.class },
+				{ LinkedList.class, LinkedList.class },
+				{ Vector.class, Vector.class }, { Stack.class, Stack.class },
+				{ Queue.class, Queue.class },
+				{ ArrayDeque.class, ArrayDeque.class },
+				{ Set.class, HashSet.class },
+				{ LinkedHashSet.class, LinkedHashSet.class },
+				{ TreeSet.class, TreeSet.class },
+				{ HashSet.class, HashSet.class },
 
-            //import java.util.Iterator;
-        });
-    }
+				// import java.util.Iterator;
+		});
+	}
 
 }

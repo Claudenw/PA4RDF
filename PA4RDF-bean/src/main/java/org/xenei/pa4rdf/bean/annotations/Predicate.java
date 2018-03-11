@@ -50,7 +50,8 @@ import java.lang.annotation.RetentionPolicy;
  * 
  */
 @Retention(RetentionPolicy.RUNTIME)
-public @interface Predicate {
+public @interface Predicate
+{
 	/**
 	 * If true empty strings are assumed to be null and are not inserted.
 	 * 
@@ -130,5 +131,7 @@ public @interface Predicate {
 	 */
 	String postExec() default "";
 
-	public static class UNSET{};
+	public static class UNSET
+	{
+	};
 }

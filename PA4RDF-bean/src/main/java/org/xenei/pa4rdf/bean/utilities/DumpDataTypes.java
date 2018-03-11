@@ -16,7 +16,8 @@ package org.xenei.pa4rdf.bean.utilities;
 
 import org.xenei.pa4rdf.bean.impl.PredicateInfoImpl;
 
-public class DumpDataTypes {
+public class DumpDataTypes
+{
 
 	/**
 	 * Dump the registered data types.
@@ -37,18 +38,22 @@ public class DumpDataTypes {
 	 * @see org.xenei.jena.entities.impl.PredicateInfoImpl#dataTypeDump(String,
 	 *      String)
 	 */
-	public static void main(final String[] args) {
+	public static void main(final String[] args)
+	{
 		String fmt = "%s | %s";
 		String nullString = null;
-		if (args.length > 0) {
+		if (args.length > 0)
+		{
 			fmt = args[0];
 		}
 
-		if (args.length > 1) {
+		if (args.length > 1)
+		{
 			nullString = args[1];
 		}
-		for (final String s : PredicateInfoImpl.dataTypeDump( fmt, nullString )) {
-			System.out.println( s );
+		for (final String s : PredicateInfoImpl.dataTypeDump(fmt, nullString))
+		{
+			System.out.println(s);
 		}
 
 	}

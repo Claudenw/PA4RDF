@@ -1,7 +1,5 @@
 package org.xenei.pa4rdf.bean;
 
-import org.apache.jena.datatypes.RDFDatatype;
-import org.apache.jena.datatypes.TypeMapper;
 import org.apache.jena.rdf.model.Resource;
 import org.xenei.pa4rdf.bean.exceptions.MissingAnnotation;
 import org.xenei.pa4rdf.bean.impl.FactoryImpl;
@@ -9,21 +7,27 @@ import org.xenei.pa4rdf.bean.impl.FactoryImpl;
 public interface EntityFactory
 {
 
-	static final EntityFactory INSTANCE = new FactoryImpl();	
+	static final EntityFactory INSTANCE = new FactoryImpl();
 
-	static <T> T read( Resource r, Class<T> clazz) throws MissingAnnotation
+	static void reset()
 	{
-		return INSTANCE.makeInstance( r, clazz );
+		INSTANCE.reset_();
 	}
 
-	static <T> T read( ResourceWrapper r, Class<T> clazz) throws MissingAnnotation
+	static <T> T read(Resource r, Class<T> clazz) throws MissingAnnotation
 	{
-		return INSTANCE.makeInstance( r, clazz );
+		return INSTANCE.makeInstance(r, clazz);
 	}
 
-	SubjectInfo getSubjectInfo( Class<?> clazz );
+	static <T> T read(ResourceWrapper r, Class<T> clazz)
+			throws MissingAnnotation
+	{
+		return INSTANCE.makeInstance(r, clazz);
+	}
 
-	<T> T makeInstance( Object source, Class<T> clazz) throws MissingAnnotation;
+	SubjectInfo getSubjectInfo(Class<?> clazz);
+
+	<T> T makeInstance(Object source, Class<T> clazz) throws MissingAnnotation;
 
 	/**
 	 * Parse the class if necessary.
@@ -37,4 +41,8 @@ public interface EntityFactory
 	 */
 	SubjectInfo parse(final Class<?> clazz) throws MissingAnnotation;
 
+	/**
+	 * reset internals to initial state.
+	 */
+	public void reset_();
 }

@@ -18,10 +18,13 @@ import org.xenei.pa4rdf.bean.annotations.Subject;
 import org.xenei.pa4rdf.bean.test.iface.SingleValueObjectInterface;
 
 @Subject(namespace = "http://localhost/test#")
-public abstract class SingleValueObjectIntfAbst implements SingleValueObjectInterface {
+public abstract class SingleValueObjectIntfAbst
+		implements SingleValueObjectInterface
+{
 
-    public String getSomeValue() {
-        return "Some Value";
-    }
+	public String getSomeValue()
+	{
+		return "Some Value";
+	}
 
 }

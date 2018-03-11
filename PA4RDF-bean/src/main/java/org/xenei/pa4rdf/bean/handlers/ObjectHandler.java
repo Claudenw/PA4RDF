@@ -32,7 +32,8 @@ import org.apache.jena.rdf.model.Statement;
  * In general X.equals( parseObject( createRDFNode( X ))) should hold true as
  * should X.equals( createRDFNode( parseObject( X ))).
  */
-public interface ObjectHandler {
+public interface ObjectHandler
+{
 	/**
 	 * Parse the object into an RDFNode representation.
 	 * 
@@ -71,7 +72,8 @@ public interface ObjectHandler {
 	void removeObject(Statement stmt, RDFNode value);
 
 	@SuppressWarnings("unchecked")
-	default Collection<RDFNode> asCollection( boolean emptyIsNull, Object obj ) {
+	default Collection<RDFNode> asCollection(boolean emptyIsNull, Object obj)
+	{
 		Collection<Object> objs = null;
 		if (obj == null)
 		{
@@ -82,19 +84,20 @@ public interface ObjectHandler {
 			objs = (Collection<Object>) obj;
 		} else if (obj.getClass().isArray())
 		{
-			objs = new ArrayList<Object>(  Arrays.asList( obj ) );
-		} else {
+			objs = new ArrayList<Object>(Arrays.asList(obj));
+		} else
+		{
 			objs = new ArrayList<Object>();
 			if (isEmpty(obj) && emptyIsNull)
 			{
 				objs.add(null);
-			}
-			else 
+			} else
 			{
-				objs.add(  obj  );
+				objs.add(obj);
 			}
 		}
-		return objs.stream().map( o -> createRDFNode(o)).collect(  Collectors.toList() );
+		return objs.stream().map(o -> createRDFNode(o))
+				.collect(Collectors.toList());
 	}
 
 }

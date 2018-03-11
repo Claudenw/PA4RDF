@@ -21,30 +21,32 @@ import java.util.Iterator;
 /**
  * An enumeration of Action types.
  */
-public enum ActionType {
+public enum ActionType
+{
 	/**
 	 * Indicates a method that gets a value
 	 */
-	GETTER(new String[]{"get", "is"}, new boolean[]{false,false}, false, 0, 1),
+	GETTER(new String[] { "get", "is" }, new boolean[] { false, false }, false, 0, 1),
 	/**
 	 * Indicates a method that sets a value
 	 */
-	SETTER(new String[]{"set", "add"}, new boolean[]{false,true}, false, 1, 1),
+	SETTER(new String[] { "set", "add" }, new boolean[] { false, true }, false, 1, 1),
 	/**
 	 * Indicates a method that removes a value
 	 */
-	REMOVER( new String[]{"remove"}, new boolean[]{false}, true, 0, 1),
+	REMOVER(new String[] { "remove" }, new boolean[] { false }, true, 0, 1),
 	/**
 	 * Indicates a method that checks for the existence of a value
 	 */
-	EXISTENTIAL( new String[]{"has"}, new boolean[]{false}, true, 0,1);
+	EXISTENTIAL(new String[] { "has" }, new boolean[] { false }, true, 0, 1);
 
 	private String[] prefixes;
-	private boolean allowNull; 
+	private boolean allowNull;
 	private int minArgs;
 	private int maxArgs;
 
-	ActionType( String[] prefixes, boolean[] flags, boolean allowNull, int minArgs, int maxArgs)
+	ActionType(String[] prefixes, boolean[] flags, boolean allowNull,
+			int minArgs, int maxArgs)
 	{
 		this.prefixes = prefixes;
 		this.allowNull = allowNull;
@@ -54,24 +56,30 @@ public enum ActionType {
 
 	/**
 	 * Return true if the method is backed by multiple entries in the graph.
-	 * @param method the method to check
+	 * 
+	 * @param method
+	 *            the method to check
 	 * @return true if there are multiples.
 	 */
-	public static boolean isMultiple(final Method method) {
-		final ActionType at = ActionType.parse( method.getName() );
-		switch (at) {
+	public static boolean isMultiple(final Method method)
+	{
+		final ActionType at = ActionType.parse(method.getName());
+		switch (at)
+		{
 			case GETTER:
-				return Iterator.class.isAssignableFrom( method.getReturnType() )
-						|| Collection.class.isAssignableFrom( method.getReturnType() );
+				return Iterator.class.isAssignableFrom(method.getReturnType())
+						|| Collection.class
+								.isAssignableFrom(method.getReturnType());
 
 			case SETTER:
-				return method.getName().startsWith( "add" );
+				return method.getName().startsWith("add");
 
 			case EXISTENTIAL:
 			case REMOVER:
 				return method.getParameterTypes().length > 0;
 		}
-		throw new IllegalArgumentException( String.format( "%s is not an action type function", method ) );
+		throw new IllegalArgumentException(
+				String.format("%s is not an action type function", method));
 	}
 
 	/**
@@ -111,16 +119,18 @@ public enum ActionType {
 	 * @throws IllegalArgumentException
 	 *             if the function does not have an action type prefix.
 	 */
-	public static ActionType parse(final String functionName) {
-		for (final ActionType type :ActionType.values())
+	public static ActionType parse(final String functionName)
+	{
+		for (final ActionType type : ActionType.values())
 		{
-			if (type.isA( functionName  ))                
+			if (type.isA(functionName))
 			{
 				return type;
 			}
 		}
 
-		throw new IllegalArgumentException( String.format( "%s is not an action type function", functionName ) );
+		throw new IllegalArgumentException(String
+				.format("%s is not an action type function", functionName));
 
 	}
 
@@ -133,22 +143,26 @@ public enum ActionType {
 	 * @throws IllegalArgumentException
 	 *             fur unrecognized ActionType instances.
 	 */
-	public String extractName(final String name) {
-		switch (this) {
+	public String extractName(final String name)
+	{
+		switch (this)
+		{
 			case GETTER:
-				if (name.startsWith( "get" )) {
-					return name.substring( 3 );
+				if (name.startsWith("get"))
+				{
+					return name.substring(3);
 				}
-				return name.substring( 2 );
+				return name.substring(2);
 
 			case SETTER:
 			case EXISTENTIAL:
-				return name.substring( 3 );
+				return name.substring(3);
 
 			case REMOVER:
-				return name.substring( 6 );
+				return name.substring(6);
 		}
-		throw new IllegalArgumentException( this.getClass().getName() + " does not seem to be a valid ActionType" );
+		throw new IllegalArgumentException(this.getClass().getName()
+				+ " does not seem to be a valid ActionType");
 	}
 
 	/**
@@ -158,11 +172,12 @@ public enum ActionType {
 	 *            the suffix for the name.
 	 * @return an array of potential method names.
 	 */
-	public String[] functionNames(final String nameSuffix) {
-		final String[] retval = new String[ prefixes.length];
-		for (int i=0;i<prefixes.length;i++)
+	public String[] functionNames(final String nameSuffix)
+	{
+		final String[] retval = new String[prefixes.length];
+		for (int i = 0; i < prefixes.length; i++)
 		{
-			retval[i] = prefixes[i]+nameSuffix;
+			retval[i] = prefixes[i] + nameSuffix;
 		}
 		return retval;
 	}
@@ -174,13 +189,15 @@ public enum ActionType {
 	 *            The name to test
 	 * @return true if the function is of this type, false otherwise.
 	 */
-	public boolean isA(final String functionName) {
-		if (functionName == null) {
+	public boolean isA(final String functionName)
+	{
+		if (functionName == null)
+		{
 			return false;
 		}
 		for (final String pfx : prefixes)
 		{
-			if (functionName.startsWith( pfx ))
+			if (functionName.startsWith(pfx))
 			{
 				return true;
 			}
@@ -191,21 +208,24 @@ public enum ActionType {
 	/**
 	 * @return true if the action type allows a null user facing type.
 	 */
-	public boolean allowsNull() {
+	public boolean allowsNull()
+	{
 		return allowNull;
 	}
 
 	/**
 	 * Return true if the method is of this action type.
-	 * @param method the method to check
+	 * 
+	 * @param method
+	 *            the method to check
 	 * @return true if the method is of this action type.
 	 */
-	public boolean isType( Method method )
+	public boolean isType(Method method)
 	{
-		if (isA( method.getName() ))
+		if (isA(method.getName()))
 		{
 			final int paramCount = method.getParameterTypes().length;
-			return paramCount>=minArgs && paramCount<=maxArgs;
+			return paramCount >= minArgs && paramCount <= maxArgs;
 		}
 		return false;
 	}

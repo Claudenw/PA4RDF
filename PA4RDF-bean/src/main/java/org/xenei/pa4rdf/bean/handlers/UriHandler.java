@@ -22,12 +22,14 @@ import org.apache.jena.rdf.model.ResourceFactory;
  * An ObjectHandler that handles converting RDFNodes to URI strings and visa
  * versa
  */
-public class UriHandler extends AbstractObjectHandler {
+public class UriHandler extends AbstractObjectHandler
+{
 
 	public static final UriHandler INSTANCE = new UriHandler();
 
-	private UriHandler() 
-	{}
+	private UriHandler()
+	{
+	}
 
 	/**
 	 * Convert the object as a string to an RDFNode.
@@ -37,23 +39,28 @@ public class UriHandler extends AbstractObjectHandler {
 	 * @return The RDFNode with the object string value as the URI.
 	 */
 	@Override
-	public RDFNode createRDFNode(final Object obj) {
-		return obj == null ? null : ResourceFactory.createResource( String.valueOf( obj ) );
+	public RDFNode createRDFNode(final Object obj)
+	{
+		return obj == null ? null
+				: ResourceFactory.createResource(String.valueOf(obj));
 	}
 
 	@Override
-	public boolean equals(final Object o) {
+	public boolean equals(final Object o)
+	{
 		return o instanceof UriHandler;
 	}
 
 	@Override
-	public int hashCode() {
+	public int hashCode()
+	{
 		return toString().hashCode();
 	}
 
 	@Override
-	public boolean isEmpty(final Object obj) {
-		return (obj == null) || StringUtils.isBlank( String.valueOf( obj ) );
+	public boolean isEmpty(final Object obj)
+	{
+		return (obj == null) || StringUtils.isBlank(String.valueOf(obj));
 	}
 
 	/**
@@ -64,12 +71,14 @@ public class UriHandler extends AbstractObjectHandler {
 	 * @return the URI fo the RDF node
 	 */
 	@Override
-	public Object parseObject(final RDFNode node) {
+	public Object parseObject(final RDFNode node)
+	{
 		return node.asResource().getURI();
 	}
 
 	@Override
-	public String toString() {
+	public String toString()
+	{
 		return "UriHandler";
 	}
 

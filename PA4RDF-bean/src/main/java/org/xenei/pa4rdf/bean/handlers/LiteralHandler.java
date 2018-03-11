@@ -26,7 +26,8 @@ import org.xenei.pa4rdf.bean.impl.TypeChecker;
  * An ObjectHandler that encodes objects as Literals and visa versa.
  * 
  */
-public class LiteralHandler extends AbstractObjectHandler {
+public class LiteralHandler extends AbstractObjectHandler
+{
 	private final RDFDatatype literalDatatype;
 
 	/**
@@ -35,7 +36,8 @@ public class LiteralHandler extends AbstractObjectHandler {
 	 * @param literalDatatype
 	 *            The RDFDatatype that will be converted to/from.
 	 */
-	public LiteralHandler(final RDFDatatype literalDatatype) {
+	public LiteralHandler(final RDFDatatype literalDatatype)
+	{
 		this.literalDatatype = literalDatatype;
 	}
 
@@ -47,39 +49,47 @@ public class LiteralHandler extends AbstractObjectHandler {
 	 * @return The literal representation of the object.
 	 */
 	@Override
-	public Literal createRDFNode(final Object obj) {
-		if (obj == null) {
+	public Literal createRDFNode(final Object obj)
+	{
+		if (obj == null)
+		{
 			return null;
 		}
-		final String lexicalForm = literalDatatype.unparse( obj );
-		return ResourceFactory.createTypedLiteral( lexicalForm, literalDatatype );
+		final String lexicalForm = literalDatatype.unparse(obj);
+		return ResourceFactory.createTypedLiteral(lexicalForm, literalDatatype);
 	}
 
 	private Class<?> getReducedClass()
 	{
-		final Class<?> pType = TypeChecker.getPrimitiveClass( literalDatatype.getJavaClass() );
-		return (pType == null)?literalDatatype.getJavaClass():pType;
+		final Class<?> pType = TypeChecker
+				.getPrimitiveClass(literalDatatype.getJavaClass());
+		return (pType == null) ? literalDatatype.getJavaClass() : pType;
 	}
 
 	@Override
-	public boolean equals(final Object o) {
-		if (o instanceof LiteralHandler) {
+	public boolean equals(final Object o)
+	{
+		if (o instanceof LiteralHandler)
+		{
 			final Class<?> oType = ((LiteralHandler) o).getReducedClass();
-			return getReducedClass().equals( oType ) &&
-					(literalDatatype.getURI().equals(  ((LiteralHandler) o).literalDatatype.getURI() ));
+			return getReducedClass().equals(oType) && (literalDatatype.getURI()
+					.equals(((LiteralHandler) o).literalDatatype.getURI()));
 		}
 		return false;
 	}
 
 	@Override
-	public int hashCode() {
+	public int hashCode()
+	{
 		return getReducedClass().hashCode();
 	}
 
 	@Override
-	public boolean isEmpty(final Object obj) {
-		if (obj != null) {
-			return StringUtils.isBlank( createRDFNode( obj ).getLexicalForm() );
+	public boolean isEmpty(final Object obj)
+	{
+		if (obj != null)
+		{
+			return StringUtils.isBlank(createRDFNode(obj).getLexicalForm());
 		}
 		return true;
 	}
@@ -94,12 +104,14 @@ public class LiteralHandler extends AbstractObjectHandler {
 	 *             if node is not a Liter that can be parsed by literalDatatype.
 	 */
 	@Override
-	public Object parseObject(final RDFNode node) throws DatatypeFormatException {
-		return literalDatatype.parse( node.asLiteral().getLexicalForm() );
+	public Object parseObject(final RDFNode node) throws DatatypeFormatException
+	{
+		return literalDatatype.parse(node.asLiteral().getLexicalForm());
 	}
 
 	@Override
-	public String toString() {
+	public String toString()
+	{
 		return "LiteralHandler{" + literalDatatype + "}";
 	}
 

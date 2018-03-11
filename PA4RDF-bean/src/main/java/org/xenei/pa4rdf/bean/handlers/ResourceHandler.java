@@ -20,12 +20,15 @@ import org.apache.jena.rdf.model.RDFNode;
 /**
  * An ObjectHandler that does not convert RDFNodes.
  */
-public class ResourceHandler extends AbstractObjectHandler {
+public class ResourceHandler extends AbstractObjectHandler
+{
 
 	public static final ResourceHandler INSTANCE = new ResourceHandler();
 
-	private ResourceHandler() {
+	private ResourceHandler()
+	{
 	}
+
 	/**
 	 * Convert an object to an RDFNode.
 	 * 
@@ -33,35 +36,45 @@ public class ResourceHandler extends AbstractObjectHandler {
 	 *             if obj is not an instance of RDFNode
 	 */
 	@Override
-	public RDFNode createRDFNode(final Object obj) {
-		if (obj == null) {
+	public RDFNode createRDFNode(final Object obj)
+	{
+		if (obj == null)
+		{
 			return null;
 		}
-		if (obj instanceof RDFNode) {
+		if (obj instanceof RDFNode)
+		{
 			return (RDFNode) obj;
 		}
-		throw new IllegalArgumentException( String.format( "%s is not an RDFNode", obj ) );
+		throw new IllegalArgumentException(
+				String.format("%s is not an RDFNode", obj));
 	}
 
 	@Override
-	public boolean equals(final Object o) {
+	public boolean equals(final Object o)
+	{
 		return o instanceof ResourceHandler;
 	}
 
 	@Override
-	public int hashCode() {
+	public int hashCode()
+	{
 		return toString().hashCode();
 	}
 
 	@Override
-	public boolean isEmpty(final Object obj) {
-		if ((obj != null) && (obj instanceof RDFNode)) {
+	public boolean isEmpty(final Object obj)
+	{
+		if ((obj != null) && (obj instanceof RDFNode))
+		{
 			final RDFNode node = (RDFNode) obj;
-			if (node.isLiteral()) {
-				return StringUtils.isBlank( node.asLiteral().getLexicalForm() );
+			if (node.isLiteral())
+			{
+				return StringUtils.isBlank(node.asLiteral().getLexicalForm());
 			}
-			if (node.isURIResource()) {
-				return StringUtils.isBlank( node.asResource().getURI() );
+			if (node.isURIResource())
+			{
+				return StringUtils.isBlank(node.asResource().getURI());
 			}
 			return false;
 		}
@@ -76,12 +89,14 @@ public class ResourceHandler extends AbstractObjectHandler {
 	 * @return The node parameter
 	 */
 	@Override
-	public Object parseObject(final RDFNode node) {
+	public Object parseObject(final RDFNode node)
+	{
 		return node;
 	}
 
 	@Override
-	public String toString() {
+	public String toString()
+	{
 		return "ResourceHandler";
 	}
 

@@ -23,151 +23,152 @@ import org.xenei.pa4rdf.bean.annotations.Subject;
 import org.xenei.pa4rdf.bean.annotations.URI;
 
 @Subject(namespace = "http://localhost/test#")
-public interface MultiValueInterface {
+public interface MultiValueInterface
+{
 
-    @Predicate
-    void addBool(Boolean b);
+	@Predicate
+	void addBool(Boolean b);
 
-    @Predicate
-    void addChar(Character b);
+	@Predicate
+	void addChar(Character b);
 
-    @Predicate
-    void addDbl(Double b);
+	@Predicate
+	void addDbl(Double b);
 
-    @Predicate
-    void addEnt(TestInterface b);
+	@Predicate
+	void addEnt(TestInterface b);
 
-    @Predicate
-    void addFlt(Float b);
+	@Predicate
+	void addFlt(Float b);
 
-    @Predicate
-    void addInt(Integer b);
+	@Predicate
+	void addInt(Integer b);
 
-    @Predicate
-    void addLng(Long b);
+	@Predicate
+	void addLng(Long b);
 
-    @Predicate
-    void addRDF(RDFNode b);
+	@Predicate
+	void addRDF(RDFNode b);
 
-    @Predicate
-    void addStr(String b);
+	@Predicate
+	void addStr(String b);
 
-    void addU(RDFNode b);
+	void addU(RDFNode b);
 
-    @Predicate
-    void addU(@URI String b);
+	@Predicate
+	void addU(@URI String b);
 
-    @Predicate
-    void addU3(RDFNode b);
+	@Predicate
+	void addU3(RDFNode b);
 
-    void addU3(@URI String b);
-    
-    @Predicate( type=String.class )
-    void setLst( Collection<String> s);
-    
-    @Predicate
-    void setAry( String[] s);
+	void addU3(@URI String b);
 
-    @Predicate
-    void setAry2( String... s);
+	@Predicate(type = String.class)
+	void setLst(Collection<String> s);
 
-    ExtendedIterator<Boolean> getBool();
+	@Predicate
+	void setAry(String[] s);
 
-    ExtendedIterator<Character> getChar();
+	@Predicate
+	void setAry2(String... s);
 
-    ExtendedIterator<Double> getDbl();
+	ExtendedIterator<Boolean> getBool();
 
-    ExtendedIterator<TestInterface> getEnt();
+	ExtendedIterator<Character> getChar();
 
-    ExtendedIterator<Float> getFlt();
+	ExtendedIterator<Double> getDbl();
 
-    ExtendedIterator<Integer> getInt();
+	ExtendedIterator<TestInterface> getEnt();
 
-    ExtendedIterator<Long> getLng();
+	ExtendedIterator<Float> getFlt();
 
-    ExtendedIterator<RDFNode> getRDF();
+	ExtendedIterator<Integer> getInt();
 
-    ExtendedIterator<String> getStr();
+	ExtendedIterator<Long> getLng();
 
-    @Predicate(type = RDFNode.class)
-    ExtendedIterator<RDFNode> getU();
+	ExtendedIterator<RDFNode> getRDF();
 
-    @Predicate(type = URI.class, name = "u")
-    ExtendedIterator<String> getU2();
+	ExtendedIterator<String> getStr();
 
-    @Predicate(type = RDFNode.class)
-    ExtendedIterator<RDFNode> getU3();
+	@Predicate(type = RDFNode.class)
+	ExtendedIterator<RDFNode> getU();
 
-    @Predicate(type = URI.class, name = "u3")
-    ExtendedIterator<String> getU4();
+	@Predicate(type = URI.class, name = "u")
+	ExtendedIterator<String> getU2();
 
-    Boolean hasBool(Boolean b);
+	@Predicate(type = RDFNode.class)
+	ExtendedIterator<RDFNode> getU3();
 
-    Boolean hasChar(Character b);
+	@Predicate(type = URI.class, name = "u3")
+	ExtendedIterator<String> getU4();
 
-    Boolean hasDbl(Double b);
+	Boolean hasBool(Boolean b);
 
-    Boolean hasEnt(TestInterface b);
+	Boolean hasChar(Character b);
 
-    Boolean hasFlt(Float b);
+	Boolean hasDbl(Double b);
 
-    Boolean hasInt(Integer b);
+	Boolean hasEnt(TestInterface b);
 
-    Boolean hasLng(Long b);
+	Boolean hasFlt(Float b);
 
-    Boolean hasRDF(RDFNode b);
+	Boolean hasInt(Integer b);
 
-    Boolean hasStr(String b);
+	Boolean hasLng(Long b);
 
-    Boolean hasU(RDFNode b);
+	Boolean hasRDF(RDFNode b);
 
-    Boolean hasU(@URI String b);
+	Boolean hasStr(String b);
 
-    Boolean hasU3(RDFNode b);
+	Boolean hasU(RDFNode b);
 
-    Boolean hasU3(@URI String b);
-    
-    Boolean hasLst( String s );
-    
-    Boolean hasAry( String s );
+	Boolean hasU(@URI String b);
 
-    Boolean hasAry2(String s );
+	Boolean hasU3(RDFNode b);
 
-    void removeBool(Boolean b);
+	Boolean hasU3(@URI String b);
 
-    void removeChar(Character b);
+	Boolean hasLst(String s);
 
-    void removeDbl(Double b);
+	Boolean hasAry(String s);
 
-    void removeEnt(TestInterface b);
+	Boolean hasAry2(String s);
 
-    void removeFlt(Float b);
+	void removeBool(Boolean b);
 
-    void removeInt(Integer b);
+	void removeChar(Character b);
 
-    void removeLng(Long b);
+	void removeDbl(Double b);
 
-    void removeRDF(RDFNode b);
+	void removeEnt(TestInterface b);
 
-    void removeStr(String b);
+	void removeFlt(Float b);
 
-    void removeU(RDFNode b);
+	void removeInt(Integer b);
 
-    void removeU(@URI String b);
+	void removeLng(Long b);
 
-    void removeU3(RDFNode b);
+	void removeRDF(RDFNode b);
 
-    void removeU3(@URI String b);
-    
-    void removeLst( String s );
-    
-    void removeAry( String s );
+	void removeStr(String b);
 
-    void removeAry2(String s );
+	void removeU(RDFNode b);
 
-    Collection<String> getLst();
-    
-    Collection<String> getAry();
+	void removeU(@URI String b);
 
-    Collection<String> getAry2();
+	void removeU3(RDFNode b);
+
+	void removeU3(@URI String b);
+
+	void removeLst(String s);
+
+	void removeAry(String s);
+
+	void removeAry2(String s);
+
+	Collection<String> getLst();
+
+	Collection<String> getAry();
+
+	Collection<String> getAry2();
 }

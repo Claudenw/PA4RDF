@@ -21,76 +21,77 @@ import org.xenei.pa4rdf.bean.annotations.Subject;
 import org.xenei.pa4rdf.bean.annotations.URI;
 
 @Subject(namespace = "http://localhost/test#")
-public abstract class SingleValueMixedTypeTestClass implements Resource {
+public abstract class SingleValueMixedTypeTestClass implements Resource
+{
 
-    public abstract char getC();
+	public abstract char getC();
 
-    public abstract Character getChar();
+	public abstract Character getChar();
 
-    public abstract double getD();
+	public abstract double getD();
 
-    public abstract Double getDbl();
+	public abstract Double getDbl();
 
-    public abstract float getF();
+	public abstract float getF();
 
-    public abstract Float getFlt();
+	public abstract Float getFlt();
 
-    public abstract int getI();
+	public abstract int getI();
 
-    public abstract Integer getInt();
+	public abstract Integer getInt();
 
-    public abstract long getL();
+	public abstract long getL();
 
-    public abstract Long getLng();
+	public abstract Long getLng();
 
-    public abstract RDFNode getU();
+	public abstract RDFNode getU();
 
-    @Predicate(type = URI.class)
-    public abstract String getU2();
+	@Predicate(type = URI.class)
+	public abstract String getU2();
 
-    public abstract boolean isB();
+	public abstract boolean isB();
 
-    public abstract Boolean isBool();
+	public abstract Boolean isBool();
 
-    @Predicate
-    public abstract void setB(Boolean b);
+	@Predicate
+	public abstract void setB(Boolean b);
 
-    @Predicate
-    public abstract void setBool(boolean b);
+	@Predicate
+	public abstract void setBool(boolean b);
 
-    @Predicate
-    public abstract void setC(Character b);
+	@Predicate
+	public abstract void setC(Character b);
 
-    @Predicate
-    public abstract void setChar(char b);
+	@Predicate
+	public abstract void setChar(char b);
 
-    @Predicate
-    public abstract void setD(Double b);
+	@Predicate
+	public abstract void setD(Double b);
 
-    @Predicate
-    public abstract void setDbl(double b);
+	@Predicate
+	public abstract void setDbl(double b);
 
-    @Predicate
-    public abstract void setF(Float b);
+	@Predicate
+	public abstract void setF(Float b);
 
-    @Predicate
-    public abstract void setFlt(float b);
+	@Predicate
+	public abstract void setFlt(float b);
 
-    @Predicate
-    public abstract void setI(Integer b);
+	@Predicate
+	public abstract void setI(Integer b);
 
-    @Predicate
-    public abstract void setInt(int b);
+	@Predicate
+	public abstract void setInt(int b);
 
-    @Predicate
-    public abstract void setL(Long b);
+	@Predicate
+	public abstract void setL(Long b);
 
-    @Predicate
-    public abstract void setLng(long b);
+	@Predicate
+	public abstract void setLng(long b);
 
-    @Predicate
-    public abstract void setU(@URI String b);
+	@Predicate
+	public abstract void setU(@URI String b);
 
-    @Predicate
-    public abstract void setU2(RDFNode n);
+	@Predicate
+	public abstract void setU2(RDFNode n);
 }

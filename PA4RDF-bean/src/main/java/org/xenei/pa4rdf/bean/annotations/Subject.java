@@ -31,7 +31,8 @@ import java.lang.annotation.RetentionPolicy;
  * 
  */
 @Retention(RetentionPolicy.RUNTIME)
-public @interface Subject {
+public @interface Subject
+{
 	/**
 	 * The namespace for this subject. Must be defined and not be an empty
 	 * string.
@@ -51,8 +52,10 @@ public @interface Subject {
 	String[] types() default {};
 
 	/**
-	 * A flag that enables "magic" beans.  When this option is enabled all getter, setter, 
-	 * and existential methods are automatically processed as if they had Predicate annotations. 
+	 * A flag that enables "magic" beans. When this option is enabled all
+	 * getter, setter, and existential methods are automatically processed as if
+	 * they had Predicate annotations.
+	 * 
 	 * @return true if this subject should be considered magic.
 	 */
 	boolean magic() default false;
