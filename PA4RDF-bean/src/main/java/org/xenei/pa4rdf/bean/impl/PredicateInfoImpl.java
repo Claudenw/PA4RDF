@@ -275,11 +275,6 @@ public class PredicateInfoImpl implements PredicateInfo
 		this.hashCode = pi.hashCode;
 	}
 
-	public static boolean isPredicate(Method method)
-	{
-		return method.getAnnotation(Predicate.class) != null;
-	}
-
 	@Override
 	public ObjectHandler getObjectHandler(EntityFactory factory)
 	{

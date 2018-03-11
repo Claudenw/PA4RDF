@@ -46,50 +46,14 @@ public class SubjectInfoImpl implements SubjectInfo
 	 */
 	private final PredicateMap predicateInfo = new PredicateMap();
 
-	private final Set<Class<?>> magicInterfaces = new LinkedHashSet<>();
-
 	public SubjectInfoImpl(final Class<?> implementedClass)
 	{
 		this.implementedClass = implementedClass;
-		extractMagicInterfaces(implementedClass);
 	}
 
 	public boolean isMagicBean()
 	{
-		return isMagicBean(implementedClass);
-	}
-
-	private static boolean isMagicBean(Class<?> clazz)
-	{
-		final Subject subject = clazz.getDeclaredAnnotation(Subject.class);
-		if (subject != null)
-		{
-			return subject.magic();
-		}
-		return false;
-	}
-
-	private void extractMagicInterfaces(Class<?> clazz)
-	{
-		if (clazz.isArray())
-		{
-			return;
-		}
-
-		if (isMagicBean(clazz))
-		{
-			magicInterfaces.add(clazz);
-		}
-
-		for (final Class<?> subClazz : clazz.getInterfaces())
-		{
-			extractMagicInterfaces(subClazz);
-		}
-	}
-
-	public Set<Class<?>> getMagicInterfaces()
-	{
-		return magicInterfaces;
+		return SubjectInfo.isMagicBean(implementedClass);
 	}
 
 	@Override

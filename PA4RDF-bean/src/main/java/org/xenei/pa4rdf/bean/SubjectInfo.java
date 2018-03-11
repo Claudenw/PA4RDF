@@ -26,6 +26,16 @@ import org.xenei.pa4rdf.bean.annotations.Subject;
  */
 public interface SubjectInfo
 {
+	
+	public static boolean isMagicBean(Class<?> clazz)
+	{
+		final Subject subject = clazz.getDeclaredAnnotation(Subject.class);
+		if (subject != null)
+		{
+			return subject.magic();
+		}
+		return false;
+	}
 
 	/**
 	 * Get the class that was annotated with the Subject annotation. e.g. the
@@ -104,6 +114,6 @@ public interface SubjectInfo
 	 * 
 	 * @return the collection of predicate info objects.
 	 */
-	public Collection<PredicateInfo> getPredicates();
+	public Collection<PredicateInfo> getPredicates();	
 
 }

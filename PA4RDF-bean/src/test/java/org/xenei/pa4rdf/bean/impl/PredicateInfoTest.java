@@ -14,6 +14,7 @@ import org.apache.jena.rdf.model.Resource;
 import org.apache.jena.rdf.model.ResourceFactory;
 import org.junit.Test;
 import org.xenei.pa4rdf.bean.EntityFactory;
+import org.xenei.pa4rdf.bean.PredicateInfo;
 import org.xenei.pa4rdf.bean.annotations.Predicate;
 import org.xenei.pa4rdf.bean.annotations.Subject;
 import org.xenei.pa4rdf.bean.handlers.LiteralHandler;
@@ -50,8 +51,8 @@ public class PredicateInfoTest
 	public void isPredicateTest() throws Exception
 	{
 
-		assertTrue(PredicateInfoImpl.isPredicate(X.class.getMethod("get")));
-		assertFalse(PredicateInfoImpl.isPredicate(X.class.getMethod("getS")));
+		assertTrue(PredicateInfo.isPredicate(X.class.getMethod("get")));
+		assertFalse(PredicateInfo.isPredicate(X.class.getMethod("getS")));
 	}
 
 	@Test

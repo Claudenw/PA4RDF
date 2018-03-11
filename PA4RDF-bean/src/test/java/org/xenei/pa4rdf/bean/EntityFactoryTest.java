@@ -75,8 +75,8 @@ public class EntityFactoryTest
 		assertEquals("hello", magic.getB());
 
 		final Resource r = ((ResourceWrapper) magic).getResource();
-		assertTrue(r.hasLiteral(ResourceFactory.createProperty("a"), 1));
-		assertTrue(r.hasLiteral(ResourceFactory.createProperty("b"), "hello"));
+		assertTrue(r.hasLiteral(ResourceFactory.createProperty("http://example.com/test/a"), 1));
+		assertTrue(r.hasLiteral(ResourceFactory.createProperty("http://example.com/test/b"), "hello"));
 	}
 
 	@Test

@@ -11,6 +11,7 @@ import org.xenei.pa4rdf.bean.EntityFactory;
 import org.xenei.pa4rdf.bean.PredicateInfo;
 import org.xenei.pa4rdf.bean.ResourceWrapper;
 import org.xenei.pa4rdf.bean.SubjectInfo;
+import org.xenei.pa4rdf.bean.annotations.Predicate;
 
 import net.sf.cglib.proxy.MethodInterceptor;
 import net.sf.cglib.proxy.MethodProxy;
@@ -24,7 +25,7 @@ import net.sf.cglib.proxy.MethodProxy;
 public class ResourceEntityProxy implements MethodInterceptor
 {
 	private final Resource resource;
-	private final SubjectInfo subjectInfo;
+	//private final SubjectInfo subjectInfo;
 	private final EntityFactory factory;
 
 	/**
@@ -48,7 +49,7 @@ public class ResourceEntityProxy implements MethodInterceptor
 		{
 			this.resource = resource;
 		}
-		this.subjectInfo = subjectInfo;
+		//this.subjectInfo = subjectInfo;
 		this.factory = factory;
 	}
 
@@ -82,6 +83,8 @@ public class ResourceEntityProxy implements MethodInterceptor
 			return resource;
 		}
 
+		SubjectInfo subjectInfo = factory.getSubjectInfo(m.getDeclaringClass());
+		
 		if (m.getName().equals("getSubjectInfo")
 				&& (m.getParameterTypes().length == 0)
 				&& (m.getReturnType() == SubjectInfo.class))
@@ -161,6 +164,16 @@ public class ResourceEntityProxy implements MethodInterceptor
 				String.format("Internal predicateinfo class (%s) not (%s)",
 						pi.getClass(), PredicateInfoImpl.class));
 	}
+	
+	/* non abstract annotated methods
+     override the implementation unless annotatation includes the
+     update=true value -- not implemented */
+    private Object interceptAnnotatedNonAbstract(final Object obj, final Method m, final Object[] args,
+            final MethodProxy proxy, final Predicate p) throws Throwable {
+        return interceptAnnotated( obj, m, args, proxy );
+    }
+
+  
 
 	// handle the cases where the method is not abstract
 	private Object interceptNonAbstract(final Object obj, final Method m,
@@ -170,7 +183,7 @@ public class ResourceEntityProxy implements MethodInterceptor
 		if (m.getName().equals("toString") && !m.isVarArgs()
 				&& (m.getParameterTypes().length == 0))
 		{
-			return String.format("%s[%s]", subjectInfo.getClass(), resource);
+			return String.format("%s[%s]", m.getDeclaringClass(), resource);
 		}
 		if (m.getName().equals("hashCode"))
 		{
@@ -189,6 +202,11 @@ public class ResourceEntityProxy implements MethodInterceptor
 			}
 			return false;
 		}
+		
+		final Predicate p = m.getAnnotation( Predicate.class );
+        if (p != null) {
+            return interceptAnnotatedNonAbstract( obj, m, args, proxy, p );
+        }
 
 		return proxy.invokeSuper(obj, args);
 	}

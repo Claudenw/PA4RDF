@@ -19,6 +19,7 @@ import java.lang.reflect.Method;
 import java.util.List;
 
 import org.apache.jena.rdf.model.Property;
+import org.xenei.pa4rdf.bean.annotations.Predicate;
 import org.xenei.pa4rdf.bean.handlers.ObjectHandler;
 import org.xenei.pa4rdf.bean.impl.ActionType;
 import org.xenei.pa4rdf.bean.impl.EffectivePredicate;
@@ -97,5 +98,10 @@ public interface PredicateInfo
 	 * @return the ObjectHandler instance for this predicate info
 	 */
 	public ObjectHandler getObjectHandler(EntityFactory factory);
+
+	static boolean isPredicate(Method method)
+	{
+		return method.getAnnotation(Predicate.class) != null;
+	}
 
 }

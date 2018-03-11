@@ -4,8 +4,10 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Queue;
 import java.util.Set;
 
 import org.apache.commons.logging.Log;
@@ -17,6 +19,7 @@ import org.apache.jena.rdf.model.RDFNode;
 import org.apache.jena.rdf.model.Resource;
 import org.xenei.pa4rdf.bean.EntityFactory;
 import org.xenei.pa4rdf.bean.MethodParser;
+import org.xenei.pa4rdf.bean.PredicateInfo;
 import org.xenei.pa4rdf.bean.ResourceWrapper;
 import org.xenei.pa4rdf.bean.SubjectInfo;
 import org.xenei.pa4rdf.bean.datatypes.Init;
@@ -34,7 +37,7 @@ public class FactoryImpl implements EntityFactory
 
 	private static final Log LOG = LogFactory.getLog(FactoryImpl.class);
 
-	private final Map<Class<?>, SubjectInfo> subjectInfoMap = new HashMap<Class<?>, SubjectInfo>();
+	private final Map<Class<?>, SubjectInfoImpl> subjectInfoMap = new HashMap<Class<?>, SubjectInfoImpl>();
 
 	@Override
 	public void reset_()
@@ -51,20 +54,13 @@ public class FactoryImpl implements EntityFactory
 	}
 
 	@SuppressWarnings("unchecked")
-	public <T> T makeInstance(Object source, SubjectInfoImpl subjectInfo)
+	public <T> T makeInstance(Object source, SubjectInfo subjectInfo)
 			throws MissingAnnotation
 	{
-		final Set<Class<?>> classes = new LinkedHashSet<Class<?>>(
-				subjectInfo.getMagicInterfaces().size() + 2);
+		final Set<Class<?>> classes = new LinkedHashSet<Class<?>>();
 		if (subjectInfo.getImplementedClass().isInterface())
 		{
 			classes.add(subjectInfo.getImplementedClass());
-		}
-
-		for (final Class<?> cla : subjectInfo.getMagicInterfaces())
-		{
-			parse(cla);
-			classes.add(cla);
 		}
 
 		if (!classes.contains(ResourceWrapper.class))
@@ -173,17 +169,39 @@ public class FactoryImpl implements EntityFactory
 	 * @throws MissingAnnotation
 	 */
 	@Override
-	public SubjectInfoImpl parse(final Class<?> clazz) throws MissingAnnotation
+	public SubjectInfo parse(final Class<?> clazz) throws MissingAnnotation
 	{
-		SubjectInfoImpl subjectInfo = (SubjectInfoImpl) getSubjectInfo(clazz);
+		SubjectInfo subjectInfo = subjectInfoMap.get(clazz);
 
 		if (subjectInfo == null)
+		{
+			@SuppressWarnings("serial")
+			Queue<Class<?>> queue = new LinkedList<Class<?>>() {
+				@Override
+				public boolean add(Class<?> e) {
+					if (this.contains(e) || subjectInfoMap.containsKey(e))
+					{
+						return false;
+					}
+					return super.add(e);
+				}
+			};
+			queue.add( clazz );
+			parse( queue );
+			subjectInfo = subjectInfoMap.get(clazz);
+		}
+		return subjectInfo;
+	}
+	
+	private void parse( Queue<Class<?>> queue) throws MissingAnnotation {
+		Class<?> clazz = null;
+		while ((clazz = queue.poll()) != null)
 		{
 			if (LOG.isDebugEnabled())
 			{
 				LOG.info("Parsing " + clazz);
 			}
-			subjectInfo = new SubjectInfoImpl(clazz);
+			SubjectInfoImpl subjectInfo = new SubjectInfoImpl(clazz);
 
 			final MethodParser parser = new MethodParser(this, subjectInfo,
 					countAdders(clazz.getMethods()));
@@ -197,27 +215,37 @@ public class FactoryImpl implements EntityFactory
 			final List<Method> annotated = new ArrayList<Method>();
 			for (final Method method : clazz.getMethods())
 			{
-				try
+				// if we declared the method process it.
+				if (method.getDeclaringClass().equals(clazz))
 				{
-					final ActionType actionType = ActionType
-							.parse(method.getName());
-					if (PredicateInfoImpl.isPredicate(method)
-							|| subjectInfo.isMagicBean())
+					try
 					{
-						foundAnnotation = true;
-						if (ActionType.GETTER == actionType)
+						final ActionType actionType = ActionType
+								.parse(method.getName());
+						if (PredicateInfo.isPredicate(method) || subjectInfo
+								.isMagicBean())
 						{
-							parser.parse(method);
-						} else
-						{
-							annotated.add(method);
+							foundAnnotation = true;
+							if (ActionType.GETTER == actionType)
+							{
+								parser.parse(method);
+							} else
+							{
+								annotated.add(method);
+							}
 						}
+					} catch (final IllegalArgumentException expected)
+					{
+						// not an action type ignore meannotationClassthod
 					}
-				} catch (final IllegalArgumentException expected)
-				{
-					// not an action type ignore meannotationClassthod
+				} else {
+					if (PredicateInfo.isPredicate(method) || SubjectInfo
+							.isMagicBean(method.getDeclaringClass()))
+					{
+						queue.add( method.getDeclaringClass());
+						foundAnnotation = true;
+					}
 				}
-
 			}
 			if (!foundAnnotation)
 			{
@@ -238,7 +266,7 @@ public class FactoryImpl implements EntityFactory
 
 			/* save the result */
 			subjectInfoMap.put(clazz, subjectInfo);
+
 		}
-		return subjectInfo;
 	}
 }
