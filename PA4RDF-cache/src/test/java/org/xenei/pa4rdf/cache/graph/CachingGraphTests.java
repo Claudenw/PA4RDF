@@ -23,6 +23,7 @@ import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.rdf.model.Resource;
 import org.apache.jena.rdfconnection.RDFConnection;
 import org.apache.jena.rdfconnection.RDFConnectionFactory;
+import org.apache.jena.sparql.core.Quad;
 import org.apache.jena.vocabulary.DC_11;
 import org.apache.jena.vocabulary.OWL;
 import org.apache.jena.vocabulary.RDF;
@@ -35,7 +36,7 @@ import org.xenei.pa4rdf.cache.impl.QueryExecutorImpl;
 
 public class CachingGraphTests {
     private CachingGraph graph;
-    private final Node graphName = NodeFactory.createURI( "testing" );
+    private final Node graphName = Quad.defaultGraphIRI;
     private Model model;
 
     private QueryExecutor queryExecutor;

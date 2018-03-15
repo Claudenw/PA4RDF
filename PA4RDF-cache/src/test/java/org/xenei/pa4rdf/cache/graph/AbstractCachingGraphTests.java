@@ -21,6 +21,7 @@ import org.apache.jena.rdf.model.Literal;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.Resource;
 import org.apache.jena.rdfconnection.RDFConnection;
+import org.apache.jena.sparql.core.Quad;
 import org.apache.jena.testing_framework.NodeCreateUtils;
 import org.apache.jena.vocabulary.DC_11;
 import org.apache.jena.vocabulary.OWL;
@@ -32,7 +33,7 @@ import org.xenei.pa4rdf.cache.graph.CachingGraph;
 
 public abstract class AbstractCachingGraphTests {
     protected CachingGraph graph;
-    protected final Node modelName = NodeFactory.createURI( "testing" );
+    protected final Node modelName = Quad.defaultGraphIRI;
     protected RDFConnection connection;
 
     @Test
@@ -123,7 +124,7 @@ public abstract class AbstractCachingGraphTests {
     public void testAnonymousLinkages() {
         final Model model = connection.fetch();
       
-        final Node p2 = node( "P2" );
+        final Node p1 = node( "P1" );
         final Node foo = node( "'foo'" );
         final Graph g = model.getGraph();
         txnBegin( g );
@@ -131,7 +132,7 @@ public abstract class AbstractCachingGraphTests {
         txnCommit( g );
         connection.put( model );
         
-        final SelectBuilder sb = new SelectBuilder().addVar( "s" ).addVar( "o" ).addWhere( "?s", p2, "?o" );
+        final SelectBuilder sb = new SelectBuilder().addVar( "s" ).addVar( "o" ).addWhere( "?s", p1, "?o" );
 
         QuerySolution qs = connection.query( sb.build() ).execSelect().next();
         Node a1 = qs.getResource(  "s"  ).asNode();
@@ -142,7 +143,7 @@ public abstract class AbstractCachingGraphTests {
         assertEquals( 1, answ.size() );
         answ = graph.find( node( "S" ), Node.ANY, Node.ANY ).toSet();
         assertEquals( 2, answ.size() );
-        answ = graph.find( a1, p2, Node.ANY ).toSet();
+        answ = graph.find( a1, p1, Node.ANY ).toSet();
         assertEquals( 1, answ.size() );
         assertEquals( a2, answ.iterator().next().getObject() );
     }
