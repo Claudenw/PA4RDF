@@ -23,6 +23,7 @@ import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.Resource;
 import org.xenei.pa4rdf.bean.EntityFactory;
 import org.xenei.pa4rdf.bean.Listener;
+import org.xenei.pa4rdf.bean.ResourceWrapper;
 import org.xenei.pa4rdf.bean.SubjectInfo;
 import org.xenei.pa4rdf.bean.annotations.Subject;
 import org.xenei.pa4rdf.bean.exceptions.MissingAnnotation;
@@ -320,5 +321,9 @@ public interface EntityManager extends EntityFactory, QueryExecutor {
 	 * @return the model.
 	 */
 	public Model getModel();
+	
+	<T> T read(Resource r, Class<T> clazz) throws MissingAnnotation;
+
+	<T> T read(ResourceWrapper r, Class<T> clazz) throws MissingAnnotation;
 
 }

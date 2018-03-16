@@ -76,7 +76,6 @@ public class EntityManagerImpl implements EntityManager {
 
 	private final EntityFactory factory;
 
-
 	protected final CachingModel cachingModel;
 
 	private final ExecutorService execService;
@@ -112,6 +111,17 @@ public class EntityManagerImpl implements EntityManager {
 		this.cachingModel = CachingModel.makeInstance( mi, execService );
 	}
 
+	public <T> T read(Resource r, Class<T> clazz) throws MissingAnnotation
+	{
+		return makeInstance(r, clazz);
+	}
+
+	public <T> T read(ResourceWrapper r, Class<T> clazz)
+			throws MissingAnnotation
+	{
+		return makeInstance(r, clazz);
+	}
+	
 	public ExecutorService getExecutorService()
 	{
 		return execService;
