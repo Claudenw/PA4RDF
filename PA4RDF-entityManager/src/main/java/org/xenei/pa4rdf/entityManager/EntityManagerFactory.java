@@ -28,20 +28,20 @@ import org.xenei.pa4rdf.entityManager.impl.EntityManagerImpl;
  */
 public class EntityManagerFactory {
 
-    public static EntityManager create() {
-        return create( DatasetFactory.create() );
-    }
+	public static EntityManager create() {
+		return create( DatasetFactory.create() );
+	}
 
-    public static EntityManager create(Model model) {
-        return create( DatasetFactory.create( model ) );
-    }
+	public static EntityManager create(Model model) {
+		return create( DatasetFactory.create( model ) );
+	}
 
-    public static EntityManager create(Dataset dataset) {
-        return create( RDFConnectionFactory.connect( dataset ) );
-    }
+	public static EntityManager create(Dataset dataset) {
+		return create( RDFConnectionFactory.connect( dataset ) );
+	}
 
-    public static EntityManager create(RDFConnection connection) {
-        return new EntityManagerImpl( connection );
-    }
+	public static EntityManager create(RDFConnection connection) {
+		return new EntityManagerImpl( connection );
+	}
 
 }

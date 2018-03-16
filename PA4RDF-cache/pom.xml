@@ -6,7 +6,7 @@
     <version>2.0-SNAPSHOT</version>
   </parent>
   <artifactId>PA4RDF-cache</artifactId>
-  <name>PA4RDF - Cache</name>
+  <name>PA4RDF Cache</name>
   <description>Code to handle caching beans so they can be updated to a backend server</description>
   <dependencies>
   <dependency>

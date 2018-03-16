@@ -6,7 +6,7 @@
     <version>2.0-SNAPSHOT</version>
   </parent>
   <artifactId>PA4RDF-bean</artifactId>
-  <name>RA4RDF- Bean</name>
+  <name>RA4RDF Bean</name>
   <description>Module containing bean code.  Used to create beans that read/write to a graph.</description>
   <dependencies>
   	<dependency>

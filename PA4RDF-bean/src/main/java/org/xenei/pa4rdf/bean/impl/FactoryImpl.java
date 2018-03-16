@@ -1,8 +1,12 @@
 package org.xenei.pa4rdf.bean.impl;
 
+import java.lang.ref.WeakReference;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -18,6 +22,7 @@ import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.rdf.model.RDFNode;
 import org.apache.jena.rdf.model.Resource;
 import org.xenei.pa4rdf.bean.EntityFactory;
+import org.xenei.pa4rdf.bean.Listener;
 import org.xenei.pa4rdf.bean.MethodParser;
 import org.xenei.pa4rdf.bean.PredicateInfo;
 import org.xenei.pa4rdf.bean.ResourceWrapper;
@@ -38,6 +43,9 @@ public class FactoryImpl implements EntityFactory
 	private static final Log LOG = LogFactory.getLog(FactoryImpl.class);
 
 	private final Map<Class<?>, SubjectInfoImpl> subjectInfoMap = new HashMap<Class<?>, SubjectInfoImpl>();
+
+	private final List<WeakReference<Listener>> listeners = Collections
+			.synchronizedList(new ArrayList<WeakReference<Listener>>());
 
 	@Override
 	public void reset_()
@@ -176,9 +184,11 @@ public class FactoryImpl implements EntityFactory
 		if (subjectInfo == null)
 		{
 			@SuppressWarnings("serial")
-			Queue<Class<?>> queue = new LinkedList<Class<?>>() {
+			Queue<Class<?>> queue = new LinkedList<Class<?>>()
+			{
 				@Override
-				public boolean add(Class<?> e) {
+				public boolean add(Class<?> e)
+				{
 					if (this.contains(e) || subjectInfoMap.containsKey(e))
 					{
 						return false;
@@ -186,14 +196,15 @@ public class FactoryImpl implements EntityFactory
 					return super.add(e);
 				}
 			};
-			queue.add( clazz );
-			parse( queue );
+			queue.add(clazz);
+			parse(queue);
 			subjectInfo = subjectInfoMap.get(clazz);
 		}
 		return subjectInfo;
 	}
-	
-	private void parse( Queue<Class<?>> queue) throws MissingAnnotation {
+
+	private void parse(Queue<Class<?>> queue) throws MissingAnnotation
+	{
 		Class<?> clazz = null;
 		while ((clazz = queue.poll()) != null)
 		{
@@ -222,8 +233,8 @@ public class FactoryImpl implements EntityFactory
 					{
 						final ActionType actionType = ActionType
 								.parse(method.getName());
-						if (PredicateInfo.isPredicate(method) || subjectInfo
-								.isMagicBean())
+						if (PredicateInfo.isPredicate(method)
+								|| subjectInfo.isMagicBean())
 						{
 							foundAnnotation = true;
 							if (ActionType.GETTER == actionType)
@@ -238,11 +249,12 @@ public class FactoryImpl implements EntityFactory
 					{
 						// not an action type ignore meannotationClassthod
 					}
-				} else {
+				} else
+				{
 					if (PredicateInfo.isPredicate(method) || SubjectInfo
 							.isMagicBean(method.getDeclaringClass()))
 					{
-						queue.add( method.getDeclaringClass());
+						queue.add(method.getDeclaringClass());
 						foundAnnotation = true;
 					}
 				}
@@ -267,6 +279,54 @@ public class FactoryImpl implements EntityFactory
 			/* save the result */
 			subjectInfoMap.put(clazz, subjectInfo);
 
+			/* notify the listeners */
+			synchronized (listeners)
+			{
+				final Iterator<WeakReference<Listener>> iter = listeners
+						.iterator();
+				while (iter.hasNext())
+				{
+					final WeakReference<Listener> listener = iter.next();
+					final Listener l = listener.get();
+					if (l == null)
+					{
+						iter.remove();
+					} else
+					{
+						l.onParseClass(subjectInfo);
+					}
+				}
+			}
 		}
+	}
+
+	@Override
+	public void registerListener(Listener listener)
+	{
+		listeners.add(new WeakReference<Listener>(listener));
+	}
+
+	@Override
+	public void unregisterListener(Listener listener)
+	{
+		synchronized (listeners)
+		{
+			final Iterator<WeakReference<Listener>> iter = listeners.iterator();
+			while (iter.hasNext())
+			{
+				final WeakReference<Listener> wl = iter.next();
+				final Listener l = wl.get();
+				if (l == null || l == listener)
+				{
+					iter.remove();
+				}
+			}
+		}
+	}
+
+	@Override
+	public Collection<? extends SubjectInfo> getSubjects()
+	{
+		return subjectInfoMap.values();
 	}
 }

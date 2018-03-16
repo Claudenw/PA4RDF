@@ -31,6 +31,6 @@
 			<artifactId>commons-collections4</artifactId>
 		</dependency>
 	</dependencies>
-  <name>PA4RDF - diff patch routines</name>
+  <name>PA4RDF Diff-Patch Routines</name>
   <description>Diff Patch code for PA code.</description>
 </project>

@@ -1,5 +1,7 @@
 package org.xenei.pa4rdf.bean;
 
+import java.util.Collection;
+
 import org.apache.jena.rdf.model.Resource;
 import org.xenei.pa4rdf.bean.exceptions.MissingAnnotation;
 import org.xenei.pa4rdf.bean.impl.FactoryImpl;
@@ -36,6 +38,14 @@ public interface EntityFactory
      */
 	public SubjectInfo getSubjectInfo(Class<?> clazz);
 
+	/**
+     * Get the collection of known SubjectInfo objects
+     *
+     * @return a collection of SubjectInfo objects.
+     */
+	public Collection<? extends SubjectInfo> getSubjects();
+
+	
 	  /**
    * Read an instance of clazz from source.
    *
@@ -72,4 +82,24 @@ public interface EntityFactory
 	 * reset internals to initial state.
 	 */
 	public void reset_();
+	
+	/**
+     * Register a listener to this Entity Factory.
+     * 
+     * Listeners are held with weak references so if the listener can be garbage
+     * collected.
+     * 
+     * @param listener
+     *            the listener to register.
+     */
+    public void registerListener(Listener listener);
+
+    /**
+     * Unregister a listener from this Entity Factory.
+     * 
+     * @param listener
+     *            the listener to remove.
+     */
+    public void unregisterListener(Listener listener);
+
 }

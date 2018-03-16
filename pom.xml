@@ -27,7 +27,7 @@
 		</repository>
 
 	</distributionManagement>
-	<name>Persistence Annotations 4 RDF</name>
+	<name>PA4RDF Persistence Annotations 4 RDF</name>
 	<url>http://claudenw.github.com/PA4RDF</url>
 	<inceptionYear>2012</inceptionYear>
 	<organization>

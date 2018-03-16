@@ -20,4 +20,6 @@
   		<artifactId>PA4RDF-cache</artifactId>
   	</dependency>
   </dependencies>
+  <name>PA4RDF Entity Manager</name>
+  <description>An entity manager that handles updating the RDF store properly.</description>
 </project>

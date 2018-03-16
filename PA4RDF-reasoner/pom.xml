@@ -20,4 +20,6 @@
   		<artifactId>PA4RDF-bean</artifactId>
   	</dependency>
   </dependencies>
+  <name>PA4RDF Reasoner</name>
+  <description>A reasoner that attempts to perform reasoning based on the PA4RDF annotations.</description>
 </project>

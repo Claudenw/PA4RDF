@@ -23,7 +23,8 @@ import org.apache.jena.reasoner.ReasonerException;
 import org.apache.jena.reasoner.TriplePattern;
 import org.apache.jena.util.iterator.ExtendedIterator;
 import org.apache.jena.util.iterator.NiceIterator;
-import org.xenei.jena.entities.EntityManager;
+import org.xenei.pa4rdf.bean.EntityFactory;
+import org.xenei.pa4rdf.bean.Listener;
 import org.xenei.pa4rdf.bean.PredicateInfo;
 import org.xenei.pa4rdf.bean.SubjectInfo;
 import org.xenei.pa4rdf.bean.impl.ActionType;
@@ -33,8 +34,8 @@ import org.xenei.pa4rdf.bean.impl.ActionType;
  * Entity manager performs when adding values for properties.
  *
  */
-public class EntityManagerReasoner implements Reasoner, EntityManager.Listener {
-    private static final Log LOG = LogFactory.getLog( EntityManagerReasoner.class );
+public class EntityFactoryReasoner implements Reasoner, Listener {
+    private static final Log LOG = LogFactory.getLog( EntityFactoryReasoner.class );
 
     private enum MethodType {
         SINGLE, MULTI, CONFLICT
@@ -48,12 +49,11 @@ public class EntityManagerReasoner implements Reasoner, EntityManager.Listener {
      * @param em
      *            The entity manager to use.
      */
-    public EntityManagerReasoner(EntityManager em) {
+    public EntityFactoryReasoner(EntityFactory em) {
         em.registerListener( this );
         for (final SubjectInfo si : em.getSubjects()) {
             processSubjectInfo( si );
         }
-
     }
 
     private void processSubjectInfo(SubjectInfo si) {
