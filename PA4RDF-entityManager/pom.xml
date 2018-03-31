@@ -19,6 +19,16 @@
   		<groupId>org.xenei</groupId>
   		<artifactId>PA4RDF-cache</artifactId>
   	</dependency>
+  	<dependency>
+  		<groupId>junit</groupId>
+  		<artifactId>junit</artifactId>
+  		<scope>test</scope>
+  	</dependency>
+  	<dependency>
+  		<groupId>log4j</groupId>
+  		<artifactId>log4j</artifactId>
+  		<scope>test</scope>
+  	</dependency>
   </dependencies>
   <name>PA4RDF Entity Manager</name>
   <description>An entity manager that handles updating the RDF store properly.</description>

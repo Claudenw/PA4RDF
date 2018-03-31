@@ -111,16 +111,7 @@ public class EntityManagerImpl implements EntityManager {
 		this.cachingModel = CachingModel.makeInstance( mi, execService );
 	}
 
-	public <T> T read(Resource r, Class<T> clazz) throws MissingAnnotation
-	{
-		return makeInstance(r, clazz);
-	}
-
-	public <T> T read(ResourceWrapper r, Class<T> clazz)
-			throws MissingAnnotation
-	{
-		return makeInstance(r, clazz);
-	}
+	
 	
 	public ExecutorService getExecutorService()
 	{
@@ -573,7 +564,8 @@ public class EntityManagerImpl implements EntityManager {
 	}
 
 	@Override
-	public void sync() {
+	public void sync( Resource r ) {
+		cachingModel.add( r.getModel());
 		cachingModel.sync();
 	}
 

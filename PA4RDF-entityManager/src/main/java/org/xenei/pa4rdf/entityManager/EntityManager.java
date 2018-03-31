@@ -265,7 +265,15 @@ public interface EntityManager extends EntityFactory, QueryExecutor {
 	 * Sync the system with the remote data store. If there are pending updates
 	 * they will be executed and then the underlying graph synced.
 	 */
-	public void sync();
+	public default void sync( ResourceWrapper resourceWrapper) {
+		sync( resourceWrapper.getResource());
+	}
+
+	/**
+	 * Sync the system with the remote data store. If there are pending updates
+	 * they will be executed and then the underlying graph synced.
+	 */
+	public void sync( Resource resource);
 
 	/**
 	 * Create resource with URI in the managed model.
@@ -322,8 +330,16 @@ public interface EntityManager extends EntityFactory, QueryExecutor {
 	 */
 	public Model getModel();
 	
-	<T> T read(Resource r, Class<T> clazz) throws MissingAnnotation;
+	public default <T> T read(Resource r, Class<T> clazz) throws MissingAnnotation
+	{
+		return makeInstance(r, clazz);
+	}
 
-	<T> T read(ResourceWrapper r, Class<T> clazz) throws MissingAnnotation;
+	public default <T> T read(ResourceWrapper r, Class<T> clazz)
+				throws MissingAnnotation
+		{
+			return makeInstance(r, clazz);
+		}
+	
 
 }
