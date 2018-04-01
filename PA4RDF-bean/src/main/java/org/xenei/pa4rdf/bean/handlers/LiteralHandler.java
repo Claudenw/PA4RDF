@@ -14,6 +14,9 @@
  */
 package org.xenei.pa4rdf.bean.handlers;
 
+import java.math.BigDecimal;
+import java.math.BigInteger;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.jena.datatypes.DatatypeFormatException;
 import org.apache.jena.datatypes.RDFDatatype;
@@ -106,7 +109,16 @@ public class LiteralHandler extends AbstractObjectHandler
 	@Override
 	public Object parseObject(final RDFNode node) throws DatatypeFormatException
 	{
-		return literalDatatype.parse(node.asLiteral().getLexicalForm());
+		String lexForm = node.asLiteral().getLexicalForm();
+		if (literalDatatype.getJavaClass() == BigInteger.class)
+		{
+			return new BigInteger( lexForm );
+		}
+		if (literalDatatype.getJavaClass() == BigDecimal.class)
+		{
+			return new BigDecimal(lexForm);
+		}
+		return literalDatatype.parse( lexForm );
 	}
 
 	@Override

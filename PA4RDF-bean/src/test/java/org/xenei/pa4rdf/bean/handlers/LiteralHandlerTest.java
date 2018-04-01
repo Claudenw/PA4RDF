@@ -1,5 +1,12 @@
 package org.xenei.pa4rdf.bean.handlers;
 
+import static org.junit.Assert.*;
+
+import java.math.BigDecimal;
+import java.math.BigInteger;
+
+import org.apache.jena.datatypes.RDFDatatype;
+import org.apache.jena.datatypes.TypeMapper;
 import org.apache.jena.datatypes.xsd.XSDDatatype;
 import org.apache.jena.rdf.model.Literal;
 import org.apache.jena.rdf.model.RDFNode;
@@ -10,15 +17,31 @@ import org.junit.Test;
 
 public class LiteralHandlerTest extends AbstractObjectHandlerTest
 {
-	RDFNode node;
-	Integer instance;
+	private RDFNode node;
+	private Integer instance;
 
 	@Before
 	public void setup()
 	{
-		underTest = new LiteralHandler(XSDDatatype.XSDinteger);
+		underTest = new LiteralHandler(XSDDatatype.XSDint);
 		node = ResourceFactory.createPlainLiteral("5");
 		instance = 5;
+	}
+	
+	@Test
+	public void testBigIntegerRoundTrip() {
+		RDFDatatype dt = TypeMapper.getInstance().getTypeByClass( BigInteger.class );
+		LiteralHandler underTest = new LiteralHandler( dt );
+		RDFNode value = underTest.createRDFNode( BigInteger.TEN );
+		assertEquals( "Did not return proper BigInteger", BigInteger.TEN, underTest.parseObject(value));
+	}
+	
+	@Test
+	public void testBigDecimalRoundTrip() {
+		RDFDatatype dt = TypeMapper.getInstance().getTypeByClass( BigDecimal.class );
+		LiteralHandler underTest = new LiteralHandler( dt );
+		RDFNode value = underTest.createRDFNode( BigDecimal.TEN );
+		assertEquals( "Did not return proper BigDecimal", BigDecimal.TEN, underTest.parseObject(value));
 	}
 
 	@Override
@@ -28,7 +51,7 @@ public class LiteralHandlerTest extends AbstractObjectHandlerTest
 		final RDFNode n = underTest.createRDFNode(Integer.valueOf(5));
 		Assert.assertNotNull(n);
 		final Literal l = ResourceFactory.createTypedLiteral("5",
-				XSDDatatype.XSDinteger);
+				XSDDatatype.XSDint);
 		Assert.assertEquals(l, n);
 	}
 
@@ -52,8 +75,8 @@ public class LiteralHandlerTest extends AbstractObjectHandlerTest
 	public void testParseObject()
 	{
 		final Object o = underTest.parseObject(node);
-		Assert.assertNotNull(o);
-		Assert.assertTrue(o instanceof Integer);
+		Assert.assertNotNull("Should not be null", o);
+		Assert.assertTrue("Should be an instance of Integer", o instanceof Integer);
 		final Integer a2 = (Integer) o;
 		Assert.assertEquals(instance, a2);
 
