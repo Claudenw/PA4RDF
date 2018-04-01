@@ -29,6 +29,10 @@
   		<artifactId>log4j</artifactId>
   		<scope>test</scope>
   	</dependency>
+  	<dependency>
+  		<groupId>org.apache.jena</groupId>
+  		<artifactId>jena-arq</artifactId>
+  	</dependency>
   </dependencies>
   <name>PA4RDF Entity Manager</name>
   <description>An entity manager that handles updating the RDF store properly.</description>

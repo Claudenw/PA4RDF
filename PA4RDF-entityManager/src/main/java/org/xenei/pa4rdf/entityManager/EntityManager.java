@@ -260,20 +260,12 @@ public interface EntityManager extends EntityFactory, QueryExecutor {
 	public EntityManager getDefaultManager();
 
 
-
 	/**
 	 * Sync the system with the remote data store. If there are pending updates
 	 * they will be executed and then the underlying graph synced.
 	 */
-	public default void sync( ResourceWrapper resourceWrapper) {
-		sync( resourceWrapper.getResource());
-	}
-
-	/**
-	 * Sync the system with the remote data store. If there are pending updates
-	 * they will be executed and then the underlying graph synced.
-	 */
-	public void sync( Resource resource);
+	public void sync();
+	public void sync( Object resource);
 
 	/**
 	 * Create resource with URI in the managed model.

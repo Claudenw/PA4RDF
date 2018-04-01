@@ -562,10 +562,15 @@ public class EntityManagerImpl implements EntityManager {
 
 		return target;
 	}
+	
+	@Override
+	public void sync() {
+		cachingModel.sync();
+	}
 
 	@Override
-	public void sync( Resource r ) {
-		cachingModel.add( r.getModel());
+	public void sync( Object resource ) {
+		cachingModel.add( getResource(resource).getModel());
 		cachingModel.sync();
 	}
 
@@ -584,7 +589,7 @@ public class EntityManagerImpl implements EntityManager {
 	public <T> T makeInstance(Object source, Class<T> clazz)
 			throws MissingAnnotation
 	{
-		return factory.makeInstance(source, clazz);
+		return factory.makeInstance(getResource( source ), clazz);
 	}
 
 	@Override
