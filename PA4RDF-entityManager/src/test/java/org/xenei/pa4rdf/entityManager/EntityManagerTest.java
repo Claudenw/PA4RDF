@@ -36,7 +36,7 @@ public class EntityManagerTest {
 
 	@Before
 	public void setup() {
-		//PropertyConfigurator.configure( "./src/test/resources/log4j.properties" );
+		PropertyConfigurator.configure( "log4j.properties" );
 		model.removeAll();
 		manager = EntityManagerFactory.create( model );       
 	}
