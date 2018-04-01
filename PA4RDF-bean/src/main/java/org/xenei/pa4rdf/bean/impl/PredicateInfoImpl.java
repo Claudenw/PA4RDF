@@ -542,7 +542,7 @@ public class PredicateInfoImpl implements PredicateInfo
 				/* remove the old data */
 				for (final Statement stmt : stmtLst)
 				{
-					objectHandler.removeObject(stmt, value);
+					objectHandler.removeObject(stmt, null);
 				}
 				if (value != null)
 				{

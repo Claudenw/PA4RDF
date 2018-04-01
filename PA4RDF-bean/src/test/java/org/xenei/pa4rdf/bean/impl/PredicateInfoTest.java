@@ -7,6 +7,7 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 
 import java.lang.reflect.Method;
+import java.util.Arrays;
 
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
@@ -19,6 +20,7 @@ import org.xenei.pa4rdf.bean.annotations.Predicate;
 import org.xenei.pa4rdf.bean.annotations.Subject;
 import org.xenei.pa4rdf.bean.handlers.LiteralHandler;
 import org.xenei.pa4rdf.bean.test.ComponentA;
+import org.xenei.pa4rdf.bean.test.iface.CollectionInterface;
 
 public class PredicateInfoTest
 {
@@ -180,7 +182,45 @@ public class PredicateInfoTest
 		assertEquals(int.class, impl.getValueClass());
 
 	}
+	
+	@Test
+	public void showSetReplacesValues() throws Exception
+	{
+		final Method method = ComponentA.class.getMethod("setA", int.class);
 
+		final EffectivePredicate predicate = new EffectivePredicate(method);
+
+		final PredicateInfoImpl impl = new PredicateInfoImpl(factory, predicate,
+				method, int.class);
+		
+		final Resource resource = model
+				.createResource("http://example.com/ComponentA");
+		Object[] args = new Object[] { Integer.valueOf(1) };
+		impl.exec(factory, method, resource, args);
+		args = new Object[] { Integer.valueOf(2) };
+		impl.exec(factory, method, resource, args);
+		assertEquals("Should only be one statement", 1, model.listStatements().toList().size());
+	}
+
+	@Test
+	public void showAddDoesNotReplacesValues() throws Exception
+	{
+		final Method method = CollectionInterface.class.getMethod("addX", String.class);
+
+		final EffectivePredicate predicate = new EffectivePredicate(method);
+
+		final PredicateInfoImpl impl = new PredicateInfoImpl(factory, predicate,
+				method, String.class);
+		
+		final Resource resource = model
+				.createResource("http://example.com/ComponentA");
+		Object[] args = new Object[] { "one" };
+		impl.exec(factory, method, resource, args);
+		args = new Object[] { "two" };
+		impl.exec(factory, method, resource, args);
+		assertEquals("Should only be one statement", 2, model.listStatements().toList().size());
+	}
+	
 	@Subject
 	private static class X
 	{
