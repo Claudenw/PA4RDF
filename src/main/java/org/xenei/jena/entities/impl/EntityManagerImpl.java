@@ -14,12 +14,12 @@
  */
 package org.xenei.jena.entities.impl;
 
-import com.hp.hpl.jena.datatypes.RDFDatatype;
-import com.hp.hpl.jena.datatypes.TypeMapper;
-import com.hp.hpl.jena.rdf.model.Model;
-import com.hp.hpl.jena.rdf.model.Resource;
-import com.hp.hpl.jena.rdf.model.ResourceFactory;
-import com.hp.hpl.jena.vocabulary.RDF;
+import org.apache.jena.datatypes.RDFDatatype;
+import org.apache.jena.datatypes.TypeMapper;
+import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.Resource;
+import org.apache.jena.rdf.model.ResourceFactory;
+import org.apache.jena.vocabulary.RDF;
 
 import java.io.File;
 import java.io.IOException;
@@ -406,7 +406,7 @@ public class EntityManagerImpl implements EntityManager
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.xenei.jena.entities.impl.EntityManager#isInstance(com.hp.hpl.jena
+	 * org.xenei.jena.entities.impl.EntityManager#isInstance(org.apache.jena
 	 * .rdf.model.Resource, java.lang.Class)
 	 */
 	@Override
@@ -561,7 +561,7 @@ public class EntityManagerImpl implements EntityManager
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.xenei.jena.entities.impl.EntityManager#read(com.hp.hpl.jena.rdf.model
+	 * org.xenei.jena.entities.impl.EntityManager#read(org.apache.jena.rdf.model
 	 * .Resource, java.lang.Class, java.lang.Class)
 	 */
 	@Override

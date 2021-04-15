@@ -14,7 +14,7 @@
  */
 package org.xenei.jena.entities.impl;
 
-import com.hp.hpl.jena.rdf.model.Resource;
+import org.apache.jena.rdf.model.Resource;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;

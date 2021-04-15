@@ -15,7 +15,7 @@
 
 package org.xenei.jena.entities.impl;
 
-import com.hp.hpl.jena.rdf.model.RDFNode;
+import org.apache.jena.rdf.model.RDFNode;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;

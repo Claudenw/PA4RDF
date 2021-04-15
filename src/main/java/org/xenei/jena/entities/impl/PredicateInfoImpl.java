@@ -3,9 +3,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -14,18 +14,17 @@
  */
 package org.xenei.jena.entities.impl;
 
-import com.hp.hpl.jena.datatypes.RDFDatatype;
-import com.hp.hpl.jena.datatypes.TypeMapper;
-import com.hp.hpl.jena.rdf.model.NodeIterator;
-import com.hp.hpl.jena.rdf.model.Property;
-import com.hp.hpl.jena.rdf.model.RDFNode;
-import com.hp.hpl.jena.rdf.model.Resource;
-import com.hp.hpl.jena.rdf.model.ResourceFactory;
-import com.hp.hpl.jena.rdf.model.Statement;
-import com.hp.hpl.jena.rdf.model.StmtIterator;
-import com.hp.hpl.jena.shared.Lock;
-import com.hp.hpl.jena.util.iterator.ExtendedIterator;
-import com.hp.hpl.jena.util.iterator.Map1;
+import org.apache.jena.datatypes.RDFDatatype;
+import org.apache.jena.datatypes.TypeMapper;
+import org.apache.jena.rdf.model.NodeIterator;
+import org.apache.jena.rdf.model.Property;
+import org.apache.jena.rdf.model.RDFNode;
+import org.apache.jena.rdf.model.Resource;
+import org.apache.jena.rdf.model.ResourceFactory;
+import org.apache.jena.rdf.model.Statement;
+import org.apache.jena.rdf.model.StmtIterator;
+import org.apache.jena.shared.Lock;
+import org.apache.jena.util.iterator.ExtendedIterator;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -52,7 +51,7 @@ import org.xenei.jena.entities.impl.handlers.VoidHandler;
 
 /**
  * The parsed information about a predicate method.
- * 
+ *
  * Use of this class registers three (3) new RDFDatatypes:
  * CharacterDatatype that parses Character objects
  * CharDatatype that parses char.class objects
@@ -70,15 +69,15 @@ public class PredicateInfoImpl implements PredicateInfo
 
 	/**
 	 * Create a sorted list of registered data types.
-	 * 
+	 *
 	 * The format is a String.format format string for two (2) string inputs.
 	 * The first one is the URI of the data type, the second the class name or a
 	 * blank.
 	 * To reverse the display use "%2$s | %1$s"
-	 * 
+	 *
 	 * If the nullCLassString is null registered data types without classes will
 	 * not be included.
-	 * 
+	 *
 	 * @param format
 	 *            The output format or "%s | %s" if not specified.
 	 * @param nullClassString
@@ -129,7 +128,7 @@ public class PredicateInfoImpl implements PredicateInfo
 
 	/**
 	 * Get the ObjectHandler for a predicate.
-	 * 
+	 *
 	 * @param entityManager
 	 *            The entity manager this to use.
 	 * @param returnType
@@ -175,7 +174,7 @@ public class PredicateInfoImpl implements PredicateInfo
 
 	/**
 	 * Constructor.
-	 * 
+	 *
 	 * @param entityManager
 	 *            The EntityManager that this predicate is assocatied with.
 	 * @param predicate
@@ -232,7 +231,7 @@ public class PredicateInfoImpl implements PredicateInfo
 		objectHandler = PredicateInfoImpl.getHandler(entityManager,
 				concreteType, predicate);
 	}
-	
+
 	public PredicateInfoImpl( PredicateInfoImpl pi )
 	{
 		this.actionType = pi.actionType;
@@ -253,7 +252,7 @@ public class PredicateInfoImpl implements PredicateInfo
 
 	/**
 	 * Execute the method against the resource with the arguments.
-	 * 
+	 *
 	 * @param method
 	 *            The method to execute
 	 * @param resource
@@ -351,14 +350,7 @@ public class PredicateInfoImpl implements PredicateInfo
 					.listObjectsOfProperty(resource, p);
 
 			final ExtendedIterator<Object> oIter = iter
-					.mapWith(new Map1<RDFNode, Object>() {
-
-						@Override
-						public Object map1( final RDFNode rdfNode )
-						{
-							return objectHandler.parseObject(rdfNode);
-						}
-					});
+					.mapWith(rdfNode -> objectHandler.parseObject(rdfNode));
 			if (List.class.isAssignableFrom(valueClass))
 			{
 				return oIter.toList();
@@ -392,14 +384,7 @@ public class PredicateInfoImpl implements PredicateInfo
 			final NodeIterator iter = resource.getModel()
 					.listObjectsOfProperty(resource, p);
 
-			return iter.mapWith(new Map1<RDFNode, Object>() {
-
-				@Override
-				public Object map1( final RDFNode rdfNode )
-				{
-					return objectHandler.parseObject(rdfNode);
-				}
-			});
+			return iter.mapWith(rdfNode->objectHandler.parseObject(rdfNode));
 		}
 		finally
 		{
@@ -521,7 +506,7 @@ public class PredicateInfoImpl implements PredicateInfo
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.xenei.jena.entities.impl.PredicateInfo#getFunction()
 	 */
 	@Override
@@ -532,7 +517,7 @@ public class PredicateInfoImpl implements PredicateInfo
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.xenei.jena.entities.impl.PredicateInfo#getNamespace()
 	 */
 	@Override
@@ -548,7 +533,7 @@ public class PredicateInfoImpl implements PredicateInfo
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.xenei.jena.entities.impl.PredicateInfo#getProperty()
 	 */
 	@Override
@@ -563,7 +548,7 @@ public class PredicateInfoImpl implements PredicateInfo
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.xenei.jena.entities.impl.PredicateInfo#getUri()
 	 */
 	@Override
@@ -574,7 +559,7 @@ public class PredicateInfoImpl implements PredicateInfo
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.xenei.jena.entities.impl.PredicateInfo#getValue()
 	 */
 	@Override

@@ -1,7 +1,7 @@
 package org.xenei.jena.entities.impl.parser;
 
-import com.hp.hpl.jena.datatypes.TypeMapper;
-import com.hp.hpl.jena.rdf.model.RDFNode;
+import org.apache.jena.datatypes.TypeMapper;
+import org.apache.jena.rdf.model.RDFNode;
 
 import java.lang.reflect.Method;
 

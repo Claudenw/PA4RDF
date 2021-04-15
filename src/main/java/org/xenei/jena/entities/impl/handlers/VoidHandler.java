@@ -14,7 +14,7 @@
  */
 package org.xenei.jena.entities.impl.handlers;
 
-import com.hp.hpl.jena.rdf.model.RDFNode;
+import org.apache.jena.rdf.model.RDFNode;
 
 import org.xenei.jena.entities.impl.ObjectHandler;
 

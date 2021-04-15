@@ -1,6 +1,6 @@
 package org.xenei.jena.entities.testing.impl;
 
-import com.hp.hpl.jena.rdf.model.RDFNode;
+import org.apache.jena.rdf.model.RDFNode;
 
 import org.xenei.jena.entities.EntityManagerRequiredException;
 import org.xenei.jena.entities.annotations.Predicate;

@@ -14,7 +14,7 @@
  */
 package org.xenei.jena.entities.impl.datatype;
 
-import com.hp.hpl.jena.datatypes.xsd.impl.XSDBaseNumericType;
+import org.apache.jena.datatypes.xsd.impl.XSDBaseNumericType;
 
 /**
  * A XSDBaseNumericType instance that converts a number into Long and visa

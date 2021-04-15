@@ -1,7 +1,7 @@
 package org.xenei.jena.entities.impl.datatype;
 
-import com.hp.hpl.jena.datatypes.RDFDatatype;
-import com.hp.hpl.jena.datatypes.TypeMapper;
+import org.apache.jena.datatypes.RDFDatatype;
+import org.apache.jena.datatypes.TypeMapper;
 
 import java.util.HashMap;
 import java.util.Iterator;

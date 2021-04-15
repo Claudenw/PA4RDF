@@ -1,7 +1,7 @@
 package org.xenei.jena.entities.testing.iface;
 
-import com.hp.hpl.jena.rdf.model.RDFNode;
-import com.hp.hpl.jena.util.iterator.ExtendedIterator;
+import org.apache.jena.rdf.model.RDFNode;
+import org.apache.jena.util.iterator.ExtendedIterator;
 
 import java.util.List;
 
