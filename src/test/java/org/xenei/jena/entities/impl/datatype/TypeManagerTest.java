@@ -7,7 +7,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -20,7 +19,7 @@ public class TypeManagerTest
 {
 
 	private TypeMapper mapper;
-	
+
 	@Before
 	public void setUp() throws Exception
 	{
@@ -46,7 +45,7 @@ public class TypeManagerTest
 			}
 		}
 		EntityManagerImpl.registerTypes();
-		
+
 		// check the list of datatypes
 		for (final Iterator<RDFDatatype> iter = mapper.listTypes(); iter
 				.hasNext();)
@@ -58,7 +57,7 @@ public class TypeManagerTest
 				RDFDatatype dt3 = localTypeMap.get( dt.getJavaClass() );
 				Assert.assertNotNull( dt3 );
 				Assert.assertEquals( dt3.getURI(), dt2.getURI() );
-				Assert.assertEquals( dt3.getJavaClass(), dt2.getJavaClass() );				
+				Assert.assertEquals( dt3.getJavaClass(), dt2.getJavaClass() );
 			}
 		}
 	}
@@ -81,7 +80,7 @@ public class TypeManagerTest
 			}
 		}
 		EntityManagerImpl.registerTypes();
-		
+
 		// check the list of datatypes
 		for (final Iterator<RDFDatatype> iter = mapper.listTypes(); iter
 				.hasNext();)
@@ -93,7 +92,7 @@ public class TypeManagerTest
 				RDFDatatype dt3 = localTypeMap.get( dt.getURI() );
 				Assert.assertNotNull( dt3 );
 				Assert.assertEquals( dt3.getURI(), dt2.getURI() );
-				Assert.assertEquals( dt3.getJavaClass(), dt2.getJavaClass() );				
+				Assert.assertEquals( dt3.getJavaClass(), dt2.getJavaClass() );
 			}
 		}
 	}

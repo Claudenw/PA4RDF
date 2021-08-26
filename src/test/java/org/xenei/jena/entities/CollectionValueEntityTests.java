@@ -3,9 +3,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -80,9 +80,9 @@ public class CollectionValueEntityTests
 	public void testChar()
 	{
 		final char c = 'a';
-		final Character cc = new Character(c);
+		final Character cc = Character.valueOf( c ) ;
 		final char d = 'b';
-		final Character dd = new Character(d);
+		final Character dd = Character.valueOf(d);
 
 		tc.addChar(c);
 		Assert.assertTrue(tc.hasChar(c));
@@ -118,10 +118,10 @@ public class CollectionValueEntityTests
 	public void testDbl()
 	{
 		final double c = 3.14;
-		final Double cc = new Double(c);
+		final Double cc = Double.valueOf(c);
 
 		final double d = 2.157;
-		final Double dd = new Double(d);
+		final Double dd = Double.valueOf(d);
 
 		tc.addDbl(c);
 		Assert.assertTrue(tc.hasDbl(c));
@@ -187,10 +187,10 @@ public class CollectionValueEntityTests
 	public void testFlt()
 	{
 		final float c = 3.14F;
-		final Float cc = new Float(c);
+		final Float cc = Float.valueOf(c);
 
 		final float d = 2.157F;
-		final Float dd = new Float(d);
+		final Float dd = Float.valueOf(d);
 
 		tc.addFlt(c);
 		Assert.assertTrue(tc.hasFlt(c));
@@ -225,10 +225,10 @@ public class CollectionValueEntityTests
 	public void testInt()
 	{
 		final int c = 3;
-		final Integer cc = new Integer(c);
+		final Integer cc = Integer.valueOf(c);
 
 		final int d = 42;
-		final Integer dd = new Integer(d);
+		final Integer dd = Integer.valueOf(d);
 
 		tc.addInt(c);
 		Assert.assertTrue(tc.hasInt(c));
@@ -263,10 +263,10 @@ public class CollectionValueEntityTests
 	public void testLng()
 	{
 		final long c = 3;
-		final Long cc = new Long(c);
+		final Long cc = Long.valueOf(c);
 
 		final long d = 42;
-		final Long dd = new Long(d);
+		final Long dd = Long.valueOf(d);
 
 		tc.addLng(c);
 		Assert.assertTrue(tc.hasLng(c));

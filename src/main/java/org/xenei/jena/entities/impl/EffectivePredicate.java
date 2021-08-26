@@ -3,9 +3,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -21,6 +21,7 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
@@ -34,242 +35,311 @@ import org.xenei.jena.entities.annotations.URI;
  *
  * @see org.xenei.jena.entities.annotations.Predicate
  */
-public class EffectivePredicate
-{
-	boolean upcase = false;
-	String name = "";
-	String namespace = "";
-	String literalType = "";
-	Class<?> type = null;
-	boolean emptyIsNull = true;
-	boolean impl = false;
-	List<Method> postExec = null;
+public class EffectivePredicate {
+    private boolean upcase = false;
+    private String name = "";
+    private String namespace = "";
+    private String literalType = "";
+    private Class<?> type = null;
+    private boolean emptyIsNull = true;
+    private boolean impl = false;
+    private List<Method> postExec = null;
 
-	public EffectivePredicate()
-	{
-	}
+    /**
+     * Constructs an empty predicate.
+     */
+    public EffectivePredicate() {
+    }
 
-	public EffectivePredicate( final EffectivePredicate ep )
-	{
-		this();
-		merge(ep);
-	}
+    /**
+     * Constructs an effective predicate as a copy of the argument.
+     * @param ep the predicate to copy.
+     */
+    public EffectivePredicate(final EffectivePredicate ep) {
+        this();
+        merge( ep );
+    }
 
-	public EffectivePredicate( final Method m )
-	{
-		if (m != null)
-		{
+    /**
+     * Constructs an effective predicate by parsing the method and its annotations.
+     * @param m the method to parse.
+     */
+    public EffectivePredicate(final Method m) {
+        if (m != null) {
 
-			if (m.getParameterTypes().length > 0)
-			{
+            if (m.getParameterTypes().length > 0) {
 
-				for (final Annotation a : m.getParameterAnnotations()[0])
-				{
-					if (a instanceof URI)
-					{
-						this.type = URI.class;
-					}
-				}
-			}
+                for (final Annotation a : m.getParameterAnnotations()[0]) {
+                    if (a instanceof URI) {
+                        type = URI.class;
+                    }
+                }
+            }
 
-			final Subject s = m.getDeclaringClass()
-					.getAnnotation(Subject.class);
-			if (s != null)
-			{
-				this.namespace = s.namespace();
-			}
-			Predicate p = m.getAnnotation(Predicate.class); 
-			merge(p);
-			if (p != null)
-			{
-				if (StringUtils.isNotBlank(p.postExec()))
-				{
-					String mName = p.postExec().trim();
-					try
-					{
-						Method peMethod = null;
-						Class<?> argType = null;
-						final ActionType actionType = ActionType.parse(m.getName());
-						switch (actionType)
-						{
-							case GETTER:
-								argType = m.getReturnType();
-								break;
-								
-							case SETTER:
-							case EXISTENTIAL:
-							case REMOVER:
-								if (m.getParameterTypes().length != 1)
-								{
-									throw new RuntimeException( String.format( "%s does not have a single parameter", peMethod ));
-								}
-								argType = m.getParameterTypes()[0];
-								break;
-						}
-						peMethod = m.getDeclaringClass().getMethod(mName, argType);
-						if ( argType.equals( peMethod.getReturnType()))
-						{
-							addPostExec( peMethod );
-						}
-						else {
-							throw new RuntimeException( String.format( "%s does not return its parameter type", peMethod ));
-						}
-					}
-					catch (NoSuchMethodException e)
-					{
-						throw new RuntimeException( "Error parsing predicate annotation", e );
-					}
-					catch (SecurityException e)
-					{
-						throw new RuntimeException( "Error parsing predicate annotation", e );
-					}
-					catch (IllegalArgumentException e)
-					{
-						throw new RuntimeException( "Error parsing predicate annotation action type", e );
-					}
-				}
-			}
-			if (StringUtils.isBlank(name))
-			{
-				try
-				{
-					final ActionType actionType = ActionType.parse(m.getName());
-					setName(actionType.extractName(m.getName()));
-				}
-				catch (final IllegalArgumentException e)
-				{
-					// expected when not an action method.
-				}
-			}
-		}
-	}
+            final Subject s = m.getDeclaringClass().getAnnotation( Subject.class );
+            if (s != null) {
+                namespace = s.namespace();
+            }
+            final Predicate p = m.getAnnotation( Predicate.class );
+            merge( p );
+            if (p != null) {
+                if (StringUtils.isNotBlank( p.postExec() )) {
+                    final String mName = p.postExec().trim();
+                    try {
+                        Method peMethod = null;
+                        Class<?> argType = null;
+                        final ActionType actionType = ActionType.parse( m.getName() );
+                        switch (actionType) {
+                        case GETTER:
+                            argType = m.getReturnType();
+                            break;
 
-	public EffectivePredicate( final Predicate p )
-	{
-		this();
-		merge(p);
-	}
-	
-	public void addPostExec( Collection<Method> peMethods)
-	{
-		for (Method m : peMethods)
-		{
-			addPostExec( m );
-		}
-	}
-	
-	public void addPostExec( Method peMethod )
-	{
-		if (postExec == null)
-		{
-			postExec = new ArrayList<Method>();
-		}
-		if (! postExec.contains(peMethod))
-		{
-			postExec.add( peMethod );
-		}
-	}
+                        case SETTER:
+                        case EXISTENTIAL:
+                        case REMOVER:
+                            if (m.getParameterTypes().length != 1) {
+                                throw new RuntimeException(
+                                        String.format( "%s does not have a single parameter", peMethod ) );
+                            }
+                            argType = m.getParameterTypes()[0];
+                            break;
+                        }
+                        peMethod = m.getDeclaringClass().getMethod( mName, argType );
+                        if (argType.equals( peMethod.getReturnType() )) {
+                            addPostExec( peMethod );
+                        } else {
+                            throw new RuntimeException(
+                                    String.format( "%s does not return its parameter type", peMethod ) );
+                        }
+                    } catch (final NoSuchMethodException e) {
+                        throw new RuntimeException( "Error parsing predicate annotation", e );
+                    } catch (final SecurityException e) {
+                        throw new RuntimeException( "Error parsing predicate annotation", e );
+                    } catch (final IllegalArgumentException e) {
+                        throw new RuntimeException( "Error parsing predicate annotation action type", e );
+                    }
+                }
+            }
+            if (StringUtils.isBlank( name )) {
+                try {
+                    final ActionType actionType = ActionType.parse( m.getName() );
+                    setName( actionType.extractName( m.getName() ) );
+                } catch (final IllegalArgumentException e) {
+                    // expected when not an action method.
+                }
+            }
+        }
+    }
 
-	public boolean emptyIsNull()
-	{
-		return emptyIsNull;
-	}
+    /**
+     * Constructs an effective predicate from a Predicate annotation.
+     * @param p the predicate to parse.
+     */
+    public EffectivePredicate(final Predicate p) {
+        this();
+        merge( p );
+    }
 
-	public boolean impl()
-	{
-		return impl;
-	}
+    /**
+     * Add postExec processing to the predicate.
+     * @param peMethods A collection PostExec methods to execute.
+     */
+    public void addPostExec(final Collection<Method> peMethods) {
+        for (final Method m : peMethods) {
+            addPostExec( m );
+        }
+    }
 
-	public boolean isTypeNotSet()
-	{
-		return type == null;
-	}
+    /**
+     * Add postExec processing to the predicate.
+     * A method many only be added once.  An attempt to add the method a second time will be ignored.
+     * @param peMethod the PostExec method to execute.
+     */
+    public void addPostExec(final Method peMethod) {
+        if (postExec == null) {
+            postExec = new ArrayList<>();
+        }
+        if (!postExec.contains( peMethod )) {
+            postExec.add( peMethod );
+        }
+    }
 
-	public String literalType()
-	{
-		return literalType;
-	}
+    /**
+     * Returns the postExec processing list.
+     * If the postExec has not been set will return an empty list.
+     * @return an unmodifiable copy of the processingList.
+     */
+    public List<Method> postExec() {
+        if (postExec == null) {
+            return Collections.emptyList();
+        }
+        return Collections.unmodifiableList( postExec );
+    }
 
-	public EffectivePredicate merge( final EffectivePredicate predicate )
-	{
-		if (predicate != null)
-		{
-			upcase = predicate.upcase();
-			setName(StringUtils.isBlank(predicate.name()) ? name : predicate
-					.name());
-			namespace = StringUtils.isBlank(predicate.namespace()) ? namespace
-					: predicate.namespace();
-			literalType = StringUtils.isBlank(predicate.literalType()) ? literalType
-					: predicate.literalType();
-			type = RDFNode.class.equals(predicate.type()) ? type : predicate
-					.type();
-			impl |= predicate.impl();
-			if (predicate.postExec != null)
-			{
-				for (Method m : predicate.postExec)
-				{
-					addPostExec( m );
-				}
-			}
-			
-		}
-		return this;
-	}
+    /**
+     * If true empty strings are assumed to be null and are not inserted.
+     *
+     * @return true if empty strings should be considered as nulls.
+     */
+    public boolean emptyIsNull() {
+        return emptyIsNull;
+    }
 
-	public EffectivePredicate merge( final Predicate predicate )
-	{
-		if (predicate != null)
-		{
-			upcase = predicate.upcase();
-			setName(StringUtils.isBlank(predicate.name()) ? name : predicate
-					.name());
-			namespace = StringUtils.isBlank(predicate.namespace()) ? namespace
-					: predicate.namespace();
-			literalType = StringUtils.isBlank(predicate.literalType()) ? literalType
-					: predicate.literalType();
-			type = RDFNode.class.equals(predicate.type()) ? type : predicate
-					.type();
-			// type = type!=null ? type : predicate.type();
-			emptyIsNull = predicate.emptyIsNull();
-			impl |= predicate.impl();
-		}
-		return this;
-	}
+    /**
+     * Indicates that a method is an implementation of an abstract method to
+     * allow the class to be concrete while not providing a concrete
+     * implementation of the Predicate annotated methods.
+     *
+     * @return true if the implementation should be overridden.
+     */
+    public boolean impl() {
+        return impl;
+    }
 
-	public String name()
-	{
-		return name;
-	}
+    /**
+     * Returns true if the type has not been set.
+     * @return true if the type has not been set.
+     */
+    public boolean isTypeNotSet() {
+        return type == null;
+    }
 
-	public String namespace()
-	{
-		return namespace;
-	}
+    /**
+     * The name of the literal type or an empty string if not is use. If
+     * specified it is used in a call to typeMapper.getSafeTypeByName() to get
+     * the RDFDatatype used to parse and unparse literal values.
+     *
+     * @return The name of the literal type or an empty string.
+     */
+    public String literalType() {
+        return literalType;
+    }
 
-	public void setName( final String name )
-	{
-		if (StringUtils.isNotBlank(name))
-		{
-			final String s = name.substring(0, 1);
-			if (upcase())
-			{
-				this.name = name.replaceFirst(s, s.toUpperCase());
-			}
-			else
-			{
-				this.name = name.replaceFirst(s, s.toLowerCase());
-			}
-		}
-	}
+    public void setLiteralType( String literalType )
+    {
+        this.literalType = literalType;
+    }
 
-	public Class<?> type()
-	{
-		return type == null ? RDFNode.class : type;
-	}
+    /**
+     * Merges an EffectivePredicate into this one.
+     * @param predicate the other effective predicate to merge.
+     * @return this EffectivePredicate.
+     */
+    public EffectivePredicate merge(final EffectivePredicate predicate) {
+        if (predicate != null) {
+            upcase = predicate.upcase();
+            setName( StringUtils.isBlank( predicate.name() ) ? name : predicate.name() );
+            namespace = StringUtils.isBlank( predicate.namespace() ) ? namespace : predicate.namespace();
+            literalType = StringUtils.isBlank( predicate.literalType() ) ? literalType : predicate.literalType();
+            type = RDFNode.class.equals( predicate.type() ) ? type : predicate.type();
+            impl |= predicate.impl();
+            if (predicate.postExec != null) {
+                for (final Method m : predicate.postExec) {
+                    addPostExec( m );
+                }
+            }
 
-	public boolean upcase()
-	{
-		return upcase;
-	}
+        }
+        return this;
+    }
+
+    /**
+     * Merges a Predicate into this one.
+     * @param predicate the predicate to merge.
+     * @return this EffectivePredicate.
+     */
+    public EffectivePredicate merge(final Predicate predicate) {
+        if (predicate != null) {
+            upcase = predicate.upcase();
+            setName( StringUtils.isBlank( predicate.name() ) ? name : predicate.name() );
+            namespace = StringUtils.isBlank( predicate.namespace() ) ? namespace : predicate.namespace();
+            literalType = StringUtils.isBlank( predicate.literalType() ) ? literalType : predicate.literalType();
+            type = RDFNode.class.equals( predicate.type() ) ? type : predicate.type();
+            // type = type!=null ? type : predicate.type();
+            emptyIsNull = predicate.emptyIsNull();
+            impl |= predicate.impl();
+        }
+        return this;
+    }
+
+    /**
+     * The name of the predicate. This is the local name in RDF parlance. If not
+     * specified it defaults to the name of the function with the action prefix
+     * removed. @see{ @link org.xenei.jena.entities.impl.ActionType}.
+     *
+     * The namespace may be specified as part of the name. In this case the
+     * namespace value need not be set.
+     *
+     * @return the local name of the RDF predicate.
+     */
+    public String name() {
+        return name;
+    }
+
+    /**
+     * The namespace for the predicate. If not specified defaults to the
+     * namespace for the subject that this predicate is part of. The namespace
+     * may be specified with this field or as part of the name field.
+     *
+     * @return The namespace portion of the RDF predicate.
+     */
+    public String namespace() {
+        return namespace;
+    }
+
+    /**
+     * Set the name of this predicate.
+     * @param name the name to set.
+     */
+    public void setName(final String name) {
+        if (StringUtils.isNotBlank( name )) {
+            final String s = name.substring( 0, 1 );
+            if (upcase()) {
+                this.name = name.replaceFirst( s, s.toUpperCase() );
+            } else {
+                this.name = name.replaceFirst( s, s.toLowerCase() );
+            }
+        }
+    }
+
+    /**
+     * The java object class that will be returned when the object is read from
+     * the RDF model.
+     *
+     * @return The object class.  If type is null {@code RDFNode.class} is returned.
+     */
+    public Class<?> type() {
+        return type == null ? RDFNode.class : type;
+    }
+
+    /**
+     * The java object class that will be returned when the object is read from
+     * the RDF model.
+     *
+     * @return The object class.
+     */
+    public Class<?> rawType() {
+        return type;
+    }
+
+    /**
+     * Sets the java object class that will be returned when the object is read from
+     * the RDF model.
+     * @param type the type to set.
+     */
+    public void setType( Class<?> type ) {
+        this.type = type;
+    }
+
+    /**
+     * determines if the local name should have the first character upper cased.
+     * If false (the default) the first character will be lower cased. If true,
+     * the first character will be upper cased.
+     *
+     * @return true if the first character of the name should be upper cased.
+     */
+    public boolean upcase() {
+        return upcase;
+    }
 
 }

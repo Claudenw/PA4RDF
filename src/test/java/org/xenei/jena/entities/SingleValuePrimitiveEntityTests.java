@@ -3,9 +3,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -73,7 +73,7 @@ public class SingleValuePrimitiveEntityTests
 	public void testChar()
 	{
 		final char c = 'a';
-		final Character cc = new Character(c);
+		final Character cc = Character.valueOf(c);
 		tc.setChar(c);
 		Assert.assertEquals(cc, Character.valueOf(tc.getChar()));
 		tc.setChar('x');
@@ -96,7 +96,7 @@ public class SingleValuePrimitiveEntityTests
 	public void testDbl()
 	{
 		final double c = 3.14;
-		final Double cc = new Double(c);
+		final Double cc = Double.valueOf(c);
 		tc.setDbl(c);
 		Assert.assertEquals(cc, Double.valueOf(tc.getDbl()));
 		tc.setDbl(0.0);
@@ -120,7 +120,7 @@ public class SingleValuePrimitiveEntityTests
 	public void testFlt()
 	{
 		final float c = 3.14F;
-		final Float cc = new Float(c);
+		final Float cc = Float.valueOf(c);
 		tc.setFlt(c);
 		Assert.assertEquals(cc, Float.valueOf(tc.getFlt()));
 		tc.setFlt(0.0F);
@@ -144,7 +144,7 @@ public class SingleValuePrimitiveEntityTests
 	public void testInt()
 	{
 		final int c = 3;
-		final Integer cc = new Integer(c);
+		final Integer cc = Integer.valueOf(c);
 		tc.setInt(c);
 		Assert.assertEquals(cc, Integer.valueOf(tc.getInt()));
 		tc.setInt(0);
@@ -168,7 +168,7 @@ public class SingleValuePrimitiveEntityTests
 	public void testLng()
 	{
 		final long c = 3;
-		final Long cc = new Long(c);
+		final Long cc = Long.valueOf(c);
 		tc.setLng(c);
 		Assert.assertEquals(cc, Long.valueOf(tc.getLng()));
 		tc.setLng(0L);

@@ -3,9 +3,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -79,7 +79,7 @@ public class SingleValueMixedObjectEntityTests
 	public void testC()
 	{
 		final char c = 'a';
-		final Character cc = new Character(c);
+		final Character cc = Character.valueOf(c);
 		tc.setC(c);
 		Assert.assertEquals(cc, Character.valueOf(tc.getC()));
 		tc.setC('x');
@@ -93,7 +93,7 @@ public class SingleValueMixedObjectEntityTests
 	public void testChar()
 	{
 		final char c = 'a';
-		final Character cc = new Character(c);
+		final Character cc = Character.valueOf(c);
 		Assert.assertNull(tc.getChar());
 		tc.setChar(c);
 		Assert.assertEquals(cc, Character.valueOf(tc.getChar()));
@@ -107,7 +107,7 @@ public class SingleValueMixedObjectEntityTests
 	public void testD()
 	{
 		final double c = 3.14;
-		final Double cc = new Double(c);
+		final Double cc = Double.valueOf(c);
 		tc.setD(c);
 		Assert.assertEquals(cc, Double.valueOf(tc.getD()));
 		tc.setD(0.0);
@@ -120,7 +120,7 @@ public class SingleValueMixedObjectEntityTests
 	public void testDbl()
 	{
 		final double c = 3.14;
-		final Double cc = new Double(c);
+		final Double cc = Double.valueOf(c);
 		Assert.assertNull(tc.getDbl());
 		tc.setDbl(c);
 		Assert.assertEquals(cc, Double.valueOf(tc.getDbl()));
@@ -134,7 +134,7 @@ public class SingleValueMixedObjectEntityTests
 	public void testF()
 	{
 		final float c = 3.14F;
-		final Float cc = new Float(c);
+		final Float cc = Float.valueOf(c);
 		tc.setF(c);
 		Assert.assertEquals(cc, Float.valueOf(tc.getF()));
 		tc.setF(0.0F);
@@ -147,7 +147,7 @@ public class SingleValueMixedObjectEntityTests
 	public void testFlt()
 	{
 		final float c = 3.14F;
-		final Float cc = new Float(c);
+		final Float cc = Float.valueOf(c);
 		Assert.assertNull(tc.getFlt());
 		tc.setFlt(c);
 		Assert.assertEquals(cc, Float.valueOf(tc.getFlt()));
@@ -162,7 +162,7 @@ public class SingleValueMixedObjectEntityTests
 	public void testI()
 	{
 		final int c = 3;
-		final Integer cc = new Integer(c);
+		final Integer cc = Integer.valueOf(c);
 		tc.setI(c);
 		Assert.assertEquals(cc, Integer.valueOf(tc.getI()));
 		tc.setI(0);
@@ -175,7 +175,7 @@ public class SingleValueMixedObjectEntityTests
 	public void testInt()
 	{
 		final int c = 3;
-		final Integer cc = new Integer(c);
+		final Integer cc = Integer.valueOf(c);
 		Assert.assertNull(tc.getInt());
 		tc.setInt(c);
 		Assert.assertEquals(cc, Integer.valueOf(tc.getInt()));
@@ -189,7 +189,7 @@ public class SingleValueMixedObjectEntityTests
 	public void testL()
 	{
 		final long c = 3;
-		final Long cc = new Long(c);
+		final Long cc = Long.valueOf(c);
 		tc.setL(c);
 		Assert.assertEquals(cc, Long.valueOf(tc.getL()));
 		tc.setL(0L);
@@ -202,7 +202,7 @@ public class SingleValueMixedObjectEntityTests
 	public void testLng()
 	{
 		final long c = 3;
-		final Long cc = new Long(c);
+		final Long cc = Long.valueOf(c);
 		Assert.assertNull(tc.getLng());
 		tc.setLng(c);
 		Assert.assertEquals(cc, Long.valueOf(tc.getLng()));

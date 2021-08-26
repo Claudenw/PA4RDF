@@ -3,9 +3,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -19,32 +19,30 @@ import org.xenei.jena.entities.impl.EntityManagerImpl;
 
 /**
  * Factory to create EntityManagers.
- * 
+ *
  */
-public class EntityManagerFactory
-{
-	private static EntityManager manager;
+public class EntityManagerFactory {
+    private static EntityManager manager;
 
-	/**
-	 * @return the entity manager
-	 */
-	public static EntityManager getEntityManager()
-	{
-		if (EntityManagerFactory.manager == null)
-		{
-			EntityManagerFactory.manager = new EntityManagerImpl();
-		}
-		return EntityManagerFactory.manager;
-	}
+    /**
+     * @return the entity manager
+     */
+    public static EntityManager getEntityManager() {
+        if (EntityManagerFactory.manager == null) {
+            EntityManagerFactory.manager = new EntityManagerImpl();
+        }
+        return EntityManagerFactory.manager;
+    }
 
-	/**
-	 * Set the entity manager that the factory will return.
-	 * 
-	 * @param manager The manager to be returned on subsequent getEntityManager() calls.
-	 */
-	public static void setEntityManager( final EntityManager manager )
-	{
-		EntityManagerFactory.manager = manager;
-	}
+    /**
+     * Set the entity manager that the factory will return.
+     * 
+     * @param manager
+     *            The manager to be returned on subsequent getEntityManager()
+     *            calls.
+     */
+    public static void setEntityManager(final EntityManager manager) {
+        EntityManagerFactory.manager = manager;
+    }
 
 }
