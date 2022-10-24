@@ -5,9 +5,9 @@ import org.apache.jena.rdf.model.Literal;
 import org.apache.jena.rdf.model.RDFNode;
 import org.apache.jena.rdf.model.ResourceFactory;
 
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class LiteralHandlerTest implements HandlerTestInterface
 {
@@ -15,7 +15,7 @@ public class LiteralHandlerTest implements HandlerTestInterface
 	RDFNode node;
 	Integer instance;
 
-	@Before
+	@BeforeEach
 	public void setup()
 	{
 		handler = new LiteralHandler(XSDDatatype.XSDinteger);
@@ -28,24 +28,24 @@ public class LiteralHandlerTest implements HandlerTestInterface
 	public void testCreateRDFNode()
 	{
 		final RDFNode n = handler.createRDFNode(Integer.valueOf(5));
-		Assert.assertNotNull(n);
+		Assertions.assertNotNull(n);
 		final Literal l = ResourceFactory.createTypedLiteral("5",
 				XSDDatatype.XSDinteger);
-		Assert.assertEquals(l, n);
+		Assertions.assertEquals(l, n);
 	}
 
 	@Override
 	@Test
 	public void testIsEmpty()
 	{
-		Assert.assertTrue(handler.isEmpty(null));
-		Assert.assertFalse(handler.isEmpty(instance));
+		Assertions.assertTrue(handler.isEmpty(null));
+		Assertions.assertFalse(handler.isEmpty(instance));
 		handler = new LiteralHandler(XSDDatatype.XSDstring);
-		Assert.assertTrue(handler.isEmpty(null));
-		Assert.assertTrue(handler.isEmpty(""));
-		Assert.assertTrue(handler.isEmpty(" "));
-		Assert.assertFalse(handler.isEmpty(instance));
-		Assert.assertFalse(handler.isEmpty("foo"));
+		Assertions.assertTrue(handler.isEmpty(null));
+		Assertions.assertTrue(handler.isEmpty(""));
+		Assertions.assertTrue(handler.isEmpty(" "));
+		Assertions.assertFalse(handler.isEmpty(instance));
+		Assertions.assertFalse(handler.isEmpty("foo"));
 
 	}
 
@@ -54,10 +54,10 @@ public class LiteralHandlerTest implements HandlerTestInterface
 	public void testParseObject()
 	{
 		final Object o = handler.parseObject(node);
-		Assert.assertNotNull(o);
-		Assert.assertTrue(o instanceof Integer);
+		Assertions.assertNotNull(o);
+		Assertions.assertTrue(o instanceof Integer);
 		final Integer a2 = (Integer) o;
-		Assert.assertEquals(instance, a2);
+		Assertions.assertEquals(instance, a2);
 
 	}
 }

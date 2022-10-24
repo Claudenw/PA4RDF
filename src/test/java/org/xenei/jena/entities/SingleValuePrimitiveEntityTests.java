@@ -18,10 +18,10 @@ import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.rdf.model.Resource;
 
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.xenei.jena.entities.testing.abst.SingleValuePrimitiveTestClass;
 
 public class SingleValuePrimitiveEntityTests
@@ -30,7 +30,7 @@ public class SingleValuePrimitiveEntityTests
 	private SingleValuePrimitiveTestClass tc;
 	private Model model;
 
-	@Before
+	@BeforeEach
 	public void setup() throws Exception
 	{
 		model = ModelFactory.createDefaultModel();
@@ -40,7 +40,7 @@ public class SingleValuePrimitiveEntityTests
 		tc = manager.read(r, SingleValuePrimitiveTestClass.class);
 	}
 
-	@After
+	@AfterEach
 	public void teardown()
 	{
 		model.close();
@@ -50,18 +50,18 @@ public class SingleValuePrimitiveEntityTests
 	public void testBoolean()
 	{
 		tc.setBool(true);
-		Assert.assertTrue(tc.isBool());
+		Assertions.assertTrue(tc.isBool());
 		tc.setBool(false);
-		Assert.assertTrue(!tc.isBool());
+		Assertions.assertTrue(!tc.isBool());
 		tc.setBool(Boolean.TRUE);
-		Assert.assertTrue(tc.isBool());
+		Assertions.assertTrue(tc.isBool());
 		tc.setBool(Boolean.FALSE);
-		Assert.assertTrue(!tc.isBool());
+		Assertions.assertTrue(!tc.isBool());
 		tc.removeBool();
 		try
 		{
 			tc.isBool();
-			Assert.fail("Should have thrown NullPointerException");
+			Assertions.fail("Should have thrown NullPointerException");
 		}
 		catch (final NullPointerException e)
 		{
@@ -75,16 +75,16 @@ public class SingleValuePrimitiveEntityTests
 		final char c = 'a';
 		final Character cc = Character.valueOf(c);
 		tc.setChar(c);
-		Assert.assertEquals(cc, Character.valueOf(tc.getChar()));
+		Assertions.assertEquals(cc, Character.valueOf(tc.getChar()));
 		tc.setChar('x');
-		Assert.assertTrue(!cc.equals(tc.getChar()));
+		Assertions.assertTrue(!cc.equals(tc.getChar()));
 		tc.setChar(cc);
-		Assert.assertEquals(cc, Character.valueOf(tc.getChar()));
+		Assertions.assertEquals(cc, Character.valueOf(tc.getChar()));
 		tc.removeChar();
 		try
 		{
 			tc.getChar();
-			Assert.fail("Should have thrown NullPointerException");
+			Assertions.fail("Should have thrown NullPointerException");
 		}
 		catch (final NullPointerException e)
 		{
@@ -98,16 +98,16 @@ public class SingleValuePrimitiveEntityTests
 		final double c = 3.14;
 		final Double cc = Double.valueOf(c);
 		tc.setDbl(c);
-		Assert.assertEquals(cc, Double.valueOf(tc.getDbl()));
+		Assertions.assertEquals(cc, Double.valueOf(tc.getDbl()));
 		tc.setDbl(0.0);
-		Assert.assertTrue(!cc.equals(tc.getDbl()));
+		Assertions.assertTrue(!cc.equals(tc.getDbl()));
 		tc.setDbl(cc);
-		Assert.assertEquals(cc, Double.valueOf(tc.getDbl()));
+		Assertions.assertEquals(cc, Double.valueOf(tc.getDbl()));
 		tc.removeDbl();
 		try
 		{
 			tc.getDbl();
-			Assert.fail("Should have thrown NullPointerException");
+			Assertions.fail("Should have thrown NullPointerException");
 		}
 		catch (final NullPointerException e)
 		{
@@ -122,16 +122,16 @@ public class SingleValuePrimitiveEntityTests
 		final float c = 3.14F;
 		final Float cc = Float.valueOf(c);
 		tc.setFlt(c);
-		Assert.assertEquals(cc, Float.valueOf(tc.getFlt()));
+		Assertions.assertEquals(cc, Float.valueOf(tc.getFlt()));
 		tc.setFlt(0.0F);
-		Assert.assertTrue(!cc.equals(tc.getFlt()));
+		Assertions.assertTrue(!cc.equals(tc.getFlt()));
 		tc.setFlt(cc);
-		Assert.assertEquals(cc, Float.valueOf(tc.getFlt()));
+		Assertions.assertEquals(cc, Float.valueOf(tc.getFlt()));
 		tc.removeFlt();
 		try
 		{
 			tc.getFlt();
-			Assert.fail("Should have thrown NullPointerException");
+			Assertions.fail("Should have thrown NullPointerException");
 		}
 		catch (final NullPointerException e)
 		{
@@ -146,16 +146,16 @@ public class SingleValuePrimitiveEntityTests
 		final int c = 3;
 		final Integer cc = Integer.valueOf(c);
 		tc.setInt(c);
-		Assert.assertEquals(cc, Integer.valueOf(tc.getInt()));
+		Assertions.assertEquals(cc, Integer.valueOf(tc.getInt()));
 		tc.setInt(0);
-		Assert.assertTrue(!cc.equals(tc.getInt()));
+		Assertions.assertTrue(!cc.equals(tc.getInt()));
 		tc.setInt(cc);
-		Assert.assertEquals(cc, Integer.valueOf(tc.getInt()));
+		Assertions.assertEquals(cc, Integer.valueOf(tc.getInt()));
 		tc.removeInt();
 		try
 		{
 			tc.getInt();
-			Assert.fail("Should have thrown NullPointerException");
+			Assertions.fail("Should have thrown NullPointerException");
 		}
 		catch (final NullPointerException e)
 		{
@@ -170,16 +170,16 @@ public class SingleValuePrimitiveEntityTests
 		final long c = 3;
 		final Long cc = Long.valueOf(c);
 		tc.setLng(c);
-		Assert.assertEquals(cc, Long.valueOf(tc.getLng()));
+		Assertions.assertEquals(cc, Long.valueOf(tc.getLng()));
 		tc.setLng(0L);
-		Assert.assertTrue(!cc.equals(tc.getLng()));
+		Assertions.assertTrue(!cc.equals(tc.getLng()));
 		tc.setLng(cc);
-		Assert.assertEquals(cc, Long.valueOf(tc.getLng()));
+		Assertions.assertEquals(cc, Long.valueOf(tc.getLng()));
 		tc.removeLng();
 		try
 		{
 			tc.getLng();
-			Assert.fail("Should have thrown NullPointerException");
+			Assertions.fail("Should have thrown NullPointerException");
 		}
 		catch (final NullPointerException e)
 		{

@@ -22,9 +22,9 @@ import org.apache.jena.util.iterator.ExtendedIterator;
 import java.lang.reflect.Method;
 import java.util.List;
 
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.xenei.jena.entities.testing.abst.TestPropertyRenamingInterface;
 import org.xenei.jena.entities.testing.iface.TestInterface;
 
@@ -34,7 +34,7 @@ public class ResourceEntityProxyTest
 	private Model model;
 	private EntityManager manager;
 
-	@Before
+	@BeforeEach
 	public void setup()
 	{
 		model = ModelFactory.createMemModelMaker().createDefaultModel();
@@ -48,9 +48,9 @@ public class ResourceEntityProxyTest
 		final TestInterface ti1 = manager.read(r, TestInterface.class);
 		final TestInterface ti2 = manager.read(r, TestInterface.class);
 
-		Assert.assertEquals(ti1, ti2);
-		Assert.assertEquals(ti2, ti1);
-		Assert.assertEquals(ti1.hashCode(), ti2.hashCode());
+		Assertions.assertEquals(ti1, ti2);
+		Assertions.assertEquals(ti2, ti1);
+		Assertions.assertEquals(ti1.hashCode(), ti2.hashCode());
 	}
 
 	@Test
@@ -61,7 +61,7 @@ public class ResourceEntityProxyTest
 		final SubjectInfo ci = manager.getSubjectInfo(TestInterface.class);
 		final String namespaceStr = "http://localhost/test#";
 
-		Assert.assertEquals(TestInterface.class, ci.getImplementedClass());
+		Assertions.assertEquals(TestInterface.class, ci.getImplementedClass());
 
 		PredicateInfo pi = null;
 		Method m = null;
@@ -70,70 +70,70 @@ public class ResourceEntityProxyTest
 
 		m = TestInterface.class.getMethod("setBar", String.class);
 		pi = ci.getPredicateInfo(m);
-		Assert.assertEquals("setBar", pi.getMethodName());
-		Assert.assertEquals(namespaceStr, pi.getNamespace());
-		Assert.assertEquals(namespaceStr + "bar", pi.getUriString());
-		Assert.assertEquals(String.class, pi.getValueClass());
+		Assertions.assertEquals("setBar", pi.getMethodName());
+		Assertions.assertEquals(namespaceStr, pi.getNamespace());
+		Assertions.assertEquals(namespaceStr + "bar", pi.getUriString());
+		Assertions.assertEquals(String.class, pi.getValueClass());
 
 		m = TestInterface.class.getMethod("getBar");
 		pi = ci.getPredicateInfo(m);
-		Assert.assertEquals("getBar", pi.getMethodName());
-		Assert.assertEquals(namespaceStr, pi.getNamespace());
-		Assert.assertEquals(namespaceStr + "bar", pi.getUriString());
-		Assert.assertEquals(String.class, pi.getValueClass());
+		Assertions.assertEquals("getBar", pi.getMethodName());
+		Assertions.assertEquals(namespaceStr, pi.getNamespace());
+		Assertions.assertEquals(namespaceStr + "bar", pi.getUriString());
+		Assertions.assertEquals(String.class, pi.getValueClass());
 
 		m = TestInterface.class.getMethod("removeBar");
 		pi = ci.getPredicateInfo(m);
-		Assert.assertEquals("removeBar", pi.getMethodName());
-		Assert.assertEquals(namespaceStr, pi.getNamespace());
-		Assert.assertEquals(namespaceStr + "bar", pi.getUriString());
-		Assert.assertEquals(null, pi.getValueClass());
+		Assertions.assertEquals("removeBar", pi.getMethodName());
+		Assertions.assertEquals(namespaceStr, pi.getNamespace());
+		Assertions.assertEquals(namespaceStr + "bar", pi.getUriString());
+		Assertions.assertEquals(null, pi.getValueClass());
 
 		// BAZ test
 
 		m = TestInterface.class.getMethod("addBaz", String.class);
 		pi = ci.getPredicateInfo(m);
-		Assert.assertEquals("addBaz", pi.getMethodName());
-		Assert.assertEquals(namespaceStr, pi.getNamespace());
-		Assert.assertEquals(namespaceStr + "baz", pi.getUriString());
-		Assert.assertEquals(String.class, pi.getValueClass());
+		Assertions.assertEquals("addBaz", pi.getMethodName());
+		Assertions.assertEquals(namespaceStr, pi.getNamespace());
+		Assertions.assertEquals(namespaceStr + "baz", pi.getUriString());
+		Assertions.assertEquals(String.class, pi.getValueClass());
 
 		m = TestInterface.class.getMethod("getBaz");
 		pi = ci.getPredicateInfo(m);
-		Assert.assertEquals("getBaz", pi.getMethodName());
-		Assert.assertEquals(namespaceStr, pi.getNamespace());
-		Assert.assertEquals(namespaceStr + "baz", pi.getUriString());
-		Assert.assertEquals(ExtendedIterator.class, pi.getValueClass());
+		Assertions.assertEquals("getBaz", pi.getMethodName());
+		Assertions.assertEquals(namespaceStr, pi.getNamespace());
+		Assertions.assertEquals(namespaceStr + "baz", pi.getUriString());
+		Assertions.assertEquals(ExtendedIterator.class, pi.getValueClass());
 
 		m = TestInterface.class.getMethod("removeBaz", String.class);
 		pi = ci.getPredicateInfo(m);
-		Assert.assertEquals("removeBaz", pi.getMethodName());
-		Assert.assertEquals(namespaceStr, pi.getNamespace());
-		Assert.assertEquals(namespaceStr + "baz", pi.getUriString());
-		Assert.assertEquals(String.class, pi.getValueClass());
+		Assertions.assertEquals("removeBaz", pi.getMethodName());
+		Assertions.assertEquals(namespaceStr, pi.getNamespace());
+		Assertions.assertEquals(namespaceStr + "baz", pi.getUriString());
+		Assertions.assertEquals(String.class, pi.getValueClass());
 
 		// flag test
 
 		m = TestInterface.class.getMethod("setFlag", Boolean.class);
 		pi = ci.getPredicateInfo(m);
-		Assert.assertEquals("setFlag", pi.getMethodName());
-		Assert.assertEquals(namespaceStr, pi.getNamespace());
-		Assert.assertEquals(namespaceStr + "flag", pi.getUriString());
-		Assert.assertEquals(Boolean.class, pi.getValueClass());
+		Assertions.assertEquals("setFlag", pi.getMethodName());
+		Assertions.assertEquals(namespaceStr, pi.getNamespace());
+		Assertions.assertEquals(namespaceStr + "flag", pi.getUriString());
+		Assertions.assertEquals(Boolean.class, pi.getValueClass());
 
 		m = TestInterface.class.getMethod("isFlag");
 		pi = ci.getPredicateInfo(m);
-		Assert.assertEquals("isFlag", pi.getMethodName());
-		Assert.assertEquals(namespaceStr, pi.getNamespace());
-		Assert.assertEquals(namespaceStr + "flag", pi.getUriString());
-		Assert.assertEquals(Boolean.class, pi.getValueClass());
+		Assertions.assertEquals("isFlag", pi.getMethodName());
+		Assertions.assertEquals(namespaceStr, pi.getNamespace());
+		Assertions.assertEquals(namespaceStr + "flag", pi.getUriString());
+		Assertions.assertEquals(Boolean.class, pi.getValueClass());
 
 		m = TestInterface.class.getMethod("removeFlag");
 		pi = ci.getPredicateInfo(m);
-		Assert.assertEquals("removeFlag", pi.getMethodName());
-		Assert.assertEquals(namespaceStr, pi.getNamespace());
-		Assert.assertEquals(namespaceStr + "flag", pi.getUriString());
-		Assert.assertEquals(null, pi.getValueClass());
+		Assertions.assertEquals("removeFlag", pi.getMethodName());
+		Assertions.assertEquals(namespaceStr, pi.getNamespace());
+		Assertions.assertEquals(namespaceStr + "flag", pi.getUriString());
+		Assertions.assertEquals(null, pi.getValueClass());
 	}
 
 	@Test
@@ -144,7 +144,7 @@ public class ResourceEntityProxyTest
 				.getSubjectInfo(TestPropertyRenamingInterface.class);
 		final String namespace = "http://localhost/different#";
 
-		Assert.assertEquals(TestPropertyRenamingInterface.class,
+		Assertions.assertEquals(TestPropertyRenamingInterface.class,
 				ci.getImplementedClass());
 
 		PredicateInfo pi = null;
@@ -155,73 +155,73 @@ public class ResourceEntityProxyTest
 		m = TestPropertyRenamingInterface.class.getMethod("setFoomer2",
 				String.class);
 		pi = ci.getPredicateInfo(m);
-		Assert.assertEquals("setFoomer2", pi.getMethodName());
-		Assert.assertEquals(namespace, pi.getNamespace());
-		Assert.assertEquals(namespace + "foo2", pi.getUriString());
-		Assert.assertEquals(String.class, pi.getValueClass());
+		Assertions.assertEquals("setFoomer2", pi.getMethodName());
+		Assertions.assertEquals(namespace, pi.getNamespace());
+		Assertions.assertEquals(namespace + "foo2", pi.getUriString());
+		Assertions.assertEquals(String.class, pi.getValueClass());
 
 		m = TestPropertyRenamingInterface.class.getMethod("getFoomer2");
 		pi = ci.getPredicateInfo(m);
-		Assert.assertEquals("getFoomer2", pi.getMethodName());
-		Assert.assertEquals(namespace, pi.getNamespace());
-		Assert.assertEquals(namespace + "foo2", pi.getUriString());
-		Assert.assertEquals(String.class, pi.getValueClass());
+		Assertions.assertEquals("getFoomer2", pi.getMethodName());
+		Assertions.assertEquals(namespace, pi.getNamespace());
+		Assertions.assertEquals(namespace + "foo2", pi.getUriString());
+		Assertions.assertEquals(String.class, pi.getValueClass());
 
 		m = TestPropertyRenamingInterface.class.getMethod("removeFoomer2");
 		pi = ci.getPredicateInfo(m);
-		Assert.assertEquals("removeFoomer2", pi.getMethodName());
-		Assert.assertEquals(namespace, pi.getNamespace());
-		Assert.assertEquals(namespace + "foo2", pi.getUriString());
-		Assert.assertEquals(null, pi.getValueClass());
+		Assertions.assertEquals("removeFoomer2", pi.getMethodName());
+		Assertions.assertEquals(namespace, pi.getNamespace());
+		Assertions.assertEquals(namespace + "foo2", pi.getUriString());
+		Assertions.assertEquals(null, pi.getValueClass());
 
 		// BAZ test
 
 		m = TestPropertyRenamingInterface.class.getMethod("addFoomer",
 				String.class);
 		pi = ci.getPredicateInfo(m);
-		Assert.assertEquals("addFoomer", pi.getMethodName());
-		Assert.assertEquals(namespace, pi.getNamespace());
-		Assert.assertEquals(namespace + "foo", pi.getUriString());
-		Assert.assertEquals(String.class, pi.getValueClass());
+		Assertions.assertEquals("addFoomer", pi.getMethodName());
+		Assertions.assertEquals(namespace, pi.getNamespace());
+		Assertions.assertEquals(namespace + "foo", pi.getUriString());
+		Assertions.assertEquals(String.class, pi.getValueClass());
 
 		m = TestPropertyRenamingInterface.class.getMethod("getFoomer");
 		pi = ci.getPredicateInfo(m);
-		Assert.assertEquals("getFoomer", pi.getMethodName());
-		Assert.assertEquals(namespace, pi.getNamespace());
-		Assert.assertEquals(namespace + "foo", pi.getUriString());
-		Assert.assertEquals(ExtendedIterator.class, pi.getValueClass());
+		Assertions.assertEquals("getFoomer", pi.getMethodName());
+		Assertions.assertEquals(namespace, pi.getNamespace());
+		Assertions.assertEquals(namespace + "foo", pi.getUriString());
+		Assertions.assertEquals(ExtendedIterator.class, pi.getValueClass());
 
 		m = TestPropertyRenamingInterface.class.getMethod("removeFoomer",
 				String.class);
 		pi = ci.getPredicateInfo(m);
-		Assert.assertEquals("removeFoomer", pi.getMethodName());
-		Assert.assertEquals(namespace, pi.getNamespace());
-		Assert.assertEquals(namespace + "foo", pi.getUriString());
-		Assert.assertEquals(String.class, pi.getValueClass());
+		Assertions.assertEquals("removeFoomer", pi.getMethodName());
+		Assertions.assertEquals(namespace, pi.getNamespace());
+		Assertions.assertEquals(namespace + "foo", pi.getUriString());
+		Assertions.assertEquals(String.class, pi.getValueClass());
 
 		// flag test
 
 		m = TestPropertyRenamingInterface.class.getMethod("setFoomer3",
 				Boolean.class);
 		pi = ci.getPredicateInfo(m);
-		Assert.assertEquals("setFoomer3", pi.getMethodName());
-		Assert.assertEquals(namespace, pi.getNamespace());
-		Assert.assertEquals(namespace + "foo3", pi.getUriString());
-		Assert.assertEquals(Boolean.class, pi.getValueClass());
+		Assertions.assertEquals("setFoomer3", pi.getMethodName());
+		Assertions.assertEquals(namespace, pi.getNamespace());
+		Assertions.assertEquals(namespace + "foo3", pi.getUriString());
+		Assertions.assertEquals(Boolean.class, pi.getValueClass());
 
 		m = TestPropertyRenamingInterface.class.getMethod("isFoomer3");
 		pi = ci.getPredicateInfo(m);
-		Assert.assertEquals("isFoomer3", pi.getMethodName());
-		Assert.assertEquals(namespace, pi.getNamespace());
-		Assert.assertEquals(namespace + "foo3", pi.getUriString());
-		Assert.assertEquals(Boolean.class, pi.getValueClass());
+		Assertions.assertEquals("isFoomer3", pi.getMethodName());
+		Assertions.assertEquals(namespace, pi.getNamespace());
+		Assertions.assertEquals(namespace + "foo3", pi.getUriString());
+		Assertions.assertEquals(Boolean.class, pi.getValueClass());
 
 		m = TestPropertyRenamingInterface.class.getMethod("removeFoomer3");
 		pi = ci.getPredicateInfo(m);
-		Assert.assertEquals("removeFoomer3", pi.getMethodName());
-		Assert.assertEquals(namespace, pi.getNamespace());
-		Assert.assertEquals(namespace + "foo3", pi.getUriString());
-		Assert.assertEquals(null, pi.getValueClass());
+		Assertions.assertEquals("removeFoomer3", pi.getMethodName());
+		Assertions.assertEquals(namespace, pi.getNamespace());
+		Assertions.assertEquals(namespace + "foo3", pi.getUriString());
+		Assertions.assertEquals(null, pi.getValueClass());
 	}
 
 	@Test
@@ -231,30 +231,30 @@ public class ResourceEntityProxyTest
 		final TestInterface ti1 = manager.read(r, TestInterface.class);
 
 		ti1.setBar("foo");
-		Assert.assertEquals("foo", ti1.getBar());
+		Assertions.assertEquals("foo", ti1.getBar());
 		ti1.removeBar();
-		Assert.assertEquals(null, ti1.getBar());
+		Assertions.assertEquals(null, ti1.getBar());
 
 		ti1.addBaz("foo");
 		ti1.addBaz("foo2");
 		List<String> result = ti1.getBaz().toList();
-		Assert.assertEquals(2, result.size());
-		Assert.assertTrue(result.contains("foo"));
-		Assert.assertTrue(result.contains("foo2"));
+		Assertions.assertEquals(2, result.size());
+		Assertions.assertTrue(result.contains("foo"));
+		Assertions.assertTrue(result.contains("foo2"));
 		ti1.removeBaz("foo");
 		result = ti1.getBaz().toList();
-		Assert.assertEquals(1, result.size());
-		Assert.assertTrue(result.contains("foo2"));
+		Assertions.assertEquals(1, result.size());
+		Assertions.assertTrue(result.contains("foo2"));
 		ti1.removeBaz("foo2");
 		result = ti1.getBaz().toList();
-		Assert.assertEquals(0, result.size());
+		Assertions.assertEquals(0, result.size());
 
 		ti1.setFlag(true);
-		Assert.assertTrue(ti1.isFlag());
+		Assertions.assertTrue(ti1.isFlag());
 		ti1.setFlag(false);
-		Assert.assertTrue(!ti1.isFlag());
+		Assertions.assertTrue(!ti1.isFlag());
 		ti1.removeFlag();
-		Assert.assertNull(ti1.isFlag());
+		Assertions.assertNull(ti1.isFlag());
 
 	}
 }

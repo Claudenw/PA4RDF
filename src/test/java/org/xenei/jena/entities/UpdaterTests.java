@@ -4,9 +4,9 @@ import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.rdf.model.Resource;
 
-import junit.framework.Assert;
+import org.junit.jupiter.api.Assertions;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.xenei.jena.entities.annotations.Predicate;
 import org.xenei.jena.entities.annotations.Subject;
 import org.xenei.jena.entities.impl.EntityManagerImpl;
@@ -211,11 +211,11 @@ public class UpdaterTests
 				DataSourceModelIface.class);
 		manager.update(ds1, ds2);
 
-		Assert.assertEquals(1, ds2.getIntValue());
-		Assert.assertEquals(2.1, ds2.getDblValue());
-		Assert.assertEquals(3.2F, ds2.getFltValue());
-		Assert.assertEquals(4, ds2.getLngValue());
-		Assert.assertEquals("5", ds2.getStrValue());
+		Assertions.assertEquals(1, ds2.getIntValue());
+		Assertions.assertEquals(2.1, ds2.getDblValue());
+		Assertions.assertEquals(3.2F, ds2.getFltValue());
+		Assertions.assertEquals(4, ds2.getLngValue());
+		Assertions.assertEquals("5", ds2.getStrValue());
 	}
 
 	@Test
@@ -235,11 +235,11 @@ public class UpdaterTests
 		final DataSource ds2 = new DataSource();
 		manager.update(ds1, ds2);
 
-		Assert.assertEquals(1, ds2.getIntValue());
-		Assert.assertEquals(2.1, ds2.getDblValue());
-		Assert.assertEquals(3.2F, ds2.getFltValue());
-		Assert.assertEquals(4, ds2.getLngValue());
-		Assert.assertEquals("5", ds2.getStrValue());
+		Assertions.assertEquals(1, ds2.getIntValue());
+		Assertions.assertEquals(2.1, ds2.getDblValue());
+		Assertions.assertEquals(3.2F, ds2.getFltValue());
+		Assertions.assertEquals(4, ds2.getLngValue());
+		Assertions.assertEquals("5", ds2.getStrValue());
 	}
 
 	@Test
@@ -255,11 +255,11 @@ public class UpdaterTests
 		final DataSourceIface ds2 = new DataSourceIfaceImpl();
 		manager.update(ds1, ds2);
 
-		Assert.assertEquals(1, ds2.getIntValue());
-		Assert.assertEquals(2.1, ds2.getDblValue());
-		Assert.assertEquals(3.2F, ds2.getFltValue());
-		Assert.assertEquals(4, ds2.getLngValue());
-		Assert.assertEquals("5", ds2.getStrValue());
+		Assertions.assertEquals(1, ds2.getIntValue());
+		Assertions.assertEquals(2.1, ds2.getDblValue());
+		Assertions.assertEquals(3.2F, ds2.getFltValue());
+		Assertions.assertEquals(4, ds2.getLngValue());
+		Assertions.assertEquals("5", ds2.getStrValue());
 	}
 
 	@Test
@@ -275,11 +275,11 @@ public class UpdaterTests
 		final DataSource ds2 = new DataSource();
 		manager.update(ds1, ds2);
 
-		Assert.assertEquals(1, ds2.getIntValue());
-		Assert.assertEquals(2.1, ds2.getDblValue());
-		Assert.assertEquals(3.2F, ds2.getFltValue());
-		Assert.assertEquals(4, ds2.getLngValue());
-		Assert.assertEquals("5", ds2.getStrValue());
+		Assertions.assertEquals(1, ds2.getIntValue());
+		Assertions.assertEquals(2.1, ds2.getDblValue());
+		Assertions.assertEquals(3.2F, ds2.getFltValue());
+		Assertions.assertEquals(4, ds2.getLngValue());
+		Assertions.assertEquals("5", ds2.getStrValue());
 	}
 
 	@Test
@@ -295,11 +295,11 @@ public class UpdaterTests
 		final DataSource ds2 = new DataSource();
 		manager.update(ds1, ds2);
 
-		Assert.assertEquals(1, ds2.getIntValue());
-		Assert.assertEquals(2.1, ds2.getDblValue());
-		Assert.assertEquals(3.2F, ds2.getFltValue());
-		Assert.assertEquals(4, ds2.getLngValue());
-		Assert.assertEquals("5", ds2.getStrValue());
+		Assertions.assertEquals(1, ds2.getIntValue());
+		Assertions.assertEquals(2.1, ds2.getDblValue());
+		Assertions.assertEquals(3.2F, ds2.getFltValue());
+		Assertions.assertEquals(4, ds2.getLngValue());
+		Assertions.assertEquals("5", ds2.getStrValue());
 	}
 
 }

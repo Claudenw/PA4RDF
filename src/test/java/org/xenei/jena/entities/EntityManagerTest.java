@@ -3,9 +3,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,10 +17,8 @@ package org.xenei.jena.entities;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
 
-import org.apache.log4j.PropertyConfigurator;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 import org.xenei.jena.entities.impl.EntityManagerImpl;
 import org.xenei.jena.entities.testing.abst.CollectionValueAnnoatedAbst;
 import org.xenei.jena.entities.testing.abst.MultiValueAnnotatedAbst;
@@ -31,11 +29,6 @@ public class EntityManagerTest
 
 	private final EntityManager manager = new EntityManagerImpl();
 
-	@Before
-	public void setup()
-	{
-		PropertyConfigurator.configure("./src/test/resources/log4j.properties");
-	}
 
 	@Test
 	public void testBasicParser() throws Exception
@@ -51,10 +44,10 @@ public class EntityManagerTest
 				MultiValueAnnotatedAbst.class.getName(),
 				CollectionValueAnnoatedAbst.class.getName() });
 		SubjectInfo ci = manager.getSubjectInfo(MultiValueAnnotatedAbst.class);
-		Assert.assertNotNull(ci.getPredicateInfo(MultiValueAnnotatedAbst.class
+		Assertions.assertNotNull(ci.getPredicateInfo(MultiValueAnnotatedAbst.class
 				.getMethod("getU")));
 		ci = manager.getSubjectInfo(CollectionValueAnnoatedAbst.class);
-		Assert.assertNotNull(ci
+		Assertions.assertNotNull(ci
 				.getPredicateInfo(CollectionValueAnnoatedAbst.class
 						.getMethod("getU")));
 	}
@@ -64,10 +57,10 @@ public class EntityManagerTest
 	{
 		manager.parseClasses(new String[] { "org.xenei.jena.entities.testing.abst" });
 		SubjectInfo ci = manager.getSubjectInfo(MultiValueAnnotatedAbst.class);
-		Assert.assertNotNull(ci.getPredicateInfo(MultiValueAnnotatedAbst.class
+		Assertions.assertNotNull(ci.getPredicateInfo(MultiValueAnnotatedAbst.class
 				.getMethod("getU")));
 		ci = manager.getSubjectInfo(CollectionValueAnnoatedAbst.class);
-		Assert.assertNotNull(ci
+		Assertions.assertNotNull(ci
 				.getPredicateInfo(CollectionValueAnnoatedAbst.class
 						.getMethod("getU")));
 	}
@@ -82,7 +75,7 @@ public class EntityManagerTest
 					model.createResource(),
 					org.xenei.jena.entities.testing.iface.SimpleInterface.class,
 					UnannotatedInterface.class);
-			Assert.fail("Should have thrown InvokerException");
+			Assertions.fail("Should have thrown InvokerException");
 		}
 		catch (final MissingAnnotation e)
 		{

@@ -20,10 +20,10 @@ import org.apache.jena.rdf.model.RDFNode;
 import org.apache.jena.rdf.model.Resource;
 import org.apache.jena.rdf.model.ResourceFactory;
 
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.xenei.jena.entities.testing.abst.MultiValueAnnotatedAbst;
 import org.xenei.jena.entities.testing.iface.TestInterface;
 
@@ -38,7 +38,7 @@ public class MultiValueEntityTests
 	private final EntityManager manager = EntityManagerFactory
 			.getEntityManager();
 
-	@Before
+	@BeforeEach
 	public void setup() throws MissingAnnotation
 	{
 		m = ModelFactory.createDefaultModel();
@@ -47,7 +47,7 @@ public class MultiValueEntityTests
 		tc = manager.read(r, MultiValueAnnotatedAbst.class);
 	}
 
-	@After
+	@AfterEach
 	public void teardown()
 	{
 		m.close();
@@ -57,23 +57,23 @@ public class MultiValueEntityTests
 	public void testBoolean()
 	{
 		tc.addBool(true);
-		Assert.assertTrue(tc.hasBool(true));
-		Assert.assertTrue(!tc.hasBool(false));
-		Assert.assertEquals(1, tc.getBool().toSet().size());
+		Assertions.assertTrue(tc.hasBool(true));
+		Assertions.assertTrue(!tc.hasBool(false));
+		Assertions.assertEquals(1, tc.getBool().toSet().size());
 
 		tc.addBool(false);
-		Assert.assertTrue(tc.hasBool(true));
-		Assert.assertTrue(tc.hasBool(false));
-		Assert.assertEquals(2, tc.getBool().toSet().size());
+		Assertions.assertTrue(tc.hasBool(true));
+		Assertions.assertTrue(tc.hasBool(false));
+		Assertions.assertEquals(2, tc.getBool().toSet().size());
 
 		tc.addBool(false);
-		Assert.assertEquals(2, tc.getBool().toSet().size());
-		Assert.assertEquals(2, tc.getBool().toList().size());
+		Assertions.assertEquals(2, tc.getBool().toSet().size());
+		Assertions.assertEquals(2, tc.getBool().toList().size());
 
 		tc.removeBool(false);
-		Assert.assertTrue(tc.hasBool(true));
-		Assert.assertTrue(!tc.hasBool(false));
-		Assert.assertEquals(1, tc.getBool().toSet().size());
+		Assertions.assertTrue(tc.hasBool(true));
+		Assertions.assertTrue(!tc.hasBool(false));
+		Assertions.assertEquals(1, tc.getBool().toSet().size());
 
 	}
 
@@ -86,32 +86,32 @@ public class MultiValueEntityTests
 		final Character dd = Character.valueOf(d);
 
 		tc.addChar(c);
-		Assert.assertTrue(tc.hasChar(c));
-		Assert.assertTrue(tc.hasChar(cc));
-		Assert.assertTrue(!tc.hasChar(d));
-		Assert.assertTrue(!tc.hasChar(dd));
-		Assert.assertEquals(1, tc.getChar().toList().size());
+		Assertions.assertTrue(tc.hasChar(c));
+		Assertions.assertTrue(tc.hasChar(cc));
+		Assertions.assertTrue(!tc.hasChar(d));
+		Assertions.assertTrue(!tc.hasChar(dd));
+		Assertions.assertEquals(1, tc.getChar().toList().size());
 
 		tc.addChar(dd);
-		Assert.assertTrue(tc.hasChar(c));
-		Assert.assertTrue(tc.hasChar(cc));
-		Assert.assertTrue(tc.hasChar(d));
-		Assert.assertTrue(tc.hasChar(dd));
-		Assert.assertEquals(2, tc.getChar().toList().size());
+		Assertions.assertTrue(tc.hasChar(c));
+		Assertions.assertTrue(tc.hasChar(cc));
+		Assertions.assertTrue(tc.hasChar(d));
+		Assertions.assertTrue(tc.hasChar(dd));
+		Assertions.assertEquals(2, tc.getChar().toList().size());
 
 		tc.removeChar(cc);
-		Assert.assertTrue(!tc.hasChar(c));
-		Assert.assertTrue(!tc.hasChar(cc));
-		Assert.assertTrue(tc.hasChar(d));
-		Assert.assertTrue(tc.hasChar(dd));
-		Assert.assertEquals(1, tc.getChar().toList().size());
+		Assertions.assertTrue(!tc.hasChar(c));
+		Assertions.assertTrue(!tc.hasChar(cc));
+		Assertions.assertTrue(tc.hasChar(d));
+		Assertions.assertTrue(tc.hasChar(dd));
+		Assertions.assertEquals(1, tc.getChar().toList().size());
 
 		tc.removeChar(d);
-		Assert.assertTrue(!tc.hasChar(c));
-		Assert.assertTrue(!tc.hasChar(cc));
-		Assert.assertTrue(!tc.hasChar(d));
-		Assert.assertTrue(!tc.hasChar(dd));
-		Assert.assertEquals(0, tc.getChar().toList().size());
+		Assertions.assertTrue(!tc.hasChar(c));
+		Assertions.assertTrue(!tc.hasChar(cc));
+		Assertions.assertTrue(!tc.hasChar(d));
+		Assertions.assertTrue(!tc.hasChar(dd));
+		Assertions.assertEquals(0, tc.getChar().toList().size());
 
 	}
 
@@ -125,32 +125,32 @@ public class MultiValueEntityTests
 		final Double dd = Double.valueOf(d);
 
 		tc.addDbl(c);
-		Assert.assertTrue(tc.hasDbl(c));
-		Assert.assertTrue(tc.hasDbl(cc));
-		Assert.assertTrue(!tc.hasDbl(d));
-		Assert.assertTrue(!tc.hasDbl(dd));
-		Assert.assertEquals(1, tc.getDbl().toList().size());
+		Assertions.assertTrue(tc.hasDbl(c));
+		Assertions.assertTrue(tc.hasDbl(cc));
+		Assertions.assertTrue(!tc.hasDbl(d));
+		Assertions.assertTrue(!tc.hasDbl(dd));
+		Assertions.assertEquals(1, tc.getDbl().toList().size());
 
 		tc.addDbl(dd);
-		Assert.assertTrue(tc.hasDbl(c));
-		Assert.assertTrue(tc.hasDbl(cc));
-		Assert.assertTrue(tc.hasDbl(d));
-		Assert.assertTrue(tc.hasDbl(dd));
-		Assert.assertEquals(2, tc.getDbl().toList().size());
+		Assertions.assertTrue(tc.hasDbl(c));
+		Assertions.assertTrue(tc.hasDbl(cc));
+		Assertions.assertTrue(tc.hasDbl(d));
+		Assertions.assertTrue(tc.hasDbl(dd));
+		Assertions.assertEquals(2, tc.getDbl().toList().size());
 
 		tc.removeDbl(cc);
-		Assert.assertTrue(!tc.hasDbl(c));
-		Assert.assertTrue(!tc.hasDbl(cc));
-		Assert.assertTrue(tc.hasDbl(d));
-		Assert.assertTrue(tc.hasDbl(dd));
-		Assert.assertEquals(1, tc.getDbl().toList().size());
+		Assertions.assertTrue(!tc.hasDbl(c));
+		Assertions.assertTrue(!tc.hasDbl(cc));
+		Assertions.assertTrue(tc.hasDbl(d));
+		Assertions.assertTrue(tc.hasDbl(dd));
+		Assertions.assertEquals(1, tc.getDbl().toList().size());
 
 		tc.removeDbl(d);
-		Assert.assertTrue(!tc.hasDbl(c));
-		Assert.assertTrue(!tc.hasDbl(cc));
-		Assert.assertTrue(!tc.hasDbl(d));
-		Assert.assertTrue(!tc.hasDbl(dd));
-		Assert.assertEquals(0, tc.getDbl().toList().size());
+		Assertions.assertTrue(!tc.hasDbl(c));
+		Assertions.assertTrue(!tc.hasDbl(cc));
+		Assertions.assertTrue(!tc.hasDbl(d));
+		Assertions.assertTrue(!tc.hasDbl(dd));
+		Assertions.assertEquals(0, tc.getDbl().toList().size());
 
 	}
 
@@ -163,24 +163,24 @@ public class MultiValueEntityTests
 		final TestInterface dd = manager.read(r, TestInterface.class);
 
 		tc.addEnt(cc);
-		Assert.assertTrue(tc.hasEnt(cc));
-		Assert.assertTrue(!tc.hasEnt(dd));
-		Assert.assertEquals(1, tc.getEnt().toList().size());
+		Assertions.assertTrue(tc.hasEnt(cc));
+		Assertions.assertTrue(!tc.hasEnt(dd));
+		Assertions.assertEquals(1, tc.getEnt().toList().size());
 
 		tc.addEnt(dd);
-		Assert.assertTrue(tc.hasEnt(cc));
-		Assert.assertTrue(tc.hasEnt(dd));
-		Assert.assertEquals(2, tc.getEnt().toList().size());
+		Assertions.assertTrue(tc.hasEnt(cc));
+		Assertions.assertTrue(tc.hasEnt(dd));
+		Assertions.assertEquals(2, tc.getEnt().toList().size());
 
 		tc.removeEnt(cc);
-		Assert.assertTrue(!tc.hasEnt(cc));
-		Assert.assertTrue(tc.hasEnt(dd));
-		Assert.assertEquals(1, tc.getEnt().toList().size());
+		Assertions.assertTrue(!tc.hasEnt(cc));
+		Assertions.assertTrue(tc.hasEnt(dd));
+		Assertions.assertEquals(1, tc.getEnt().toList().size());
 
 		tc.removeEnt(dd);
-		Assert.assertTrue(!tc.hasEnt(cc));
-		Assert.assertTrue(!tc.hasEnt(dd));
-		Assert.assertEquals(0, tc.getEnt().toList().size());
+		Assertions.assertTrue(!tc.hasEnt(cc));
+		Assertions.assertTrue(!tc.hasEnt(dd));
+		Assertions.assertEquals(0, tc.getEnt().toList().size());
 
 	}
 
@@ -194,32 +194,32 @@ public class MultiValueEntityTests
 		final Float dd = Float.valueOf(d);
 
 		tc.addFlt(c);
-		Assert.assertTrue(tc.hasFlt(c));
-		Assert.assertTrue(tc.hasFlt(cc));
-		Assert.assertTrue(!tc.hasFlt(d));
-		Assert.assertTrue(!tc.hasFlt(dd));
-		Assert.assertEquals(1, tc.getFlt().toList().size());
+		Assertions.assertTrue(tc.hasFlt(c));
+		Assertions.assertTrue(tc.hasFlt(cc));
+		Assertions.assertTrue(!tc.hasFlt(d));
+		Assertions.assertTrue(!tc.hasFlt(dd));
+		Assertions.assertEquals(1, tc.getFlt().toList().size());
 
 		tc.addFlt(dd);
-		Assert.assertTrue(tc.hasFlt(c));
-		Assert.assertTrue(tc.hasFlt(cc));
-		Assert.assertTrue(tc.hasFlt(d));
-		Assert.assertTrue(tc.hasFlt(dd));
-		Assert.assertEquals(2, tc.getFlt().toList().size());
+		Assertions.assertTrue(tc.hasFlt(c));
+		Assertions.assertTrue(tc.hasFlt(cc));
+		Assertions.assertTrue(tc.hasFlt(d));
+		Assertions.assertTrue(tc.hasFlt(dd));
+		Assertions.assertEquals(2, tc.getFlt().toList().size());
 
 		tc.removeFlt(cc);
-		Assert.assertTrue(!tc.hasFlt(c));
-		Assert.assertTrue(!tc.hasFlt(cc));
-		Assert.assertTrue(tc.hasFlt(d));
-		Assert.assertTrue(tc.hasFlt(dd));
-		Assert.assertEquals(1, tc.getFlt().toList().size());
+		Assertions.assertTrue(!tc.hasFlt(c));
+		Assertions.assertTrue(!tc.hasFlt(cc));
+		Assertions.assertTrue(tc.hasFlt(d));
+		Assertions.assertTrue(tc.hasFlt(dd));
+		Assertions.assertEquals(1, tc.getFlt().toList().size());
 
 		tc.removeFlt(d);
-		Assert.assertTrue(!tc.hasFlt(c));
-		Assert.assertTrue(!tc.hasFlt(cc));
-		Assert.assertTrue(!tc.hasFlt(d));
-		Assert.assertTrue(!tc.hasFlt(dd));
-		Assert.assertEquals(0, tc.getFlt().toList().size());
+		Assertions.assertTrue(!tc.hasFlt(c));
+		Assertions.assertTrue(!tc.hasFlt(cc));
+		Assertions.assertTrue(!tc.hasFlt(d));
+		Assertions.assertTrue(!tc.hasFlt(dd));
+		Assertions.assertEquals(0, tc.getFlt().toList().size());
 	}
 
 	@Test
@@ -232,32 +232,32 @@ public class MultiValueEntityTests
 		final Integer dd = Integer.valueOf(d);
 
 		tc.addInt(c);
-		Assert.assertTrue(tc.hasInt(c));
-		Assert.assertTrue(tc.hasInt(cc));
-		Assert.assertTrue(!tc.hasInt(d));
-		Assert.assertTrue(!tc.hasInt(dd));
-		Assert.assertEquals(1, tc.getInt().toList().size());
+		Assertions.assertTrue(tc.hasInt(c));
+		Assertions.assertTrue(tc.hasInt(cc));
+		Assertions.assertTrue(!tc.hasInt(d));
+		Assertions.assertTrue(!tc.hasInt(dd));
+		Assertions.assertEquals(1, tc.getInt().toList().size());
 
 		tc.addInt(dd);
-		Assert.assertTrue(tc.hasInt(c));
-		Assert.assertTrue(tc.hasInt(cc));
-		Assert.assertTrue(tc.hasInt(d));
-		Assert.assertTrue(tc.hasInt(dd));
-		Assert.assertEquals(2, tc.getInt().toList().size());
+		Assertions.assertTrue(tc.hasInt(c));
+		Assertions.assertTrue(tc.hasInt(cc));
+		Assertions.assertTrue(tc.hasInt(d));
+		Assertions.assertTrue(tc.hasInt(dd));
+		Assertions.assertEquals(2, tc.getInt().toList().size());
 
 		tc.removeInt(cc);
-		Assert.assertTrue(!tc.hasInt(c));
-		Assert.assertTrue(!tc.hasInt(cc));
-		Assert.assertTrue(tc.hasInt(d));
-		Assert.assertTrue(tc.hasInt(dd));
-		Assert.assertEquals(1, tc.getInt().toList().size());
+		Assertions.assertTrue(!tc.hasInt(c));
+		Assertions.assertTrue(!tc.hasInt(cc));
+		Assertions.assertTrue(tc.hasInt(d));
+		Assertions.assertTrue(tc.hasInt(dd));
+		Assertions.assertEquals(1, tc.getInt().toList().size());
 
 		tc.removeInt(d);
-		Assert.assertTrue(!tc.hasInt(c));
-		Assert.assertTrue(!tc.hasInt(cc));
-		Assert.assertTrue(!tc.hasInt(d));
-		Assert.assertTrue(!tc.hasInt(dd));
-		Assert.assertEquals(0, tc.getInt().toList().size());
+		Assertions.assertTrue(!tc.hasInt(c));
+		Assertions.assertTrue(!tc.hasInt(cc));
+		Assertions.assertTrue(!tc.hasInt(d));
+		Assertions.assertTrue(!tc.hasInt(dd));
+		Assertions.assertEquals(0, tc.getInt().toList().size());
 	}
 
 	@Test
@@ -270,32 +270,32 @@ public class MultiValueEntityTests
 		final Long dd = Long.valueOf(d);
 
 		tc.addLng(c);
-		Assert.assertTrue(tc.hasLng(c));
-		Assert.assertTrue(tc.hasLng(cc));
-		Assert.assertTrue(!tc.hasLng(d));
-		Assert.assertTrue(!tc.hasLng(dd));
-		Assert.assertEquals(1, tc.getLng().toList().size());
+		Assertions.assertTrue(tc.hasLng(c));
+		Assertions.assertTrue(tc.hasLng(cc));
+		Assertions.assertTrue(!tc.hasLng(d));
+		Assertions.assertTrue(!tc.hasLng(dd));
+		Assertions.assertEquals(1, tc.getLng().toList().size());
 
 		tc.addLng(dd);
-		Assert.assertTrue(tc.hasLng(c));
-		Assert.assertTrue(tc.hasLng(cc));
-		Assert.assertTrue(tc.hasLng(d));
-		Assert.assertTrue(tc.hasLng(dd));
-		Assert.assertEquals(2, tc.getLng().toList().size());
+		Assertions.assertTrue(tc.hasLng(c));
+		Assertions.assertTrue(tc.hasLng(cc));
+		Assertions.assertTrue(tc.hasLng(d));
+		Assertions.assertTrue(tc.hasLng(dd));
+		Assertions.assertEquals(2, tc.getLng().toList().size());
 
 		tc.removeLng(cc);
-		Assert.assertTrue(!tc.hasLng(c));
-		Assert.assertTrue(!tc.hasLng(cc));
-		Assert.assertTrue(tc.hasLng(d));
-		Assert.assertTrue(tc.hasLng(dd));
-		Assert.assertEquals(1, tc.getLng().toList().size());
+		Assertions.assertTrue(!tc.hasLng(c));
+		Assertions.assertTrue(!tc.hasLng(cc));
+		Assertions.assertTrue(tc.hasLng(d));
+		Assertions.assertTrue(tc.hasLng(dd));
+		Assertions.assertEquals(1, tc.getLng().toList().size());
 
 		tc.removeLng(d);
-		Assert.assertTrue(!tc.hasLng(c));
-		Assert.assertTrue(!tc.hasLng(cc));
-		Assert.assertTrue(!tc.hasLng(d));
-		Assert.assertTrue(!tc.hasLng(dd));
-		Assert.assertEquals(0, tc.getLng().toList().size());
+		Assertions.assertTrue(!tc.hasLng(c));
+		Assertions.assertTrue(!tc.hasLng(cc));
+		Assertions.assertTrue(!tc.hasLng(d));
+		Assertions.assertTrue(!tc.hasLng(dd));
+		Assertions.assertEquals(0, tc.getLng().toList().size());
 
 	}
 
@@ -308,24 +308,24 @@ public class MultiValueEntityTests
 		;
 
 		tc.addRDF(cc);
-		Assert.assertTrue(tc.hasRDF(cc));
-		Assert.assertTrue(!tc.hasRDF(dd));
-		Assert.assertEquals(1, tc.getRDF().toList().size());
+		Assertions.assertTrue(tc.hasRDF(cc));
+		Assertions.assertTrue(!tc.hasRDF(dd));
+		Assertions.assertEquals(1, tc.getRDF().toList().size());
 
 		tc.addRDF(dd);
-		Assert.assertTrue(tc.hasRDF(cc));
-		Assert.assertTrue(tc.hasRDF(dd));
-		Assert.assertEquals(2, tc.getRDF().toList().size());
+		Assertions.assertTrue(tc.hasRDF(cc));
+		Assertions.assertTrue(tc.hasRDF(dd));
+		Assertions.assertEquals(2, tc.getRDF().toList().size());
 
 		tc.removeRDF(cc);
-		Assert.assertTrue(!tc.hasRDF(cc));
-		Assert.assertTrue(tc.hasRDF(dd));
-		Assert.assertEquals(1, tc.getRDF().toList().size());
+		Assertions.assertTrue(!tc.hasRDF(cc));
+		Assertions.assertTrue(tc.hasRDF(dd));
+		Assertions.assertEquals(1, tc.getRDF().toList().size());
 
 		tc.removeRDF(dd);
-		Assert.assertTrue(!tc.hasRDF(cc));
-		Assert.assertTrue(!tc.hasRDF(dd));
-		Assert.assertEquals(0, tc.getRDF().toList().size());
+		Assertions.assertTrue(!tc.hasRDF(cc));
+		Assertions.assertTrue(!tc.hasRDF(dd));
+		Assertions.assertEquals(0, tc.getRDF().toList().size());
 	}
 
 	@Test
@@ -336,24 +336,24 @@ public class MultiValueEntityTests
 		final String dd = "d";
 
 		tc.addStr(cc);
-		Assert.assertTrue(tc.hasStr(cc));
-		Assert.assertTrue(!tc.hasStr(dd));
-		Assert.assertEquals(1, tc.getStr().toList().size());
+		Assertions.assertTrue(tc.hasStr(cc));
+		Assertions.assertTrue(!tc.hasStr(dd));
+		Assertions.assertEquals(1, tc.getStr().toList().size());
 
 		tc.addStr(dd);
-		Assert.assertTrue(tc.hasStr(cc));
-		Assert.assertTrue(tc.hasStr(dd));
-		Assert.assertEquals(2, tc.getStr().toList().size());
+		Assertions.assertTrue(tc.hasStr(cc));
+		Assertions.assertTrue(tc.hasStr(dd));
+		Assertions.assertEquals(2, tc.getStr().toList().size());
 
 		tc.removeStr(cc);
-		Assert.assertTrue(!tc.hasStr(cc));
-		Assert.assertTrue(tc.hasStr(dd));
-		Assert.assertEquals(1, tc.getStr().toList().size());
+		Assertions.assertTrue(!tc.hasStr(cc));
+		Assertions.assertTrue(tc.hasStr(dd));
+		Assertions.assertEquals(1, tc.getStr().toList().size());
 
 		tc.removeStr(dd);
-		Assert.assertTrue(!tc.hasStr(cc));
-		Assert.assertTrue(!tc.hasStr(dd));
-		Assert.assertEquals(0, tc.getStr().toList().size());
+		Assertions.assertTrue(!tc.hasStr(cc));
+		Assertions.assertTrue(!tc.hasStr(dd));
+		Assertions.assertEquals(0, tc.getStr().toList().size());
 	}
 
 	@Test
@@ -364,36 +364,36 @@ public class MultiValueEntityTests
 		final Resource dd = ResourceFactory.createResource("dd");
 
 		tc.addU("cc");
-		Assert.assertTrue(tc.hasU(cc));
-		Assert.assertTrue(tc.hasU("cc"));
-		Assert.assertTrue(!tc.hasU(dd));
-		Assert.assertTrue(!tc.hasU("dd"));
-		Assert.assertEquals(1, tc.getU().toList().size());
-		Assert.assertEquals(1, tc.getU2().toList().size());
+		Assertions.assertTrue(tc.hasU(cc));
+		Assertions.assertTrue(tc.hasU("cc"));
+		Assertions.assertTrue(!tc.hasU(dd));
+		Assertions.assertTrue(!tc.hasU("dd"));
+		Assertions.assertEquals(1, tc.getU().toList().size());
+		Assertions.assertEquals(1, tc.getU2().toList().size());
 
 		tc.addU("dd");
-		Assert.assertTrue(tc.hasU(cc));
-		Assert.assertTrue(tc.hasU("cc"));
-		Assert.assertTrue(tc.hasU(dd));
-		Assert.assertTrue(tc.hasU("dd"));
-		Assert.assertEquals(2, tc.getU().toList().size());
-		Assert.assertEquals(2, tc.getU2().toList().size());
+		Assertions.assertTrue(tc.hasU(cc));
+		Assertions.assertTrue(tc.hasU("cc"));
+		Assertions.assertTrue(tc.hasU(dd));
+		Assertions.assertTrue(tc.hasU("dd"));
+		Assertions.assertEquals(2, tc.getU().toList().size());
+		Assertions.assertEquals(2, tc.getU2().toList().size());
 
 		tc.removeU(cc);
-		Assert.assertTrue(!tc.hasU(cc));
-		Assert.assertTrue(!tc.hasU("cc"));
-		Assert.assertTrue(tc.hasU(dd));
-		Assert.assertTrue(tc.hasU("dd"));
-		Assert.assertEquals(1, tc.getU().toList().size());
-		Assert.assertEquals(1, tc.getU2().toList().size());
+		Assertions.assertTrue(!tc.hasU(cc));
+		Assertions.assertTrue(!tc.hasU("cc"));
+		Assertions.assertTrue(tc.hasU(dd));
+		Assertions.assertTrue(tc.hasU("dd"));
+		Assertions.assertEquals(1, tc.getU().toList().size());
+		Assertions.assertEquals(1, tc.getU2().toList().size());
 
 		tc.removeU("dd");
-		Assert.assertTrue(!tc.hasU(cc));
-		Assert.assertTrue(!tc.hasU("cc"));
-		Assert.assertTrue(!tc.hasU(dd));
-		Assert.assertTrue(!tc.hasU("dd"));
-		Assert.assertEquals(0, tc.getU().toList().size());
-		Assert.assertEquals(0, tc.getU2().toList().size());
+		Assertions.assertTrue(!tc.hasU(cc));
+		Assertions.assertTrue(!tc.hasU("cc"));
+		Assertions.assertTrue(!tc.hasU(dd));
+		Assertions.assertTrue(!tc.hasU("dd"));
+		Assertions.assertEquals(0, tc.getU().toList().size());
+		Assertions.assertEquals(0, tc.getU2().toList().size());
 
 	}
 }

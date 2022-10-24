@@ -4,10 +4,9 @@ import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.rdf.model.Resource;
 
-import org.apache.log4j.PropertyConfigurator;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.xenei.jena.entities.testing.bad.UnannotatedInterface;
 import org.xenei.jena.entities.testing.iface.TwoValueSimpleInterface;
 
@@ -19,12 +18,12 @@ public class DirectInheritanceTest
 	private TwoValueSimpleInterface theInstance;
 	private Resource r;
 
-	@Before
+	@BeforeEach
 	public void setup() throws MissingAnnotation
 	{
-		PropertyConfigurator.configure("./src/test/resources/log4j.properties");
 		m = ModelFactory.createDefaultModel();
 		r = m.createResource("http://localhost/DirectInheritanceTest");
+		System.err.println( "getting instance" );
 		theInstance = manager.read(r, TwoValueSimpleInterface.class);
 	}
 
@@ -32,21 +31,21 @@ public class DirectInheritanceTest
 	public void testEmptyIsNull()
 	{
 		theInstance.setZ("foo");
-		Assert.assertNotNull(theInstance.getZ());
-		Assert.assertEquals("foo", theInstance.getZ());
+		Assertions.assertNotNull(theInstance.getZ());
+		Assertions.assertEquals("foo", theInstance.getZ());
 
 		theInstance.setZ("");
-		Assert.assertNull(theInstance.getZ());
+		Assertions.assertNull(theInstance.getZ());
 
 	}
 
 	@Test
 	public void testNullMethods()
 	{
-		try
+        try
 		{
 			manager.read(r, UnannotatedInterface.class);
-			Assert.fail("Should have thrown MissingAnnotation");
+			Assertions.fail("Should have thrown MissingAnnotation");
 		}
 		catch (final MissingAnnotation e)
 		{
@@ -59,15 +58,15 @@ public class DirectInheritanceTest
 	 * @Test
 	 * public void testResourceAncestorMethods()
 	 * {
-	 * 
-	 * Assert.assertEquals(r.getModel(), theInstance.getModel());
-	 * 
+	 *
+	 * Assertions.assertEquals(r.getModel(), theInstance.getModel());
+	 *
 	 * }
-	 * 
+	 *
 	 * @Test
 	 * public void testResourceMethods()
 	 * {
-	 * Assert.assertEquals(r.getURI(), theInstance.getURI());
+	 * Assertions.assertEquals(r.getURI(), theInstance.getURI());
 	 * }
 	 */
 }

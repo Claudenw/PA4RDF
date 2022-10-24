@@ -3,7 +3,7 @@ package org.xenei.jena.entities.nested;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.xenei.jena.entities.EntityManager;
 import org.xenei.jena.entities.EntityManagerFactory;
 import org.xenei.jena.entities.annotations.Predicate;

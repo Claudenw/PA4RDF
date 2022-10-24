@@ -5,9 +5,9 @@ import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.rdf.model.Property;
 import org.apache.jena.rdf.model.Resource;
 
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.xenei.jena.entities.EntityManager;
 import org.xenei.jena.entities.EntityManagerFactory;
 import org.xenei.jena.entities.MissingAnnotation;
@@ -70,7 +70,7 @@ public class ImplementedAnnotationTest
 
 	private final EntityManager em = EntityManagerFactory.getEntityManager();
 
-	@Before
+	@BeforeEach
 	public void setup()
 	{
 		model.removeAll();
@@ -104,13 +104,13 @@ public class ImplementedAnnotationTest
 			final AnnotationImplementation ai = em.read(resource,
 					AnnotationImplementation.class);
 			final String name = ai.getName();
-			Assert.assertEquals("name", name);
+			Assertions.assertEquals("name", name);
 			final String value = ai.getValue();
-			Assert.assertEquals("modelValue", value);
+			Assertions.assertEquals("modelValue", value);
 		}
 		catch (final RuntimeException e)
 		{
-			Assert.assertEquals("Not IMPLEMENTED", e.getMessage());
+			Assertions.assertEquals("Not IMPLEMENTED", e.getMessage());
 		}
 	}
 
@@ -121,13 +121,13 @@ public class ImplementedAnnotationTest
 		{
 			final AnnotationImplementation nai = new AnnotationImplementation();
 			final String name = nai.getName();
-			Assert.assertEquals("name", name);
+			Assertions.assertEquals("name", name);
 			nai.getValue();
-			Assert.fail("Should have thrown an IllegalArgumentException");
+			Assertions.fail("Should have thrown an IllegalArgumentException");
 		}
 		catch (final IllegalArgumentException e)
 		{
-			Assert.assertEquals("NOT A VALID METHOD", e.getMessage());
+			Assertions.assertEquals("NOT A VALID METHOD", e.getMessage());
 		}
 	}
 
@@ -138,13 +138,13 @@ public class ImplementedAnnotationTest
 		{
 			final NoAnnotationImplementation nai = new NoAnnotationImplementation();
 			final String name = nai.getName();
-			Assert.assertEquals("name", name);
+			Assertions.assertEquals("name", name);
 			nai.getValue();
-			Assert.fail("Should have thrown an IllegalArgumentException");
+			Assertions.fail("Should have thrown an IllegalArgumentException");
 		}
 		catch (final IllegalArgumentException e)
 		{
-			Assert.assertEquals("NOT A VALID METHOD", e.getMessage());
+			Assertions.assertEquals("NOT A VALID METHOD", e.getMessage());
 		}
 	}
 

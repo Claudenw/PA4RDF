@@ -78,9 +78,8 @@ public class SubjectInfoImpl implements SubjectInfo {
         if (m.getParameterTypes().length == 0) {
             // must be a getter or single value remove
             return getPredicateInfo( m.getName(), m.getReturnType() );
-        } else {
-            return getPredicateInfo( m.getName(), m.getParameterTypes()[0] );
         }
+        return getPredicateInfo( m.getName(), m.getParameterTypes()[0] );
     }
 
     private PredicateInfo getPredicateInfo(final String function) {

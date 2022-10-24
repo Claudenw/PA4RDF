@@ -4,12 +4,11 @@ import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.rdf.model.Resource;
 
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.xenei.jena.entities.EntityManager;
-import org.xenei.jena.entities.MissingAnnotation;
 import org.xenei.jena.entities.ResourceWrapper;
 import org.xenei.jena.entities.impl.EntityManagerImpl;
 import org.xenei.jena.entities.impl.SubjectInfoImpl;
@@ -27,14 +26,14 @@ abstract public class BaseAbstractManagerTest
 		this.classUnderTest = classUnderTest;
 	}
 
-	@Before
-	public void setup() throws MissingAnnotation
+	@BeforeEach
+	public void setup()
 	{
 		model = ModelFactory.createDefaultModel();
 		subjectInfo = (SubjectInfoImpl) manager.getSubjectInfo(classUnderTest);
 	}
 
-	@After
+	@AfterEach
 	public void teardown()
 	{
 		model.close();
@@ -56,7 +55,7 @@ abstract public class BaseAbstractManagerTest
 		{
 			r2 = (Resource) o;
 		}
-		Assert.assertEquals(r, r2);
+		Assertions.assertEquals(r, r2);
 	}
 
 }

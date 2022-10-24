@@ -2,8 +2,8 @@ package org.xenei.jena.entities.impl.manager;
 
 import org.apache.jena.rdf.model.Resource;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 import org.xenei.jena.entities.testing.impl.SimpleInterfaceImpl;
 
 public class PostExecTest extends BaseAbstractManagerTest
@@ -21,7 +21,7 @@ public class PostExecTest extends BaseAbstractManagerTest
 		
 		o.setX( "foo" );
 		o.getX();
-		Assert.assertEquals( "foo", o.lastGetX );
+		Assertions.assertEquals( "foo", o.lastGetX );
 		
 	}
 

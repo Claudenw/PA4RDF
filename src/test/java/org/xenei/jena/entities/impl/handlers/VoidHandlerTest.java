@@ -3,9 +3,9 @@ package org.xenei.jena.entities.impl.handlers;
 import org.apache.jena.rdf.model.RDFNode;
 import org.apache.jena.rdf.model.ResourceFactory;
 
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class VoidHandlerTest implements HandlerTestInterface
 {
@@ -13,7 +13,7 @@ public class VoidHandlerTest implements HandlerTestInterface
 	RDFNode node;
 	Integer instance;
 
-	@Before
+	@BeforeEach
 	public void setup()
 	{
 		handler = new VoidHandler();
@@ -26,18 +26,18 @@ public class VoidHandlerTest implements HandlerTestInterface
 	public void testCreateRDFNode()
 	{
 		final RDFNode n = handler.createRDFNode(Integer.valueOf(5));
-		Assert.assertNull(n);
+		Assertions.assertNull(n);
 	}
 
 	@Override
 	@Test
 	public void testIsEmpty()
 	{
-		Assert.assertTrue(handler.isEmpty(null));
-		Assert.assertTrue(handler.isEmpty(instance));
-		Assert.assertTrue(handler.isEmpty(""));
-		Assert.assertTrue(handler.isEmpty(" "));
-		Assert.assertTrue(handler.isEmpty("foo"));
+		Assertions.assertTrue(handler.isEmpty(null));
+		Assertions.assertTrue(handler.isEmpty(instance));
+		Assertions.assertTrue(handler.isEmpty(""));
+		Assertions.assertTrue(handler.isEmpty(" "));
+		Assertions.assertTrue(handler.isEmpty("foo"));
 
 	}
 
@@ -46,6 +46,6 @@ public class VoidHandlerTest implements HandlerTestInterface
 	public void testParseObject()
 	{
 		final Object o = handler.parseObject(node);
-		Assert.assertNull(o);
+		Assertions.assertNull(o);
 	}
 }

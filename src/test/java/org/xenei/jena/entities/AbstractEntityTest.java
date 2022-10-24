@@ -4,10 +4,11 @@ import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.rdf.model.Resource;
 
-import org.apache.log4j.PropertyConfigurator;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.BeforeEach;
 import org.xenei.jena.entities.testing.abst.AbstractEntity;
 
 public class AbstractEntityTest
@@ -18,10 +19,9 @@ public class AbstractEntityTest
 	private AbstractEntity theInstance;
 	private Resource r;
 
-	@Before
+	@BeforeEach
 	public void setup() throws MissingAnnotation
 	{
-		PropertyConfigurator.configure("./src/test/resources/log4j.properties");
 		m = ModelFactory.createDefaultModel();
 		r = m.createResource("http://localhost/DirectInheritanceTest");
 		theInstance = manager.read(r, AbstractEntity.class);
@@ -30,17 +30,17 @@ public class AbstractEntityTest
 	@Test
 	public void testConcreteMethod()
 	{
-		Assert.assertEquals("Y", theInstance.getY());
+		assertEquals("Y", theInstance.getY());
 	}
 
 	@Test
 	public void testSetRetrieve()
 	{
 		String x = theInstance.getX();
-		Assert.assertNull(x);
+		assertNull(x);
 		theInstance.setX("foo");
 		x = theInstance.getX();
-		Assert.assertEquals("foo", theInstance.getX());
+		assertEquals("foo", theInstance.getX());
 	}
 
 }

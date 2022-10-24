@@ -3,8 +3,8 @@ package org.xenei.jena.entities.impl.manager;
 import org.apache.jena.datatypes.TypeMapper;
 import org.apache.jena.rdf.model.RDFNode;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 import org.xenei.jena.entities.impl.ObjectHandler;
 import org.xenei.jena.entities.impl.PredicateInfoImpl;
 import org.xenei.jena.entities.impl.handlers.EntityHandler;
@@ -31,48 +31,48 @@ public abstract class AbstractSingleValueTest extends BaseAbstractManagerTest
 		final ObjectHandler handler = new LiteralHandler(TypeMapper
 				.getInstance().getTypeByClass(Boolean.class));
 
-		Assert.assertEquals("isBool", pi.getMethodName());
-		Assert.assertEquals(handler, pi.getObjectHandler());
-		Assert.assertEquals(Boolean.class, pi.getValueClass());
-		Assert.assertEquals(BaseAbstractManagerTest.NS + "bool",
+		Assertions.assertEquals("isBool", pi.getMethodName());
+		Assertions.assertEquals(handler, pi.getObjectHandler());
+		Assertions.assertEquals(Boolean.class, pi.getValueClass());
+		Assertions.assertEquals(BaseAbstractManagerTest.NS + "bool",
 				pi.getUriString());
-		Assert.assertEquals(BaseAbstractManagerTest.NS, pi.getNamespace());
+		Assertions.assertEquals(BaseAbstractManagerTest.NS, pi.getNamespace());
 
 		pi = (PredicateInfoImpl) subjectInfo.getPredicateInfo("setBool",
 				Boolean.class);
-		Assert.assertEquals("setBool", pi.getMethodName());
-		Assert.assertEquals(handler, pi.getObjectHandler());
-		Assert.assertEquals(Boolean.class, pi.getValueClass());
-		Assert.assertEquals(BaseAbstractManagerTest.NS + "bool",
+		Assertions.assertEquals("setBool", pi.getMethodName());
+		Assertions.assertEquals(handler, pi.getObjectHandler());
+		Assertions.assertEquals(Boolean.class, pi.getValueClass());
+		Assertions.assertEquals(BaseAbstractManagerTest.NS + "bool",
 				pi.getUriString());
-		Assert.assertEquals(BaseAbstractManagerTest.NS, pi.getNamespace());
+		Assertions.assertEquals(BaseAbstractManagerTest.NS, pi.getNamespace());
 
 		pi = (PredicateInfoImpl) subjectInfo.getPredicateInfo("removeBool",
 				null);
-		Assert.assertEquals("removeBool", pi.getMethodName());
-		Assert.assertEquals(new VoidHandler(), pi.getObjectHandler());
-		Assert.assertEquals(null, pi.getValueClass());
-		Assert.assertEquals(BaseAbstractManagerTest.NS + "bool",
+		Assertions.assertEquals("removeBool", pi.getMethodName());
+		Assertions.assertEquals(new VoidHandler(), pi.getObjectHandler());
+		Assertions.assertEquals(null, pi.getValueClass());
+		Assertions.assertEquals(BaseAbstractManagerTest.NS + "bool",
 				pi.getUriString());
-		Assert.assertEquals(BaseAbstractManagerTest.NS, pi.getNamespace());
+		Assertions.assertEquals(BaseAbstractManagerTest.NS, pi.getNamespace());
 
 		final Class<?> c = (Class<?>) Boolean.class.getField("TYPE").get(null);
 
 		pi = (PredicateInfoImpl) subjectInfo.getPredicateInfo("isBool", c);
-		Assert.assertEquals("isBool", pi.getMethodName());
-		Assert.assertEquals(handler, pi.getObjectHandler());
-		Assert.assertEquals(Boolean.class, pi.getValueClass());
-		Assert.assertEquals(BaseAbstractManagerTest.NS + "bool",
+		Assertions.assertEquals("isBool", pi.getMethodName());
+		Assertions.assertEquals(handler, pi.getObjectHandler());
+		Assertions.assertEquals(Boolean.class, pi.getValueClass());
+		Assertions.assertEquals(BaseAbstractManagerTest.NS + "bool",
 				pi.getUriString());
-		Assert.assertEquals(BaseAbstractManagerTest.NS, pi.getNamespace());
+		Assertions.assertEquals(BaseAbstractManagerTest.NS, pi.getNamespace());
 
 		pi = (PredicateInfoImpl) subjectInfo.getPredicateInfo("setBool", c);
-		Assert.assertEquals("setBool", pi.getMethodName());
-		Assert.assertEquals(handler, pi.getObjectHandler());
-		Assert.assertEquals(Boolean.class, pi.getValueClass());
-		Assert.assertEquals(BaseAbstractManagerTest.NS + "bool",
+		Assertions.assertEquals("setBool", pi.getMethodName());
+		Assertions.assertEquals(handler, pi.getObjectHandler());
+		Assertions.assertEquals(Boolean.class, pi.getValueClass());
+		Assertions.assertEquals(BaseAbstractManagerTest.NS + "bool",
 				pi.getUriString());
-		Assert.assertEquals(BaseAbstractManagerTest.NS, pi.getNamespace());
+		Assertions.assertEquals(BaseAbstractManagerTest.NS, pi.getNamespace());
 
 	}
 
@@ -85,49 +85,49 @@ public abstract class AbstractSingleValueTest extends BaseAbstractManagerTest
 		final ObjectHandler handler = new LiteralHandler(TypeMapper
 				.getInstance().getTypeByClass(Character.class));
 
-		Assert.assertEquals("getChar", pi.getMethodName());
-		Assert.assertEquals(handler, pi.getObjectHandler());
-		Assert.assertEquals(Character.class, pi.getValueClass());
-		Assert.assertEquals(BaseAbstractManagerTest.NS + "char",
+		Assertions.assertEquals("getChar", pi.getMethodName());
+		Assertions.assertEquals(handler, pi.getObjectHandler());
+		Assertions.assertEquals(Character.class, pi.getValueClass());
+		Assertions.assertEquals(BaseAbstractManagerTest.NS + "char",
 				pi.getUriString());
-		Assert.assertEquals(BaseAbstractManagerTest.NS, pi.getNamespace());
+		Assertions.assertEquals(BaseAbstractManagerTest.NS, pi.getNamespace());
 
 		pi = (PredicateInfoImpl) subjectInfo.getPredicateInfo("setChar",
 				Character.class);
-		Assert.assertEquals("setChar", pi.getMethodName());
-		Assert.assertEquals(handler, pi.getObjectHandler());
-		Assert.assertEquals(Character.class, pi.getValueClass());
-		Assert.assertEquals(BaseAbstractManagerTest.NS + "char",
+		Assertions.assertEquals("setChar", pi.getMethodName());
+		Assertions.assertEquals(handler, pi.getObjectHandler());
+		Assertions.assertEquals(Character.class, pi.getValueClass());
+		Assertions.assertEquals(BaseAbstractManagerTest.NS + "char",
 				pi.getUriString());
-		Assert.assertEquals(BaseAbstractManagerTest.NS, pi.getNamespace());
+		Assertions.assertEquals(BaseAbstractManagerTest.NS, pi.getNamespace());
 
 		pi = (PredicateInfoImpl) subjectInfo.getPredicateInfo("removeChar",
 				null);
-		Assert.assertEquals("removeChar", pi.getMethodName());
-		Assert.assertEquals(new VoidHandler(), pi.getObjectHandler());
-		Assert.assertEquals(null, pi.getValueClass());
-		Assert.assertEquals(BaseAbstractManagerTest.NS + "char",
+		Assertions.assertEquals("removeChar", pi.getMethodName());
+		Assertions.assertEquals(new VoidHandler(), pi.getObjectHandler());
+		Assertions.assertEquals(null, pi.getValueClass());
+		Assertions.assertEquals(BaseAbstractManagerTest.NS + "char",
 				pi.getUriString());
-		Assert.assertEquals(BaseAbstractManagerTest.NS, pi.getNamespace());
+		Assertions.assertEquals(BaseAbstractManagerTest.NS, pi.getNamespace());
 
 		final Class<?> c = (Class<?>) Character.class.getField("TYPE")
 				.get(null);
 
 		pi = (PredicateInfoImpl) subjectInfo.getPredicateInfo("getChar", c);
-		Assert.assertEquals("getChar", pi.getMethodName());
-		Assert.assertEquals(handler, pi.getObjectHandler());
-		Assert.assertEquals(Character.class, pi.getValueClass());
-		Assert.assertEquals(BaseAbstractManagerTest.NS + "char",
+		Assertions.assertEquals("getChar", pi.getMethodName());
+		Assertions.assertEquals(handler, pi.getObjectHandler());
+		Assertions.assertEquals(Character.class, pi.getValueClass());
+		Assertions.assertEquals(BaseAbstractManagerTest.NS + "char",
 				pi.getUriString());
-		Assert.assertEquals(BaseAbstractManagerTest.NS, pi.getNamespace());
+		Assertions.assertEquals(BaseAbstractManagerTest.NS, pi.getNamespace());
 
 		pi = (PredicateInfoImpl) subjectInfo.getPredicateInfo("setChar", c);
-		Assert.assertEquals("setChar", pi.getMethodName());
-		Assert.assertEquals(handler, pi.getObjectHandler());
-		Assert.assertEquals(Character.class, pi.getValueClass());
-		Assert.assertEquals(BaseAbstractManagerTest.NS + "char",
+		Assertions.assertEquals("setChar", pi.getMethodName());
+		Assertions.assertEquals(handler, pi.getObjectHandler());
+		Assertions.assertEquals(Character.class, pi.getValueClass());
+		Assertions.assertEquals(BaseAbstractManagerTest.NS + "char",
 				pi.getUriString());
-		Assert.assertEquals(BaseAbstractManagerTest.NS, pi.getNamespace());
+		Assertions.assertEquals(BaseAbstractManagerTest.NS, pi.getNamespace());
 
 	}
 
@@ -140,48 +140,48 @@ public abstract class AbstractSingleValueTest extends BaseAbstractManagerTest
 		final ObjectHandler handler = new LiteralHandler(TypeMapper
 				.getInstance().getTypeByClass(Double.class));
 
-		Assert.assertEquals("getDbl", pi.getMethodName());
-		Assert.assertEquals(handler, pi.getObjectHandler());
-		Assert.assertEquals(Double.class, pi.getValueClass());
-		Assert.assertEquals(BaseAbstractManagerTest.NS + "dbl",
+		Assertions.assertEquals("getDbl", pi.getMethodName());
+		Assertions.assertEquals(handler, pi.getObjectHandler());
+		Assertions.assertEquals(Double.class, pi.getValueClass());
+		Assertions.assertEquals(BaseAbstractManagerTest.NS + "dbl",
 				pi.getUriString());
-		Assert.assertEquals(BaseAbstractManagerTest.NS, pi.getNamespace());
+		Assertions.assertEquals(BaseAbstractManagerTest.NS, pi.getNamespace());
 
 		pi = (PredicateInfoImpl) subjectInfo.getPredicateInfo("setDbl",
 				Double.class);
-		Assert.assertEquals("setDbl", pi.getMethodName());
-		Assert.assertEquals(handler, pi.getObjectHandler());
-		Assert.assertEquals(Double.class, pi.getValueClass());
-		Assert.assertEquals(BaseAbstractManagerTest.NS + "dbl",
+		Assertions.assertEquals("setDbl", pi.getMethodName());
+		Assertions.assertEquals(handler, pi.getObjectHandler());
+		Assertions.assertEquals(Double.class, pi.getValueClass());
+		Assertions.assertEquals(BaseAbstractManagerTest.NS + "dbl",
 				pi.getUriString());
-		Assert.assertEquals(BaseAbstractManagerTest.NS, pi.getNamespace());
+		Assertions.assertEquals(BaseAbstractManagerTest.NS, pi.getNamespace());
 
 		pi = (PredicateInfoImpl) subjectInfo
 				.getPredicateInfo("removeDbl", null);
-		Assert.assertEquals("removeDbl", pi.getMethodName());
-		Assert.assertEquals(new VoidHandler(), pi.getObjectHandler());
-		Assert.assertEquals(null, pi.getValueClass());
-		Assert.assertEquals(BaseAbstractManagerTest.NS + "dbl",
+		Assertions.assertEquals("removeDbl", pi.getMethodName());
+		Assertions.assertEquals(new VoidHandler(), pi.getObjectHandler());
+		Assertions.assertEquals(null, pi.getValueClass());
+		Assertions.assertEquals(BaseAbstractManagerTest.NS + "dbl",
 				pi.getUriString());
-		Assert.assertEquals(BaseAbstractManagerTest.NS, pi.getNamespace());
+		Assertions.assertEquals(BaseAbstractManagerTest.NS, pi.getNamespace());
 
 		final Class<?> c = (Class<?>) Double.class.getField("TYPE").get(null);
 
 		pi = (PredicateInfoImpl) subjectInfo.getPredicateInfo("getDbl", c);
-		Assert.assertEquals("getDbl", pi.getMethodName());
-		Assert.assertEquals(handler, pi.getObjectHandler());
-		Assert.assertEquals(Double.class, pi.getValueClass());
-		Assert.assertEquals(BaseAbstractManagerTest.NS + "dbl",
+		Assertions.assertEquals("getDbl", pi.getMethodName());
+		Assertions.assertEquals(handler, pi.getObjectHandler());
+		Assertions.assertEquals(Double.class, pi.getValueClass());
+		Assertions.assertEquals(BaseAbstractManagerTest.NS + "dbl",
 				pi.getUriString());
-		Assert.assertEquals(BaseAbstractManagerTest.NS, pi.getNamespace());
+		Assertions.assertEquals(BaseAbstractManagerTest.NS, pi.getNamespace());
 
 		pi = (PredicateInfoImpl) subjectInfo.getPredicateInfo("setDbl", c);
-		Assert.assertEquals("setDbl", pi.getMethodName());
-		Assert.assertEquals(handler, pi.getObjectHandler());
-		Assert.assertEquals(Double.class, pi.getValueClass());
-		Assert.assertEquals(BaseAbstractManagerTest.NS + "dbl",
+		Assertions.assertEquals("setDbl", pi.getMethodName());
+		Assertions.assertEquals(handler, pi.getObjectHandler());
+		Assertions.assertEquals(Double.class, pi.getValueClass());
+		Assertions.assertEquals(BaseAbstractManagerTest.NS + "dbl",
 				pi.getUriString());
-		Assert.assertEquals(BaseAbstractManagerTest.NS, pi.getNamespace());
+		Assertions.assertEquals(BaseAbstractManagerTest.NS, pi.getNamespace());
 
 	}
 
@@ -193,30 +193,30 @@ public abstract class AbstractSingleValueTest extends BaseAbstractManagerTest
 		final ObjectHandler handler = new EntityHandler(manager,
 				TestInterface.class);
 
-		Assert.assertEquals("getEnt", pi.getMethodName());
-		Assert.assertEquals(handler, pi.getObjectHandler());
-		Assert.assertEquals(TestInterface.class, pi.getValueClass());
-		Assert.assertEquals(BaseAbstractManagerTest.NS + "ent",
+		Assertions.assertEquals("getEnt", pi.getMethodName());
+		Assertions.assertEquals(handler, pi.getObjectHandler());
+		Assertions.assertEquals(TestInterface.class, pi.getValueClass());
+		Assertions.assertEquals(BaseAbstractManagerTest.NS + "ent",
 				pi.getUriString());
-		Assert.assertEquals(BaseAbstractManagerTest.NS, pi.getNamespace());
+		Assertions.assertEquals(BaseAbstractManagerTest.NS, pi.getNamespace());
 
 		pi = (PredicateInfoImpl) subjectInfo.getPredicateInfo("setEnt",
 				TestInterface.class);
-		Assert.assertEquals("setEnt", pi.getMethodName());
-		Assert.assertEquals(handler, pi.getObjectHandler());
-		Assert.assertEquals(TestInterface.class, pi.getValueClass());
-		Assert.assertEquals(BaseAbstractManagerTest.NS + "ent",
+		Assertions.assertEquals("setEnt", pi.getMethodName());
+		Assertions.assertEquals(handler, pi.getObjectHandler());
+		Assertions.assertEquals(TestInterface.class, pi.getValueClass());
+		Assertions.assertEquals(BaseAbstractManagerTest.NS + "ent",
 				pi.getUriString());
-		Assert.assertEquals(BaseAbstractManagerTest.NS, pi.getNamespace());
+		Assertions.assertEquals(BaseAbstractManagerTest.NS, pi.getNamespace());
 
 		pi = (PredicateInfoImpl) subjectInfo
 				.getPredicateInfo("removeEnt", null);
-		Assert.assertEquals("removeEnt", pi.getMethodName());
-		Assert.assertEquals(new VoidHandler(), pi.getObjectHandler());
-		Assert.assertEquals(null, pi.getValueClass());
-		Assert.assertEquals(BaseAbstractManagerTest.NS + "ent",
+		Assertions.assertEquals("removeEnt", pi.getMethodName());
+		Assertions.assertEquals(new VoidHandler(), pi.getObjectHandler());
+		Assertions.assertEquals(null, pi.getValueClass());
+		Assertions.assertEquals(BaseAbstractManagerTest.NS + "ent",
 				pi.getUriString());
-		Assert.assertEquals(BaseAbstractManagerTest.NS, pi.getNamespace());
+		Assertions.assertEquals(BaseAbstractManagerTest.NS, pi.getNamespace());
 	}
 
 	@Test
@@ -228,48 +228,48 @@ public abstract class AbstractSingleValueTest extends BaseAbstractManagerTest
 		final ObjectHandler handler = new LiteralHandler(TypeMapper
 				.getInstance().getTypeByClass(Float.class));
 
-		Assert.assertEquals("getFlt", pi.getMethodName());
-		Assert.assertEquals(handler, pi.getObjectHandler());
-		Assert.assertEquals(Float.class, pi.getValueClass());
-		Assert.assertEquals(BaseAbstractManagerTest.NS + "flt",
+		Assertions.assertEquals("getFlt", pi.getMethodName());
+		Assertions.assertEquals(handler, pi.getObjectHandler());
+		Assertions.assertEquals(Float.class, pi.getValueClass());
+		Assertions.assertEquals(BaseAbstractManagerTest.NS + "flt",
 				pi.getUriString());
-		Assert.assertEquals(BaseAbstractManagerTest.NS, pi.getNamespace());
+		Assertions.assertEquals(BaseAbstractManagerTest.NS, pi.getNamespace());
 
 		pi = (PredicateInfoImpl) subjectInfo.getPredicateInfo("setFlt",
 				Float.class);
-		Assert.assertEquals("setFlt", pi.getMethodName());
-		Assert.assertEquals(handler, pi.getObjectHandler());
-		Assert.assertEquals(Float.class, pi.getValueClass());
-		Assert.assertEquals(BaseAbstractManagerTest.NS + "flt",
+		Assertions.assertEquals("setFlt", pi.getMethodName());
+		Assertions.assertEquals(handler, pi.getObjectHandler());
+		Assertions.assertEquals(Float.class, pi.getValueClass());
+		Assertions.assertEquals(BaseAbstractManagerTest.NS + "flt",
 				pi.getUriString());
-		Assert.assertEquals(BaseAbstractManagerTest.NS, pi.getNamespace());
+		Assertions.assertEquals(BaseAbstractManagerTest.NS, pi.getNamespace());
 
 		pi = (PredicateInfoImpl) subjectInfo
 				.getPredicateInfo("removeFlt", null);
-		Assert.assertEquals("removeFlt", pi.getMethodName());
-		Assert.assertEquals(new VoidHandler(), pi.getObjectHandler());
-		Assert.assertEquals(null, pi.getValueClass());
-		Assert.assertEquals(BaseAbstractManagerTest.NS + "flt",
+		Assertions.assertEquals("removeFlt", pi.getMethodName());
+		Assertions.assertEquals(new VoidHandler(), pi.getObjectHandler());
+		Assertions.assertEquals(null, pi.getValueClass());
+		Assertions.assertEquals(BaseAbstractManagerTest.NS + "flt",
 				pi.getUriString());
-		Assert.assertEquals(BaseAbstractManagerTest.NS, pi.getNamespace());
+		Assertions.assertEquals(BaseAbstractManagerTest.NS, pi.getNamespace());
 
 		final Class<?> c = (Class<?>) Float.class.getField("TYPE").get(null);
 
 		pi = (PredicateInfoImpl) subjectInfo.getPredicateInfo("getFlt", c);
-		Assert.assertEquals("getFlt", pi.getMethodName());
-		Assert.assertEquals(handler, pi.getObjectHandler());
-		Assert.assertEquals(Float.class, pi.getValueClass());
-		Assert.assertEquals(BaseAbstractManagerTest.NS + "flt",
+		Assertions.assertEquals("getFlt", pi.getMethodName());
+		Assertions.assertEquals(handler, pi.getObjectHandler());
+		Assertions.assertEquals(Float.class, pi.getValueClass());
+		Assertions.assertEquals(BaseAbstractManagerTest.NS + "flt",
 				pi.getUriString());
-		Assert.assertEquals(BaseAbstractManagerTest.NS, pi.getNamespace());
+		Assertions.assertEquals(BaseAbstractManagerTest.NS, pi.getNamespace());
 
 		pi = (PredicateInfoImpl) subjectInfo.getPredicateInfo("setFlt", c);
-		Assert.assertEquals("setFlt", pi.getMethodName());
-		Assert.assertEquals(handler, pi.getObjectHandler());
-		Assert.assertEquals(Float.class, pi.getValueClass());
-		Assert.assertEquals(BaseAbstractManagerTest.NS + "flt",
+		Assertions.assertEquals("setFlt", pi.getMethodName());
+		Assertions.assertEquals(handler, pi.getObjectHandler());
+		Assertions.assertEquals(Float.class, pi.getValueClass());
+		Assertions.assertEquals(BaseAbstractManagerTest.NS + "flt",
 				pi.getUriString());
-		Assert.assertEquals(BaseAbstractManagerTest.NS, pi.getNamespace());
+		Assertions.assertEquals(BaseAbstractManagerTest.NS, pi.getNamespace());
 
 	}
 
@@ -283,48 +283,48 @@ public abstract class AbstractSingleValueTest extends BaseAbstractManagerTest
 		final ObjectHandler handler = new LiteralHandler(TypeMapper
 				.getInstance().getTypeByClass(Integer.class));
 
-		Assert.assertEquals("getInt", pi.getMethodName());
-		Assert.assertEquals(handler, pi.getObjectHandler());
-		Assert.assertEquals(Integer.class, pi.getValueClass());
-		Assert.assertEquals(BaseAbstractManagerTest.NS + "int",
+		Assertions.assertEquals("getInt", pi.getMethodName());
+		Assertions.assertEquals(handler, pi.getObjectHandler());
+		Assertions.assertEquals(Integer.class, pi.getValueClass());
+		Assertions.assertEquals(BaseAbstractManagerTest.NS + "int",
 				pi.getUriString());
-		Assert.assertEquals(BaseAbstractManagerTest.NS, pi.getNamespace());
+		Assertions.assertEquals(BaseAbstractManagerTest.NS, pi.getNamespace());
 
 		pi = (PredicateInfoImpl) subjectInfo.getPredicateInfo("setInt",
 				Integer.class);
-		Assert.assertEquals("setInt", pi.getMethodName());
-		Assert.assertEquals(handler, pi.getObjectHandler());
-		Assert.assertEquals(Integer.class, pi.getValueClass());
-		Assert.assertEquals(BaseAbstractManagerTest.NS + "int",
+		Assertions.assertEquals("setInt", pi.getMethodName());
+		Assertions.assertEquals(handler, pi.getObjectHandler());
+		Assertions.assertEquals(Integer.class, pi.getValueClass());
+		Assertions.assertEquals(BaseAbstractManagerTest.NS + "int",
 				pi.getUriString());
-		Assert.assertEquals(BaseAbstractManagerTest.NS, pi.getNamespace());
+		Assertions.assertEquals(BaseAbstractManagerTest.NS, pi.getNamespace());
 
 		pi = (PredicateInfoImpl) subjectInfo
 				.getPredicateInfo("removeInt", null);
-		Assert.assertEquals("removeInt", pi.getMethodName());
-		Assert.assertEquals(new VoidHandler(), pi.getObjectHandler());
-		Assert.assertEquals(null, pi.getValueClass());
-		Assert.assertEquals(BaseAbstractManagerTest.NS + "int",
+		Assertions.assertEquals("removeInt", pi.getMethodName());
+		Assertions.assertEquals(new VoidHandler(), pi.getObjectHandler());
+		Assertions.assertEquals(null, pi.getValueClass());
+		Assertions.assertEquals(BaseAbstractManagerTest.NS + "int",
 				pi.getUriString());
-		Assert.assertEquals(BaseAbstractManagerTest.NS, pi.getNamespace());
+		Assertions.assertEquals(BaseAbstractManagerTest.NS, pi.getNamespace());
 
 		final Class<?> c = (Class<?>) Integer.class.getField("TYPE").get(null);
 
 		pi = (PredicateInfoImpl) subjectInfo.getPredicateInfo("getInt", c);
-		Assert.assertEquals("getInt", pi.getMethodName());
-		Assert.assertEquals(handler, pi.getObjectHandler());
-		Assert.assertEquals(Integer.class, pi.getValueClass());
-		Assert.assertEquals(BaseAbstractManagerTest.NS + "int",
+		Assertions.assertEquals("getInt", pi.getMethodName());
+		Assertions.assertEquals(handler, pi.getObjectHandler());
+		Assertions.assertEquals(Integer.class, pi.getValueClass());
+		Assertions.assertEquals(BaseAbstractManagerTest.NS + "int",
 				pi.getUriString());
-		Assert.assertEquals(BaseAbstractManagerTest.NS, pi.getNamespace());
+		Assertions.assertEquals(BaseAbstractManagerTest.NS, pi.getNamespace());
 
 		pi = (PredicateInfoImpl) subjectInfo.getPredicateInfo("setInt", c);
-		Assert.assertEquals("setInt", pi.getMethodName());
-		Assert.assertEquals(handler, pi.getObjectHandler());
-		Assert.assertEquals(Integer.class, pi.getValueClass());
-		Assert.assertEquals(BaseAbstractManagerTest.NS + "int",
+		Assertions.assertEquals("setInt", pi.getMethodName());
+		Assertions.assertEquals(handler, pi.getObjectHandler());
+		Assertions.assertEquals(Integer.class, pi.getValueClass());
+		Assertions.assertEquals(BaseAbstractManagerTest.NS + "int",
 				pi.getUriString());
-		Assert.assertEquals(BaseAbstractManagerTest.NS, pi.getNamespace());
+		Assertions.assertEquals(BaseAbstractManagerTest.NS, pi.getNamespace());
 
 	}
 
@@ -337,48 +337,48 @@ public abstract class AbstractSingleValueTest extends BaseAbstractManagerTest
 		final ObjectHandler handler = new LiteralHandler(TypeMapper
 				.getInstance().getTypeByClass(Long.class));
 
-		Assert.assertEquals("getLng", pi.getMethodName());
-		Assert.assertEquals(handler, pi.getObjectHandler());
-		Assert.assertEquals(Long.class, pi.getValueClass());
-		Assert.assertEquals(BaseAbstractManagerTest.NS + "lng",
+		Assertions.assertEquals("getLng", pi.getMethodName());
+		Assertions.assertEquals(handler, pi.getObjectHandler());
+		Assertions.assertEquals(Long.class, pi.getValueClass());
+		Assertions.assertEquals(BaseAbstractManagerTest.NS + "lng",
 				pi.getUriString());
-		Assert.assertEquals(BaseAbstractManagerTest.NS, pi.getNamespace());
+		Assertions.assertEquals(BaseAbstractManagerTest.NS, pi.getNamespace());
 
 		pi = (PredicateInfoImpl) subjectInfo.getPredicateInfo("setLng",
 				Long.class);
-		Assert.assertEquals("setLng", pi.getMethodName());
-		Assert.assertEquals(handler, pi.getObjectHandler());
-		Assert.assertEquals(Long.class, pi.getValueClass());
-		Assert.assertEquals(BaseAbstractManagerTest.NS + "lng",
+		Assertions.assertEquals("setLng", pi.getMethodName());
+		Assertions.assertEquals(handler, pi.getObjectHandler());
+		Assertions.assertEquals(Long.class, pi.getValueClass());
+		Assertions.assertEquals(BaseAbstractManagerTest.NS + "lng",
 				pi.getUriString());
-		Assert.assertEquals(BaseAbstractManagerTest.NS, pi.getNamespace());
+		Assertions.assertEquals(BaseAbstractManagerTest.NS, pi.getNamespace());
 
 		pi = (PredicateInfoImpl) subjectInfo
 				.getPredicateInfo("removeLng", null);
-		Assert.assertEquals("removeLng", pi.getMethodName());
-		Assert.assertEquals(new VoidHandler(), pi.getObjectHandler());
-		Assert.assertEquals(null, pi.getValueClass());
-		Assert.assertEquals(BaseAbstractManagerTest.NS + "lng",
+		Assertions.assertEquals("removeLng", pi.getMethodName());
+		Assertions.assertEquals(new VoidHandler(), pi.getObjectHandler());
+		Assertions.assertEquals(null, pi.getValueClass());
+		Assertions.assertEquals(BaseAbstractManagerTest.NS + "lng",
 				pi.getUriString());
-		Assert.assertEquals(BaseAbstractManagerTest.NS, pi.getNamespace());
+		Assertions.assertEquals(BaseAbstractManagerTest.NS, pi.getNamespace());
 
 		final Class<?> c = (Class<?>) Long.class.getField("TYPE").get(null);
 
 		pi = (PredicateInfoImpl) subjectInfo.getPredicateInfo("getLng", c);
-		Assert.assertEquals("getLng", pi.getMethodName());
-		Assert.assertEquals(handler, pi.getObjectHandler());
-		Assert.assertEquals(Long.class, pi.getValueClass());
-		Assert.assertEquals(BaseAbstractManagerTest.NS + "lng",
+		Assertions.assertEquals("getLng", pi.getMethodName());
+		Assertions.assertEquals(handler, pi.getObjectHandler());
+		Assertions.assertEquals(Long.class, pi.getValueClass());
+		Assertions.assertEquals(BaseAbstractManagerTest.NS + "lng",
 				pi.getUriString());
-		Assert.assertEquals(BaseAbstractManagerTest.NS, pi.getNamespace());
+		Assertions.assertEquals(BaseAbstractManagerTest.NS, pi.getNamespace());
 
 		pi = (PredicateInfoImpl) subjectInfo.getPredicateInfo("setLng", c);
-		Assert.assertEquals("setLng", pi.getMethodName());
-		Assert.assertEquals(handler, pi.getObjectHandler());
-		Assert.assertEquals(Long.class, pi.getValueClass());
-		Assert.assertEquals(BaseAbstractManagerTest.NS + "lng",
+		Assertions.assertEquals("setLng", pi.getMethodName());
+		Assertions.assertEquals(handler, pi.getObjectHandler());
+		Assertions.assertEquals(Long.class, pi.getValueClass());
+		Assertions.assertEquals(BaseAbstractManagerTest.NS + "lng",
 				pi.getUriString());
-		Assert.assertEquals(BaseAbstractManagerTest.NS, pi.getNamespace());
+		Assertions.assertEquals(BaseAbstractManagerTest.NS, pi.getNamespace());
 	}
 
 	@Test
@@ -388,30 +388,30 @@ public abstract class AbstractSingleValueTest extends BaseAbstractManagerTest
 				.getPredicateInfo("getRDF", RDFNode.class);
 		final ObjectHandler handler = new ResourceHandler();
 
-		Assert.assertEquals("getRDF", pi.getMethodName());
-		Assert.assertEquals(handler, pi.getObjectHandler());
-		Assert.assertEquals(RDFNode.class, pi.getValueClass());
-		Assert.assertEquals(BaseAbstractManagerTest.NS + "rDF",
+		Assertions.assertEquals("getRDF", pi.getMethodName());
+		Assertions.assertEquals(handler, pi.getObjectHandler());
+		Assertions.assertEquals(RDFNode.class, pi.getValueClass());
+		Assertions.assertEquals(BaseAbstractManagerTest.NS + "rDF",
 				pi.getUriString());
-		Assert.assertEquals(BaseAbstractManagerTest.NS, pi.getNamespace());
+		Assertions.assertEquals(BaseAbstractManagerTest.NS, pi.getNamespace());
 
 		pi = (PredicateInfoImpl) subjectInfo.getPredicateInfo("setRDF",
 				RDFNode.class);
-		Assert.assertEquals("setRDF", pi.getMethodName());
-		Assert.assertEquals(handler, pi.getObjectHandler());
-		Assert.assertEquals(RDFNode.class, pi.getValueClass());
-		Assert.assertEquals(BaseAbstractManagerTest.NS + "rDF",
+		Assertions.assertEquals("setRDF", pi.getMethodName());
+		Assertions.assertEquals(handler, pi.getObjectHandler());
+		Assertions.assertEquals(RDFNode.class, pi.getValueClass());
+		Assertions.assertEquals(BaseAbstractManagerTest.NS + "rDF",
 				pi.getUriString());
-		Assert.assertEquals(BaseAbstractManagerTest.NS, pi.getNamespace());
+		Assertions.assertEquals(BaseAbstractManagerTest.NS, pi.getNamespace());
 
 		pi = (PredicateInfoImpl) subjectInfo
 				.getPredicateInfo("removeRDF", null);
-		Assert.assertEquals("removeRDF", pi.getMethodName());
-		Assert.assertEquals(new VoidHandler(), pi.getObjectHandler());
-		Assert.assertEquals(null, pi.getValueClass());
-		Assert.assertEquals(BaseAbstractManagerTest.NS + "rDF",
+		Assertions.assertEquals("removeRDF", pi.getMethodName());
+		Assertions.assertEquals(new VoidHandler(), pi.getObjectHandler());
+		Assertions.assertEquals(null, pi.getValueClass());
+		Assertions.assertEquals(BaseAbstractManagerTest.NS + "rDF",
 				pi.getUriString());
-		Assert.assertEquals(BaseAbstractManagerTest.NS, pi.getNamespace());
+		Assertions.assertEquals(BaseAbstractManagerTest.NS, pi.getNamespace());
 	}
 
 	@Test
@@ -422,30 +422,30 @@ public abstract class AbstractSingleValueTest extends BaseAbstractManagerTest
 		final ObjectHandler handler = new LiteralHandler(TypeMapper
 				.getInstance().getTypeByClass(String.class));
 
-		Assert.assertEquals("getStr", pi.getMethodName());
-		Assert.assertEquals(handler, pi.getObjectHandler());
-		Assert.assertEquals(String.class, pi.getValueClass());
-		Assert.assertEquals(BaseAbstractManagerTest.NS + "str",
+		Assertions.assertEquals("getStr", pi.getMethodName());
+		Assertions.assertEquals(handler, pi.getObjectHandler());
+		Assertions.assertEquals(String.class, pi.getValueClass());
+		Assertions.assertEquals(BaseAbstractManagerTest.NS + "str",
 				pi.getUriString());
-		Assert.assertEquals(BaseAbstractManagerTest.NS, pi.getNamespace());
+		Assertions.assertEquals(BaseAbstractManagerTest.NS, pi.getNamespace());
 
 		pi = (PredicateInfoImpl) subjectInfo.getPredicateInfo("setStr",
 				String.class);
-		Assert.assertEquals("setStr", pi.getMethodName());
-		Assert.assertEquals(handler, pi.getObjectHandler());
-		Assert.assertEquals(String.class, pi.getValueClass());
-		Assert.assertEquals(BaseAbstractManagerTest.NS + "str",
+		Assertions.assertEquals("setStr", pi.getMethodName());
+		Assertions.assertEquals(handler, pi.getObjectHandler());
+		Assertions.assertEquals(String.class, pi.getValueClass());
+		Assertions.assertEquals(BaseAbstractManagerTest.NS + "str",
 				pi.getUriString());
-		Assert.assertEquals(BaseAbstractManagerTest.NS, pi.getNamespace());
+		Assertions.assertEquals(BaseAbstractManagerTest.NS, pi.getNamespace());
 
 		pi = (PredicateInfoImpl) subjectInfo
 				.getPredicateInfo("removeStr", null);
-		Assert.assertEquals("removeStr", pi.getMethodName());
-		Assert.assertEquals(new VoidHandler(), pi.getObjectHandler());
-		Assert.assertEquals(null, pi.getValueClass());
-		Assert.assertEquals(BaseAbstractManagerTest.NS + "str",
+		Assertions.assertEquals("removeStr", pi.getMethodName());
+		Assertions.assertEquals(new VoidHandler(), pi.getObjectHandler());
+		Assertions.assertEquals(null, pi.getValueClass());
+		Assertions.assertEquals(BaseAbstractManagerTest.NS + "str",
 				pi.getUriString());
-		Assert.assertEquals(BaseAbstractManagerTest.NS, pi.getNamespace());
+		Assertions.assertEquals(BaseAbstractManagerTest.NS, pi.getNamespace());
 	}
 
 	@Test
@@ -457,42 +457,42 @@ public abstract class AbstractSingleValueTest extends BaseAbstractManagerTest
 		final ObjectHandler uriHandler = new UriHandler();
 		final ObjectHandler rdfHandler = new ResourceHandler();
 
-		Assert.assertEquals("getU", pi.getMethodName());
-		Assert.assertEquals(rdfHandler, pi.getObjectHandler());
-		Assert.assertEquals(RDFNode.class, pi.getValueClass());
-		Assert.assertEquals(BaseAbstractManagerTest.NS + "u", pi.getUriString());
-		Assert.assertEquals(BaseAbstractManagerTest.NS, pi.getNamespace());
+		Assertions.assertEquals("getU", pi.getMethodName());
+		Assertions.assertEquals(rdfHandler, pi.getObjectHandler());
+		Assertions.assertEquals(RDFNode.class, pi.getValueClass());
+		Assertions.assertEquals(BaseAbstractManagerTest.NS + "u", pi.getUriString());
+		Assertions.assertEquals(BaseAbstractManagerTest.NS, pi.getNamespace());
 
 		pi = (PredicateInfoImpl) subjectInfo.getPredicateInfo("setU",
 				String.class);
-		Assert.assertEquals("setU", pi.getMethodName());
-		Assert.assertEquals(uriHandler, pi.getObjectHandler());
-		Assert.assertEquals(String.class, pi.getValueClass());
-		Assert.assertEquals(BaseAbstractManagerTest.NS + "u", pi.getUriString());
-		Assert.assertEquals(BaseAbstractManagerTest.NS, pi.getNamespace());
+		Assertions.assertEquals("setU", pi.getMethodName());
+		Assertions.assertEquals(uriHandler, pi.getObjectHandler());
+		Assertions.assertEquals(String.class, pi.getValueClass());
+		Assertions.assertEquals(BaseAbstractManagerTest.NS + "u", pi.getUriString());
+		Assertions.assertEquals(BaseAbstractManagerTest.NS, pi.getNamespace());
 
 		pi = (PredicateInfoImpl) subjectInfo.getPredicateInfo("setU",
 				RDFNode.class);
-		Assert.assertEquals("setU", pi.getMethodName());
-		Assert.assertEquals(rdfHandler, pi.getObjectHandler());
-		Assert.assertEquals(RDFNode.class, pi.getValueClass());
-		Assert.assertEquals(BaseAbstractManagerTest.NS + "u", pi.getUriString());
-		Assert.assertEquals(BaseAbstractManagerTest.NS, pi.getNamespace());
+		Assertions.assertEquals("setU", pi.getMethodName());
+		Assertions.assertEquals(rdfHandler, pi.getObjectHandler());
+		Assertions.assertEquals(RDFNode.class, pi.getValueClass());
+		Assertions.assertEquals(BaseAbstractManagerTest.NS + "u", pi.getUriString());
+		Assertions.assertEquals(BaseAbstractManagerTest.NS, pi.getNamespace());
 
 		pi = (PredicateInfoImpl) subjectInfo.getPredicateInfo("removeU", null);
-		Assert.assertEquals("removeU", pi.getMethodName());
-		Assert.assertEquals(new VoidHandler(), pi.getObjectHandler());
-		Assert.assertEquals(null, pi.getValueClass());
-		Assert.assertEquals(BaseAbstractManagerTest.NS + "u", pi.getUriString());
-		Assert.assertEquals(BaseAbstractManagerTest.NS, pi.getNamespace());
+		Assertions.assertEquals("removeU", pi.getMethodName());
+		Assertions.assertEquals(new VoidHandler(), pi.getObjectHandler());
+		Assertions.assertEquals(null, pi.getValueClass());
+		Assertions.assertEquals(BaseAbstractManagerTest.NS + "u", pi.getUriString());
+		Assertions.assertEquals(BaseAbstractManagerTest.NS, pi.getNamespace());
 
 		pi = (PredicateInfoImpl) subjectInfo.getPredicateInfo("getU2",
 				String.class);
-		Assert.assertEquals("getU2", pi.getMethodName());
-		Assert.assertEquals(uriHandler, pi.getObjectHandler());
-		Assert.assertEquals(String.class, pi.getValueClass());
-		Assert.assertEquals(BaseAbstractManagerTest.NS + "u", pi.getUriString());
-		Assert.assertEquals(BaseAbstractManagerTest.NS, pi.getNamespace());
+		Assertions.assertEquals("getU2", pi.getMethodName());
+		Assertions.assertEquals(uriHandler, pi.getObjectHandler());
+		Assertions.assertEquals(String.class, pi.getValueClass());
+		Assertions.assertEquals(BaseAbstractManagerTest.NS + "u", pi.getUriString());
+		Assertions.assertEquals(BaseAbstractManagerTest.NS, pi.getNamespace());
 	}
 
 }

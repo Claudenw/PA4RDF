@@ -18,10 +18,10 @@ import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.rdf.model.Resource;
 
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.xenei.jena.entities.testing.abst.SingleValueMixedTypeTestClass;
 
 public class SingleValueMixedObjectEntityTests
@@ -30,7 +30,7 @@ public class SingleValueMixedObjectEntityTests
 	private SingleValueMixedTypeTestClass tc;
 	private Model model;
 
-	@Before
+	@BeforeEach
 	public void setup() throws Exception
 	{
 		final EntityManager manager = EntityManagerFactory.getEntityManager();
@@ -40,7 +40,7 @@ public class SingleValueMixedObjectEntityTests
 		tc = manager.read(r, SingleValueMixedTypeTestClass.class);
 	}
 
-	@After
+	@AfterEach
 	public void teardown()
 	{
 		model.close();
@@ -50,28 +50,28 @@ public class SingleValueMixedObjectEntityTests
 	public void testB()
 	{
 		tc.setB(true);
-		Assert.assertTrue(tc.isB());
+		Assertions.assertTrue(tc.isB());
 		tc.setB(false);
-		Assert.assertTrue(!tc.isB());
+		Assertions.assertTrue(!tc.isB());
 		tc.setB(Boolean.TRUE);
-		Assert.assertTrue(tc.isB());
+		Assertions.assertTrue(tc.isB());
 		tc.setB(Boolean.FALSE);
-		Assert.assertTrue(!tc.isB());
+		Assertions.assertTrue(!tc.isB());
 
 	}
 
 	@Test
 	public void testBoolean()
 	{
-		Assert.assertNull(tc.isBool());
+		Assertions.assertNull(tc.isBool());
 		tc.setBool(true);
-		Assert.assertTrue(tc.isBool());
+		Assertions.assertTrue(tc.isBool());
 		tc.setBool(false);
-		Assert.assertTrue(!tc.isBool());
+		Assertions.assertTrue(!tc.isBool());
 		tc.setBool(Boolean.TRUE);
-		Assert.assertTrue(tc.isBool());
+		Assertions.assertTrue(tc.isBool());
 		tc.setBool(Boolean.FALSE);
-		Assert.assertTrue(!tc.isBool());
+		Assertions.assertTrue(!tc.isBool());
 
 	}
 
@@ -81,11 +81,11 @@ public class SingleValueMixedObjectEntityTests
 		final char c = 'a';
 		final Character cc = Character.valueOf(c);
 		tc.setC(c);
-		Assert.assertEquals(cc, Character.valueOf(tc.getC()));
+		Assertions.assertEquals(cc, Character.valueOf(tc.getC()));
 		tc.setC('x');
-		Assert.assertTrue(!cc.equals(tc.getC()));
+		Assertions.assertTrue(!cc.equals(tc.getC()));
 		tc.setC(cc);
-		Assert.assertEquals(cc, Character.valueOf(tc.getC()));
+		Assertions.assertEquals(cc, Character.valueOf(tc.getC()));
 
 	}
 
@@ -94,13 +94,13 @@ public class SingleValueMixedObjectEntityTests
 	{
 		final char c = 'a';
 		final Character cc = Character.valueOf(c);
-		Assert.assertNull(tc.getChar());
+		Assertions.assertNull(tc.getChar());
 		tc.setChar(c);
-		Assert.assertEquals(cc, Character.valueOf(tc.getChar()));
+		Assertions.assertEquals(cc, Character.valueOf(tc.getChar()));
 		tc.setChar('x');
-		Assert.assertTrue(!cc.equals(tc.getChar()));
+		Assertions.assertTrue(!cc.equals(tc.getChar()));
 		tc.setChar(cc);
-		Assert.assertEquals(cc, Character.valueOf(tc.getChar()));
+		Assertions.assertEquals(cc, Character.valueOf(tc.getChar()));
 	}
 
 	@Test
@@ -109,11 +109,11 @@ public class SingleValueMixedObjectEntityTests
 		final double c = 3.14;
 		final Double cc = Double.valueOf(c);
 		tc.setD(c);
-		Assert.assertEquals(cc, Double.valueOf(tc.getD()));
+		Assertions.assertEquals(cc, Double.valueOf(tc.getD()));
 		tc.setD(0.0);
-		Assert.assertTrue(!cc.equals(tc.getD()));
+		Assertions.assertTrue(!cc.equals(tc.getD()));
 		tc.setD(cc);
-		Assert.assertEquals(cc, Double.valueOf(tc.getD()));
+		Assertions.assertEquals(cc, Double.valueOf(tc.getD()));
 	}
 
 	@Test
@@ -121,13 +121,13 @@ public class SingleValueMixedObjectEntityTests
 	{
 		final double c = 3.14;
 		final Double cc = Double.valueOf(c);
-		Assert.assertNull(tc.getDbl());
+		Assertions.assertNull(tc.getDbl());
 		tc.setDbl(c);
-		Assert.assertEquals(cc, Double.valueOf(tc.getDbl()));
+		Assertions.assertEquals(cc, Double.valueOf(tc.getDbl()));
 		tc.setDbl(0.0);
-		Assert.assertTrue(!cc.equals(tc.getDbl()));
+		Assertions.assertTrue(!cc.equals(tc.getDbl()));
 		tc.setDbl(cc);
-		Assert.assertEquals(cc, Double.valueOf(tc.getDbl()));
+		Assertions.assertEquals(cc, Double.valueOf(tc.getDbl()));
 	}
 
 	@Test
@@ -136,11 +136,11 @@ public class SingleValueMixedObjectEntityTests
 		final float c = 3.14F;
 		final Float cc = Float.valueOf(c);
 		tc.setF(c);
-		Assert.assertEquals(cc, Float.valueOf(tc.getF()));
+		Assertions.assertEquals(cc, Float.valueOf(tc.getF()));
 		tc.setF(0.0F);
-		Assert.assertTrue(!cc.equals(tc.getF()));
+		Assertions.assertTrue(!cc.equals(tc.getF()));
 		tc.setF(cc);
-		Assert.assertEquals(cc, Float.valueOf(tc.getF()));
+		Assertions.assertEquals(cc, Float.valueOf(tc.getF()));
 	}
 
 	@Test
@@ -148,13 +148,13 @@ public class SingleValueMixedObjectEntityTests
 	{
 		final float c = 3.14F;
 		final Float cc = Float.valueOf(c);
-		Assert.assertNull(tc.getFlt());
+		Assertions.assertNull(tc.getFlt());
 		tc.setFlt(c);
-		Assert.assertEquals(cc, Float.valueOf(tc.getFlt()));
+		Assertions.assertEquals(cc, Float.valueOf(tc.getFlt()));
 		tc.setFlt(0.0F);
-		Assert.assertTrue(!cc.equals(tc.getFlt()));
+		Assertions.assertTrue(!cc.equals(tc.getFlt()));
 		tc.setFlt(cc);
-		Assert.assertEquals(cc, Float.valueOf(tc.getFlt()));
+		Assertions.assertEquals(cc, Float.valueOf(tc.getFlt()));
 
 	}
 
@@ -164,11 +164,11 @@ public class SingleValueMixedObjectEntityTests
 		final int c = 3;
 		final Integer cc = Integer.valueOf(c);
 		tc.setI(c);
-		Assert.assertEquals(cc, Integer.valueOf(tc.getI()));
+		Assertions.assertEquals(cc, Integer.valueOf(tc.getI()));
 		tc.setI(0);
-		Assert.assertTrue(!cc.equals(tc.getI()));
+		Assertions.assertTrue(!cc.equals(tc.getI()));
 		tc.setI(cc);
-		Assert.assertEquals(cc, Integer.valueOf(tc.getI()));
+		Assertions.assertEquals(cc, Integer.valueOf(tc.getI()));
 	}
 
 	@Test
@@ -176,13 +176,13 @@ public class SingleValueMixedObjectEntityTests
 	{
 		final int c = 3;
 		final Integer cc = Integer.valueOf(c);
-		Assert.assertNull(tc.getInt());
+		Assertions.assertNull(tc.getInt());
 		tc.setInt(c);
-		Assert.assertEquals(cc, Integer.valueOf(tc.getInt()));
+		Assertions.assertEquals(cc, Integer.valueOf(tc.getInt()));
 		tc.setInt(0);
-		Assert.assertTrue(!cc.equals(tc.getInt()));
+		Assertions.assertTrue(!cc.equals(tc.getInt()));
 		tc.setInt(cc);
-		Assert.assertEquals(cc, Integer.valueOf(tc.getInt()));
+		Assertions.assertEquals(cc, Integer.valueOf(tc.getInt()));
 	}
 
 	@Test
@@ -191,11 +191,11 @@ public class SingleValueMixedObjectEntityTests
 		final long c = 3;
 		final Long cc = Long.valueOf(c);
 		tc.setL(c);
-		Assert.assertEquals(cc, Long.valueOf(tc.getL()));
+		Assertions.assertEquals(cc, Long.valueOf(tc.getL()));
 		tc.setL(0L);
-		Assert.assertTrue(!cc.equals(tc.getL()));
+		Assertions.assertTrue(!cc.equals(tc.getL()));
 		tc.setL(cc);
-		Assert.assertEquals(cc, Long.valueOf(tc.getL()));
+		Assertions.assertEquals(cc, Long.valueOf(tc.getL()));
 	}
 
 	@Test
@@ -203,13 +203,13 @@ public class SingleValueMixedObjectEntityTests
 	{
 		final long c = 3;
 		final Long cc = Long.valueOf(c);
-		Assert.assertNull(tc.getLng());
+		Assertions.assertNull(tc.getLng());
 		tc.setLng(c);
-		Assert.assertEquals(cc, Long.valueOf(tc.getLng()));
+		Assertions.assertEquals(cc, Long.valueOf(tc.getLng()));
 		tc.setLng(0L);
-		Assert.assertTrue(!cc.equals(tc.getLng()));
+		Assertions.assertTrue(!cc.equals(tc.getLng()));
 		tc.setLng(cc);
-		Assert.assertEquals(cc, Long.valueOf(tc.getLng()));
+		Assertions.assertEquals(cc, Long.valueOf(tc.getLng()));
 	}
 
 }

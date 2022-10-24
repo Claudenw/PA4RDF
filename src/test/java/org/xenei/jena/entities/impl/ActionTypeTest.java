@@ -1,19 +1,19 @@
 package org.xenei.jena.entities.impl;
 
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class ActionTypeTest
 {
 
-	@Before
+	@BeforeEach
 	public void setUp() throws Exception
 	{
 	}
 
-	@After
+	@AfterEach
 	public void tearDown() throws Exception
 	{
 	}
@@ -22,33 +22,33 @@ public class ActionTypeTest
 	public void testExistentialTypes()
 	{
 		final ActionType type = ActionType.parse("hasX");
-		Assert.assertTrue("hasX should be EXISTENTIAL",
-				type == ActionType.EXISTENTIAL);
+		Assertions.assertTrue(
+				type == ActionType.EXISTENTIAL,
+				"hasX should be EXISTENTIAL");
 	}
 
 	@Test
 	public void testGetterTypes()
 	{
 		ActionType type = ActionType.parse("getX");
-		Assert.assertTrue("Should be GETTER", type == ActionType.GETTER);
+		Assertions.assertTrue(type == ActionType.GETTER, "Should be GETTER");
 		type = ActionType.parse("getIs");
-		Assert.assertTrue("Should be GETTER", type == ActionType.GETTER);
+		Assertions.assertTrue(type == ActionType.GETTER,"Should be GETTER");
 	}
 
 	@Test
 	public void testRemoverTypes()
 	{
 		final ActionType type = ActionType.parse("removeX");
-		Assert.assertTrue("hasX should be REMOVER", type == ActionType.REMOVER);
+		Assertions.assertTrue(type == ActionType.REMOVER, "hasX should be REMOVER");
 	}
 
 	@Test
 	public void testSetterTypes()
 	{
 		ActionType type = ActionType.parse("setX");
-		Assert.assertTrue("setX should be SETTER", type == ActionType.SETTER);
+		Assertions.assertTrue(type == ActionType.SETTER, "setX should be SETTER");
 		type = ActionType.parse("addX");
-		Assert.assertTrue("addX should be SETTER", type == ActionType.SETTER);
-
+		Assertions.assertTrue(type == ActionType.SETTER, "setX should be SETTER");
 	}
 }

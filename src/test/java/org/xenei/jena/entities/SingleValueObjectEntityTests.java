@@ -20,10 +20,10 @@ import org.apache.jena.rdf.model.RDFNode;
 import org.apache.jena.rdf.model.Resource;
 import org.apache.jena.rdf.model.ResourceFactory;
 
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.xenei.jena.entities.testing.abst.SingleValueObjectAnnotatedAbst;
 import org.xenei.jena.entities.testing.abst.SingleValueObjectAnnotatedAbst.SubPredicate;
 import org.xenei.jena.entities.testing.iface.TestInterface;
@@ -35,7 +35,7 @@ public class SingleValueObjectEntityTests
 	private Model model;
 	private EntityManager manager;
 
-	@Before
+	@BeforeEach
 	public void setup() throws Exception
 	{
 		manager = EntityManagerFactory.getEntityManager();
@@ -45,7 +45,7 @@ public class SingleValueObjectEntityTests
 		tc = manager.read(r, SingleValueObjectAnnotatedAbst.class);
 	}
 
-	@After
+	@AfterEach
 	public void teardown()
 	{
 		model.close();
@@ -55,15 +55,15 @@ public class SingleValueObjectEntityTests
 	public void testBoolean()
 	{
 		tc.setBool(true);
-		Assert.assertTrue(tc.isBool());
+		Assertions.assertTrue(tc.isBool());
 		tc.setBool(false);
-		Assert.assertTrue(!tc.isBool());
+		Assertions.assertTrue(!tc.isBool());
 		tc.setBool(Boolean.TRUE);
-		Assert.assertTrue(tc.isBool());
+		Assertions.assertTrue(tc.isBool());
 		tc.setBool(Boolean.FALSE);
-		Assert.assertTrue(!tc.isBool());
+		Assertions.assertTrue(!tc.isBool());
 		tc.removeBool();
-		Assert.assertNull(tc.isBool());
+		Assertions.assertNull(tc.isBool());
 	}
 
 	@Test
@@ -72,13 +72,13 @@ public class SingleValueObjectEntityTests
 		final char c = 'a';
 		final Character cc = Character.valueOf(c);
 		tc.setChar(c);
-		Assert.assertEquals(cc, tc.getChar());
+		Assertions.assertEquals(cc, tc.getChar());
 		tc.setChar('x');
-		Assert.assertTrue(!cc.equals(tc.getChar()));
+		Assertions.assertTrue(!cc.equals(tc.getChar()));
 		tc.setChar(cc);
-		Assert.assertEquals(cc, tc.getChar());
+		Assertions.assertEquals(cc, tc.getChar());
 		tc.removeChar();
-		Assert.assertNull(tc.getChar());
+		Assertions.assertNull(tc.getChar());
 	}
 
 	@Test
@@ -87,13 +87,13 @@ public class SingleValueObjectEntityTests
 		final double c = 3.14;
 		final Double cc = Double.valueOf(c);
 		tc.setDbl(c);
-		Assert.assertEquals(cc, tc.getDbl());
+		Assertions.assertEquals(cc, tc.getDbl());
 		tc.setDbl(0.0);
-		Assert.assertTrue(!cc.equals(tc.getDbl()));
+		Assertions.assertTrue(!cc.equals(tc.getDbl()));
 		tc.setDbl(cc);
-		Assert.assertEquals(cc, tc.getDbl());
+		Assertions.assertEquals(cc, tc.getDbl());
 		tc.removeDbl();
-		Assert.assertNull(tc.getDbl());
+		Assertions.assertNull(tc.getDbl());
 	}
 
 	@Test
@@ -102,13 +102,13 @@ public class SingleValueObjectEntityTests
 		Resource r = model.createResource("testclass");
 		final TestInterface c = manager.read(r, TestInterface.class);
 		tc.setEnt(c);
-		Assert.assertEquals(c, tc.getEnt());
+		Assertions.assertEquals(c, tc.getEnt());
 		r = model.createResource("testclass2");
 		final TestInterface cc = manager.read(r, TestInterface.class);
 		tc.setEnt(cc);
-		Assert.assertTrue(!c.equals(tc.getEnt()));
+		Assertions.assertTrue(!c.equals(tc.getEnt()));
 		tc.removeEnt();
-		Assert.assertNull(tc.getEnt());
+		Assertions.assertNull(tc.getEnt());
 
 	}
 
@@ -118,13 +118,13 @@ public class SingleValueObjectEntityTests
 		final float c = 3.14F;
 		final Float cc = Float.valueOf(c);
 		tc.setFlt(c);
-		Assert.assertEquals(cc, tc.getFlt());
+		Assertions.assertEquals(cc, tc.getFlt());
 		tc.setFlt(0.0F);
-		Assert.assertTrue(!cc.equals(tc.getFlt()));
+		Assertions.assertTrue(!cc.equals(tc.getFlt()));
 		tc.setFlt(cc);
-		Assert.assertEquals(cc, tc.getFlt());
+		Assertions.assertEquals(cc, tc.getFlt());
 		tc.removeFlt();
-		Assert.assertNull(tc.getFlt());
+		Assertions.assertNull(tc.getFlt());
 	}
 
 	@Test
@@ -133,13 +133,13 @@ public class SingleValueObjectEntityTests
 		final int c = 3;
 		final Integer cc = Integer.valueOf(c);
 		tc.setInt(c);
-		Assert.assertEquals(cc, tc.getInt());
+		Assertions.assertEquals(cc, tc.getInt());
 		tc.setInt(0);
-		Assert.assertTrue(!cc.equals(tc.getInt()));
+		Assertions.assertTrue(!cc.equals(tc.getInt()));
 		tc.setInt(cc);
-		Assert.assertEquals(cc, tc.getInt());
+		Assertions.assertEquals(cc, tc.getInt());
 		tc.removeInt();
-		Assert.assertNull(tc.getInt());
+		Assertions.assertNull(tc.getInt());
 	}
 
 	@Test
@@ -148,13 +148,13 @@ public class SingleValueObjectEntityTests
 		final long c = 3;
 		final Long cc = Long.valueOf(c);
 		tc.setLng(c);
-		Assert.assertEquals(cc, tc.getLng());
+		Assertions.assertEquals(cc, tc.getLng());
 		tc.setLng(0L);
-		Assert.assertTrue(!cc.equals(tc.getLng()));
+		Assertions.assertTrue(!cc.equals(tc.getLng()));
 		tc.setLng(cc);
-		Assert.assertEquals(cc, tc.getLng());
+		Assertions.assertEquals(cc, tc.getLng());
 		tc.removeLng();
-		Assert.assertNull(tc.getLng());
+		Assertions.assertNull(tc.getLng());
 	}
 
 	@Test
@@ -162,11 +162,11 @@ public class SingleValueObjectEntityTests
 	{
 		final RDFNode n = model.createResource("rdfNode");
 		tc.setRDF(n);
-		Assert.assertEquals(n, tc.getRDF());
+		Assertions.assertEquals(n, tc.getRDF());
 		tc.setRDF(model.createResource("anotherRdfNode"));
-		Assert.assertTrue(!n.equals(tc.getStr()));
+		Assertions.assertTrue(!n.equals(tc.getStr()));
 		tc.removeRDF();
-		Assert.assertNull(tc.getRDF());
+		Assertions.assertNull(tc.getRDF());
 
 	}
 
@@ -175,13 +175,13 @@ public class SingleValueObjectEntityTests
 	{
 		final String cc = "string";
 		tc.setStr("string");
-		Assert.assertEquals(cc, tc.getStr());
+		Assertions.assertEquals(cc, tc.getStr());
 		tc.setStr("foo");
-		Assert.assertTrue(!cc.equals(tc.getStr()));
+		Assertions.assertTrue(!cc.equals(tc.getStr()));
 		tc.setStr(cc);
-		Assert.assertEquals(cc, tc.getStr());
+		Assertions.assertEquals(cc, tc.getStr());
 		tc.removeStr();
-		Assert.assertNull(tc.getStr());
+		Assertions.assertNull(tc.getStr());
 	}
 
 	@Test
@@ -196,17 +196,15 @@ public class SingleValueObjectEntityTests
 		sp2.setName("spTest2");
 
 		tc.setSubPredicate(sp);
-		Assert.assertNotNull(tc.getSubPredicate());
-		Assert.assertTrue(tc.getSubPredicate() instanceof SubPredicate);
-		Assert.assertEquals(sp.getName(), tc.getSubPredicate().getName());
+		Assertions.assertNotNull(tc.getSubPredicate());
+		Assertions.assertEquals(sp.getName(), tc.getSubPredicate().getName());
 
 		tc.setSubPredicate(sp2);
-		Assert.assertNotNull(tc.getSubPredicate());
-		Assert.assertTrue(tc.getSubPredicate() instanceof SubPredicate);
-		Assert.assertEquals(sp2.getName(), tc.getSubPredicate().getName());
+		Assertions.assertNotNull(tc.getSubPredicate());
+		Assertions.assertEquals(sp2.getName(), tc.getSubPredicate().getName());
 
 		tc.removeSubPredicate();
-		Assert.assertNull(tc.getSubPredicate());
+		Assertions.assertNull(tc.getSubPredicate());
 
 	}
 
@@ -215,12 +213,12 @@ public class SingleValueObjectEntityTests
 	{
 		final Resource r = ResourceFactory.createResource("uriTest");
 		tc.setU(r);
-		Assert.assertEquals(r, tc.getU());
-		Assert.assertEquals("uriTest", tc.getU2());
+		Assertions.assertEquals(r, tc.getU());
+		Assertions.assertEquals("uriTest", tc.getU2());
 		tc.setU("uriTest2");
-		Assert.assertTrue(!r.equals(tc.getU()));
+		Assertions.assertTrue(!r.equals(tc.getU()));
 		tc.removeU();
-		Assert.assertNull(tc.getU());
-		Assert.assertNull(tc.getU2());
+		Assertions.assertNull(tc.getU());
+		Assertions.assertNull(tc.getU2());
 	}
 }

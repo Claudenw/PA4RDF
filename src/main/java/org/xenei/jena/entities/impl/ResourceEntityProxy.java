@@ -67,9 +67,8 @@ public class ResourceEntityProxy implements MethodInterceptor // Invoker
         // handle the cases where the method is not abstract
         if (!Modifier.isAbstract( m.getModifiers() )) {
             return interceptNonAbstract( obj, m, args, proxy );
-        } else {
-            return interceptAnnotated( obj, m, args, proxy );
         }
+        return interceptAnnotated( obj, m, args, proxy );
     }
 
     private Object interceptAnnotated(final Object obj, final Method m, final Object[] args, final MethodProxy proxy)
@@ -89,9 +88,8 @@ public class ResourceEntityProxy implements MethodInterceptor // Invoker
             if (m.getDeclaringClass().isAssignableFrom( Resource.class )
                     && Resource.class.isAssignableFrom( subjectInfo.getImplementedClass() )) {
                 return m.invoke( resource, args );
-            } else {
-                workingInfo = entityManager.getSubjectInfo( m.getDeclaringClass() );
             }
+            workingInfo = entityManager.getSubjectInfo( m.getDeclaringClass() );
         }
         final PredicateInfo pi = workingInfo.getPredicateInfo( m );
 

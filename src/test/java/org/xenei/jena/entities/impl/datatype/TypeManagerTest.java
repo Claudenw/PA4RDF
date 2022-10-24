@@ -7,9 +7,9 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.xenei.jena.entities.impl.EntityManagerImpl;
 
 /**
@@ -20,7 +20,7 @@ public class TypeManagerTest
 
 	private TypeMapper mapper;
 
-	@Before
+	@BeforeEach
 	public void setUp() throws Exception
 	{
 		TypeMapper.reset();
@@ -55,9 +55,9 @@ public class TypeManagerTest
 			{
 				RDFDatatype dt2 = mapper.getTypeByClass( dt.getJavaClass() );
 				RDFDatatype dt3 = localTypeMap.get( dt.getJavaClass() );
-				Assert.assertNotNull( dt3 );
-				Assert.assertEquals( dt3.getURI(), dt2.getURI() );
-				Assert.assertEquals( dt3.getJavaClass(), dt2.getJavaClass() );
+				Assertions.assertNotNull( dt3 );
+				Assertions.assertEquals( dt3.getURI(), dt2.getURI() );
+				Assertions.assertEquals( dt3.getJavaClass(), dt2.getJavaClass() );
 			}
 		}
 	}
@@ -90,9 +90,9 @@ public class TypeManagerTest
 			{
 				RDFDatatype dt2 = mapper.getTypeByName( dt.getURI() );
 				RDFDatatype dt3 = localTypeMap.get( dt.getURI() );
-				Assert.assertNotNull( dt3 );
-				Assert.assertEquals( dt3.getURI(), dt2.getURI() );
-				Assert.assertEquals( dt3.getJavaClass(), dt2.getJavaClass() );
+				Assertions.assertNotNull( dt3 );
+				Assertions.assertEquals( dt3.getURI(), dt2.getURI() );
+				Assertions.assertEquals( dt3.getJavaClass(), dt2.getJavaClass() );
 			}
 		}
 	}
