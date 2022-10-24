@@ -28,7 +28,7 @@ import org.apache.jena.rdf.model.RDFNode;
 public interface ObjectHandler {
     /**
      * Parse the object into an RDFNode representation.
-     * 
+     *
      * @param obj
      *            The object to represent
      * @return The RDFNode representation
@@ -37,7 +37,7 @@ public interface ObjectHandler {
 
     /**
      * Returns true if the object is considered empty.
-     * 
+     *
      * @param obj
      *            the object that would be passed to createRDFNode
      * @return true if the object is a empty.
@@ -46,7 +46,7 @@ public interface ObjectHandler {
 
     /**
      * Parse the RDF node into an object.
-     * 
+     *
      * @param node
      *            The RDFNode to be unparsed.
      * @return The Object from the unparsed RDFNode.

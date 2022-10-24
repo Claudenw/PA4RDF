@@ -30,14 +30,14 @@ public interface SubjectInfo {
     /**
      * Get the class that was annotated with the Subject annotation. e.g. the
      * class that this SubjectInfo is about.
-     * 
+     *
      * @return The class that contains the annotation.
      */
     public Class<?> getImplementedClass();
 
     /**
      * Get the predicateInfo or return null if not found
-     * 
+     *
      * @param method
      *            The method to get information for.
      * @return PredicateInfo or null.
@@ -46,7 +46,7 @@ public interface SubjectInfo {
 
     /**
      * Get the predicate info for a method.
-     * 
+     *
      * @param methodName
      *            The method name
      * @param clazz
@@ -58,7 +58,7 @@ public interface SubjectInfo {
 
     /**
      * Get the Property that is the predicate for the method.
-     * 
+     *
      * @param method
      *            The method to lookup.
      * @return A property or null if method was not found
@@ -67,7 +67,7 @@ public interface SubjectInfo {
 
     /**
      * Get the Property that is the predicate for the method.
-     * 
+     *
      * @param methodName
      *            The method name to lookup.
      * @return A property or null if function was not found
@@ -76,7 +76,7 @@ public interface SubjectInfo {
 
     /**
      * The the URI string of the predicate property.
-     * 
+     *
      * @param method
      *            The method to get the predicate for.
      * @return the URI string for the predicate property.
@@ -85,7 +85,7 @@ public interface SubjectInfo {
 
     /**
      * The the URI string of the predicate property.
-     * 
+     *
      * @param methodName
      *            The name of the method to get the predicate for.
      * @return the URI string for the predicate property.
@@ -94,7 +94,7 @@ public interface SubjectInfo {
 
     /**
      * Get the @Subject annotation object for this subject.
-     * 
+     *
      * @return the Subject annotation for this object.
      */
     public Subject getSubject();
@@ -102,7 +102,7 @@ public interface SubjectInfo {
     /**
      * Validate that this subject info implements all the methods for all the
      * interfaces listed in iface.
-     * 
+     *
      * @param iface
      *            The list of interfaces that this subjectInfo should implement.
      */

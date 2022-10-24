@@ -24,7 +24,7 @@ import org.xenei.jena.entities.impl.ObjectHandler;
 public class VoidHandler implements ObjectHandler {
     /**
      * Convert the object to null
-     * 
+     *
      * @param obj
      *            The object to convert
      * @return null
@@ -51,7 +51,7 @@ public class VoidHandler implements ObjectHandler {
 
     /**
      * convert the node to a null
-     * 
+     *
      * @param node
      *            The node to convert.
      * @return null.

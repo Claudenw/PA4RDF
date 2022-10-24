@@ -2,12 +2,10 @@ package org.xenei.jena.entities.impl.manager;
 
 import org.xenei.jena.entities.testing.impl.MultiValueSubjectImpl;
 
-public class MultiValueSubjectImplTest extends AbstractMultiValueTest
-{
+public class MultiValueSubjectImplTest extends AbstractMultiValueTest {
 
-	public MultiValueSubjectImplTest()
-	{
-		super(MultiValueSubjectImpl.class);
-	}
+    public MultiValueSubjectImplTest() {
+        super( MultiValueSubjectImpl.class );
+    }
 
 }

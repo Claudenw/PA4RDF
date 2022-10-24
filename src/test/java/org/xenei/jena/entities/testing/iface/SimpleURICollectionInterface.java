@@ -10,41 +10,39 @@ import org.xenei.jena.entities.annotations.Subject;
 import org.xenei.jena.entities.annotations.URI;
 
 /**
- * __U() shows add annotation
- * __U2() shows get annotation
+ * __U() shows add annotation __U2() shows get annotation
  */
-@Subject( namespace = "http://example.com/" )
-public interface SimpleURICollectionInterface
-{
-	void addU( RDFNode x );
+@Subject(namespace = "http://example.com/")
+public interface SimpleURICollectionInterface {
+    void addU(RDFNode x);
 
-	@Predicate
-	void addU( @URI String x );
+    @Predicate
+    void addU(@URI String x);
 
-	void addU2( RDFNode b );
+    void addU2(RDFNode b);
 
-	void addU2( @URI String x );
+    void addU2(@URI String x);
 
-	//
-	// List with URI annotations
-	//
-	List<RDFNode> getU();
+    //
+    // List with URI annotations
+    //
+    List<RDFNode> getU();
 
-	@Predicate( type = RDFNode.class )
-	ExtendedIterator<RDFNode> getU2();
+    @Predicate(type = RDFNode.class)
+    ExtendedIterator<RDFNode> getU2();
 
-	//
-	// Extended iterator with URI annotations
-	//
+    //
+    // Extended iterator with URI annotations
+    //
 
-	boolean hasU( @URI String x );
+    boolean hasU(@URI String x);
 
-	Boolean hasU2( @URI String b );
+    Boolean hasU2(@URI String b);
 
-	void removeU( @URI String x );
+    void removeU(@URI String x);
 
-	void removeU2( RDFNode b );
+    void removeU2(RDFNode b);
 
-	void removeU2( @URI String b );
+    void removeU2(@URI String b);
 
 }

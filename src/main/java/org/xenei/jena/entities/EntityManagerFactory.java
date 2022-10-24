@@ -36,7 +36,7 @@ public class EntityManagerFactory {
 
     /**
      * Set the entity manager that the factory will return.
-     * 
+     *
      * @param manager
      *            The manager to be returned on subsequent getEntityManager()
      *            calls.

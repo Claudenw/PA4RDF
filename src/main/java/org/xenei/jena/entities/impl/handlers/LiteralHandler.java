@@ -32,7 +32,7 @@ public class LiteralHandler implements ObjectHandler {
 
     /**
      * Create a LiteralHandler that converts literalDatatype objects.
-     * 
+     *
      * @param literalDatatype
      *            The RDFDatatype that will be converted to/from.
      */
@@ -42,7 +42,7 @@ public class LiteralHandler implements ObjectHandler {
 
     /**
      * Convert the object to a Literal using the literalDatatype.
-     * 
+     *
      * @param obj
      *            the Object to convert.
      * @return The literal representation of the object.
@@ -76,7 +76,7 @@ public class LiteralHandler implements ObjectHandler {
 
     /**
      * Convert a Literal to an object using the Literaldata type to parse it.
-     * 
+     *
      * @param node
      *            The literal node.
      * @return The parsed object

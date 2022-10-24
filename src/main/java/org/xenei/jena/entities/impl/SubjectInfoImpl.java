@@ -223,10 +223,9 @@ public class SubjectInfoImpl implements SubjectInfo {
     public void removePredicateInfo(final String function, final Class<?> clazz) {
         final Map<ObjectHandler, PredicateInfo> map = predicateInfo.get( function );
         if (map != null) {
-            for (Map.Entry<ObjectHandler,PredicateInfo> entry : map.entrySet())
-            {
+            for (final Map.Entry<ObjectHandler, PredicateInfo> entry : map.entrySet()) {
                 if (entry.getValue().getValueClass().equals( clazz )) {
-                    map.remove(entry.getKey());
+                    map.remove( entry.getKey() );
                 }
             }
             if (map.isEmpty()) {

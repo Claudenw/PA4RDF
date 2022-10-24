@@ -51,7 +51,7 @@ import java.lang.annotation.RetentionPolicy;
 public @interface Predicate {
     /**
      * If true empty strings are assumed to be null and are not inserted.
-     * 
+     *
      * Default value = false
      *
      * @return true if empty strings should be considered as nulls.
@@ -62,7 +62,7 @@ public @interface Predicate {
      * Indicates that a method is an implementation of an abstract method to
      * allow the class to be concrete while not providing a concrete
      * implementation of the Predicate annotated methods.
-     * 
+     *
      * @return true if the implementation should be overridden.
      */
     boolean impl() default false;
@@ -71,7 +71,7 @@ public @interface Predicate {
      * The name of the literal type or an empty string if not is use. If
      * specified it is used in a call to typeMapper.getSafeTypeByName() to get
      * the RDFDatatype used to parse and unparse literal values.
-     * 
+     *
      * @return The name of the literal type or an empty string.
      */
     String literalType() default "";
@@ -80,10 +80,10 @@ public @interface Predicate {
      * The name of the predicate. This is the local name in RDF parlance. If not
      * specified it defaults to the name of the function with the action prefix
      * removed. @see{ @link org.xenei.jena.entities.impl.ActionType}.
-     * 
+     *
      * The namespace may be specified as part of the name. In this case the
      * namespace value need not be set.
-     * 
+     *
      * @return the local name of the RDF predicate.
      */
     String name() default "";
@@ -92,7 +92,7 @@ public @interface Predicate {
      * The namespace for the predicate. If not specified defaults to the
      * namespace for the subject that this predicate is part of. The namespace
      * may be specified with this field or as part of the name field.
-     * 
+     *
      * @return The namespace portion of the RDF predicate.
      */
     String namespace() default "";
@@ -100,7 +100,7 @@ public @interface Predicate {
     /**
      * The java object class that will be returned when the object is read from
      * the RDF model.
-     * 
+     *
      * @return The object class.
      */
     Class<?> type() default RDFNode.class;

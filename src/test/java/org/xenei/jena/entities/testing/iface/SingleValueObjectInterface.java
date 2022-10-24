@@ -3,9 +3,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -20,103 +20,100 @@ import org.xenei.jena.entities.annotations.Predicate;
 import org.xenei.jena.entities.annotations.Subject;
 import org.xenei.jena.entities.annotations.URI;
 
-@Subject( namespace = "http://localhost/test#" )
-public interface SingleValueObjectInterface
-{
+@Subject(namespace = "http://localhost/test#")
+public interface SingleValueObjectInterface {
 
-	@Subject( namespace = "http://localhost/test#" )
-	public static abstract class SubPredicate
-	{
-		public SubPredicate()
-		{
-		};
+    @Subject(namespace = "http://localhost/test#")
+    public static abstract class SubPredicate {
+        public SubPredicate() {
+        };
 
-		public abstract String getName();
+        public abstract String getName();
 
-		@Predicate
-		public abstract void setName( String name );
-	};
+        @Predicate
+        public abstract void setName(String name);
+    };
 
-	Character getChar();
+    Character getChar();
 
-	Double getDbl();
+    Double getDbl();
 
-	TestInterface getEnt();
+    TestInterface getEnt();
 
-	Float getFlt();
+    Float getFlt();
 
-	Integer getInt();
+    Integer getInt();
 
-	Long getLng();
+    Long getLng();
 
-	RDFNode getRDF();
+    RDFNode getRDF();
 
-	String getStr();
+    String getStr();
 
-	SubPredicate getSubPredicate();
+    SubPredicate getSubPredicate();
 
-	RDFNode getU();
+    RDFNode getU();
 
-	@Predicate( type = URI.class, name = "u" )
-	String getU2();
+    @Predicate(type = URI.class, name = "u")
+    String getU2();
 
-	Boolean isBool();
+    Boolean isBool();
 
-	void removeBool();
+    void removeBool();
 
-	void removeChar();
+    void removeChar();
 
-	void removeDbl();
+    void removeDbl();
 
-	void removeEnt();
+    void removeEnt();
 
-	void removeFlt();
+    void removeFlt();
 
-	void removeInt();
+    void removeInt();
 
-	void removeLng();
+    void removeLng();
 
-	void removeRDF();
+    void removeRDF();
 
-	void removeStr();
+    void removeStr();
 
-	void removeSubPredicate();
+    void removeSubPredicate();
 
-	void removeU();
+    void removeU();
 
-	@Predicate
-	void setBool( Boolean b );
+    @Predicate
+    void setBool(Boolean b);
 
-	@Predicate
-	void setChar( Character b );
+    @Predicate
+    void setChar(Character b);
 
-	@Predicate
-	void setDbl( Double b );
+    @Predicate
+    void setDbl(Double b);
 
-	@Predicate
-	void setEnt( TestInterface b );
+    @Predicate
+    void setEnt(TestInterface b);
 
-	@Predicate
-	void setFlt( Float b );
+    @Predicate
+    void setFlt(Float b);
 
-	@Predicate
-	void setInt( Integer b );
+    @Predicate
+    void setInt(Integer b);
 
-	@Predicate
-	void setLng( Long b );
+    @Predicate
+    void setLng(Long b);
 
-	@Predicate
-	void setRDF( RDFNode b );
+    @Predicate
+    void setRDF(RDFNode b);
 
-	@Predicate
-	void setStr( String b );
+    @Predicate
+    void setStr(String b);
 
-	@Predicate
-	void setSubPredicate( SubPredicate subPredicate );
+    @Predicate
+    void setSubPredicate(SubPredicate subPredicate);
 
-	void setU( RDFNode b );
+    void setU(RDFNode b);
 
-	@Predicate
-	void setU( @URI String b );
+    @Predicate
+    void setU(@URI String b);
 
 }

@@ -22,7 +22,7 @@ public class TypeChecker {
 
     /**
      * True if <code>a</code> can be set from <code>b</code>
-     * 
+     *
      * @param a
      *            The resulting class.
      * @param b
@@ -46,10 +46,10 @@ public class TypeChecker {
 
     /**
      * Get the primitive class that is equivalent to clazz.
-     * 
+     *
      * If clazz is a primitive returns clazz. If clazz does not wrap a primitive
      * returns null.
-     * 
+     *
      * @param clazz
      *            the class to unwrap.
      * @return The primitive class or null.

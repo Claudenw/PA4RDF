@@ -72,7 +72,7 @@ public class EntityManagerImpl implements EntityManager {
      * Register the datatypes used by the entity manger specifically xsd:long :
      * java.util.Long xsd:string : java.util.Character xsd:string :
      * java.lang.char
-     * 
+     *
      * and finally resetting xsd:string to java.lang.String
      */
     public static void registerTypes() {
@@ -123,7 +123,7 @@ public class EntityManagerImpl implements EntityManager {
      * This method may modify the graph and should be called within the scope of
      * a transaction if the underlying graph requires them.
      * </p>
-     * 
+     *
      * @param source
      *            Must either implement Resource or ResourceWrapper interfaces.
      * @param clazz
@@ -175,7 +175,7 @@ public class EntityManagerImpl implements EntityManager {
      * Recursive method used to find all classes in a given directory and
      * subdirs. Adapted from http://snippets.dzone.com/posts/show/4831 and
      * extended to support use of JAR files
-     * 
+     *
      * @param directory
      *            The base directory
      * @param packageName
@@ -220,7 +220,7 @@ public class EntityManagerImpl implements EntityManager {
      * to the given package and subpackages. Adapted from
      * http://snippets.dzone.com/posts/show/4831 and extended to support use of
      * JAR files
-     * 
+     *
      * @param packageName
      *            The base package or class name
      * @return The classes
@@ -299,7 +299,7 @@ public class EntityManagerImpl implements EntityManager {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * org.xenei.jena.entities.impl.EntityManager#getSubjectInfo(java.lang.Class
      * )
@@ -327,7 +327,7 @@ public class EntityManagerImpl implements EntityManager {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * org.xenei.jena.entities.impl.EntityManager#isInstance(org.apache.jena
      * .rdf.model.Resource, java.lang.Class)
@@ -358,10 +358,10 @@ public class EntityManagerImpl implements EntityManager {
 
     /**
      * Parse the class if necessary.
-     * 
+     *
      * The first time the class is seen it is parsed, after that a cached
      * version is returned.
-     * 
+     *
      * @param clazz
      * @return The SubjectInfo for the class.
      * @throws MissingAnnotation
@@ -444,7 +444,7 @@ public class EntityManagerImpl implements EntityManager {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * org.xenei.jena.entities.impl.EntityManager#read(org.apache.jena.rdf.model
      * .Resource, java.lang.Class, java.lang.Class)
@@ -488,7 +488,7 @@ public class EntityManagerImpl implements EntityManager {
      * the source to the target. It reads scans the target class for "set"
      * methods and the source class for associated "get" methods. If a pairing
      * is found the value of the "get" call is passed to the "set" call.
-     * 
+     *
      * @param source
      *            The object that has the values to transfer.
      * @param target

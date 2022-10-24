@@ -43,7 +43,7 @@ public class ResourceEntityProxy implements MethodInterceptor // Invoker
 
     /**
      * The constructor
-     * 
+     *
      * @param entityManager
      *            The entity manager to use.
      * @param resource

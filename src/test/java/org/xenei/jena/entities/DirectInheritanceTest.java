@@ -10,63 +10,50 @@ import org.junit.jupiter.api.Test;
 import org.xenei.jena.entities.testing.bad.UnannotatedInterface;
 import org.xenei.jena.entities.testing.iface.TwoValueSimpleInterface;
 
-public class DirectInheritanceTest
-{
-	private Model m;
-	private final EntityManager manager = EntityManagerFactory
-			.getEntityManager();
-	private TwoValueSimpleInterface theInstance;
-	private Resource r;
+public class DirectInheritanceTest {
+    private Model m;
+    private final EntityManager manager = EntityManagerFactory.getEntityManager();
+    private TwoValueSimpleInterface theInstance;
+    private Resource r;
 
-	@BeforeEach
-	public void setup() throws MissingAnnotation
-	{
-		m = ModelFactory.createDefaultModel();
-		r = m.createResource("http://localhost/DirectInheritanceTest");
-		System.err.println( "getting instance" );
-		theInstance = manager.read(r, TwoValueSimpleInterface.class);
-	}
+    @BeforeEach
+    public void setup() throws MissingAnnotation {
+        m = ModelFactory.createDefaultModel();
+        r = m.createResource( "http://localhost/DirectInheritanceTest" );
+        System.err.println( "getting instance" );
+        theInstance = manager.read( r, TwoValueSimpleInterface.class );
+    }
 
-	@Test
-	public void testEmptyIsNull()
-	{
-		theInstance.setZ("foo");
-		Assertions.assertNotNull(theInstance.getZ());
-		Assertions.assertEquals("foo", theInstance.getZ());
+    @Test
+    public void testEmptyIsNull() {
+        theInstance.setZ( "foo" );
+        Assertions.assertNotNull( theInstance.getZ() );
+        Assertions.assertEquals( "foo", theInstance.getZ() );
 
-		theInstance.setZ("");
-		Assertions.assertNull(theInstance.getZ());
+        theInstance.setZ( "" );
+        Assertions.assertNull( theInstance.getZ() );
 
-	}
+    }
 
-	@Test
-	public void testNullMethods()
-	{
-        try
-		{
-			manager.read(r, UnannotatedInterface.class);
-			Assertions.fail("Should have thrown MissingAnnotation");
-		}
-		catch (final MissingAnnotation e)
-		{
-			// expected
-		}
+    @Test
+    public void testNullMethods() {
+        try {
+            manager.read( r, UnannotatedInterface.class );
+            Assertions.fail( "Should have thrown MissingAnnotation" );
+        } catch (final MissingAnnotation e) {
+            // expected
+        }
 
-	}
+    }
 
-	/*
-	 * @Test
-	 * public void testResourceAncestorMethods()
-	 * {
-	 *
-	 * Assertions.assertEquals(r.getModel(), theInstance.getModel());
-	 *
-	 * }
-	 *
-	 * @Test
-	 * public void testResourceMethods()
-	 * {
-	 * Assertions.assertEquals(r.getURI(), theInstance.getURI());
-	 * }
-	 */
+    /*
+     * @Test public void testResourceAncestorMethods() {
+     *
+     * Assertions.assertEquals(r.getModel(), theInstance.getModel());
+     *
+     * }
+     *
+     * @Test public void testResourceMethods() {
+     * Assertions.assertEquals(r.getURI(), theInstance.getURI()); }
+     */
 }

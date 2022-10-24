@@ -28,7 +28,7 @@ import org.xenei.jena.entities.annotations.Subject;
 public interface ResourceWrapper {
     /**
      * Get the wrapped resource.
-     * 
+     *
      * @return The jena model resource.
      */
     @Predicate

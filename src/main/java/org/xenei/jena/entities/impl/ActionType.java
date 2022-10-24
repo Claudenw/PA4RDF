@@ -58,12 +58,12 @@ public enum ActionType {
 
     /**
      * Parse the action type from the function name.
-     * 
+     *
      * Action types are defined from known function name prefixes. In general
      * the function prefix will define the action type and the remaining portion
      * of the name will define the local name for the predicate. @see @link{
      * org.xenei.jena.annotations.Predicate }
-     * 
+     *
      * <table summary="List of function prefixes and ActionType mappings">
      * <tr>
      * <th>Function prefix</th>
@@ -86,7 +86,7 @@ public enum ActionType {
      * <td>EXISTENTIAL</td>
      * </tr>
      * </table>
-     * 
+     *
      * @param functionName
      *            The name of the function being parsed.
      * @return ActionType
@@ -112,7 +112,7 @@ public enum ActionType {
 
     /**
      * Extract the local name portion of the function name/
-     * 
+     *
      * @param name
      *            The function name to extract the local portion from.
      * @return The local name.
@@ -139,7 +139,7 @@ public enum ActionType {
 
     /**
      * Test to see if the function name is of this action type.
-     * 
+     *
      * @param functionName
      *            The name to test
      * @return true if the function is of this type, false otherwise.

@@ -32,7 +32,7 @@ public class EntityHandler implements ObjectHandler {
 
     /**
      * Constructor.
-     * 
+     *
      * @param entityManager
      *            The EntityManager to use.
      * @param valueClass
@@ -70,7 +70,7 @@ public class EntityHandler implements ObjectHandler {
      * Use the entity manager to create an instance of the valueClass from the
      * resource. Effectively calls entityManager.read( node.asResource,
      * valueClass )
-     * 
+     *
      * @param node
      *            The RDFNode to wrap with the valueClass.
      * @return the instance of the valueClass.

@@ -53,7 +53,9 @@ public class EffectivePredicate {
 
     /**
      * Constructs an effective predicate as a copy of the argument.
-     * @param ep the predicate to copy.
+     *
+     * @param ep
+     *            the predicate to copy.
      */
     public EffectivePredicate(final EffectivePredicate ep) {
         this();
@@ -61,8 +63,11 @@ public class EffectivePredicate {
     }
 
     /**
-     * Constructs an effective predicate by parsing the method and its annotations.
-     * @param m the method to parse.
+     * Constructs an effective predicate by parsing the method and its
+     * annotations.
+     *
+     * @param m
+     *            the method to parse.
      */
     public EffectivePredicate(final Method m) {
         if (m != null) {
@@ -133,7 +138,9 @@ public class EffectivePredicate {
 
     /**
      * Constructs an effective predicate from a Predicate annotation.
-     * @param p the predicate to parse.
+     *
+     * @param p
+     *            the predicate to parse.
      */
     public EffectivePredicate(final Predicate p) {
         this();
@@ -142,7 +149,9 @@ public class EffectivePredicate {
 
     /**
      * Add postExec processing to the predicate.
-     * @param peMethods A collection PostExec methods to execute.
+     *
+     * @param peMethods
+     *            A collection PostExec methods to execute.
      */
     public void addPostExec(final Collection<Method> peMethods) {
         for (final Method m : peMethods) {
@@ -151,9 +160,11 @@ public class EffectivePredicate {
     }
 
     /**
-     * Add postExec processing to the predicate.
-     * A method many only be added once.  An attempt to add the method a second time will be ignored.
-     * @param peMethod the PostExec method to execute.
+     * Add postExec processing to the predicate. A method many only be added
+     * once. An attempt to add the method a second time will be ignored.
+     *
+     * @param peMethod
+     *            the PostExec method to execute.
      */
     public void addPostExec(final Method peMethod) {
         if (postExec == null) {
@@ -165,8 +176,9 @@ public class EffectivePredicate {
     }
 
     /**
-     * Returns the postExec processing list.
-     * If the postExec has not been set will return an empty list.
+     * Returns the postExec processing list. If the postExec has not been set
+     * will return an empty list.
+     *
      * @return an unmodifiable copy of the processingList.
      */
     public List<Method> postExec() {
@@ -198,6 +210,7 @@ public class EffectivePredicate {
 
     /**
      * Returns true if the type has not been set.
+     *
      * @return true if the type has not been set.
      */
     public boolean isTypeNotSet() {
@@ -215,14 +228,15 @@ public class EffectivePredicate {
         return literalType;
     }
 
-    public void setLiteralType( String literalType )
-    {
+    public void setLiteralType(final String literalType) {
         this.literalType = literalType;
     }
 
     /**
      * Merges an EffectivePredicate into this one.
-     * @param predicate the other effective predicate to merge.
+     *
+     * @param predicate
+     *            the other effective predicate to merge.
      * @return this EffectivePredicate.
      */
     public EffectivePredicate merge(final EffectivePredicate predicate) {
@@ -245,7 +259,9 @@ public class EffectivePredicate {
 
     /**
      * Merges a Predicate into this one.
-     * @param predicate the predicate to merge.
+     *
+     * @param predicate
+     *            the predicate to merge.
      * @return this EffectivePredicate.
      */
     public EffectivePredicate merge(final Predicate predicate) {
@@ -289,7 +305,9 @@ public class EffectivePredicate {
 
     /**
      * Set the name of this predicate.
-     * @param name the name to set.
+     *
+     * @param name
+     *            the name to set.
      */
     public void setName(final String name) {
         if (StringUtils.isNotBlank( name )) {
@@ -306,7 +324,8 @@ public class EffectivePredicate {
      * The java object class that will be returned when the object is read from
      * the RDF model.
      *
-     * @return The object class.  If type is null {@code RDFNode.class} is returned.
+     * @return The object class. If type is null {@code RDFNode.class} is
+     *         returned.
      */
     public Class<?> type() {
         return type == null ? RDFNode.class : type;
@@ -323,11 +342,13 @@ public class EffectivePredicate {
     }
 
     /**
-     * Sets the java object class that will be returned when the object is read from
-     * the RDF model.
-     * @param type the type to set.
+     * Sets the java object class that will be returned when the object is read
+     * from the RDF model.
+     *
+     * @param type
+     *            the type to set.
      */
-    public void setType( Class<?> type ) {
+    public void setType(final Class<?> type) {
         this.type = type;
     }
 

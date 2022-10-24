@@ -35,7 +35,7 @@ public @interface Subject {
     /**
      * The namespace for this subject. Must be defined and not be an empty
      * string.
-     * 
+     *
      * @return The namespace for the properties.
      */
     String namespace() default "";
@@ -44,7 +44,7 @@ public @interface Subject {
      * The types that entities of this type must have to be valid. To be a valid
      * entity of this type the resource must have RDFS:type properties with
      * objects with the URIs listed.
-     * 
+     *
      * @return the list of URIs (Strings) that the RDFS:type properties must
      *         have.
      */
