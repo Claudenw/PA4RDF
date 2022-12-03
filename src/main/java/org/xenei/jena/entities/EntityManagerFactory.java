@@ -23,13 +23,17 @@ import org.xenei.jena.entities.impl.EntityManagerImpl;
  */
 public class EntityManagerFactory {
     private static EntityManager manager;
+    
+    private EntityManagerFactory() {
+        // no not instantiate.
+    }
 
     /**
      * @return the entity manager
      */
     public static EntityManager getEntityManager() {
         if (EntityManagerFactory.manager == null) {
-            EntityManagerFactory.manager = new EntityManagerImpl();
+            setEntityManager( new EntityManagerImpl() );
         }
         return EntityManagerFactory.manager;
     }
@@ -42,6 +46,9 @@ public class EntityManagerFactory {
      *            calls.
      */
     public static void setEntityManager(final EntityManager manager) {
+        if (manager == null) {
+            throw new EntityManagerRequiredException();
+        }
         EntityManagerFactory.manager = manager;
     }
 
