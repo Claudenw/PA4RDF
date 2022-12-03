@@ -9,15 +9,13 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 public class ResourceHandlerTest implements HandlerTestInterface {
-    ResourceHandler handler;
-    RDFNode node;
-    Integer instance;
+    private ResourceHandler handler;
+    private RDFNode node;
 
     @BeforeEach
     public void setup() {
         handler = new ResourceHandler();
         node = ResourceFactory.createResource();
-        instance = 5;
     }
 
     @Override
@@ -26,6 +24,7 @@ public class ResourceHandlerTest implements HandlerTestInterface {
         final RDFNode n = handler.createRDFNode( node );
         Assertions.assertNotNull( n );
         Assertions.assertEquals( node, n );
+        Assertions.assertThrows( IllegalArgumentException.class, () -> handler.createRDFNode( Long.valueOf(  5  ) ));
     }
 
     @Override

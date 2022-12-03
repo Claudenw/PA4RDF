@@ -1,5 +1,7 @@
 package org.xenei.jena.entities.impl.handlers;
 
+import static org.junit.jupiter.api.Assertions.assertFalse;
+
 import org.apache.jena.datatypes.xsd.XSDDatatype;
 import org.apache.jena.rdf.model.Literal;
 import org.apache.jena.rdf.model.RDFNode;
@@ -10,9 +12,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 public class LiteralHandlerTest implements HandlerTestInterface {
-    LiteralHandler handler;
-    RDFNode node;
-    Integer instance;
+    private LiteralHandler handler;
+    private RDFNode node;
+    private Integer instance;
 
     @BeforeEach
     public void setup() {
@@ -53,5 +55,10 @@ public class LiteralHandlerTest implements HandlerTestInterface {
         final Integer a2 = (Integer) o;
         Assertions.assertEquals( instance, a2 );
 
+    }
+
+    @Test
+    public void testNotEquals() {
+        Assertions.assertFalse( handler.equals( Integer.valueOf( 1 ) ) );
     }
 }

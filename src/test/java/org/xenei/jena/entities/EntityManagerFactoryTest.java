@@ -9,7 +9,6 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.TestInstance.Lifecycle;
-import org.xenei.jena.entities.annotations.Subject;
 
 @TestInstance(Lifecycle.PER_CLASS)
 public class EntityManagerFactoryTest {
@@ -32,54 +31,7 @@ public class EntityManagerFactoryTest {
     
     @Test
     public void setTest() {
-        EntityManager mgr = new EntityManager() {
-
-            @Override
-            public Subject getSubject(Class<?> clazz) {
-                return null;
-            }
-
-            @Override
-            public SubjectInfo getSubjectInfo(Class<?> clazz) {
-                return null;
-            }
-
-            @Override
-            public boolean isInstance(Object target, Class<?> clazz) {
-                return false;
-            }
-
-            @Override
-            public void parseClasses(String packageName) throws MissingAnnotation {}
-
-            @Override
-            public void parseClasses(String[] packageNames) throws MissingAnnotation {}
-
-            @Override
-            public <T> T make(Object source, Class<T> primaryClass, Class<?>... secondaryClasses)
-                    throws MissingAnnotation {
-                return null;
-            }
-
-            @Override
-            public <T> T read(Object source, Class<T> primaryClass, Class<?>... secondaryClasses)
-                    throws MissingAnnotation, IllegalArgumentException {
-                return null;
-            }
-
-            @Override
-            public <T> T addInstanceProperties(T source, Class<?> clazz) throws MissingAnnotation {
-                return null;
-            }
-
-            @Override
-            public Object update(Object source, Object target) {
-                return null;
-            }
-
-            @Override
-            public void reset() {}
-        };
+        EntityManager mgr = new TestEntityManager();
         EntityManagerFactory.setEntityManager( mgr );
         assertEquals( mgr, EntityManagerFactory.getEntityManager());
     }

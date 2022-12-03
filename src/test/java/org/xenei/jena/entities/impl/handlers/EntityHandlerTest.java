@@ -6,15 +6,18 @@ import org.apache.jena.rdf.model.ResourceFactory;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentMatchers;
+import org.mockito.Mockito;
 import org.xenei.jena.entities.EntityManager;
 import org.xenei.jena.entities.EntityManagerFactory;
+import org.xenei.jena.entities.MissingAnnotation;
 import org.xenei.jena.entities.testing.iface.TwoValueSimpleInterface;
 
 public class EntityHandlerTest implements HandlerTestInterface {
     EntityHandler handler;
-    EntityManager em;
-    RDFNode node;
-    TwoValueSimpleInterface instance;
+    private EntityManager em;
+    private RDFNode node;
+    private TwoValueSimpleInterface instance;
 
     @BeforeEach
     public void setup() throws Exception {
@@ -47,5 +50,21 @@ public class EntityHandlerTest implements HandlerTestInterface {
         Assertions.assertTrue( o instanceof TwoValueSimpleInterface );
         final TwoValueSimpleInterface a2 = (TwoValueSimpleInterface) o;
         Assertions.assertEquals( instance, a2 );
+    }
+
+    @Test
+    public void testMissingAnnotationDuringRead() {
+        final RDFNode node = ResourceFactory.createResource();
+        final EntityManager mockEM = Mockito.mock( EntityManager.class );
+        try {
+            Mockito.when( mockEM.read( ArgumentMatchers.eq( node.asResource() ),
+                    ArgumentMatchers.eq( TwoValueSimpleInterface.class ) ) ).thenThrow( MissingAnnotation.class );
+
+            handler = new EntityHandler( mockEM, TwoValueSimpleInterface.class );
+            Assertions.assertThrows( RuntimeException.class, () -> handler.parseObject( node ) );
+        } catch (IllegalArgumentException | MissingAnnotation e) {
+            Assertions.fail( e.getMessage() );
+        }
+
     }
 }
