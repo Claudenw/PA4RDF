@@ -22,11 +22,11 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.xenei.jena.entities.testing.abst.SingleValuePrimitiveTestClass;
+import org.xenei.jena.entities.testing.iface.SingleValuePrimitiveTestInterface;
 
 public class SingleValuePrimitiveEntityTests {
 
-    private SingleValuePrimitiveTestClass tc;
+    private SingleValuePrimitiveTestInterface tc;
     private Model model;
 
     @BeforeEach
@@ -34,7 +34,7 @@ public class SingleValuePrimitiveEntityTests {
         model = ModelFactory.createDefaultModel();
         final Resource r = model.createResource( "http://localhost/SingleValuePrimitiveEntityTests" );
         final EntityManager manager = EntityManagerFactory.getEntityManager();
-        tc = manager.read( r, SingleValuePrimitiveTestClass.class );
+        tc = manager.read( r, SingleValuePrimitiveTestInterface.class );
     }
 
     @AfterEach

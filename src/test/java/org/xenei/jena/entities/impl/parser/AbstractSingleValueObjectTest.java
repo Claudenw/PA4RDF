@@ -7,9 +7,12 @@ import java.lang.reflect.Method;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.w3c.dom.CharacterData;
 import org.xenei.jena.entities.EntityManagerFactory;
 import org.xenei.jena.entities.impl.ObjectHandler;
 import org.xenei.jena.entities.impl.PredicateInfoImpl;
+import org.xenei.jena.entities.impl.datatype.CharacterDatatype;
+import org.xenei.jena.entities.impl.datatype.LongDatatype;
 import org.xenei.jena.entities.impl.handlers.EntityHandler;
 import org.xenei.jena.entities.impl.handlers.LiteralHandler;
 import org.xenei.jena.entities.impl.handlers.ResourceHandler;
@@ -60,7 +63,7 @@ public abstract class AbstractSingleValueObjectTest extends BaseAbstractParserTe
         Method m = classUnderTest.getMethod( "getChar" );
         PredicateInfoImpl pi = (PredicateInfoImpl) parser.parse( m );
 
-        final ObjectHandler handler = new LiteralHandler( TypeMapper.getInstance().getTypeByClass( Character.class ) );
+        final ObjectHandler handler = new LiteralHandler( CharacterDatatype.INSTANCE );
 
         Assertions.assertEquals( "getChar", pi.getMethodName() );
         Assertions.assertEquals( handler, pi.getObjectHandler() );
@@ -210,7 +213,7 @@ public abstract class AbstractSingleValueObjectTest extends BaseAbstractParserTe
     public void testLng() throws Exception {
         Method m = classUnderTest.getMethod( "getLng" );
         PredicateInfoImpl pi = (PredicateInfoImpl) parser.parse( m );
-        final ObjectHandler handler = new LiteralHandler( TypeMapper.getInstance().getTypeByClass( Long.class ) );
+        final ObjectHandler handler = new LiteralHandler( LongDatatype.INSTANCE );
 
         Assertions.assertEquals( "getLng", pi.getMethodName() );
         Assertions.assertEquals( handler, pi.getObjectHandler() );

@@ -43,6 +43,9 @@ import org.xenei.jena.entities.EntityManager;
 import org.xenei.jena.entities.PredicateInfo;
 import org.xenei.jena.entities.annotations.Subject;
 import org.xenei.jena.entities.annotations.URI;
+import org.xenei.jena.entities.impl.datatype.CharDatatype;
+import org.xenei.jena.entities.impl.datatype.CharacterDatatype;
+import org.xenei.jena.entities.impl.datatype.LongDatatype;
 import org.xenei.jena.entities.impl.handlers.EntityHandler;
 import org.xenei.jena.entities.impl.handlers.LiteralHandler;
 import org.xenei.jena.entities.impl.handlers.ResourceHandler;
@@ -130,7 +133,7 @@ public class PredicateInfoImpl implements PredicateInfo {
             dt = typeMapper.getTypeByClass( returnType );
         }
         if (dt != null) {
-            return new LiteralHandler( dt );
+            return new LiteralHandler( adjustDataType( dt, returnType ));
         }
         if (returnType != null) {
             if (returnType.getAnnotation( Subject.class ) != null) {
@@ -145,12 +148,23 @@ public class PredicateInfoImpl implements PredicateInfo {
         }
         return new VoidHandler();
     }
+    
+    private static RDFDatatype adjustDataType( RDFDatatype initial, Class<?> returnType) {
+        if (CharDatatype.INSTANCE.getJavaClass().equals( returnType )) {
+            return CharDatatype.INSTANCE;
+        } else if (CharacterDatatype.INSTANCE.getJavaClass().equals( returnType )) {
+            return CharacterDatatype.INSTANCE;
+        } else if (LongDatatype.INSTANCE.getJavaClass().equals( returnType )) {
+            return LongDatatype.INSTANCE;
+        } 
+        return initial;
+    }
 
     /**
      * Constructor.
      *
      * @param entityManager
-     *            The EntityManager that this predicate is assocatied with.
+     *            The EntityManager that this predicate is associated with.
      * @param predicate
      *            The EffectivePredicate instance that describes the predicate.
      * @param methodName

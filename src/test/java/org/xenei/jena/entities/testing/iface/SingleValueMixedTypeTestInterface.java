@@ -15,102 +15,83 @@
 package org.xenei.jena.entities.testing.iface;
 
 import org.apache.jena.rdf.model.RDFNode;
+import org.apache.jena.rdf.model.Resource;
 
 import org.xenei.jena.entities.annotations.Predicate;
 import org.xenei.jena.entities.annotations.Subject;
 import org.xenei.jena.entities.annotations.URI;
 
 @Subject(namespace = "http://localhost/test#")
-public interface SingleValueObjectInterface {
+public interface SingleValueMixedTypeTestInterface {
 
-    @Subject(namespace = "http://localhost/test#")
-    public interface SubPredicate {
-        String getName();
-
-        @Predicate
-        void setName(String name);
-    };
+    char getC();
 
     Character getChar();
 
+    double getD();
+
     Double getDbl();
 
-    TestInterface getEnt();
+    float getF();
 
     Float getFlt();
 
+    int getI();
+
     Integer getInt();
+
+    long getL();
 
     Long getLng();
 
-    RDFNode getRDF();
-
-    String getStr();
-
-    SubPredicate getSubPredicate();
-
     RDFNode getU();
 
-    @Predicate(type = URI.class, name = "u")
+    @Predicate(type = URI.class)
     String getU2();
+
+    boolean isB();
 
     Boolean isBool();
 
-    void removeBool();
-
-    void removeChar();
-
-    void removeDbl();
-
-    void removeEnt();
-
-    void removeFlt();
-
-    void removeInt();
-
-    void removeLng();
-
-    void removeRDF();
-
-    void removeStr();
-
-    void removeSubPredicate();
-
-    void removeU();
+    @Predicate
+    void setB(Boolean b);
 
     @Predicate
-    void setBool(Boolean b);
+    void setBool(boolean b);
 
     @Predicate
-    void setChar(Character b);
+    void setC(Character b);
 
     @Predicate
-    void setDbl(Double b);
+    void setChar(char b);
 
     @Predicate
-    void setEnt(TestInterface b);
+    void setD(Double b);
 
     @Predicate
-    void setFlt(Float b);
+    void setDbl(double b);
 
     @Predicate
-    void setInt(Integer b);
+    void setF(Float b);
 
     @Predicate
-    void setLng(Long b);
+    void setFlt(float b);
 
     @Predicate
-    void setRDF(RDFNode b);
+    void setI(Integer b);
 
     @Predicate
-    void setStr(String b);
+    void setInt(int b);
 
     @Predicate
-    void setSubPredicate(SubPredicate subPredicate);
+    void setL(Long b);
 
-    void setU(RDFNode b);
+    @Predicate
+    void setLng(long b);
 
     @Predicate
     void setU(@URI String b);
 
+    @Predicate
+    void setU2(RDFNode n);
 }

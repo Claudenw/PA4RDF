@@ -25,7 +25,9 @@ import org.apache.jena.datatypes.xsd.impl.XSDBaseNumericType;
  */
 public class LongDatatype extends XSDBaseNumericType {
 
-    public LongDatatype() {
+    public static final LongDatatype INSTANCE = new LongDatatype();
+
+    private LongDatatype() {
         super( "long", Long.class );
     }
 

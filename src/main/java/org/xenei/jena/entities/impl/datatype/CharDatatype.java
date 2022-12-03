@@ -23,19 +23,10 @@ import org.apache.jena.datatypes.xsd.impl.XSDBaseStringType;
  */
 public class CharDatatype extends XSDBaseStringType {
 
-    public CharDatatype() {
-        super( "string", null );
-        try {
-            javaClass = (Class<?>) Character.class.getField( "TYPE" ).get( null );
-        } catch (final IllegalArgumentException e) {
-            throw new RuntimeException( e );
-        } catch (final SecurityException e) {
-            throw new RuntimeException( e );
-        } catch (final IllegalAccessException e) {
-            throw new RuntimeException( e );
-        } catch (final NoSuchFieldException e) {
-            throw new RuntimeException( e );
-        }
+    public static final CharDatatype INSTANCE = new CharDatatype();
+    
+    private CharDatatype() {
+        super( "string", char.class );        
     }
 
     /**

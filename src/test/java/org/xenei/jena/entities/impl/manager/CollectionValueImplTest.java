@@ -1,11 +1,11 @@
 package org.xenei.jena.entities.impl.manager;
 
-import org.xenei.jena.entities.testing.impl.CollectionValueImpl;
+import org.xenei.jena.entities.testing.iface.CollectionValueDefault;
 
 public class CollectionValueImplTest extends AbstractCollectionValueTest {
 
     public CollectionValueImplTest() {
-        super( CollectionValueImpl.class );
+        super( CollectionValueDefault.class );
     }
 
 }

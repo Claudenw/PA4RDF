@@ -11,6 +11,8 @@ import org.junit.jupiter.api.Test;
 import org.xenei.jena.entities.EntityManagerFactory;
 import org.xenei.jena.entities.impl.ObjectHandler;
 import org.xenei.jena.entities.impl.PredicateInfoImpl;
+import org.xenei.jena.entities.impl.datatype.CharacterDatatype;
+import org.xenei.jena.entities.impl.datatype.LongDatatype;
 import org.xenei.jena.entities.impl.handlers.EntityHandler;
 import org.xenei.jena.entities.impl.handlers.LiteralHandler;
 import org.xenei.jena.entities.impl.handlers.ResourceHandler;
@@ -52,7 +54,7 @@ public abstract class AbstractMultiValueTest extends BaseAbstractParserTest {
         Method m = classUnderTest.getMethod( "getChar" );
         PredicateInfoImpl pi = (PredicateInfoImpl) parser.parse( m );
 
-        final ObjectHandler handler = new LiteralHandler( TypeMapper.getInstance().getTypeByClass( Character.class ) );
+        final ObjectHandler handler = new LiteralHandler( CharacterDatatype.INSTANCE );
         Assertions.assertEquals( "getChar", pi.getMethodName() );
         Assertions.assertEquals( handler, pi.getObjectHandler() );
         Assertions.assertEquals( ExtendedIterator.class, pi.getValueClass() );
@@ -244,7 +246,7 @@ public abstract class AbstractMultiValueTest extends BaseAbstractParserTest {
     public void testLng() throws Exception {
         Method m = classUnderTest.getMethod( "getLng" );
         PredicateInfoImpl pi = (PredicateInfoImpl) parser.parse( m );
-        final ObjectHandler handler = new LiteralHandler( TypeMapper.getInstance().getTypeByClass( Long.class ) );
+        final ObjectHandler handler = new LiteralHandler( LongDatatype.INSTANCE );
 
         Assertions.assertEquals( "getLng", pi.getMethodName() );
         Assertions.assertEquals( handler, pi.getObjectHandler() );

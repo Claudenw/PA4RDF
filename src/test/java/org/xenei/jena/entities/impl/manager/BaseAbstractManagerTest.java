@@ -25,13 +25,13 @@ abstract public class BaseAbstractManagerTest {
     }
 
     @BeforeEach
-    public void setup() {
+    public final void setup() {
         model = ModelFactory.createDefaultModel();
         subjectInfo = (SubjectInfoImpl) manager.getSubjectInfo( classUnderTest );
     }
 
     @AfterEach
-    public void teardown() {
+    public final void teardown() {
         model.close();
     }
 

@@ -39,7 +39,7 @@ public class TypeManagerTest {
                 localTypeMap.put( dt.getJavaClass(), dt2 );
             }
         }
-        EntityManagerImpl.registerTypes();
+
 
         // check the list of datatypes
         for (final Iterator<RDFDatatype> iter = mapper.listTypes(); iter.hasNext();) {
@@ -67,7 +67,7 @@ public class TypeManagerTest {
                 localTypeMap.put( dt.getURI(), dt2 );
             }
         }
-        EntityManagerImpl.registerTypes();
+
 
         // check the list of datatypes
         for (final Iterator<RDFDatatype> iter = mapper.listTypes(); iter.hasNext();) {

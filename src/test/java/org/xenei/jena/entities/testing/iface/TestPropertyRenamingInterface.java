@@ -14,37 +14,32 @@
  */
 package org.xenei.jena.entities.testing.iface;
 
+import org.apache.jena.rdf.model.Resource;
 import org.apache.jena.util.iterator.ExtendedIterator;
 
 import org.xenei.jena.entities.annotations.Predicate;
-import org.xenei.jena.entities.annotations.Subject;
 
-/**
- * An interface used to test parsing of annotated interface parameters and
- * returns from other annotated classes and interfaces
- */
-@Subject(namespace = "http://localhost/test#")
-public interface TestInterface {
+public interface TestPropertyRenamingInterface {
 
-    @Predicate
-    void addBaz(String str);
+    @Predicate(name = "foo", namespace = "http://localhost/different#")
+    public abstract void addFoomer(String key);
 
-    String getBar();
+    public abstract ExtendedIterator<String> getFoomer();
 
-    ExtendedIterator<String> getBaz();
+    public abstract String getFoomer2();
 
-    Boolean isFlag();
+    public abstract Boolean isFoomer3();
 
-    void removeBar();
+    public abstract void removeFoomer(String key);
 
-    void removeBaz(String str);
+    public abstract void removeFoomer2();
 
-    void removeFlag();
+    public abstract void removeFoomer3();
 
-    @Predicate
-    void setBar(String value);
+    @Predicate(name = "foo2", namespace = "http://localhost/different#")
+    public abstract void setFoomer2(String example);
 
-    @Predicate
-    void setFlag(Boolean state);
+    @Predicate(name = "foo3", namespace = "http://localhost/different#")
+    public abstract void setFoomer3(Boolean example);
 
 }

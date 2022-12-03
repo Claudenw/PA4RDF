@@ -1,9 +1,9 @@
 package org.xenei.jena.entities.impl.parser;
 
-import org.xenei.jena.entities.testing.impl.CollectionSubjectImpl;
+import org.xenei.jena.entities.testing.iface.CollectionInterfaceDefault;
 
 public class CollectionSubjectImplTest extends AbstractCollectionTest {
     public CollectionSubjectImplTest() {
-        super( CollectionSubjectImpl.class );
+        super( CollectionInterfaceDefault.class );
     }
 }

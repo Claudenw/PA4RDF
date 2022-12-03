@@ -35,24 +35,39 @@ import org.xenei.jena.entities.ResourceWrapper;
 import org.xenei.jena.entities.SubjectInfo;
 import org.xenei.jena.entities.annotations.Subject;
 
+import net.bytebuddy.ByteBuddy;
+import net.bytebuddy.dynamic.DynamicType.Unloaded;
+import net.bytebuddy.implementation.MethodDelegation;
+import net.bytebuddy.implementation.bind.annotation.AllArguments;
+import net.bytebuddy.implementation.bind.annotation.Origin;
+import net.bytebuddy.implementation.bind.annotation.RuntimeType;
+import net.bytebuddy.implementation.bind.annotation.SuperMethod;
+import net.bytebuddy.implementation.bind.annotation.This;
+import net.bytebuddy.matcher.ElementMatchers;
+
 /**
  * An implementation of the EntityManager interface.
  *
  */
-public class EntityManagerImpl implements EntityManager {
-    private static Logger LOG = LoggerFactory.getLogger( EntityManagerImpl.class );
+public class EntityManagerByteBuddy implements EntityManager {
+    private static Logger LOG = LoggerFactory.getLogger( EntityManagerByteBuddy.class );
     private final SubjectInfoFactory factory;
 
     /**
      * Constructor.
      */
-    public EntityManagerImpl() {
+    public EntityManagerByteBuddy() {
         factory = new SubjectInfoFactory( this );
     }
 
     @Override
     public void reset() {
         factory.clear();
+        try {
+            factory.parse( ResourceWrapper.class );
+        } catch (final MissingAnnotation e) {
+            throw new RuntimeException( e );
+        }
     }
 
     /**
@@ -177,7 +192,7 @@ public class EntityManagerImpl implements EntityManager {
                     try {
                         factory.parse( c );
                     } catch (final MissingAnnotation e) {
-                        EntityManagerImpl.LOG.warn( "Error processing {}: {}", c, e.getMessage() );
+                        LOG.warn( "Error processing {}: {}", c, e.getMessage() );
                         hasErrors = true;
                     }
                 }
@@ -231,6 +246,19 @@ public class EntityManagerImpl implements EntityManager {
         final Class<?>[] classArray = new Class<?>[classes.size()];
         return (T) Proxy.newProxyInstance( primaryClass.getClassLoader(), classes.toArray( classArray ),
                 resourceEntityProxy );
+    }
+
+    public <T extends ResourceWrapper> Class<? extends T> makeClass(final Class<T> clazz)
+            throws MissingAnnotation, IllegalArgumentException, SecurityException {
+
+        final SubjectInfoImpl subjectInfo = factory.parse( clazz );
+
+        final Interceptor interceptor = new Interceptor( this, subjectInfo );
+        Unloaded<T> unloaded = new ByteBuddy().subclass( clazz ).method( ElementMatchers.any() )
+                .intercept( MethodDelegation.to( interceptor ) ).make();
+        // clazz.getClassLoader()
+        Class<? extends T> type = unloaded.load( Thread.currentThread().getContextClassLoader() ).getLoaded();
+        return type;
     }
 
     /**
@@ -299,5 +327,25 @@ public class EntityManagerImpl implements EntityManager {
         }
         return target;
     }
+    
+    public class Interceptor {
 
+        private final EntityManager entityManager;
+        private final SubjectInfo subjectInfo;
+        private ResourceEntityProxy proxy;
+        
+        Interceptor(EntityManager entityManager, SubjectInfo subjectInfo) {
+            this.entityManager=entityManager;
+            this.subjectInfo=subjectInfo;
+        }
+
+        @RuntimeType
+        public Object intercept(@This ResourceWrapper self, @Origin Method method, @AllArguments Object[] args,
+                @SuperMethod(nullIfImpossible = true) Method superMethod) throws Throwable {
+            if (proxy == null) {
+                proxy = new ResourceEntityProxy( entityManager, self.getResource(), subjectInfo);
+            }
+            return proxy.invoke( self, method, args );
+        }
+    }
 }

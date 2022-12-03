@@ -15,7 +15,7 @@ import org.xenei.jena.entities.SubjectInfo;
 import org.xenei.jena.entities.impl.handlers.LiteralHandler;
 import org.xenei.jena.entities.impl.handlers.ResourceHandler;
 import org.xenei.jena.entities.impl.handlers.UriHandler;
-import org.xenei.jena.entities.testing.abst.SingleValueMixedTypeTestClass;
+import org.xenei.jena.entities.testing.iface.SingleValueMixedTypeTestInterface;
 
 public class SingleValueMixedTypeParserTest {
 
@@ -30,8 +30,8 @@ public class SingleValueMixedTypeParserTest {
         final EntityManager manager = EntityManagerFactory.getEntityManager();
         manager.reset();
         manager.read( model.createResource( "http://localhost/SingleValueEntityTests" ),
-                SingleValueMixedTypeTestClass.class );
-        subjectInfo = manager.getSubjectInfo( SingleValueMixedTypeTestClass.class );
+                SingleValueMixedTypeTestInterface.class );
+        subjectInfo = manager.getSubjectInfo( SingleValueMixedTypeTestInterface.class );
     }
 
     @AfterEach

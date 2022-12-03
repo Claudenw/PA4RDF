@@ -147,7 +147,7 @@ public interface EntityManager {
      * @param primaryClass
      *            The class of the object to be returned.
      * @param secondaryClasses
-     *            A lost of other classes that are implemented.
+     *            A list of other classes that are implemented.
      * @param <T>
      *            the instance type to return.
      * @return primaryClass instance that also implements ResourceWrapper.

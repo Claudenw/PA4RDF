@@ -6,11 +6,11 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.xenei.jena.entities.PredicateInfo;
 import org.xenei.jena.entities.impl.ActionType;
-import org.xenei.jena.entities.testing.impl.SimpleInterfaceImpl;
+import org.xenei.jena.entities.testing.iface.SimpleInterfaceDefault;
 
 public class SimpleInterfaceImplTest extends AbstractSimpleTest {
     public SimpleInterfaceImplTest() {
-        super( SimpleInterfaceImpl.class );
+        super( SimpleInterfaceDefault.class );
     }
 
     @Test

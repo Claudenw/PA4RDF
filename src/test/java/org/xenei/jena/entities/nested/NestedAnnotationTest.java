@@ -28,10 +28,10 @@ public class NestedAnnotationTest {
 
     }
 
-    public static abstract class Implementation implements AnnotatedInterface {
+    public interface Implementation extends AnnotatedInterface {
 
         @Override
-        public String getName() {
+        default String getName() {
             return "name";
         }
 

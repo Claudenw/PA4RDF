@@ -14,37 +14,54 @@
  */
 package org.xenei.jena.entities.testing.iface;
 
-import org.apache.jena.util.iterator.ExtendedIterator;
+import org.apache.jena.rdf.model.Resource;
 
 import org.xenei.jena.entities.annotations.Predicate;
 import org.xenei.jena.entities.annotations.Subject;
 
-/**
- * An interface used to test parsing of annotated interface parameters and
- * returns from other annotated classes and interfaces
- */
 @Subject(namespace = "http://localhost/test#")
-public interface TestInterface {
+public interface SingleValuePrimitiveTestInterface  {
+
+    char getChar();
+
+    double getDbl();
+
+    float getFlt();
+
+    int getInt();
+
+    long getLng();
+
+    boolean isBool();
+
+    void removeBool();
+
+    void removeChar();
+
+    void removeDbl();
+
+    void removeFlt();
+
+    void removeInt();
+
+    void removeLng();
 
     @Predicate
-    void addBaz(String str);
-
-    String getBar();
-
-    ExtendedIterator<String> getBaz();
-
-    Boolean isFlag();
-
-    void removeBar();
-
-    void removeBaz(String str);
-
-    void removeFlag();
+    void setBool(boolean b);
 
     @Predicate
-    void setBar(String value);
+    void setChar(char b);
 
     @Predicate
-    void setFlag(Boolean state);
+    void setDbl(double b);
+
+    @Predicate
+    void setFlt(float b);
+
+    @Predicate
+    void setInt(int b);
+
+    @Predicate
+    void setLng(long b);
 
 }
