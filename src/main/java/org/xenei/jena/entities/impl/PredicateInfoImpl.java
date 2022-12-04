@@ -40,6 +40,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xenei.jena.entities.EntityManager;
+import org.xenei.jena.entities.ObjectHandler;
 import org.xenei.jena.entities.PredicateInfo;
 import org.xenei.jena.entities.annotations.Subject;
 import org.xenei.jena.entities.annotations.URI;
@@ -420,6 +421,7 @@ public class PredicateInfoImpl implements PredicateInfo {
         return predicate.namespace();
     }
 
+    @Override
     public ObjectHandler getObjectHandler() {
         return objectHandler;
     }

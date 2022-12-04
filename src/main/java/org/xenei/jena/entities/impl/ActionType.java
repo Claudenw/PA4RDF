@@ -44,10 +44,11 @@ public enum ActionType {
         switch (at) {
         case GETTER:
             return Iterator.class.isAssignableFrom( m.getReturnType() )
-                    || Collection.class.isAssignableFrom( m.getReturnType() );
+                    || Collection.class.isAssignableFrom( m.getReturnType() )
+                    || m.getReturnType().isArray();
 
         case SETTER:
-            return m.getName().startsWith( "set" );
+            return m.getName().startsWith( "add" );
 
         case EXISTENTIAL:
         case REMOVER:
@@ -151,7 +152,7 @@ public enum ActionType {
         switch (this) {
         case EXISTENTIAL:
             return functionName.startsWith( "has" );
-
+            
         case GETTER:
             return functionName.startsWith( "get" ) || functionName.startsWith( "is" );
 
@@ -162,6 +163,20 @@ public enum ActionType {
             return functionName.startsWith( "set" ) || functionName.startsWith( "add" );
         }
         return false;
+    }
+    
+    public Class<?> predicateClass( Method m ) {
+        switch (this) {
+        case EXISTENTIAL:
+        case REMOVER:
+        case SETTER:
+            return m.getParameterTypes().length == 0?null:m.getParameterTypes()[0];
+
+        case GETTER:
+        default:
+            return m.getReturnType();
+
+        }
     }
 
 }

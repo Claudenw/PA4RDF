@@ -15,8 +15,7 @@
 package org.xenei.jena.entities.impl.handlers;
 
 import org.apache.jena.rdf.model.RDFNode;
-
-import org.xenei.jena.entities.impl.ObjectHandler;
+import org.xenei.jena.entities.ObjectHandler;
 
 /**
  * An ObjectHandler that always returns null.

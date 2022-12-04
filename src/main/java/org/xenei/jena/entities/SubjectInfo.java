@@ -98,13 +98,4 @@ public interface SubjectInfo {
      */
     public Subject getSubject();
 
-    /**
-     * Validate that this subject info implements all the methods for all the
-     * interfaces listed in iface.
-     *
-     * @param iface
-     *            The list of interfaces that this subjectInfo should implement.
-     */
-    public void validate(final Collection<Class<?>> iface);
-
 }

@@ -6,7 +6,7 @@ import org.apache.jena.util.iterator.ExtendedIterator;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.xenei.jena.entities.impl.ObjectHandler;
+import org.xenei.jena.entities.ObjectHandler;
 import org.xenei.jena.entities.impl.PredicateInfoImpl;
 import org.xenei.jena.entities.impl.datatype.CharacterDatatype;
 import org.xenei.jena.entities.impl.datatype.LongDatatype;

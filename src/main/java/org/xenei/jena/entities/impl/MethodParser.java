@@ -81,7 +81,6 @@ public class MethodParser {
             case GETTER:
                 if (method.getParameterTypes().length == 0) {
                     final String nameSuffix = actionType.extractName( method.getName() );
-
                     parseGetter( nameSuffix, method, predicate );
                 }
 

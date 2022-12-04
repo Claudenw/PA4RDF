@@ -1,9 +1,15 @@
 package org.xenei.jena.entities.impl;
 
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.PrimitiveIterator;
+
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.xenei.jena.entities.annotations.Predicate;
+import org.xenei.jena.entities.annotations.Subject;
 
 public class ActionTypeTest {
 
@@ -41,5 +47,91 @@ public class ActionTypeTest {
         Assertions.assertTrue( type == ActionType.SETTER, "setX should be SETTER" );
         type = ActionType.parse( "addX" );
         Assertions.assertTrue( type == ActionType.SETTER, "setX should be SETTER" );
+    }
+    
+    @Test
+    public void isATest() {
+        Assertions.assertTrue( ActionType.EXISTENTIAL.isA(  "hasX" ) );
+        Assertions.assertFalse( ActionType.EXISTENTIAL.isA(  "getX" ) );
+        Assertions.assertFalse( ActionType.EXISTENTIAL.isA(  "removeX" ) );
+        Assertions.assertFalse( ActionType.EXISTENTIAL.isA(  "setX" ) );
+        Assertions.assertFalse( ActionType.EXISTENTIAL.isA(  "addX" ) );
+        Assertions.assertFalse( ActionType.EXISTENTIAL.isA(  "random" ) );
+
+        Assertions.assertFalse( ActionType.GETTER.isA(  "hasX" ) );
+        Assertions.assertTrue( ActionType.GETTER.isA(  "getX" ) );
+        Assertions.assertFalse( ActionType.GETTER.isA(  "removeX" ) );
+        Assertions.assertFalse( ActionType.GETTER.isA(  "setX" ) );
+        Assertions.assertFalse( ActionType.GETTER.isA(  "addX" ) );
+        Assertions.assertFalse( ActionType.GETTER.isA(  "random" ) );
+        
+        Assertions.assertFalse( ActionType.REMOVER.isA(  "hasX" ) );
+        Assertions.assertFalse( ActionType.REMOVER.isA(  "getX" ) );
+        Assertions.assertTrue( ActionType.REMOVER.isA(  "removeX" ) );
+        Assertions.assertFalse( ActionType.REMOVER.isA(  "setX" ) );
+        Assertions.assertFalse( ActionType.REMOVER.isA(  "addX" ) );
+        Assertions.assertFalse( ActionType.REMOVER.isA(  "random" ) );
+        
+        Assertions.assertFalse( ActionType.SETTER.isA(  "hasX" ) );
+        Assertions.assertFalse( ActionType.SETTER.isA(  "getX" ) );
+        Assertions.assertFalse( ActionType.SETTER.isA(  "removeX" ) );
+        Assertions.assertTrue( ActionType.SETTER.isA(  "setX" ) );
+        Assertions.assertTrue( ActionType.SETTER.isA(  "addX" ) );
+        Assertions.assertFalse( ActionType.SETTER.isA(  "random" ) );
+    }
+    
+    @Test
+    public void isMultipleTest() throws Exception {
+        Assertions.assertFalse( ActionType.isMultiple( MultipleTest.class.getMethod( "getSingle" )));
+        Assertions.assertTrue( ActionType.isMultiple( MultipleTest.class.getMethod( "getArray" )));
+        Assertions.assertTrue( ActionType.isMultiple( MultipleTest.class.getMethod( "getCollection" )));
+        Assertions.assertTrue( ActionType.isMultiple( MultipleTest.class.getMethod( "getIterator" )));
+        Assertions.assertTrue( ActionType.isMultiple( MultipleTest.class.getMethod( "getPrimitive" )));
+        Assertions.assertFalse( ActionType.isMultiple( MultipleTest.class.getMethod( "setSingle", Integer.class )));
+        Assertions.assertTrue( ActionType.isMultiple( MultipleTest.class.getMethod( "addMultiple", Integer.class )));
+        Assertions.assertFalse( ActionType.isMultiple( MultipleTest.class.getMethod( "hasSingle" )));
+        Assertions.assertTrue( ActionType.isMultiple( MultipleTest.class.getMethod( "hasMultiple", Integer.class )));
+        Assertions.assertFalse( ActionType.isMultiple( MultipleTest.class.getMethod( "removeSingle" )));
+        Assertions.assertTrue( ActionType.isMultiple( MultipleTest.class.getMethod( "removeMultiple", Integer.class )));
+        
+        Assertions.assertThrows(  IllegalArgumentException.class, () -> ActionType.isMultiple( MultipleTest.class.getMethod( "notAnActionMethod" )));
+    }
+    
+    @Subject(namespace = "http://example.com/")
+    interface MultipleTest {
+        @Predicate
+        Integer getSingle();
+        
+        @Predicate
+        Integer[] getArray();
+        
+        @Predicate
+        Collection<Integer> getCollection();
+        
+        @Predicate
+        Iterator<Integer> getIterator();
+        
+        @Predicate
+        PrimitiveIterator.OfInt getPrimitive();
+        
+        @Predicate
+        void setSingle(Integer i);
+        
+        @Predicate
+        void addMultiple(Integer i);
+        
+        @Predicate
+        boolean hasSingle();
+        
+        @Predicate
+        boolean hasMultiple( Integer a );
+        
+        @Predicate
+        boolean removeSingle();
+        
+        @Predicate
+        boolean removeMultiple( Integer a );
+        
+        void notAnActionMethod();
     }
 }

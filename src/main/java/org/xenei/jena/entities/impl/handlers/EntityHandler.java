@@ -18,8 +18,8 @@ import org.apache.jena.rdf.model.RDFNode;
 
 import org.xenei.jena.entities.EntityManager;
 import org.xenei.jena.entities.MissingAnnotation;
+import org.xenei.jena.entities.ObjectHandler;
 import org.xenei.jena.entities.ResourceWrapper;
-import org.xenei.jena.entities.impl.ObjectHandler;
 
 /**
  * An ObjectHandler that creates EntityManager managed entities from

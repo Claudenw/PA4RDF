@@ -12,7 +12,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.xenei.jena.entities.impl;
+package org.xenei.jena.entities;
 
 import org.apache.jena.rdf.model.RDFNode;
 

@@ -89,7 +89,7 @@ public class SubjectInfoFactory {
         try {
             if (ActionType.parse( m.getName() ) == ActionType.SETTER) {
                 final Class<?> parms[] = m.getParameterTypes();
-                return (parms != null) && (parms.length == 1);
+                return parms.length == 1;
             }
         } catch (final IllegalArgumentException expected) {
             // do nothing

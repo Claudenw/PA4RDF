@@ -240,7 +240,7 @@ public class EntityManagerByteBuddy implements EntityManager {
         if (!classes.contains( ResourceWrapper.class )) {
             classes.add( ResourceWrapper.class );
         }
-        subjectInfo.validate( classes );
+
         final ResourceEntityProxy resourceEntityProxy = new ResourceEntityProxy( this,
                 ResourceWrapper.getResource( source ), subjectInfo );
         final Class<?>[] classArray = new Class<?>[classes.size()];
