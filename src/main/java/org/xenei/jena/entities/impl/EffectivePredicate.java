@@ -71,45 +71,29 @@ public class EffectivePredicate {
      */
     public EffectivePredicate(final Method m) {
         if (m != null) {
-
             if (m.getParameterTypes().length > 0) {
-
                 for (final Annotation a : m.getParameterAnnotations()[0]) {
                     if (a instanceof URI) {
                         type = URI.class;
                     }
                 }
             }
-
+            final ActionType actionType = ActionType.parse( m.getName() );
             final Subject s = m.getDeclaringClass().getAnnotation( Subject.class );
             if (s != null) {
                 namespace = s.namespace();
             }
             final Predicate p = m.getAnnotation( Predicate.class );
-            merge( p );
             if (p != null) {
+                merge( p );
                 if (StringUtils.isNotBlank( p.postExec() )) {
                     final String mName = p.postExec().trim();
                     try {
-                        Method peMethod = null;
-                        Class<?> argType = null;
-                        final ActionType actionType = ActionType.parse( m.getName() );
-                        switch (actionType) {
-                        case GETTER:
-                            argType = m.getReturnType();
-                            break;
-
-                        case SETTER:
-                        case EXISTENTIAL:
-                        case REMOVER:
-                            if (m.getParameterTypes().length != 1) {
-                                throw new RuntimeException(
-                                        String.format( "%s does not have a single parameter", peMethod ) );
-                            }
-                            argType = m.getParameterTypes()[0];
-                            break;
+                        Class<?> argType = actionType.predicateClass( m );
+                        if (argType == null) {
+                            throw new IllegalArgumentException( String.format( "%s is not an Action method", m ) );
                         }
-                        peMethod = m.getDeclaringClass().getMethod( mName, argType );
+                        Method peMethod = m.getDeclaringClass().getMethod( mName, argType );
                         if (argType.equals( peMethod.getReturnType() )) {
                             addPostExec( peMethod );
                         } else {
@@ -127,7 +111,6 @@ public class EffectivePredicate {
             }
             if (StringUtils.isBlank( name )) {
                 try {
-                    final ActionType actionType = ActionType.parse( m.getName() );
                     setName( actionType.extractName( m.getName() ) );
                 } catch (final IllegalArgumentException e) {
                     // expected when not an action method.
