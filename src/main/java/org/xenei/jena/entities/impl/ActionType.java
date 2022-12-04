@@ -15,8 +15,14 @@
 package org.xenei.jena.entities.impl;
 
 import java.lang.reflect.Method;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.List;
+import java.util.Optional;
+import java.util.function.Predicate;
+
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * An enumeration of Action types.
@@ -25,27 +31,32 @@ public enum ActionType {
     /**
      * Indicates a method that gets a value
      */
-    GETTER(),
+    GETTER(Arrays.asList( "get" )),
     /**
      * Indicates a method that sets a value
      */
-    SETTER(),
+    SETTER(Arrays.asList( "set", "add" )),
     /**
      * Indicates a method that removes a value
      */
-    REMOVER(),
+    REMOVER(Arrays.asList( "remove" )),
     /**
      * Indicates a method that checks for the existance of a value
      */
-    EXISTENTIAL();
+    EXISTENTIAL(Arrays.asList( "has", "is" ));
+
+    private final List<String> prefixes;
+
+    private ActionType(final List<String> prefixes) {
+        this.prefixes = prefixes;
+    }
 
     public static boolean isMultiple(final Method m) {
         final ActionType at = ActionType.parse( m.getName() );
         switch (at) {
         case GETTER:
             return Iterator.class.isAssignableFrom( m.getReturnType() )
-                    || Collection.class.isAssignableFrom( m.getReturnType() )
-                    || m.getReturnType().isArray();
+                    || Collection.class.isAssignableFrom( m.getReturnType() ) || m.getReturnType().isArray();
 
         case SETTER:
             return m.getName().startsWith( "add" );
@@ -95,47 +106,37 @@ public enum ActionType {
      *             if the function does not have an action type prefix.
      */
     public static ActionType parse(final String functionName) {
-        if (functionName.startsWith( "get" ) || functionName.startsWith( "is" )) {
-            return GETTER;
-        }
-        if (functionName.startsWith( "set" ) || functionName.startsWith( "add" )) {
-            return SETTER;
-        }
-        if (functionName.startsWith( "remove" )) {
-            return REMOVER;
-        }
-        if (functionName.startsWith( "has" )) {
-            return EXISTENTIAL;
+        for (final ActionType action : ActionType.values()) {
+            if (action.prefixes.stream().anyMatch( (prefix) -> functionName.startsWith( prefix ) )) {
+                return action;
+            }
         }
         throw new IllegalArgumentException( String.format( "%s is not an action type function", functionName ) );
-
     }
 
     /**
      * Extract the local name portion of the function name/
      *
-     * @param name
+     * @param functionName
      *            The function name to extract the local portion from.
      * @return The local name.
      * @throws IllegalArgumentException
      *             fur unrecognized ActionType instances.
      */
-    public String extractName(final String name) {
-        switch (this) {
-        case GETTER:
-            if (name.startsWith( "get" )) {
-                return name.substring( 3 );
+    public String extractName(final String functionName) {
+        if (isA( functionName )) {
+            final Predicate<String> predicate = new Predicate<>() {
+                @Override
+                public boolean test(final String prefix) {
+                    return functionName.startsWith( prefix );
+                }
+            };
+            final Optional<String> prefix = prefixes.stream().filter( predicate ).findFirst();
+            if (prefix.isPresent()) {
+                return functionName.substring( prefix.get().length() );
             }
-            return name.substring( 2 );
-
-        case SETTER:
-        case EXISTENTIAL:
-            return name.substring( 3 );
-
-        case REMOVER:
-            return name.substring( 6 );
         }
-        throw new IllegalArgumentException( this.getClass().getName() + " does not seem to be a valid ActionType" );
+        throw new IllegalArgumentException( functionName + " is not an ActionType" );
     }
 
     /**
@@ -146,31 +147,17 @@ public enum ActionType {
      * @return true if the function is of this type, false otherwise.
      */
     public boolean isA(final String functionName) {
-        if (functionName == null) {
-            return false;
-        }
-        switch (this) {
-        case EXISTENTIAL:
-            return functionName.startsWith( "has" );
-            
-        case GETTER:
-            return functionName.startsWith( "get" ) || functionName.startsWith( "is" );
-
-        case REMOVER:
-            return functionName.startsWith( "remove" );
-
-        case SETTER:
-            return functionName.startsWith( "set" ) || functionName.startsWith( "add" );
-        }
-        return false;
+        return StringUtils.isNotBlank( functionName )
+                ? prefixes.stream().anyMatch( (prefix) -> functionName.startsWith( prefix ) )
+                : false;
     }
-    
-    public Class<?> predicateClass( Method m ) {
+
+    public Class<?> predicateClass(final Method m) {
         switch (this) {
         case EXISTENTIAL:
         case REMOVER:
         case SETTER:
-            return m.getParameterTypes().length == 0?null:m.getParameterTypes()[0];
+            return m.getParameterTypes().length == 0 ? null : m.getParameterTypes()[0];
 
         case GETTER:
         default:

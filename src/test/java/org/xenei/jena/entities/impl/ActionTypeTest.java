@@ -57,6 +57,9 @@ public class ActionTypeTest {
         Assertions.assertFalse( ActionType.EXISTENTIAL.isA(  "setX" ) );
         Assertions.assertFalse( ActionType.EXISTENTIAL.isA(  "addX" ) );
         Assertions.assertFalse( ActionType.EXISTENTIAL.isA(  "random" ) );
+        Assertions.assertFalse( ActionType.EXISTENTIAL.isA( null) );
+        Assertions.assertFalse( ActionType.EXISTENTIAL.isA( "") );
+        Assertions.assertFalse( ActionType.EXISTENTIAL.isA( " ") );
 
         Assertions.assertFalse( ActionType.GETTER.isA(  "hasX" ) );
         Assertions.assertTrue( ActionType.GETTER.isA(  "getX" ) );
@@ -64,6 +67,9 @@ public class ActionTypeTest {
         Assertions.assertFalse( ActionType.GETTER.isA(  "setX" ) );
         Assertions.assertFalse( ActionType.GETTER.isA(  "addX" ) );
         Assertions.assertFalse( ActionType.GETTER.isA(  "random" ) );
+        Assertions.assertFalse( ActionType.GETTER.isA( null) );
+        Assertions.assertFalse( ActionType.GETTER.isA( "") );
+        Assertions.assertFalse( ActionType.GETTER.isA( " ") );
         
         Assertions.assertFalse( ActionType.REMOVER.isA(  "hasX" ) );
         Assertions.assertFalse( ActionType.REMOVER.isA(  "getX" ) );
@@ -71,6 +77,9 @@ public class ActionTypeTest {
         Assertions.assertFalse( ActionType.REMOVER.isA(  "setX" ) );
         Assertions.assertFalse( ActionType.REMOVER.isA(  "addX" ) );
         Assertions.assertFalse( ActionType.REMOVER.isA(  "random" ) );
+        Assertions.assertFalse( ActionType.REMOVER.isA( null) );
+        Assertions.assertFalse( ActionType.REMOVER.isA( "") );
+        Assertions.assertFalse( ActionType.REMOVER.isA( " ") );
         
         Assertions.assertFalse( ActionType.SETTER.isA(  "hasX" ) );
         Assertions.assertFalse( ActionType.SETTER.isA(  "getX" ) );
@@ -78,6 +87,9 @@ public class ActionTypeTest {
         Assertions.assertTrue( ActionType.SETTER.isA(  "setX" ) );
         Assertions.assertTrue( ActionType.SETTER.isA(  "addX" ) );
         Assertions.assertFalse( ActionType.SETTER.isA(  "random" ) );
+        Assertions.assertFalse( ActionType.SETTER.isA( null) );
+        Assertions.assertFalse( ActionType.SETTER.isA( "") );
+        Assertions.assertFalse( ActionType.SETTER.isA( " ") );
     }
     
     @Test
@@ -95,6 +107,35 @@ public class ActionTypeTest {
         Assertions.assertTrue( ActionType.isMultiple( MultipleTest.class.getMethod( "removeMultiple", Integer.class )));
         
         Assertions.assertThrows(  IllegalArgumentException.class, () -> ActionType.isMultiple( MultipleTest.class.getMethod( "notAnActionMethod" )));
+    }
+    
+    @Test
+    public void extractNameTest() {
+        Assertions.assertEquals( "X", ActionType.EXISTENTIAL.extractName(  "hasX" ) );
+        Assertions.assertEquals( "X", ActionType.EXISTENTIAL.extractName(  "isX" ) );
+        Assertions.assertThrows( IllegalArgumentException.class, () -> ActionType.EXISTENTIAL.extractName(  "random" ) );
+        Assertions.assertThrows( IllegalArgumentException.class, () -> ActionType.EXISTENTIAL.extractName(null) );
+        Assertions.assertThrows( IllegalArgumentException.class, () -> ActionType.EXISTENTIAL.extractName(  "" ) );
+        Assertions.assertThrows( IllegalArgumentException.class, () -> ActionType.EXISTENTIAL.extractName(  " " ) );
+        
+        Assertions.assertEquals( "X", ActionType.GETTER.extractName(  "getX" ) );
+        Assertions.assertThrows( IllegalArgumentException.class, () -> ActionType.GETTER.extractName(  "random" ) );
+        Assertions.assertThrows( IllegalArgumentException.class, () -> ActionType.GETTER.extractName(null) );
+        Assertions.assertThrows( IllegalArgumentException.class, () -> ActionType.GETTER.extractName(  "" ) );
+        Assertions.assertThrows( IllegalArgumentException.class, () -> ActionType.GETTER.extractName(  " " ) );
+
+        Assertions.assertEquals( "X", ActionType.REMOVER.extractName(  "removeX" ) );
+        Assertions.assertThrows( IllegalArgumentException.class, () -> ActionType.REMOVER.extractName(  "random" ) );
+        Assertions.assertThrows( IllegalArgumentException.class, () -> ActionType.REMOVER.extractName(null) );
+        Assertions.assertThrows( IllegalArgumentException.class, () -> ActionType.REMOVER.extractName(  "" ) );
+        Assertions.assertThrows( IllegalArgumentException.class, () -> ActionType.REMOVER.extractName(  " " ) );
+        
+        Assertions.assertEquals( "X", ActionType.SETTER.extractName(  "setX" ) );
+        Assertions.assertEquals( "X", ActionType.SETTER.extractName(  "addX" ) );
+        Assertions.assertThrows( IllegalArgumentException.class, () -> ActionType.REMOVER.extractName(  "random" ) );
+        Assertions.assertThrows( IllegalArgumentException.class, () -> ActionType.REMOVER.extractName(null) );
+        Assertions.assertThrows( IllegalArgumentException.class, () -> ActionType.REMOVER.extractName(  "" ) );
+        Assertions.assertThrows( IllegalArgumentException.class, () -> ActionType.REMOVER.extractName(  " " ) );
     }
     
     @Subject(namespace = "http://example.com/")
