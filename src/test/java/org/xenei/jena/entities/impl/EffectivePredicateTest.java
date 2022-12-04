@@ -53,7 +53,7 @@ public class EffectivePredicateTest {
     }
 
     @Test
-    public void mergeTest() {
+    public void mergePredicateTest() {
         final EffectivePredicate ep = new EffectivePredicate();
 
         ep.merge( makePred( false, false, "", "", "http://example.com", "", null, false ) );
@@ -76,6 +76,40 @@ public class EffectivePredicateTest {
 
         ep.merge( makePred( false, false, "", "", "", "SomeMethod", null, false ) );
         assertValues( ep, false, true, "", "name", "http://example.com", Integer.class, false );
+    }
+    
+    @Test
+    public void mergeEffectivePredicateTest() {
+        EffectivePredicate tempEp;
+        EffectivePredicate ep = new EffectivePredicate();
+        
+        tempEp = new EffectivePredicate( makePred( false, false, "", "", "http://example.com", "", null, false ) );
+        ep.merge( tempEp );
+        assertValues( ep, true, false, "", "", "http://example.com", RDFNode.class, false );
+
+        tempEp = new EffectivePredicate( makePred( false, false, "", "", "", "", Integer.class, false ) );
+        ep.merge( tempEp );
+        assertValues( ep, true, false, "", "", "http://example.com", Integer.class, false );
+
+        tempEp = new EffectivePredicate( makePred( true, false, "", "", "", "", null, false ) );
+        ep.merge( tempEp );
+        assertValues( ep, true, false, "", "", "http://example.com", Integer.class, false );
+
+        tempEp = new EffectivePredicate( makePred( false, true, "", "", "", "", null, false ) );
+        ep.merge( tempEp );
+        assertValues( ep, true, true, "", "", "http://example.com", Integer.class, false );
+
+        tempEp = new EffectivePredicate( makePred( false, false, "", "name", "", "", null, false ) );
+        ep.merge( tempEp );
+        assertValues( ep, true, true, "", "name", "http://example.com", Integer.class, false );
+
+        tempEp = new EffectivePredicate( makePred( false, false, "", "", "", "", null, true ) );
+        ep.merge( tempEp );
+        assertValues( ep, true, true, "", "Name", "http://example.com", Integer.class, true );
+
+        tempEp = new EffectivePredicate( makePred( false, false, "", "", "", "SomeMethod", null, false ) );
+        ep.merge( tempEp );
+        assertValues( ep, true, true, "", "name", "http://example.com", Integer.class, false );
     }
 
     @Test
@@ -168,6 +202,5 @@ public class EffectivePredicateTest {
         int getUpcase();
 
         int getUriParam(@URI String uri);
-
     }
 }
