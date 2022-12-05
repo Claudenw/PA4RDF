@@ -24,7 +24,7 @@ public class ResourceHandlerTest implements HandlerTestInterface {
         final RDFNode n = handler.createRDFNode( node );
         Assertions.assertNotNull( n );
         Assertions.assertEquals( node, n );
-        Assertions.assertThrows( IllegalArgumentException.class, () -> handler.createRDFNode( Long.valueOf(  5  ) ));
+        Assertions.assertThrows( IllegalArgumentException.class, () -> handler.createRDFNode( Long.valueOf( 5 ) ) );
     }
 
     @Override

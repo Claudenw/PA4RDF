@@ -5,8 +5,10 @@ import org.apache.jena.util.iterator.ExtendedIterator;
 
 import org.xenei.jena.entities.EntityManagerRequiredException;
 import org.xenei.jena.entities.annotations.Predicate;
+import org.xenei.jena.entities.annotations.Subject;
 import org.xenei.jena.entities.annotations.URI;
 
+@Subject
 public interface MultiValueIntfDefault extends MultiValueInterface {
 
     @Override

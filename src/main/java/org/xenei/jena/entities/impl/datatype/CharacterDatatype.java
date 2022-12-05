@@ -22,8 +22,9 @@ import org.apache.jena.datatypes.xsd.impl.XSDBaseStringType;
  * single character strings and back again.
  */
 public class CharacterDatatype extends XSDBaseStringType {
-    
+
     public static final CharacterDatatype INSTANCE = new CharacterDatatype();
+
     /**
      * constructor
      */

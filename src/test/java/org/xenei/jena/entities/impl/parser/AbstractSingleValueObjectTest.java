@@ -7,8 +7,6 @@ import java.lang.reflect.Method;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.w3c.dom.CharacterData;
-import org.xenei.jena.entities.EntityManagerFactory;
 import org.xenei.jena.entities.ObjectHandler;
 import org.xenei.jena.entities.impl.PredicateInfoImpl;
 import org.xenei.jena.entities.impl.datatype.CharacterDatatype;
@@ -123,7 +121,7 @@ public abstract class AbstractSingleValueObjectTest extends BaseAbstractParserTe
         Method m = classUnderTest.getMethod( "getEnt" );
         PredicateInfoImpl pi = (PredicateInfoImpl) parser.parse( m );
 
-        final ObjectHandler handler = new EntityHandler( EntityManagerFactory.getEntityManager(), TestInterface.class );
+        final ObjectHandler handler = new EntityHandler( TestInterface.class );
 
         Assertions.assertEquals( "getEnt", pi.getMethodName() );
         Assertions.assertEquals( handler, pi.getObjectHandler() );

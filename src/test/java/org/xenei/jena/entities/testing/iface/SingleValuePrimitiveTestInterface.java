@@ -14,13 +14,11 @@
  */
 package org.xenei.jena.entities.testing.iface;
 
-import org.apache.jena.rdf.model.Resource;
-
 import org.xenei.jena.entities.annotations.Predicate;
 import org.xenei.jena.entities.annotations.Subject;
 
 @Subject(namespace = "http://localhost/test#")
-public interface SingleValuePrimitiveTestInterface  {
+public interface SingleValuePrimitiveTestInterface {
 
     char getChar();
 

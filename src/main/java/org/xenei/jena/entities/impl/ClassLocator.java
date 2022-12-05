@@ -53,7 +53,8 @@ public class ClassLocator {
         for (final File file : files) {
             if (file.isDirectory()) {
                 assert !file.getName().contains( "." );
-                classes.addAll( ClassLocator.findClasses( file.getAbsolutePath(), packageName + "." + file.getName() ) );
+                classes.addAll(
+                        ClassLocator.findClasses( file.getAbsolutePath(), packageName + "." + file.getName() ) );
             } else if (file.getName().endsWith( ".class" )) {
                 classes.add( packageName + '.' + file.getName().substring( 0, file.getName().length() - 6 ) );
             }

@@ -89,11 +89,11 @@ public class EffectivePredicate {
                 if (StringUtils.isNotBlank( p.postExec() )) {
                     final String mName = p.postExec().trim();
                     try {
-                        Class<?> argType = actionType.predicateClass( m );
+                        final Class<?> argType = actionType.predicateClass( m );
                         if (argType == null) {
                             throw new IllegalArgumentException( String.format( "%s is not an Action method", m ) );
                         }
-                        Method peMethod = m.getDeclaringClass().getMethod( mName, argType );
+                        final Method peMethod = m.getDeclaringClass().getMethod( mName, argType );
                         if (argType.equals( peMethod.getReturnType() )) {
                             addPostExec( peMethod );
                         } else {
@@ -254,7 +254,6 @@ public class EffectivePredicate {
             namespace = StringUtils.isBlank( predicate.namespace() ) ? namespace : predicate.namespace();
             literalType = StringUtils.isBlank( predicate.literalType() ) ? literalType : predicate.literalType();
             type = RDFNode.class.equals( predicate.type() ) ? type : predicate.type();
-            // type = type!=null ? type : predicate.type();
             emptyIsNull = predicate.emptyIsNull();
             impl |= predicate.impl();
         }
@@ -276,17 +275,6 @@ public class EffectivePredicate {
     }
 
     /**
-     * The namespace for the predicate. If not specified defaults to the
-     * namespace for the subject that this predicate is part of. The namespace
-     * may be specified with this field or as part of the name field.
-     *
-     * @return The namespace portion of the RDF predicate.
-     */
-    public String namespace() {
-        return namespace;
-    }
-
-    /**
      * Set the name of this predicate.
      *
      * @param name
@@ -301,6 +289,21 @@ public class EffectivePredicate {
                 this.name = name.replaceFirst( s, s.toLowerCase() );
             }
         }
+    }
+
+    /**
+     * The namespace for the predicate. If not specified defaults to the
+     * namespace for the subject that this predicate is part of. The namespace
+     * may be specified with this field or as part of the name field.
+     *
+     * @return The namespace portion of the RDF predicate.
+     */
+    public String namespace() {
+        return namespace;
+    }
+
+    void setNamespace(final String namespace) {
+        this.namespace = namespace;
     }
 
     /**

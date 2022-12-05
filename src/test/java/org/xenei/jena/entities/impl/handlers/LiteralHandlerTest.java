@@ -1,7 +1,5 @@
 package org.xenei.jena.entities.impl.handlers;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-
 import org.apache.jena.datatypes.xsd.XSDDatatype;
 import org.apache.jena.rdf.model.Literal;
 import org.apache.jena.rdf.model.RDFNode;

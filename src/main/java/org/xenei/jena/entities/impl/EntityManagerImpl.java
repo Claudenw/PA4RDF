@@ -47,7 +47,7 @@ public class EntityManagerImpl implements EntityManager {
      * Constructor.
      */
     public EntityManagerImpl() {
-        factory = new SubjectInfoFactory( this );
+        factory = new SubjectInfoFactory();
     }
 
     @Override

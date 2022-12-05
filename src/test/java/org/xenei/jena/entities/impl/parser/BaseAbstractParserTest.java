@@ -7,7 +7,6 @@ import java.util.Map;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
-import org.xenei.jena.entities.EntityManagerFactory;
 import org.xenei.jena.entities.PredicateInfo;
 import org.xenei.jena.entities.impl.ActionType;
 import org.xenei.jena.entities.impl.MethodParser;
@@ -54,7 +53,7 @@ abstract public class BaseAbstractParserTest {
     public void setUp() throws Exception {
         subjectInfo = new SubjectInfoImpl( classUnderTest );
         final Map<String, Integer> addCount = countAdders( classUnderTest.getMethods() );
-        parser = new MethodParser( EntityManagerFactory.getEntityManager(), subjectInfo, addCount );
+        parser = new MethodParser( subjectInfo, addCount );
     }
 
     @AfterEach

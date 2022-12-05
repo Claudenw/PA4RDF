@@ -157,7 +157,7 @@ public abstract class AbstractSingleValueTest extends BaseAbstractManagerTest {
     @Test
     public void testEntity() {
         PredicateInfoImpl pi = (PredicateInfoImpl) subjectInfo.getPredicateInfo( "getEnt", TestInterface.class );
-        final ObjectHandler handler = new EntityHandler( manager, TestInterface.class );
+        final ObjectHandler handler = new EntityHandler( TestInterface.class );
 
         Assertions.assertEquals( "getEnt", pi.getMethodName() );
         Assertions.assertEquals( handler, pi.getObjectHandler() );

@@ -1,14 +1,9 @@
 package org.xenei.jena.entities.impl;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
 import org.apache.jena.rdf.model.ResourceFactory;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 import org.xenei.jena.entities.ObjectHandler;
 import org.xenei.jena.entities.PredicateInfo;
 import org.xenei.jena.entities.annotations.Subject;
@@ -16,7 +11,7 @@ import org.xenei.jena.entities.testing.iface.SimpleInterface;
 
 public class SubjectInfoImplTest {
 
-    private static String namespace= "http://example.com/";
+    private static String namespace = "http://example.com/";
     private SubjectInfoImpl subjectInfo;
     private PredicateInfo setter;
     private PredicateInfo getter;
@@ -24,172 +19,215 @@ public class SubjectInfoImplTest {
     private PredicateInfo removerNoArg;
     private PredicateInfo exist;
     private PredicateInfo existNoArg;
-    
-    
+
     private void setupMock() {
         subjectInfo = new SubjectInfoImpl( SimpleInterface.class );
-        ObjectHandler mockHandler = mock(ObjectHandler.class);
-        ObjectHandler noArgHandler = mock(ObjectHandler.class);
-        
-        setter = mock( PredicateInfo.class );
-        when( setter.getMethodName() ).thenReturn( "setMockSetter");
-        doReturn(Integer.class).when(setter).getValueClass();
-        when( setter.getActionType() ).thenReturn( ActionType.SETTER );
-        when( setter.getObjectHandler()).thenReturn( mockHandler );
-        when( setter.getProperty()).thenReturn( ResourceFactory.createProperty( namespace, "mockSetter" ));
-        when( setter.getUriString()).thenReturn( namespace+"mockSetter" );
+        final ObjectHandler mockHandler = Mockito.mock( ObjectHandler.class );
+        final ObjectHandler noArgHandler = Mockito.mock( ObjectHandler.class );
+
+        setter = Mockito.mock( PredicateInfo.class );
+        Mockito.when( setter.getMethodName() ).thenReturn( "setMockSetter" );
+        Mockito.doReturn( Integer.class ).when( setter ).getValueClass();
+        Mockito.when( setter.getActionType() ).thenReturn( ActionType.SETTER );
+        Mockito.when( setter.getObjectHandler() ).thenReturn( mockHandler );
+        Mockito.when( setter.getProperty() )
+                .thenReturn( ResourceFactory.createProperty( SubjectInfoImplTest.namespace, "mockSetter" ) );
+        Mockito.when( setter.getUriString() ).thenReturn( SubjectInfoImplTest.namespace + "mockSetter" );
         subjectInfo.add( setter );
-        
-        getter = mock( PredicateInfo.class );
-        when( getter.getMethodName() ).thenReturn( "getMockGetter");
-        doReturn(Integer.class).when(getter).getValueClass();
-        when( getter.getActionType() ).thenReturn( ActionType.GETTER );
-        when( getter.getObjectHandler()).thenReturn( mockHandler );
-        when( getter.getProperty()).thenReturn( ResourceFactory.createProperty( namespace, "mockGetter" ));
-        when( getter.getUriString()).thenReturn( namespace+"mockGetter" );
+
+        getter = Mockito.mock( PredicateInfo.class );
+        Mockito.when( getter.getMethodName() ).thenReturn( "getMockGetter" );
+        Mockito.doReturn( Integer.class ).when( getter ).getValueClass();
+        Mockito.when( getter.getActionType() ).thenReturn( ActionType.GETTER );
+        Mockito.when( getter.getObjectHandler() ).thenReturn( mockHandler );
+        Mockito.when( getter.getProperty() )
+                .thenReturn( ResourceFactory.createProperty( SubjectInfoImplTest.namespace, "mockGetter" ) );
+        Mockito.when( getter.getUriString() ).thenReturn( SubjectInfoImplTest.namespace + "mockGetter" );
         subjectInfo.add( getter );
-        
-        remover = mock( PredicateInfo.class );
-        when( remover.getMethodName() ).thenReturn( "removeMockRemover");
-        doReturn(Integer.class).when(remover).getValueClass();
-        when( remover.getActionType() ).thenReturn( ActionType.REMOVER );
-        when( remover.getObjectHandler()).thenReturn( mockHandler );
-        when( remover.getProperty()).thenReturn( ResourceFactory.createProperty( namespace, "mockRemover" ));
-        when( remover.getUriString()).thenReturn( namespace+"mockRemover" );
+
+        remover = Mockito.mock( PredicateInfo.class );
+        Mockito.when( remover.getMethodName() ).thenReturn( "removeMockRemover" );
+        Mockito.doReturn( Integer.class ).when( remover ).getValueClass();
+        Mockito.when( remover.getActionType() ).thenReturn( ActionType.REMOVER );
+        Mockito.when( remover.getObjectHandler() ).thenReturn( mockHandler );
+        Mockito.when( remover.getProperty() )
+                .thenReturn( ResourceFactory.createProperty( SubjectInfoImplTest.namespace, "mockRemover" ) );
+        Mockito.when( remover.getUriString() ).thenReturn( SubjectInfoImplTest.namespace + "mockRemover" );
         subjectInfo.add( remover );
-        
-        removerNoArg = mock( PredicateInfo.class );
-        when( removerNoArg.getMethodName() ).thenReturn( "removeMockRemover");
-        when( removerNoArg.getValueClass() ).thenReturn( null );
-        when( removerNoArg.getActionType() ).thenReturn( ActionType.REMOVER );
-        when( removerNoArg.getObjectHandler()).thenReturn( noArgHandler );
-        when( removerNoArg.getProperty()).thenReturn( ResourceFactory.createProperty( namespace, "mockRemover" ));
-        when( removerNoArg.getUriString()).thenReturn( namespace+"mockRemover" );
+
+        removerNoArg = Mockito.mock( PredicateInfo.class );
+        Mockito.when( removerNoArg.getMethodName() ).thenReturn( "removeMockRemover" );
+        Mockito.when( removerNoArg.getValueClass() ).thenReturn( null );
+        Mockito.when( removerNoArg.getActionType() ).thenReturn( ActionType.REMOVER );
+        Mockito.when( removerNoArg.getObjectHandler() ).thenReturn( noArgHandler );
+        Mockito.when( removerNoArg.getProperty() )
+                .thenReturn( ResourceFactory.createProperty( SubjectInfoImplTest.namespace, "mockRemover" ) );
+        Mockito.when( removerNoArg.getUriString() ).thenReturn( SubjectInfoImplTest.namespace + "mockRemover" );
         subjectInfo.add( removerNoArg );
-        
-        exist = mock( PredicateInfo.class );
-        when( exist.getMethodName() ).thenReturn( "hasMockExist");
-        doReturn(Integer.class).when(exist).getValueClass();
-        when( exist.getActionType() ).thenReturn( ActionType.EXISTENTIAL );
-        when( exist.getObjectHandler()).thenReturn( mockHandler );
-        when( exist.getProperty()).thenReturn( ResourceFactory.createProperty( namespace, "mockExist" ));
-        when( exist.getUriString()).thenReturn( namespace+"mockExist" );
+
+        exist = Mockito.mock( PredicateInfo.class );
+        Mockito.when( exist.getMethodName() ).thenReturn( "hasMockExist" );
+        Mockito.doReturn( Integer.class ).when( exist ).getValueClass();
+        Mockito.when( exist.getActionType() ).thenReturn( ActionType.EXISTENTIAL );
+        Mockito.when( exist.getObjectHandler() ).thenReturn( mockHandler );
+        Mockito.when( exist.getProperty() )
+                .thenReturn( ResourceFactory.createProperty( SubjectInfoImplTest.namespace, "mockExist" ) );
+        Mockito.when( exist.getUriString() ).thenReturn( SubjectInfoImplTest.namespace + "mockExist" );
         subjectInfo.add( exist );
-        
-        existNoArg = mock( PredicateInfo.class );
-        when( existNoArg.getMethodName() ).thenReturn( "hasMockExist");
-        doReturn(null).when(existNoArg).getValueClass();
-        when( existNoArg.getActionType() ).thenReturn( ActionType.EXISTENTIAL );
-        when( existNoArg.getObjectHandler()).thenReturn( noArgHandler );
-        when( existNoArg.getProperty()).thenReturn( ResourceFactory.createProperty( namespace, "mockExist" ));
-        when( existNoArg.getUriString()).thenReturn( namespace+"mockExist" );
+
+        existNoArg = Mockito.mock( PredicateInfo.class );
+        Mockito.when( existNoArg.getMethodName() ).thenReturn( "hasMockExist" );
+        Mockito.doReturn( null ).when( existNoArg ).getValueClass();
+        Mockito.when( existNoArg.getActionType() ).thenReturn( ActionType.EXISTENTIAL );
+        Mockito.when( existNoArg.getObjectHandler() ).thenReturn( noArgHandler );
+        Mockito.when( existNoArg.getProperty() )
+                .thenReturn( ResourceFactory.createProperty( SubjectInfoImplTest.namespace, "mockExist" ) );
+        Mockito.when( existNoArg.getUriString() ).thenReturn( SubjectInfoImplTest.namespace + "mockExist" );
         subjectInfo.add( existNoArg );
     }
-    
+
     @Test
     public void addTest() {
         subjectInfo = new SubjectInfoImpl( SimpleInterface.class );
         Assertions.assertThrows( IllegalArgumentException.class, () -> subjectInfo.add( null ) );
-        PredicateInfo pi = mock( PredicateInfo.class );
-        when( pi.getMethodName() ).thenReturn( "mockMethod");
+        final PredicateInfo pi = Mockito.mock( PredicateInfo.class );
+        Mockito.when( pi.getMethodName() ).thenReturn( "mockMethod" );
         subjectInfo.add( pi );
     }
-    
+
     @Test
     public void getPredicateInfoByNameTest() {
         setupMock();
-        assertEquals( setter, subjectInfo.getPredicateInfo( "setMockSetter", Integer.class ) );
-        assertNull( subjectInfo.getPredicateInfo( "setMockSetter", null ) );
-        assertEquals( getter, subjectInfo.getPredicateInfo( "getMockGetter", Integer.class ) );
-        assertNull( subjectInfo.getPredicateInfo( "getMockGetter", null ) );
-        assertEquals( remover, subjectInfo.getPredicateInfo( "removeMockRemover", Integer.class ) );
-        assertEquals( removerNoArg, subjectInfo.getPredicateInfo( "removeMockRemover", null ) );
-        assertEquals( exist, subjectInfo.getPredicateInfo( "hasMockExist", Integer.class ) );
-        assertEquals( existNoArg, subjectInfo.getPredicateInfo( "hasMockExist", null ) );
-        assertNull( subjectInfo.getPredicateInfo( "fakeMethod", null ));
+        Assertions.assertEquals( setter, subjectInfo.getPredicateInfo( "setMockSetter", Integer.class ) );
+        Assertions.assertNull( subjectInfo.getPredicateInfo( "setMockSetter", null ) );
+        Assertions.assertEquals( getter, subjectInfo.getPredicateInfo( "getMockGetter", Integer.class ) );
+        Assertions.assertNull( subjectInfo.getPredicateInfo( "getMockGetter", null ) );
+        Assertions.assertEquals( remover, subjectInfo.getPredicateInfo( "removeMockRemover", Integer.class ) );
+        Assertions.assertEquals( removerNoArg, subjectInfo.getPredicateInfo( "removeMockRemover", null ) );
+        Assertions.assertEquals( exist, subjectInfo.getPredicateInfo( "hasMockExist", Integer.class ) );
+        Assertions.assertEquals( existNoArg, subjectInfo.getPredicateInfo( "hasMockExist", null ) );
+        Assertions.assertNull( subjectInfo.getPredicateInfo( "fakeMethod", null ) );
     }
-    
-    
+
     @Test
     public void getPredicateInfoByMethodTest() throws Exception {
         setupMock();
-        assertEquals( setter, subjectInfo.getPredicateInfo( MockInterface.class.getMethod( "setMockSetter", Integer.class )) );
-        assertEquals( getter, subjectInfo.getPredicateInfo( MockInterface.class.getMethod( "getMockGetter")) );
-        assertEquals( remover, subjectInfo.getPredicateInfo( MockInterface.class.getMethod( "removeMockRemover", Integer.class )) );
-        assertEquals( removerNoArg, subjectInfo.getPredicateInfo( MockInterface.class.getMethod( "removeMockRemover") ) );
-        assertEquals( exist, subjectInfo.getPredicateInfo( MockInterface.class.getMethod( "hasMockExist", Integer.class ) ));
-        assertEquals( existNoArg, subjectInfo.getPredicateInfo( MockInterface.class.getMethod( "hasMockExist") ) );
-        assertNull( subjectInfo.getPredicateInfo( MockInterface.class.getMethod("fakeMethod") ));
-        assertNull( subjectInfo.getPredicateInfo( MockInterface.class.getMethod("setMockSetter", Integer[].class)) );
-        assertNull( subjectInfo.getPredicateInfo( MockInterface.class.getMethod("setMockSetter", Integer.class, long.class) ));
+        Assertions.assertEquals( setter,
+                subjectInfo.getPredicateInfo( MockInterface.class.getMethod( "setMockSetter", Integer.class ) ) );
+        Assertions.assertEquals( getter,
+                subjectInfo.getPredicateInfo( MockInterface.class.getMethod( "getMockGetter" ) ) );
+        Assertions.assertEquals( remover,
+                subjectInfo.getPredicateInfo( MockInterface.class.getMethod( "removeMockRemover", Integer.class ) ) );
+        Assertions.assertEquals( removerNoArg,
+                subjectInfo.getPredicateInfo( MockInterface.class.getMethod( "removeMockRemover" ) ) );
+        Assertions.assertEquals( exist,
+                subjectInfo.getPredicateInfo( MockInterface.class.getMethod( "hasMockExist", Integer.class ) ) );
+        Assertions.assertEquals( existNoArg,
+                subjectInfo.getPredicateInfo( MockInterface.class.getMethod( "hasMockExist" ) ) );
+        Assertions.assertNull( subjectInfo.getPredicateInfo( MockInterface.class.getMethod( "fakeMethod" ) ) );
+        Assertions.assertNull(
+                subjectInfo.getPredicateInfo( MockInterface.class.getMethod( "setMockSetter", Integer[].class ) ) );
+        Assertions.assertNull( subjectInfo
+                .getPredicateInfo( MockInterface.class.getMethod( "setMockSetter", Integer.class, long.class ) ) );
     }
-    
+
     @Test
     public void getPredicatePropertyFromMethodTest() throws Exception {
         setupMock();
-        assertEquals( ResourceFactory.createProperty( namespace, "mockSetter" ), subjectInfo.getPredicateProperty( MockInterface.class.getMethod( "setMockSetter", Integer.class )) );
-        assertEquals( ResourceFactory.createProperty( namespace, "mockGetter" ), subjectInfo.getPredicateProperty( MockInterface.class.getMethod( "getMockGetter")) );
-        assertEquals( ResourceFactory.createProperty( namespace, "mockRemover" ), subjectInfo.getPredicateProperty( MockInterface.class.getMethod( "removeMockRemover", Integer.class )) );
-        assertEquals( ResourceFactory.createProperty( namespace, "mockRemover" ), subjectInfo.getPredicateProperty( MockInterface.class.getMethod( "removeMockRemover") ) );
-        assertEquals( ResourceFactory.createProperty( namespace, "mockExist" ), subjectInfo.getPredicateProperty( MockInterface.class.getMethod( "hasMockExist", Integer.class ) ));
-        assertEquals( ResourceFactory.createProperty( namespace, "mockExist" ), subjectInfo.getPredicateProperty( MockInterface.class.getMethod( "hasMockExist") ) );
-        assertNull( subjectInfo.getPredicateProperty( MockInterface.class.getMethod("fakeMethod") ));
-        assertNull( subjectInfo.getPredicateProperty( MockInterface.class.getMethod("setMockSetter", Integer[].class)) );
-        assertNull( subjectInfo.getPredicateProperty( MockInterface.class.getMethod("setMockSetter", Integer.class, long.class) ));
+        Assertions.assertEquals( ResourceFactory.createProperty( SubjectInfoImplTest.namespace, "mockSetter" ),
+                subjectInfo.getPredicateProperty( MockInterface.class.getMethod( "setMockSetter", Integer.class ) ) );
+        Assertions.assertEquals( ResourceFactory.createProperty( SubjectInfoImplTest.namespace, "mockGetter" ),
+                subjectInfo.getPredicateProperty( MockInterface.class.getMethod( "getMockGetter" ) ) );
+        Assertions.assertEquals( ResourceFactory.createProperty( SubjectInfoImplTest.namespace, "mockRemover" ),
+                subjectInfo
+                        .getPredicateProperty( MockInterface.class.getMethod( "removeMockRemover", Integer.class ) ) );
+        Assertions.assertEquals( ResourceFactory.createProperty( SubjectInfoImplTest.namespace, "mockRemover" ),
+                subjectInfo.getPredicateProperty( MockInterface.class.getMethod( "removeMockRemover" ) ) );
+        Assertions.assertEquals( ResourceFactory.createProperty( SubjectInfoImplTest.namespace, "mockExist" ),
+                subjectInfo.getPredicateProperty( MockInterface.class.getMethod( "hasMockExist", Integer.class ) ) );
+        Assertions.assertEquals( ResourceFactory.createProperty( SubjectInfoImplTest.namespace, "mockExist" ),
+                subjectInfo.getPredicateProperty( MockInterface.class.getMethod( "hasMockExist" ) ) );
+        Assertions.assertNull( subjectInfo.getPredicateProperty( MockInterface.class.getMethod( "fakeMethod" ) ) );
+        Assertions.assertNull(
+                subjectInfo.getPredicateProperty( MockInterface.class.getMethod( "setMockSetter", Integer[].class ) ) );
+        Assertions.assertNull( subjectInfo
+                .getPredicateProperty( MockInterface.class.getMethod( "setMockSetter", Integer.class, long.class ) ) );
     }
-    
+
     @Test
     public void getPredicatePropertyFromNameTest() {
         setupMock();
-        assertEquals( ResourceFactory.createProperty( namespace, "mockSetter" ), subjectInfo.getPredicateProperty( "setMockSetter" ));
-        assertEquals( ResourceFactory.createProperty( namespace, "mockGetter" ), subjectInfo.getPredicateProperty( "getMockGetter") );
-        assertEquals( ResourceFactory.createProperty( namespace, "mockRemover" ), subjectInfo.getPredicateProperty( "removeMockRemover") );
-        assertEquals( ResourceFactory.createProperty( namespace, "mockExist" ), subjectInfo.getPredicateProperty( "hasMockExist" ));
-        assertNull( subjectInfo.getPredicateProperty( "fakeMethod") );
+        Assertions.assertEquals( ResourceFactory.createProperty( SubjectInfoImplTest.namespace, "mockSetter" ),
+                subjectInfo.getPredicateProperty( "setMockSetter" ) );
+        Assertions.assertEquals( ResourceFactory.createProperty( SubjectInfoImplTest.namespace, "mockGetter" ),
+                subjectInfo.getPredicateProperty( "getMockGetter" ) );
+        Assertions.assertEquals( ResourceFactory.createProperty( SubjectInfoImplTest.namespace, "mockRemover" ),
+                subjectInfo.getPredicateProperty( "removeMockRemover" ) );
+        Assertions.assertEquals( ResourceFactory.createProperty( SubjectInfoImplTest.namespace, "mockExist" ),
+                subjectInfo.getPredicateProperty( "hasMockExist" ) );
+        Assertions.assertNull( subjectInfo.getPredicateProperty( "fakeMethod" ) );
     }
-    
+
     @Test
     public void getPredicateUriStrFromMethodTest() throws Exception {
         setupMock();
-        assertEquals( namespace+"mockSetter", subjectInfo.getPredicateUriStr( MockInterface.class.getMethod( "setMockSetter", Integer.class )) );
-        assertEquals( namespace+"mockGetter", subjectInfo.getPredicateUriStr( MockInterface.class.getMethod( "getMockGetter")) );
-        assertEquals( namespace+"mockRemover", subjectInfo.getPredicateUriStr( MockInterface.class.getMethod( "removeMockRemover", Integer.class )) );
-        assertEquals( namespace+"mockRemover", subjectInfo.getPredicateUriStr( MockInterface.class.getMethod( "removeMockRemover") ) );
-        assertEquals( namespace+"mockExist", subjectInfo.getPredicateUriStr( MockInterface.class.getMethod( "hasMockExist", Integer.class ) ));
-        assertEquals( namespace+"mockExist", subjectInfo.getPredicateUriStr( MockInterface.class.getMethod( "hasMockExist") ) );
-        assertNull( subjectInfo.getPredicateUriStr( MockInterface.class.getMethod("fakeMethod") ));
-        assertNull( subjectInfo.getPredicateUriStr( MockInterface.class.getMethod("setMockSetter", Integer[].class)) );
-        assertNull( subjectInfo.getPredicateUriStr( MockInterface.class.getMethod("setMockSetter", Integer.class, long.class) ));
+        Assertions.assertEquals( SubjectInfoImplTest.namespace + "mockSetter",
+                subjectInfo.getPredicateUriStr( MockInterface.class.getMethod( "setMockSetter", Integer.class ) ) );
+        Assertions.assertEquals( SubjectInfoImplTest.namespace + "mockGetter",
+                subjectInfo.getPredicateUriStr( MockInterface.class.getMethod( "getMockGetter" ) ) );
+        Assertions.assertEquals( SubjectInfoImplTest.namespace + "mockRemover",
+                subjectInfo.getPredicateUriStr( MockInterface.class.getMethod( "removeMockRemover", Integer.class ) ) );
+        Assertions.assertEquals( SubjectInfoImplTest.namespace + "mockRemover",
+                subjectInfo.getPredicateUriStr( MockInterface.class.getMethod( "removeMockRemover" ) ) );
+        Assertions.assertEquals( SubjectInfoImplTest.namespace + "mockExist",
+                subjectInfo.getPredicateUriStr( MockInterface.class.getMethod( "hasMockExist", Integer.class ) ) );
+        Assertions.assertEquals( SubjectInfoImplTest.namespace + "mockExist",
+                subjectInfo.getPredicateUriStr( MockInterface.class.getMethod( "hasMockExist" ) ) );
+        Assertions.assertNull( subjectInfo.getPredicateUriStr( MockInterface.class.getMethod( "fakeMethod" ) ) );
+        Assertions.assertNull(
+                subjectInfo.getPredicateUriStr( MockInterface.class.getMethod( "setMockSetter", Integer[].class ) ) );
+        Assertions.assertNull( subjectInfo
+                .getPredicateUriStr( MockInterface.class.getMethod( "setMockSetter", Integer.class, long.class ) ) );
     }
-   
+
     @Test
     public void getPredicateUriStrFromNameTest() {
         setupMock();
-        assertEquals( namespace+"mockSetter", subjectInfo.getPredicateUriStr( "setMockSetter" ));
-        assertEquals( namespace+"mockGetter", subjectInfo.getPredicateUriStr( "getMockGetter") );
-        assertEquals( namespace+"mockRemover", subjectInfo.getPredicateUriStr( "removeMockRemover") );
-        assertEquals( namespace+"mockExist", subjectInfo.getPredicateUriStr( "hasMockExist" ));
-        assertNull( subjectInfo.getPredicateProperty( "fakeMethod") );
+        Assertions.assertEquals( SubjectInfoImplTest.namespace + "mockSetter",
+                subjectInfo.getPredicateUriStr( "setMockSetter" ) );
+        Assertions.assertEquals( SubjectInfoImplTest.namespace + "mockGetter",
+                subjectInfo.getPredicateUriStr( "getMockGetter" ) );
+        Assertions.assertEquals( SubjectInfoImplTest.namespace + "mockRemover",
+                subjectInfo.getPredicateUriStr( "removeMockRemover" ) );
+        Assertions.assertEquals( SubjectInfoImplTest.namespace + "mockExist",
+                subjectInfo.getPredicateUriStr( "hasMockExist" ) );
+        Assertions.assertNull( subjectInfo.getPredicateProperty( "fakeMethod" ) );
     }
-    
-    
+
     @Test
     public void getSubjectTest() {
         subjectInfo = new SubjectInfoImpl( SimpleInterface.class );
-        Subject s = subjectInfo.getSubject();
-        assertEquals( namespace, s.namespace());
+        final Subject s = subjectInfo.getSubject();
+        Assertions.assertEquals( SubjectInfoImplTest.namespace, s.namespace() );
     }
 
-    
     interface MockInterface {
         void setMockSetter(Integer i);
+
         void setMockSetter(Integer... i);
+
         void setMockSetter(Integer i, long j);
+
         Integer getMockGetter();
+
         void removeMockRemover(Integer i);
+
         void removeMockRemover();
+
         boolean hasMockExist(Integer i);
+
         boolean hasMockExist();
+
         void fakeMethod();
     }
 }

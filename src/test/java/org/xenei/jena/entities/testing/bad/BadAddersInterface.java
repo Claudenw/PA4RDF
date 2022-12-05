@@ -3,7 +3,6 @@ package org.xenei.jena.entities.testing.bad;
 import org.xenei.jena.entities.annotations.Predicate;
 import org.xenei.jena.entities.annotations.Subject;
 
-
 public interface BadAddersInterface {
 
     @Subject(namespace = "http://example.com/")

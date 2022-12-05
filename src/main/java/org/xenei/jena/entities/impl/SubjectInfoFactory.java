@@ -8,34 +8,30 @@ import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.xenei.jena.entities.EntityManager;
 import org.xenei.jena.entities.MissingAnnotation;
-import org.xenei.jena.entities.ResourceWrapper;
 import org.xenei.jena.entities.annotations.Predicate;
 
 public class SubjectInfoFactory {
     private static Logger LOG = LoggerFactory.getLogger( SubjectInfoFactory.class );
     private final Map<Class<?>, SubjectInfoImpl> classInfo = new HashMap<>();
-   
-    private EntityManager entityManager;
-    
-    public SubjectInfoFactory(EntityManager entityManager) {
-        this.entityManager=entityManager;
-        try {
-            parse( ResourceWrapper.class );
-        } catch (final MissingAnnotation e) {
-            throw new RuntimeException( e );
-        }
+
+    public SubjectInfoFactory() {
+        // try {
+        // parse( ResourceWrapper.class );
+        // } catch (final MissingAnnotation e) {
+        // throw new RuntimeException( e );
+        // }
     }
-    
+
     public void clear() {
         classInfo.clear();
-        try {
-            parse( ResourceWrapper.class );
-        } catch (final MissingAnnotation e) {
-            throw new RuntimeException( e );
-        }
+        // try {
+        // parse( ResourceWrapper.class );
+        // } catch (final MissingAnnotation e) {
+        // throw new RuntimeException( e );
+        // }
     }
+
     /**
      * Parse the class if necessary.
      *
@@ -50,10 +46,10 @@ public class SubjectInfoFactory {
         SubjectInfoImpl subjectInfo = classInfo.get( clazz );
 
         if (subjectInfo == null) {
-            LOG.info( "Parsing {}", clazz );
+            SubjectInfoFactory.LOG.info( "Parsing {}", clazz );
             subjectInfo = new SubjectInfoImpl( clazz );
 
-            final MethodParser parser = new MethodParser( entityManager, subjectInfo, countAdders( clazz.getMethods() ) );
+            final MethodParser parser = new MethodParser( subjectInfo, countAdders( clazz.getMethods() ) );
 
             boolean foundAnnotation = false;
             final List<Method> annotated = new ArrayList<>();
@@ -96,7 +92,7 @@ public class SubjectInfoFactory {
         }
         return false;
     }
-    
+
     private Map<String, Integer> countAdders(final Method[] methods) {
         final Map<String, Integer> addCount = new HashMap<>();
         for (final Method m : methods) {

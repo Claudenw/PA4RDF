@@ -80,7 +80,8 @@ public class LiteralHandler implements ObjectHandler {
      *            The literal node.
      * @return The parsed object
      * @throws DatatypeFormatException
-     *             if node is not a Literal that can be parsed by literalDatatype.
+     *             if node is not a Literal that can be parsed by
+     *             literalDatatype.
      */
     @Override
     public Object parseObject(final RDFNode node) throws DatatypeFormatException {

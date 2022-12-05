@@ -183,7 +183,7 @@ public abstract class AbstractCollectionValueTest extends BaseAbstractManagerTes
     public void testEntity() {
         PredicateInfoImpl pi = (PredicateInfoImpl) subjectInfo.getPredicateInfo( "getEnt", Queue.class );
         Assertions.assertEquals( "getEnt", pi.getMethodName() );
-        final ObjectHandler handler = new EntityHandler( manager, TestInterface.class );
+        final ObjectHandler handler = new EntityHandler( TestInterface.class );
 
         Assertions.assertEquals( handler, pi.getObjectHandler() );
         Assertions.assertEquals( Queue.class, pi.getValueClass() );

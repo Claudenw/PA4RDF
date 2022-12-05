@@ -18,7 +18,6 @@ package org.xenei.jena.entities;
 import org.apache.jena.rdf.model.Property;
 
 import java.lang.reflect.Method;
-import java.util.Collection;
 import org.xenei.jena.entities.annotations.Subject;
 
 /**

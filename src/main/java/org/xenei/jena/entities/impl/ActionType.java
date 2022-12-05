@@ -21,6 +21,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Predicate;
+import java.util.stream.Stream;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -137,6 +138,10 @@ public enum ActionType {
             }
         }
         throw new IllegalArgumentException( functionName + " is not an ActionType" );
+    }
+
+    public Stream<String> createNames(final String name) {
+        return prefixes.stream().map( t -> t + name );
     }
 
     /**

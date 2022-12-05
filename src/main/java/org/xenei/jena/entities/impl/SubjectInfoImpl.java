@@ -17,7 +17,6 @@ package org.xenei.jena.entities.impl;
 import org.apache.jena.rdf.model.Property;
 
 import java.lang.reflect.Method;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -27,13 +26,11 @@ import org.xenei.jena.entities.SubjectInfo;
 import org.xenei.jena.entities.annotations.Subject;
 
 public class SubjectInfoImpl implements SubjectInfo {
-    private boolean validated;
     private final Class<?> implementedClass;
     private final Map<String, Map<ObjectHandler, PredicateInfo>> predicateInfo = new HashMap<>();
 
     public SubjectInfoImpl(final Class<?> implementedClass) {
         this.implementedClass = implementedClass;
-        validated = false;
     }
 
     /**
@@ -77,18 +74,21 @@ public class SubjectInfoImpl implements SubjectInfo {
             return null;
         }
         try {
-        ActionType action = ActionType.parse( m.getName() );
-        return getPredicateInfo( m.getName(), action.predicateClass( m ));
-        } catch (IllegalArgumentException ignore) {
+            final ActionType action = ActionType.parse( m.getName() );
+            return getPredicateInfo( m.getName(), action.predicateClass( m ) );
+        } catch (final IllegalArgumentException ignore) {
             return null;
         }
     }
 
     /**
      * Get the first predicateinfo for the function name.
-     * @param function the function to find.
+     *
+     * @param function
+     *            the function to find.
      * @return A predicate info for the name.
-     * @throws IllegalArgumentException if the function is not found.
+     * @throws IllegalArgumentException
+     *             if the function is not found.
      */
     private PredicateInfo getPredicateInfo(final String function) {
         final Map<ObjectHandler, PredicateInfo> map = predicateInfo.get( function );
@@ -150,8 +150,8 @@ public class SubjectInfoImpl implements SubjectInfo {
      */
     @Override
     public Property getPredicateProperty(final Method method) {
-        PredicateInfo pi = getPredicateInfo( method );
-        return pi==null?null:pi.getProperty();
+        final PredicateInfo pi = getPredicateInfo( method );
+        return pi == null ? null : pi.getProperty();
     }
 
     /**
@@ -164,9 +164,9 @@ public class SubjectInfoImpl implements SubjectInfo {
     @Override
     public Property getPredicateProperty(final String methodName) {
         try {
-        PredicateInfo pi = getPredicateInfo( methodName );
-        return pi==null?null:pi.getProperty(); 
-        } catch (IllegalArgumentException ignore) {
+            final PredicateInfo pi = getPredicateInfo( methodName );
+            return pi == null ? null : pi.getProperty();
+        } catch (final IllegalArgumentException ignore) {
             return null;
         }
     }
@@ -179,8 +179,8 @@ public class SubjectInfoImpl implements SubjectInfo {
      */
     @Override
     public String getPredicateUriStr(final Method method) {
-        PredicateInfo pi = getPredicateInfo( method );
-        return pi==null?null:pi.getUriString();
+        final PredicateInfo pi = getPredicateInfo( method );
+        return pi == null ? null : pi.getUriString();
     }
 
     /*

@@ -179,7 +179,7 @@ public abstract class AbstractMultiValueTest extends BaseAbstractManagerTest {
     public void testEntity() {
         PredicateInfoImpl pi = (PredicateInfoImpl) subjectInfo.getPredicateInfo( "getEnt", ExtendedIterator.class );
         Assertions.assertEquals( "getEnt", pi.getMethodName() );
-        final ObjectHandler handler = new EntityHandler( manager, TestInterface.class );
+        final ObjectHandler handler = new EntityHandler( TestInterface.class );
 
         Assertions.assertEquals( handler, pi.getObjectHandler() );
         Assertions.assertEquals( ExtendedIterator.class, pi.getValueClass() );

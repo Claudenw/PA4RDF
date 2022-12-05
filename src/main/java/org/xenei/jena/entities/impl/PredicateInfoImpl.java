@@ -39,7 +39,6 @@ import java.util.Set;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.xenei.jena.entities.EntityManager;
 import org.xenei.jena.entities.ObjectHandler;
 import org.xenei.jena.entities.PredicateInfo;
 import org.xenei.jena.entities.annotations.Subject;
@@ -113,59 +112,20 @@ public class PredicateInfoImpl implements PredicateInfo {
         return clazz.getName();
     }
 
-    /**
-     * Get the ObjectHandler for a predicate.
-     *
-     * @param entityManager
-     *            The entity manager this to use.
-     * @param returnType
-     *            The ObjectHandler of the proper type
-     * @param pred
-     *            The EffectivePredicate definition.
-     * @return The object handler.
-     */
-    public static ObjectHandler getHandler(final EntityManager entityManager, final Class<?> returnType,
-            final EffectivePredicate pred) {
-        final TypeMapper typeMapper = TypeMapper.getInstance();
-        RDFDatatype dt = null;
-        if ((pred != null) && !pred.literalType().equals( "" )) {
-            dt = typeMapper.getSafeTypeByName( pred.literalType() );
-        } else {
-            dt = typeMapper.getTypeByClass( returnType );
-        }
-        if (dt != null) {
-            return new LiteralHandler( adjustDataType( dt, returnType ));
-        }
-        if (returnType != null) {
-            if (returnType.getAnnotation( Subject.class ) != null) {
-                return new EntityHandler( entityManager, returnType );
-            }
-            if (RDFNode.class.isAssignableFrom( returnType )) {
-                return new ResourceHandler();
-            }
-            if (returnType.equals( URI.class )) {
-                return new UriHandler();
-            }
-        }
-        return new VoidHandler();
-    }
-    
-    private static RDFDatatype adjustDataType( RDFDatatype initial, Class<?> returnType) {
+    private static RDFDatatype adjustDataType(final RDFDatatype initial, final Class<?> returnType) {
         if (CharDatatype.INSTANCE.getJavaClass().equals( returnType )) {
             return CharDatatype.INSTANCE;
         } else if (CharacterDatatype.INSTANCE.getJavaClass().equals( returnType )) {
             return CharacterDatatype.INSTANCE;
         } else if (LongDatatype.INSTANCE.getJavaClass().equals( returnType )) {
             return LongDatatype.INSTANCE;
-        } 
+        }
         return initial;
     }
 
     /**
      * Constructor.
      *
-     * @param entityManager
-     *            The EntityManager that this predicate is associated with.
      * @param predicate
      *            The EffectivePredicate instance that describes the predicate.
      * @param methodName
@@ -173,8 +133,7 @@ public class PredicateInfoImpl implements PredicateInfo {
      * @param valueClass
      *            The class type for the return (getter) or parameter (setter)
      */
-    public PredicateInfoImpl(final EntityManager entityManager, final EffectivePredicate predicate,
-            final String methodName, final Class<?> valueClass) {
+    public PredicateInfoImpl(final EffectivePredicate predicate, final String methodName, final Class<?> valueClass) {
         this.methodName = methodName;
         actionType = ActionType.parse( methodName );
         this.valueClass = valueClass;
@@ -194,16 +153,53 @@ public class PredicateInfoImpl implements PredicateInfo {
         }
 
         if ((concreteType != null) && (valueClass != null)) {
-            if (concreteType.isPrimitive() && !valueClass.isPrimitive()) {
+            if (concreteType.isPrimitive() != valueClass.isPrimitive()) {
                 // This allows us to have setters that take primitives but
-                // getters
-                // that return objects.
-                concreteType = valueClass;
-            } else if (!concreteType.isPrimitive() && valueClass.isPrimitive()) {
+                // getters that return objects.
                 concreteType = valueClass;
             }
         }
-        objectHandler = PredicateInfoImpl.getHandler( entityManager, concreteType, predicate );
+        objectHandler = getHandler( predicate );
+    }
+
+    /**
+     * Get the ObjectHandler for a predicate.
+     *
+     * @param entityManager
+     *            The entity manager this to use.
+     * @param returnType
+     *            The ObjectHandler of the proper type
+     * @param pred
+     *            The EffectivePredicate definition.
+     * @return The object handler.
+     */
+    private ObjectHandler getHandler(final EffectivePredicate pred) {
+        final TypeMapper typeMapper = TypeMapper.getInstance();
+        RDFDatatype dt = null;
+        if ((pred != null) && !pred.literalType().equals( "" )) {
+            dt = typeMapper.getSafeTypeByName( pred.literalType() );
+        } else {
+            dt = typeMapper.getTypeByClass( concreteType );
+        }
+        if (dt != null) {
+            return new LiteralHandler( PredicateInfoImpl.adjustDataType( dt, concreteType ) );
+        }
+        if (concreteType != null) {
+            if (concreteType.getAnnotation( Subject.class ) != null) {
+                return new EntityHandler( concreteType );
+            }
+            if (RDFNode.class.isAssignableFrom( concreteType )) {
+                return new ResourceHandler();
+            }
+            if (concreteType.equals( URI.class )) {
+                return new UriHandler();
+            }
+        }
+        return new VoidHandler();
+    }
+
+    Class<?> getConcreteType() {
+        return concreteType;
     }
 
     public PredicateInfoImpl(final PredicateInfoImpl pi) {

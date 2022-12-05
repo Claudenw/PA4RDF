@@ -19,7 +19,7 @@ package org.xenei.jena.entities.impl;
  * instance of another.
  */
 public class TypeChecker {
-    
+
     private TypeChecker() {
         // do not instantiate
     }
@@ -64,7 +64,7 @@ public class TypeChecker {
         }
         try {
             return (Class<?>) clazz.getField( "TYPE" ).get( null );
-        } catch (final IllegalArgumentException | SecurityException |  IllegalAccessException e) {
+        } catch (final IllegalArgumentException | SecurityException | IllegalAccessException e) {
             new RuntimeException( e );
         } catch (final NoSuchFieldException e) {
             // expected in some cases

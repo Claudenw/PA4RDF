@@ -31,8 +31,10 @@ import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
 import java.util.Stack;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
-import org.xenei.jena.entities.EntityManager;
+import org.xenei.jena.entities.EntityManagerFactory;
 import org.xenei.jena.entities.MissingAnnotation;
 import org.xenei.jena.entities.PredicateInfo;
 import org.xenei.jena.entities.SubjectInfo;
@@ -47,9 +49,9 @@ import org.xenei.jena.entities.impl.handlers.UriHandler;
  */
 public class MethodParser {
 
-    private class AbstractMethodParser {
+    class AbstractMethodParser {
         /**
-         * parses Predicate annotations and absctract methods.
+         * parses Predicate annotations and abstract methods.
          *
          * @param subjectInfo
          *            The subject Info to add data to.
@@ -106,12 +108,9 @@ public class MethodParser {
         private void parseAssociatedMethod(final String methodName, final EffectivePredicate parentPredicate,
                 final Class<?> argClass) throws MissingAnnotation {
             try {
-                Method m;
-                if (argClass == null) {
-                    m = subjectInfo.getImplementedClass().getMethod( methodName );
-                } else {
-                    m = subjectInfo.getImplementedClass().getMethod( methodName, argClass );
-                }
+                final Method m = (argClass == null) ? subjectInfo.getImplementedClass().getMethod( methodName )
+                        : subjectInfo.getImplementedClass().getMethod( methodName, argClass );
+
                 MethodParser.this.parse( m, parentPredicate );
             } catch (final NoSuchMethodException e) {
                 // do nothing
@@ -135,7 +134,7 @@ public class MethodParser {
                 } else {
                     // nothing special
                 }
-                subjectInfo.add( new PredicateInfoImpl( entityManager, predicate, m.getName(), valueType ) );
+                subjectInfo.add( new PredicateInfoImpl( predicate, m.getName(), valueType ) );
             }
         }
 
@@ -185,11 +184,8 @@ public class MethodParser {
                     predicate.setType( method.getReturnType() );
                 }
             }
-            subjectInfo
-                    .add( new PredicateInfoImpl( entityManager, predicate, method.getName(), method.getReturnType() ) );
-
-            processAssociatedMethods( predicate.rawType(), predicate, method );
-
+            subjectInfo.add( new PredicateInfoImpl( predicate, method.getName(), method.getReturnType() ) );
+            processAssociatedMethods( ActionType.GETTER, predicate.rawType(), predicate, method );
         }
 
         /**
@@ -212,7 +208,7 @@ public class MethodParser {
                 // "add"
                 final EffectivePredicate predicate = new EffectivePredicate( m ).merge( superPredicate );
 
-                final PredicateInfoImpl pi = new PredicateInfoImpl( entityManager, predicate, m.getName(), valueType );
+                final PredicateInfoImpl pi = new PredicateInfoImpl( predicate, m.getName(), valueType );
                 subjectInfo.add( pi );
 
                 predicate.setType( null );
@@ -222,13 +218,13 @@ public class MethodParser {
                     processAssociatedSetters( pi, m, predicate );
                 }
 
-                processAssociatedMethods( valueType, predicate, m );
+                processAssociatedMethods( ActionType.SETTER, valueType, predicate, m );
             }
         }
 
-        private void processAssociatedMethods(final Class<?> valueType, final EffectivePredicate predicate,
-                final Method m) throws MissingAnnotation {
-            final ActionType actionType = ActionType.parse( m.getName() );
+        private void processAssociatedMethods(final ActionType actionType, final Class<?> valueType,
+                final EffectivePredicate predicate, final Method m) throws MissingAnnotation {
+
             final String subName = actionType.extractName( m.getName() );
 
             parseAssociatedMethod( "get" + subName, predicate, null );
@@ -261,12 +257,10 @@ public class MethodParser {
                 parseAssociatedMethod( "has" + subName, predicate, null );
                 parseAssociatedMethod( "remove" + subName, predicate, null );
             }
-
         }
-
     }
 
-    private class ImplementedMethodParser {
+    class ImplementedMethodParser {
 
         private void parse(final ActionType actionType, final Method method) throws MissingAnnotation {
             if (method.getDeclaringClass().isAnnotationPresent( Subject.class )) {
@@ -307,7 +301,7 @@ public class MethodParser {
         private void parseAssociatedMethod(final Set<Class<?>> abstracts, final EffectivePredicate ep,
                 final String name, final Class<?> valueClass) throws MissingAnnotation {
             final Class<?>[] cAry = valueClass == null ? new Class<?>[0] : new Class<?>[] { valueClass };
-            final List<Method> lm = findMethod( abstracts, name, cAry );
+            final List<Method> lm = MethodParser.findMethod( abstracts, name, cAry );
             if (lm.size() > 0) {
                 MethodParser.this.parse( lm.get( 0 ), ep );
             }
@@ -315,7 +309,7 @@ public class MethodParser {
 
         private void parseAssociatedURIMethod(final Set<Class<?>> abstracts, final EffectivePredicate ep,
                 final String name) throws MissingAnnotation {
-            final List<Method> lm = findMethod( abstracts, name, new Class<?>[] { String.class } );
+            final List<Method> lm = MethodParser.findMethod( abstracts, name, new Class<?>[] { String.class } );
             for (final Method m2 : lm) {
                 if (hasURIParameter( m2 )) {
                     MethodParser.this.parse( m2, ep );
@@ -329,7 +323,8 @@ public class MethodParser {
                 // we only parse boolean results
                 if (TypeChecker.canBeSetFrom( Boolean.class, m.getReturnType() )
                         && (m.getParameterTypes().length <= 1)) {
-                    final SubjectInfo si = entityManager.getSubjectInfo( m.getDeclaringClass() );
+                    final SubjectInfo si = EntityManagerFactory.getEntityManager()
+                            .getSubjectInfo( m.getDeclaringClass() );
                     final PredicateInfoImpl pi = (PredicateInfoImpl) si.getPredicateInfo( m );
                     if (pi != null) {
                         subjectInfo.add( pi );
@@ -382,7 +377,7 @@ public class MethodParser {
             final List<Method> lm = findMethod( abstracts, method );
             for (final Method m : lm) {
 
-                final SubjectInfo si = entityManager.getSubjectInfo( m.getDeclaringClass() );
+                final SubjectInfo si = EntityManagerFactory.getEntityManager().getSubjectInfo( m.getDeclaringClass() );
                 final PredicateInfoImpl pi = (PredicateInfoImpl) si.getPredicateInfo( m );
 
                 subjectInfo.add( pi );
@@ -419,7 +414,7 @@ public class MethodParser {
 
     }
 
-    private class InterceptedMethodParser {
+    class InterceptedMethodParser {
         private void parse() {
             throw new RuntimeException( "Not IMPLEMENTED" );
         }
@@ -428,7 +423,7 @@ public class MethodParser {
     private final SubjectInfoImpl subjectInfo;
 
     private final Map<String, Integer> addCount;
-    private final EntityManager entityManager;
+
     private final Stack<Method> parseStack;
 
     private final AbstractMethodParser abstractMethodParser = new AbstractMethodParser();
@@ -440,16 +435,12 @@ public class MethodParser {
     /**
      * Constructor.
      *
-     * @param entityManager
-     *            The EntityManager we are working with.
      * @param subjectInfo
      *            The Subject Info that we are adding to.
      * @param addCount
      *            A maping of add types to counts.
      */
-    public MethodParser(final EntityManager entityManager, final SubjectInfoImpl subjectInfo,
-            final Map<String, Integer> addCount) {
-        this.entityManager = entityManager;
+    public MethodParser(final SubjectInfoImpl subjectInfo, final Map<String, Integer> addCount) {
         this.subjectInfo = subjectInfo;
         this.addCount = addCount;
         parseStack = new Stack<>();
@@ -504,10 +495,11 @@ public class MethodParser {
      * @return The first method in the set of classes.
      */
     public List<Method> findMethod(final Set<Class<?>> classSet, final Method method) {
-        return findMethod( classSet, method.getName(), method.getParameterTypes() );
+        return MethodParser.findMethod( classSet, method.getName(), method.getParameterTypes() );
     }
 
-    public List<Method> findMethod(final Set<Class<?>> classSet, final String methodName, final Class<?>[] aParams) {
+    public static List<Method> findMethod(final Set<Class<?>> classSet, final String methodName,
+            final Class<?>[] aParams) {
         final List<Class<?>> lParams = Arrays.asList( aParams );
         final List<Method> lst = new ArrayList<>();
         for (final Class<?> c : classSet) {
@@ -527,16 +519,9 @@ public class MethodParser {
     }
 
     private List<Method> getSetterMethods(final String nameSuffix) {
-        final List<Method> retval = new ArrayList<>();
         // find the setter
-        for (final Method testMth : subjectInfo.getImplementedClass().getMethods()) {
-            if (testMth.getName().equals( "set" + nameSuffix ) || testMth.getName().equals( "add" + nameSuffix )) {
-                if ((testMth.getParameterTypes().length == 1) && shouldProcess( testMth )) {
-                    retval.add( testMth );
-                }
-            }
-        }
-        return retval;
+        return Stream.of( subjectInfo.getImplementedClass().getMethods() )
+                .filter( m -> ActionType.SETTER.isA( m.getName() ) ).collect( Collectors.toList() );
     }
 
     private boolean hasURIParameter(final Method m) {
@@ -551,9 +536,7 @@ public class MethodParser {
     }
 
     private boolean isMultiAdd(final String nameSuffix) {
-        return (addCount.get( "set" + nameSuffix ) == null ? 0
-                : addCount.get( "set" + nameSuffix )
-                        + (addCount.get( "add" + nameSuffix ) == null ? 0 : addCount.get( "add" + nameSuffix ))) > 1;
+        return ActionType.SETTER.createNames( nameSuffix ).anyMatch( n -> addCount.get( n ) != null );
     }
 
     /**
@@ -625,7 +608,7 @@ public class MethodParser {
         } else {
             ep.setType( null );
         }
-        final PredicateInfoImpl pii = new PredicateInfoImpl( entityManager, ep, m.getName(), valueClass );
+        final PredicateInfoImpl pii = new PredicateInfoImpl( ep, m.getName(), valueClass );
         subjectInfo.add( pii );
     }
 

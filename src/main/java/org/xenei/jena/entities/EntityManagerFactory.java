@@ -23,7 +23,7 @@ import org.xenei.jena.entities.impl.EntityManagerImpl;
  */
 public class EntityManagerFactory {
     private static EntityManager manager;
-    
+
     private EntityManagerFactory() {
         // no not instantiate.
     }
@@ -33,7 +33,7 @@ public class EntityManagerFactory {
      */
     public static EntityManager getEntityManager() {
         if (EntityManagerFactory.manager == null) {
-            setEntityManager( new EntityManagerImpl() );
+            EntityManagerFactory.setEntityManager( new EntityManagerImpl() );
         }
         return EntityManagerFactory.manager;
     }

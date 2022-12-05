@@ -79,9 +79,10 @@ public interface PredicateInfo {
      * @return The list of methods to execute after exec.
      */
     public List<Method> getPostExec();
-    
+
     /**
      * return the object handler for the predicate info type.
+     *
      * @return the ObjectHandler.
      */
     public ObjectHandler getObjectHandler();

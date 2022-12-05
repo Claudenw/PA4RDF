@@ -33,8 +33,7 @@ import org.xenei.jena.entities.annotations.Predicate;
  * This method intercepts the annotated entity methods as well as the
  * ResourceWrapper.getResource() method.
  */
-public class ResourceEntityProxy implements InvocationHandler
-{
+public class ResourceEntityProxy implements InvocationHandler {
     private final Resource resource;
     private final SubjectInfo subjectInfo;
     private final EntityManager entityManager;
@@ -63,9 +62,9 @@ public class ResourceEntityProxy implements InvocationHandler
     public Object invoke(final Object self, final Method thisMethod, final Object[] args) throws Throwable {
         // handle the cases where the method is not abstract
         if (!Modifier.isAbstract( thisMethod.getModifiers() )) {
-            return interceptNonAbstract( self, thisMethod, args);
+            return interceptNonAbstract( self, thisMethod, args );
         }
-        return interceptAnnotated( self, thisMethod, args);
+        return interceptAnnotated( self, thisMethod, args );
     }
 
     private Object interceptAnnotated(final Object self, final Method thisMethod, final Object[] args)
@@ -123,14 +122,15 @@ public class ResourceEntityProxy implements InvocationHandler
     // update=true value -- not implemented
     private Object interceptAnnotatedNonAbstract(final Object self, final Method thisMethod, final Object[] args,
             final Predicate p) throws Throwable {
-        return interceptAnnotated( self, thisMethod, args);
+        return interceptAnnotated( self, thisMethod, args );
     }
 
     // handle the cases where the method is not abstract
     private Object interceptNonAbstract(final Object self, final Method thisMethod, final Object[] args)
             throws Throwable {
         // handle the special case methods
-        if (thisMethod.getName().equals( "toString" ) && !thisMethod.isVarArgs() && (thisMethod.getParameterTypes().length == 0)) {
+        if (thisMethod.getName().equals( "toString" ) && !thisMethod.isVarArgs()
+                && (thisMethod.getParameterTypes().length == 0)) {
             return String.format( "%s[%s]", subjectInfo.getClass(), resource );
         }
         if (thisMethod.getName().equals( "hashCode" )) {

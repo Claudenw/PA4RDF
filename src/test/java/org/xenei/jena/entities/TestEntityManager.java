@@ -5,46 +5,47 @@ import org.xenei.jena.entities.annotations.Subject;
 public class TestEntityManager implements EntityManager {
 
     @Override
-    public Subject getSubject(Class<?> clazz) {
+    public Subject getSubject(final Class<?> clazz) {
         return null;
     }
 
     @Override
-    public SubjectInfo getSubjectInfo(Class<?> clazz) {
+    public SubjectInfo getSubjectInfo(final Class<?> clazz) {
         return null;
     }
 
     @Override
-    public boolean isInstance(Object target, Class<?> clazz) {
+    public boolean isInstance(final Object target, final Class<?> clazz) {
         return false;
     }
 
     @Override
-    public void parseClasses(String packageName) throws MissingAnnotation {
+    public void parseClasses(final String packageName) throws MissingAnnotation {
     }
 
     @Override
-    public void parseClasses(String[] packageNames) throws MissingAnnotation {
+    public void parseClasses(final String[] packageNames) throws MissingAnnotation {
     }
 
     @Override
-    public <T> T make(Object source, Class<T> primaryClass, Class<?>... secondaryClasses) throws MissingAnnotation {
+    public <T> T make(final Object source, final Class<T> primaryClass, final Class<?>... secondaryClasses)
+            throws MissingAnnotation {
         return null;
     }
 
     @Override
-    public <T> T read(Object source, Class<T> primaryClass, Class<?>... secondaryClasses)
+    public <T> T read(final Object source, final Class<T> primaryClass, final Class<?>... secondaryClasses)
             throws MissingAnnotation, IllegalArgumentException {
         return null;
     }
 
     @Override
-    public <T> T addInstanceProperties(T source, Class<?> clazz) throws MissingAnnotation {
+    public <T> T addInstanceProperties(final T source, final Class<?> clazz) throws MissingAnnotation {
         return null;
     }
 
     @Override
-    public Object update(Object source, Object target) {
+    public Object update(final Object source, final Object target) {
         return null;
     }
 
