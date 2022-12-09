@@ -65,6 +65,7 @@ public @interface Predicate {
      *
      * @return true if the implementation should be overridden.
      */
+    @Deprecated
     boolean impl() default false;
 
     /**

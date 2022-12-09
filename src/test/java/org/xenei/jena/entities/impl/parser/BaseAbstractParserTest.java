@@ -52,8 +52,7 @@ abstract public class BaseAbstractParserTest {
     @BeforeEach
     public void setUp() throws Exception {
         subjectInfo = new SubjectInfoImpl( classUnderTest );
-        final Map<String, Integer> addCount = countAdders( classUnderTest.getMethods() );
-        parser = new MethodParser( subjectInfo, addCount );
+        parser = new MethodParser( subjectInfo );
     }
 
     @AfterEach

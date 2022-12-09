@@ -86,4 +86,8 @@ public interface PredicateInfo {
      * @return the ObjectHandler.
      */
     public ObjectHandler getObjectHandler();
+    
+    public EffectivePredicate getPredicate();
+    
+    public Class<?> getConcreteType();
 }

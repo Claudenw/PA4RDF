@@ -49,14 +49,15 @@ public class SingleValueObjectEntityTests {
 
     @Test
     public void testBoolean() {
+        Assertions.assertNull( tc.isBool() );
         tc.setBool( true );
         Assertions.assertTrue( tc.isBool() );
         tc.setBool( false );
-        Assertions.assertTrue( !tc.isBool() );
+        Assertions.assertFalse( tc.isBool() );
         tc.setBool( Boolean.TRUE );
         Assertions.assertTrue( tc.isBool() );
         tc.setBool( Boolean.FALSE );
-        Assertions.assertTrue( !tc.isBool() );
+        Assertions.assertFalse( tc.isBool() );
         tc.removeBool();
         Assertions.assertNull( tc.isBool() );
     }

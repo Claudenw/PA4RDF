@@ -23,7 +23,7 @@ abstract public class AbstractSimpleTest extends BaseAbstractParserTest {
     public void testStandardHas() throws Exception {
         final Method m = classUnderTest.getMethod( "hasX" );
         final PredicateInfo pi = parser.parse( m );
-        validatePredicateInfo( pi, "hasX", ActionType.EXISTENTIAL, "x", boolean.class );
+        validatePredicateInfo( pi, "hasX", ActionType.EXISTENTIAL, "x", void.class );
     }
 
     @Test
@@ -43,7 +43,7 @@ abstract public class AbstractSimpleTest extends BaseAbstractParserTest {
         validatePredicateInfo( pi, "getX", ActionType.GETTER, "x", String.class );
 
         pi = subjectInfo.getPredicateInfo( classUnderTest.getMethod( "hasX" ) );
-        validatePredicateInfo( pi, "hasX", ActionType.EXISTENTIAL, "x", boolean.class );
+        validatePredicateInfo( pi, "hasX", ActionType.EXISTENTIAL, "x", void.class );
 
         pi = subjectInfo.getPredicateInfo( classUnderTest.getMethod( "removeX" ) );
         validatePredicateInfo( pi, "removeX", ActionType.REMOVER, "x", null );

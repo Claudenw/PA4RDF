@@ -114,13 +114,13 @@ public class ActionTypeTest {
     @Test
     public void extractNameTest() {
         Assertions.assertEquals( "X", ActionType.EXISTENTIAL.extractName( "hasX" ) );
-        Assertions.assertEquals( "X", ActionType.EXISTENTIAL.extractName( "isX" ) );
         Assertions.assertThrows( IllegalArgumentException.class, () -> ActionType.EXISTENTIAL.extractName( "random" ) );
         Assertions.assertThrows( IllegalArgumentException.class, () -> ActionType.EXISTENTIAL.extractName( null ) );
         Assertions.assertThrows( IllegalArgumentException.class, () -> ActionType.EXISTENTIAL.extractName( "" ) );
         Assertions.assertThrows( IllegalArgumentException.class, () -> ActionType.EXISTENTIAL.extractName( " " ) );
 
         Assertions.assertEquals( "X", ActionType.GETTER.extractName( "getX" ) );
+        Assertions.assertEquals( "X", ActionType.GETTER.extractName( "isX" ) );
         Assertions.assertThrows( IllegalArgumentException.class, () -> ActionType.GETTER.extractName( "random" ) );
         Assertions.assertThrows( IllegalArgumentException.class, () -> ActionType.GETTER.extractName( null ) );
         Assertions.assertThrows( IllegalArgumentException.class, () -> ActionType.GETTER.extractName( "" ) );

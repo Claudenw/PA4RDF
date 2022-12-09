@@ -69,13 +69,13 @@ public class SubjectInfoImpl implements SubjectInfo {
      * reflect .Method)
      */
     @Override
-    public PredicateInfo getPredicateInfo(final Method m) {
-        if (m.isVarArgs() || (m.getParameterTypes().length > 1)) {
+    public PredicateInfo getPredicateInfo(final Method method) {
+        if (method.isVarArgs() || (method.getParameterCount() > 1)) {
             return null;
         }
         try {
-            final ActionType action = ActionType.parse( m.getName() );
-            return getPredicateInfo( m.getName(), action.predicateClass( m ) );
+            final ActionType action = ActionType.parse( method.getName() );
+            return getPredicateInfo( method.getName(), action.predicateClass( method ) );
         } catch (final IllegalArgumentException ignore) {
             return null;
         }
@@ -98,6 +98,9 @@ public class SubjectInfoImpl implements SubjectInfo {
         return map.values().iterator().next();
     }
 
+    private boolean nullOrVoid(Class<?> clazz) {
+        return (clazz == null) || clazz.equals( void.class );
+    }
     /*
      * (non-Javadoc)
      *
@@ -109,29 +112,28 @@ public class SubjectInfoImpl implements SubjectInfo {
         final Map<ObjectHandler, PredicateInfo> map = predicateInfo.get( function );
         if (map != null) {
             for (final PredicateInfo pi : map.values()) {
-                final Class<?> valueClass = pi.getValueClass();
                 switch (pi.getActionType()) {
                 case SETTER:
-                    if (TypeChecker.canBeSetFrom( valueClass, clazz )) {
+                    if (TypeChecker.canBeSetFrom( pi.getValueClass(), clazz )) {
                         return pi;
                     }
                     break;
 
                 case GETTER:
-                    if (TypeChecker.canBeSetFrom( clazz, valueClass )) {
+                    if (TypeChecker.canBeSetFrom( clazz, pi.getValueClass() )) {
                         return pi;
                     }
                     break;
 
                 case REMOVER:
                 case EXISTENTIAL:
-                    if (valueClass != null) {
+                    if (!nullOrVoid(pi.getConcreteType())) {
                         // it needs an argument
-                        if (TypeChecker.canBeSetFrom( valueClass, clazz )) {
+                        if (TypeChecker.canBeSetFrom( pi.getConcreteType(), clazz )) {
                             return pi;
                         }
                     } else {
-                        if ((clazz == null) || clazz.equals( void.class )) {
+                        if (nullOrVoid(clazz)) {
                             return pi;
                         }
                     }

@@ -1,8 +1,5 @@
 package org.xenei.jena.entities.impl;
 
-import java.util.Map;
-import java.util.TreeMap;
-
 import org.apache.jena.datatypes.xsd.impl.XSDBaseNumericType;
 import org.apache.jena.rdf.model.Property;
 import org.apache.jena.rdf.model.ResourceFactory;
@@ -31,9 +28,8 @@ public class MethodParserTest {
     }
 
     private final SubjectInfoImpl subjectInfo = new SubjectInfoImpl( ImplementedClass.class );
-    private final Map<String, Integer> addCount = new TreeMap<>();
 
-    private final MethodParser methodParser = new MethodParser( subjectInfo, addCount );
+    private final MethodParser methodParser = new MethodParser( subjectInfo );
 
     private void assertValues(final PredicateInfo pi, final ActionType actionType, final Class<?> concreteType,
             final String methodName, final ObjectHandler handler, final Property property, final Class<?> valueClass) {

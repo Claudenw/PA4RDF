@@ -44,21 +44,23 @@ public class SingleValuePrimitiveEntityTests {
 
     @Test
     public void testBoolean() {
+        Assertions.assertFalse( tc.isBool() );
         tc.setBool( true );
         Assertions.assertTrue( tc.isBool() );
         tc.setBool( false );
-        Assertions.assertTrue( !tc.isBool() );
+        Assertions.assertFalse( tc.isBool() );
         tc.setBool( Boolean.TRUE );
         Assertions.assertTrue( tc.isBool() );
         tc.setBool( Boolean.FALSE );
-        Assertions.assertTrue( !tc.isBool() );
+        Assertions.assertFalse( tc.isBool() );
         tc.removeBool();
-        try {
-            tc.isBool();
-            Assertions.fail( "Should have thrown NullPointerException" );
-        } catch (final NullPointerException e) {
-            // expected
-        }
+        Assertions.assertFalse( tc.isBool() );
+//        try {
+//            tc.isBool();
+//            Assertions.fail( "Should have thrown NullPointerException" );
+//        } catch (final NullPointerException e) {
+//            // expected
+//        }
     }
 
     @Test

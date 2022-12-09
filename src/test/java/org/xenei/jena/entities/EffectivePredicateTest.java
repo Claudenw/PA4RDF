@@ -1,4 +1,4 @@
-package org.xenei.jena.entities.impl;
+package org.xenei.jena.entities;
 
 import java.lang.reflect.Method;
 import java.util.Arrays;

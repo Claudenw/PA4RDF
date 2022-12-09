@@ -39,6 +39,7 @@ import java.util.Set;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.xenei.jena.entities.EffectivePredicate;
 import org.xenei.jena.entities.ObjectHandler;
 import org.xenei.jena.entities.PredicateInfo;
 import org.xenei.jena.entities.annotations.Subject;
@@ -113,11 +114,11 @@ public class PredicateInfoImpl implements PredicateInfo {
     }
 
     private static RDFDatatype adjustDataType(final RDFDatatype initial, final Class<?> returnType) {
-        if (CharDatatype.INSTANCE.getJavaClass().equals( returnType )) {
+        if (CharDatatype.INSTANCE.handles( returnType )) {
             return CharDatatype.INSTANCE;
-        } else if (CharacterDatatype.INSTANCE.getJavaClass().equals( returnType )) {
+        } else if (CharacterDatatype.INSTANCE.handles( returnType )) {
             return CharacterDatatype.INSTANCE;
-        } else if (LongDatatype.INSTANCE.getJavaClass().equals( returnType )) {
+        } else if (LongDatatype.INSTANCE.handles( returnType )) {
             return LongDatatype.INSTANCE;
         }
         return initial;
@@ -198,18 +199,38 @@ public class PredicateInfoImpl implements PredicateInfo {
         return new VoidHandler();
     }
 
-    Class<?> getConcreteType() {
+    @Override
+    public Class<?> getConcreteType() {
         return concreteType;
     }
-
-    public PredicateInfoImpl(final PredicateInfoImpl pi) {
-        actionType = pi.actionType;
-        concreteType = pi.concreteType;
-        methodName = pi.methodName;
-        objectHandler = pi.objectHandler;
-        predicate = new EffectivePredicate( pi.predicate );
-        property = pi.property;
-        valueClass = pi.valueClass;
+    
+    public void setConcreteType(Class<?>concreteType) {
+        this.concreteType=concreteType;
+    }
+    
+    @Override
+    public EffectivePredicate getPredicate() {
+        return predicate;
+    }
+    
+    public PredicateInfoImpl(final PredicateInfo pi) {
+        actionType = pi.getActionType();
+        concreteType = pi.getConcreteType();
+        methodName = pi.getMethodName();
+        objectHandler = pi.getObjectHandler();
+        predicate = new EffectivePredicate( pi.getPredicate() );
+        property = pi.getProperty();
+        valueClass = pi.getValueClass();
+    }
+    
+    public PredicateInfoImpl(final PredicateInfo pi, Method method, EffectivePredicate predicate) {
+        actionType = pi.getActionType();
+        concreteType = pi.getConcreteType();
+        methodName = pi.getMethodName();
+        objectHandler = pi.getObjectHandler();
+        this.predicate = predicate.merge( pi.getPredicate() );
+        property = pi.getProperty();
+        valueClass = pi.getValueClass();
     }
 
     private Property createResourceProperty(final Resource resource) {
@@ -269,7 +290,9 @@ public class PredicateInfoImpl implements PredicateInfo {
     private Object execHas(final Resource resource, final Property p, final Object[] args) {
         try {
             resource.getModel().enterCriticalSection( Lock.READ );
-
+            if (args == null) {
+                return resource.hasProperty( p );
+            }
             return resource.hasProperty( p, objectHandler.createRDFNode( args[0] ) );
         } finally {
             resource.getModel().leaveCriticalSection();

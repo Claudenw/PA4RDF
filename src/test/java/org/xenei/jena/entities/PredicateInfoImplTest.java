@@ -1,4 +1,4 @@
-package org.xenei.jena.entities.impl;
+package org.xenei.jena.entities;
 
 import java.util.Iterator;
 import java.util.Set;
@@ -10,10 +10,10 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
-import org.xenei.jena.entities.EntityManager;
-import org.xenei.jena.entities.EntityManagerFactory;
 import org.xenei.jena.entities.annotations.Subject;
 import org.xenei.jena.entities.annotations.URI;
+import org.xenei.jena.entities.impl.ActionType;
+import org.xenei.jena.entities.impl.PredicateInfoImpl;
 import org.xenei.jena.entities.impl.handlers.EntityHandler;
 import org.xenei.jena.entities.impl.handlers.LiteralHandler;
 import org.xenei.jena.entities.impl.handlers.ResourceHandler;

@@ -32,7 +32,7 @@ public enum ActionType {
     /**
      * Indicates a method that gets a value
      */
-    GETTER(Arrays.asList( "get" )),
+    GETTER(Arrays.asList( "get")),
     /**
      * Indicates a method that sets a value
      */
@@ -44,7 +44,7 @@ public enum ActionType {
     /**
      * Indicates a method that checks for the existance of a value
      */
-    EXISTENTIAL(Arrays.asList( "has", "is" ));
+    EXISTENTIAL(Arrays.asList( "has", "is"));
 
     private final List<String> prefixes;
 
@@ -64,7 +64,7 @@ public enum ActionType {
 
         case EXISTENTIAL:
         case REMOVER:
-            return m.getParameterTypes().length > 0;
+            return m.getParameterCount() > 0;
         }
         throw new IllegalArgumentException( String.format( "%s is not an action type function", m ) );
     }
@@ -137,7 +137,7 @@ public enum ActionType {
                 return functionName.substring( prefix.get().length() );
             }
         }
-        throw new IllegalArgumentException( functionName + " is not an ActionType" );
+        throw new IllegalArgumentException( functionName + " is not an "+this+" ActionType" );
     }
 
     public Stream<String> createNames(final String name) {
@@ -162,7 +162,7 @@ public enum ActionType {
         case EXISTENTIAL:
         case REMOVER:
         case SETTER:
-            return m.getParameterTypes().length == 0 ? null : m.getParameterTypes()[0];
+            return m.getParameterCount() == 0 ? null : m.getParameterTypes()[0];
 
         case GETTER:
         default:

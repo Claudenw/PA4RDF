@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 
-package org.xenei.jena.entities.impl;
+package org.xenei.jena.entities;
 
 import org.apache.jena.rdf.model.RDFNode;
 
@@ -28,6 +28,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.xenei.jena.entities.annotations.Predicate;
 import org.xenei.jena.entities.annotations.Subject;
 import org.xenei.jena.entities.annotations.URI;
+import org.xenei.jena.entities.impl.ActionType;
 
 /**
  * An class that mimics the Predicate annotation but allows processing to modify
@@ -66,34 +67,34 @@ public class EffectivePredicate {
      * Constructs an effective predicate by parsing the method and its
      * annotations.
      *
-     * @param m
+     * @param method
      *            the method to parse.
      */
-    public EffectivePredicate(final Method m) {
-        if (m != null) {
-            if (m.getParameterTypes().length > 0) {
-                for (final Annotation a : m.getParameterAnnotations()[0]) {
+    public EffectivePredicate(final Method method) {
+        if (method != null) {
+            if (method.getParameterTypes().length > 0) {
+                for (final Annotation a : method.getParameterAnnotations()[0]) {
                     if (a instanceof URI) {
                         type = URI.class;
                     }
                 }
             }
-            final ActionType actionType = ActionType.parse( m.getName() );
-            final Subject s = m.getDeclaringClass().getAnnotation( Subject.class );
+            final ActionType actionType = ActionType.parse( method.getName() );
+            final Subject s = method.getDeclaringClass().getAnnotation( Subject.class );
             if (s != null) {
                 namespace = s.namespace();
             }
-            final Predicate p = m.getAnnotation( Predicate.class );
+            final Predicate p = method.getAnnotation( Predicate.class );
             if (p != null) {
                 merge( p );
                 if (StringUtils.isNotBlank( p.postExec() )) {
                     final String mName = p.postExec().trim();
                     try {
-                        final Class<?> argType = actionType.predicateClass( m );
+                        final Class<?> argType = actionType.predicateClass( method );
                         if (argType == null) {
-                            throw new IllegalArgumentException( String.format( "%s is not an Action method", m ) );
+                            throw new IllegalArgumentException( String.format( "%s is not an Action method", method ) );
                         }
-                        final Method peMethod = m.getDeclaringClass().getMethod( mName, argType );
+                        final Method peMethod = method.getDeclaringClass().getMethod( mName, argType );
                         if (argType.equals( peMethod.getReturnType() )) {
                             addPostExec( peMethod );
                         } else {
@@ -111,7 +112,7 @@ public class EffectivePredicate {
             }
             if (StringUtils.isBlank( name )) {
                 try {
-                    setName( actionType.extractName( m.getName() ) );
+                    setName( actionType.extractName( method.getName() ) );
                 } catch (final IllegalArgumentException e) {
                     // expected when not an action method.
                 }
