@@ -25,12 +25,12 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.xenei.jena.entities.testing.iface.SingleValueObjectInterface.SubPredicate;
-import org.xenei.jena.entities.testing.iface.SingleValueObjectInterfaceDefault;
+import org.xenei.jena.entities.testing.iface.SingleValueObjectInterface;
 import org.xenei.jena.entities.testing.iface.TestInterface;
 
 public class SingleValueObjectEntityTests {
 
-    private SingleValueObjectInterfaceDefault tc;
+    private SingleValueObjectInterface tc;
     private Model model;
     private EntityManager manager;
 
@@ -39,7 +39,7 @@ public class SingleValueObjectEntityTests {
         manager = EntityManagerFactory.getEntityManager();
         model = ModelFactory.createDefaultModel();
         final Resource r = model.createResource( "http://localhost/SingleValueObjectEntityTests" );
-        tc = manager.read( r, SingleValueObjectInterfaceDefault.class );
+        tc = manager.read( r, SingleValueObjectInterface.class );
     }
 
     @AfterEach

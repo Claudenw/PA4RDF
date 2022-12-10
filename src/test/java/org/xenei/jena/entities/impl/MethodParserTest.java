@@ -14,7 +14,10 @@ import org.xenei.jena.entities.EntityManager;
 import org.xenei.jena.entities.EntityManagerFactory;
 import org.xenei.jena.entities.PredicateInfo;
 import org.xenei.jena.entities.PredicateInfoImplTest;
+import org.xenei.jena.entities.annotations.Predicate;
+import org.xenei.jena.entities.annotations.URI;
 import org.xenei.jena.entities.impl.handlers.LiteralHandler;
+import org.xenei.jena.entities.impl.handlers.UriHandler;
 import org.xenei.jena.entities.impl.handlers.VoidHandler;
 import org.xenei.jena.entities.testing.iface.SingleValueObjectInterface;
 import org.xenei.jena.entities.testing.iface.SingleValuePrimitiveInterface;
@@ -117,6 +120,7 @@ public class MethodParserTest {
         final SubjectInfoImpl subjectInfo = new SubjectInfoImpl( SingleValueObjectInterface.class );
         final MethodParser methodParser = new MethodParser( subjectInfo );
 
+        // char
         Property expectedProperty = ResourceFactory.createProperty( namespace, "char" );
         Method method = SingleValueObjectInterface.class.getMethod( "setChar", Character.class );
         PredicateInfo pi = methodParser.parse( method );
@@ -153,6 +157,7 @@ public class MethodParserTest {
         EffectivePredicateTest.assertValues( pi.getPredicate(), false, false, "", "char", namespace, Character.class,
                 false );
 
+        // boolean
         expectedHandler = PredicateInfoImplTest.createHandler( "boolean", "class java.lang.Boolean" );
         expectedProperty = ResourceFactory.createProperty( namespace, "bool" );
         method = SingleValueObjectInterface.class.getMethod( "setBool", Boolean.class );
@@ -188,6 +193,21 @@ public class MethodParserTest {
                 LiteralHandler.class, expectedHandler, expectedProperty, void.class );
         EffectivePredicateTest.assertValues( pi.getPredicate(), false, false, "", "bool", namespace, Boolean.class,
                 false );
+        
+
+        // u2
+        //@Predicate(type = URI.class, name = "u")
+        //String getU2();
+        expectedProperty = ResourceFactory.createProperty( namespace, "u" );
+        method = SingleValueObjectInterface.class.getMethod( "getU2" );
+        pi = methodParser.parse( method );
+        expectedHandler = PredicateInfoImplTest.createHandler( "string", "class java.lang.String" );
+        PredicateInfoImplTest.assertValues( pi, ActionType.GETTER, URI.class, "getU2", void.class,
+                UriHandler.class, "UriHandler", expectedProperty, void.class );
+        EffectivePredicateTest.assertValues( pi.getPredicate(), false, false, "", "u", namespace, URI.class,
+                false );
+        Assertions.assertNotNull(  subjectInfo.getPredicateInfo( method ) );
+
     }
 
 }
