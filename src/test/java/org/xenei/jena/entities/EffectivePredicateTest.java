@@ -16,14 +16,14 @@ import org.xenei.jena.entities.annotations.URI;
 public class EffectivePredicateTest {
 
     public static void assertValues(final EffectivePredicate ep, final boolean emptyIsNull, final boolean impl,
-            final String literalType, final String name, final String namespace, final Class<?> type,
+            final String literalType, final String name, final String namespace, final Class<?> rawType,
             final boolean upcase, final List<Method> postExec) {
         Assertions.assertEquals( emptyIsNull, ep.emptyIsNull(), "emptyIsNull error" );
         Assertions.assertEquals( impl, ep.impl(), "impl error" );
         Assertions.assertEquals( literalType, ep.literalType(), "litealType error" );
         Assertions.assertEquals( name, ep.name(), "nameError" );
         Assertions.assertEquals( namespace, ep.namespace(), "namespace error" );
-        Assertions.assertEquals( type, ep.rawType(), "type error" );
+        Assertions.assertEquals( rawType, ep.rawType(), "rawType error" );
         Assertions.assertEquals( upcase, ep.upcase(), "upcase error" );
         Assertions.assertEquals( postExec, ep.postExec(), "postExec error" );
     }
@@ -36,13 +36,13 @@ public class EffectivePredicateTest {
      * @param literalType
      * @param name
      * @param namespace
-     * @param type
+     * @param rawtype
      * @param upcase
      */
     public static void assertValues(final EffectivePredicate ep, final boolean emptyIsNull, final boolean impl,
-            final String literalType, final String name, final String namespace, final Class<?> type,
+            final String literalType, final String name, final String namespace, final Class<?> rawType,
             final boolean upcase) {
-        EffectivePredicateTest.assertValues( ep, emptyIsNull, impl, literalType, name, namespace, type, upcase,
+        EffectivePredicateTest.assertValues( ep, emptyIsNull, impl, literalType, name, namespace, rawType, upcase,
                 Collections.emptyList() );
     }
 
@@ -70,7 +70,7 @@ public class EffectivePredicateTest {
         final EffectivePredicate ep = new EffectivePredicate();
 
         ep.merge( makePred( false, false, "", "", "http://example.com", "", null, false ) );
-        EffectivePredicateTest.assertValues( ep, false, false, "", "", "http://example.com", RDFNode.class, false );
+        EffectivePredicateTest.assertValues( ep, false, false, "", "", "http://example.com", null, false );
 
         ep.merge( makePred( false, false, "", "", "", "", Integer.class, false ) );
         EffectivePredicateTest.assertValues( ep, false, false, "", "", "http://example.com", Integer.class, false );
@@ -98,75 +98,75 @@ public class EffectivePredicateTest {
 
         tempEp = new EffectivePredicate( makePred( false, false, "", "", "http://example.com", "", null, false ) );
         ep.merge( tempEp );
-        EffectivePredicateTest.assertValues( ep, true, false, "", "", "http://example.com", RDFNode.class, false );
+        EffectivePredicateTest.assertValues( ep, false, false, "", "", "http://example.com", null, false );
 
         tempEp = new EffectivePredicate( makePred( false, false, "", "", "", "", Integer.class, false ) );
         ep.merge( tempEp );
-        EffectivePredicateTest.assertValues( ep, true, false, "", "", "http://example.com", Integer.class, false );
+        EffectivePredicateTest.assertValues( ep, false, false, "", "", "http://example.com", Integer.class, false );
 
         tempEp = new EffectivePredicate( makePred( true, false, "", "", "", "", null, false ) );
         ep.merge( tempEp );
-        EffectivePredicateTest.assertValues( ep, true, false, "", "", "http://example.com", Integer.class, false );
+        EffectivePredicateTest.assertValues( ep, false, false, "", "", "http://example.com", Integer.class, false );
 
         tempEp = new EffectivePredicate( makePred( false, true, "", "", "", "", null, false ) );
         ep.merge( tempEp );
-        EffectivePredicateTest.assertValues( ep, true, true, "", "", "http://example.com", Integer.class, false );
+        EffectivePredicateTest.assertValues( ep, false, true, "", "", "http://example.com", Integer.class, false );
 
         tempEp = new EffectivePredicate( makePred( false, false, "", "name", "", "", null, false ) );
         ep.merge( tempEp );
-        EffectivePredicateTest.assertValues( ep, true, true, "", "name", "http://example.com", Integer.class, false );
+        EffectivePredicateTest.assertValues( ep, false, true, "", "name", "http://example.com", Integer.class, false );
 
         tempEp = new EffectivePredicate( makePred( false, false, "", "", "", "", null, true ) );
         ep.merge( tempEp );
-        EffectivePredicateTest.assertValues( ep, true, true, "", "Name", "http://example.com", Integer.class, true );
+        EffectivePredicateTest.assertValues( ep, false, true, "", "Name", "http://example.com", Integer.class, true );
 
         tempEp = new EffectivePredicate( makePred( false, false, "", "", "", "SomeMethod", null, false ) );
         ep.merge( tempEp );
-        EffectivePredicateTest.assertValues( ep, true, true, "", "name", "http://example.com", Integer.class, false );
+        EffectivePredicateTest.assertValues( ep, false, true, "", "name", "http://example.com", Integer.class, false );
     }
 
     @Test
     public void constructorFromMethodTests() throws Exception {
         EffectivePredicate ep = new EffectivePredicate( method( "getSimple" ) );
-        EffectivePredicateTest.assertValues( ep, true, false, "", "simple", "", RDFNode.class, false );
+        EffectivePredicateTest.assertValues( ep, false, false, "", "simple", "", int.class, false );
 
         ep = new EffectivePredicate( method( "getEmptyIsNull" ) );
-        EffectivePredicateTest.assertValues( ep, true, false, "", "emptyIsNull", "", RDFNode.class, false );
+        EffectivePredicateTest.assertValues( ep, true, false, "", "emptyIsNull", "", boolean.class, false );
 
         ep = new EffectivePredicate( method( "getLiteralType" ) );
-        EffectivePredicateTest.assertValues( ep, false, false, "Integer.class", "literalType", "", RDFNode.class,
+        EffectivePredicateTest.assertValues( ep, false, false, "Integer.class", "literalType", "", int.class,
                 false );
 
         ep = new EffectivePredicate( method( "getName" ) );
-        EffectivePredicateTest.assertValues( ep, false, false, "", "foo", "", RDFNode.class, false );
+        EffectivePredicateTest.assertValues( ep, false, false, "", "foo", "", int.class, false );
 
         ep = new EffectivePredicate( method( "getNamespace" ) );
-        EffectivePredicateTest.assertValues( ep, false, false, "", "namespace", "http://example.com/", RDFNode.class,
+        EffectivePredicateTest.assertValues( ep, false, false, "", "namespace", "http://example.com/", int.class,
                 false );
 
         ep = new EffectivePredicate( method( "getPostExec" ) );
-        EffectivePredicateTest.assertValues( ep, false, false, "", "postExec", "", RDFNode.class, false,
+        EffectivePredicateTest.assertValues( ep, false, false, "", "postExec", "", int.class, false,
                 Arrays.asList( TestingInterface.class.getMethod( "postExecFunc", int.class ) ) );
 
         ep = new EffectivePredicate( method( "getType" ) );
         EffectivePredicateTest.assertValues( ep, false, false, "", "type", "", Integer.class, false );
 
         ep = new EffectivePredicate( method( "getUpcase" ) );
-        EffectivePredicateTest.assertValues( ep, false, false, "", "Upcase", "", RDFNode.class, true );
+        EffectivePredicateTest.assertValues( ep, false, false, "", "Upcase", "", int.class, true );
 
         ep = new EffectivePredicate( method( "isImpl" ) );
-        EffectivePredicateTest.assertValues( ep, false, true, "", "impl", "", RDFNode.class, false );
+        EffectivePredicateTest.assertValues( ep, false, true, "", "impl", "", null, false );
 
-        ep = new EffectivePredicate( TestingInterface.class.getMethod( "getUriParam", String.class ) );
-        EffectivePredicateTest.assertValues( ep, true, false, "", "uriParam", "", URI.class, false );
+        ep = new EffectivePredicate( TestingInterface.class.getMethod( "setUriParam", String.class ) );
+        EffectivePredicateTest.assertValues( ep, false, false, "", "uriParam", "", URI.class, false );
 
         // with Subject
         ep = new EffectivePredicate( TestingInterface2.class.getMethod( "getSimple" ) );
-        EffectivePredicateTest.assertValues( ep, true, false, "", "simple", "http://example.net", RDFNode.class,
+        EffectivePredicateTest.assertValues( ep, false, false, "", "simple", "http://example.net", int.class,
                 false );
 
         ep = new EffectivePredicate( TestingInterface2.class.getMethod( "getNamespace" ) );
-        EffectivePredicateTest.assertValues( ep, false, false, "", "namespace", "http://example.com/", RDFNode.class,
+        EffectivePredicateTest.assertValues( ep, false, false, "", "namespace", "http://example.com/", int.class,
                 false );
     }
 
@@ -174,25 +174,25 @@ public class EffectivePredicateTest {
     public void constructorFromPredicateTests() throws Exception {
         EffectivePredicate ep = new EffectivePredicate(
                 makePred( false, false, "", "", "http://example.com", "", null, false ) );
-        EffectivePredicateTest.assertValues( ep, false, false, "", "", "http://example.com", RDFNode.class, false );
+        EffectivePredicateTest.assertValues( ep, false, false, "", "", "http://example.com", null, false );
 
         ep = new EffectivePredicate( makePred( false, false, "", "", "", "", Integer.class, false ) );
         EffectivePredicateTest.assertValues( ep, false, false, "", "", "", Integer.class, false );
 
         ep = new EffectivePredicate( makePred( true, false, "", "", "", "", null, false ) );
-        EffectivePredicateTest.assertValues( ep, true, false, "", "", "", RDFNode.class, false );
+        EffectivePredicateTest.assertValues( ep, true, false, "", "", "", null, false );
 
         ep = new EffectivePredicate( makePred( false, true, "", "", "", "", null, false ) );
-        EffectivePredicateTest.assertValues( ep, false, true, "", "", "", RDFNode.class, false );
+        EffectivePredicateTest.assertValues( ep, false, true, "", "", "", null, false );
 
         ep = new EffectivePredicate( makePred( false, false, "", "name", "", "", null, false ) );
-        EffectivePredicateTest.assertValues( ep, false, false, "", "name", "", RDFNode.class, false );
+        EffectivePredicateTest.assertValues( ep, false, false, "", "name", "", null, false );
 
         ep = new EffectivePredicate( makePred( false, false, "", "", "", "", null, true ) );
-        EffectivePredicateTest.assertValues( ep, false, false, "", "", "", RDFNode.class, true );
+        EffectivePredicateTest.assertValues( ep, false, false, "", "", "", null, true );
 
         ep = new EffectivePredicate( makePred( false, false, "", "", "", "SomeMethod", null, false ) );
-        EffectivePredicateTest.assertValues( ep, false, false, "", "", "", RDFNode.class, false );
+        EffectivePredicateTest.assertValues( ep, false, false, "", "", "", null, false );
     }
 
     interface TestingInterface {
@@ -226,7 +226,7 @@ public class EffectivePredicateTest {
         @Predicate(upcase = true)
         int getUpcase();
 
-        int getUriParam(@URI String uri);
+        int setUriParam(@URI String uri);
     }
 
     @Subject(namespace = "http://example.net")

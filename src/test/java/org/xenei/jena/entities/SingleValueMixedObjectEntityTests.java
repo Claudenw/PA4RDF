@@ -57,7 +57,7 @@ public class SingleValueMixedObjectEntityTests {
 
     @Test
     public void testBoolean() {
-        Assertions.assertNull( tc.isBool() );
+        Assertions.assertFalse( tc.isBool() );
         tc.setBool( true );
         Assertions.assertTrue( tc.isBool() );
         tc.setBool( false );

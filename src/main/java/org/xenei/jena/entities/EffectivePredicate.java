@@ -86,7 +86,10 @@ public class EffectivePredicate {
              * returnType; } }
              */
             final ActionType actionType = ActionType.parse( method.getName() );
-            type = actionType.predicateClass( method );
+            if (type == null)
+            {
+                type = actionType.predicateClass( method );
+            }
             final Subject s = method.getDeclaringClass().getAnnotation( Subject.class );
             if (s != null) {
                 namespace = s.namespace();
@@ -243,7 +246,6 @@ public class EffectivePredicate {
                     addPostExec( m );
                 }
             }
-
         }
         return this;
     }
