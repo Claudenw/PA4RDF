@@ -18,7 +18,7 @@ import org.xenei.jena.entities.annotations.Predicate;
 import org.xenei.jena.entities.annotations.Subject;
 
 @Subject(namespace = "http://localhost/test#")
-public interface SingleValuePrimitiveTestInterface {
+public interface SingleValuePrimitiveInterface {
 
     char getChar();
 
@@ -31,6 +31,18 @@ public interface SingleValuePrimitiveTestInterface {
     long getLng();
 
     boolean isBool();
+
+    boolean hasChar();
+
+    boolean hasDbl();
+
+    boolean hasFlt();
+
+    boolean hasInt();
+
+    boolean hasLng();
+
+    boolean hasBool();
 
     void removeBool();
 

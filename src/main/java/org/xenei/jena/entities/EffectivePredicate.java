@@ -42,7 +42,7 @@ public class EffectivePredicate {
     private String namespace = "";
     private String literalType = "";
     private Class<?> type = null;
-    private boolean emptyIsNull = true;
+    private boolean emptyIsNull = false;
     private boolean impl = false;
     private List<Method> postExec = null;
 
@@ -72,14 +72,21 @@ public class EffectivePredicate {
      */
     public EffectivePredicate(final Method method) {
         if (method != null) {
-            if (method.getParameterTypes().length > 0) {
+            if (method.getParameterCount() > 0) {
                 for (final Annotation a : method.getParameterAnnotations()[0]) {
                     if (a instanceof URI) {
                         type = URI.class;
                     }
                 }
             }
+            /*
+             * if (URI.class.equals( predicate.type() )) { tempReturnType =
+             * URI.class; } else { if (isCollection(returnType)) {
+             * tempReturnType = predicate.type(); } else { tempEnclosedType =
+             * returnType; } }
+             */
             final ActionType actionType = ActionType.parse( method.getName() );
+            type = actionType.predicateClass( method );
             final Subject s = method.getDeclaringClass().getAnnotation( Subject.class );
             if (s != null) {
                 namespace = s.namespace();

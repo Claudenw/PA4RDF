@@ -41,7 +41,7 @@ class ImplMethodParser extends BaseMethodParser {
         }
         return null;
     }
-    
+
     void parse(final ActionType actionType, final Method method, final EffectivePredicate predicate)
             throws MissingAnnotation {
 
@@ -52,14 +52,17 @@ class ImplMethodParser extends BaseMethodParser {
         PredicateInfo antecedentPI = parse( antecedent );
 
         while ((antecedentPI == null) && (antecedent != null)) {
-            
+
             antecedent = ImplMethodParser.findAntecedentMethod( antecedent );
             if (antecedent == null) {
                 return;
             }
             antecedentPI = parse( antecedent );
         }
-        PredicateInfoImpl pi = new PredicateInfoImpl( antecedentPI, method, predicate );
+        predicate.merge( antecedentPI.getPredicate() );
+        // PredicateInfoImpl pi = new PredicateInfoImpl( antecedentPI, method,
+        // predicate );
+        final PredicateInfoImpl pi = new PredicateInfoImpl( predicate.merge( antecedentPI.getPredicate() ), method );
         subjectInfo.add( pi );
     }
 }

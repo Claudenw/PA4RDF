@@ -98,9 +98,6 @@ public class SubjectInfoImpl implements SubjectInfo {
         return map.values().iterator().next();
     }
 
-    private boolean nullOrVoid(Class<?> clazz) {
-        return (clazz == null) || clazz.equals( void.class );
-    }
     /*
      * (non-Javadoc)
      *
@@ -114,26 +111,38 @@ public class SubjectInfoImpl implements SubjectInfo {
             for (final PredicateInfo pi : map.values()) {
                 switch (pi.getActionType()) {
                 case SETTER:
-                    if (TypeChecker.canBeSetFrom( pi.getValueClass(), clazz )) {
+                    if (TypeChecker.canBeSetFrom( pi.getArgumentType(), clazz )) {
                         return pi;
                     }
                     break;
 
                 case GETTER:
-                    if (TypeChecker.canBeSetFrom( clazz, pi.getValueClass() )) {
+                    if (TypeChecker.canBeSetFrom( clazz, pi.getReturnType() )) {
                         return pi;
                     }
                     break;
 
                 case REMOVER:
-                case EXISTENTIAL:
-                    if (!nullOrVoid(pi.getConcreteType())) {
+                    if (!ClassUtils.nullOrVoid( pi.getArgumentType() )) {
                         // it needs an argument
-                        if (TypeChecker.canBeSetFrom( pi.getConcreteType(), clazz )) {
+                        if (TypeChecker.canBeSetFrom( pi.getArgumentType(), clazz )) {
                             return pi;
                         }
                     } else {
-                        if (nullOrVoid(clazz)) {
+                        if (ClassUtils.nullOrVoid( clazz )) {
+                            return pi;
+                        }
+                    }
+                    break;
+
+                case EXISTENTIAL:
+                    if (pi.getArgumentType() != void.class) {
+                        // it needs an argument
+                        if (TypeChecker.canBeSetFrom( pi.getArgumentType(), clazz )) {
+                            return pi;
+                        }
+                    } else {
+                        if (ClassUtils.nullOrVoid( clazz )) {
                             return pi;
                         }
                     }

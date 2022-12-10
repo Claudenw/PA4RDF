@@ -22,11 +22,11 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.xenei.jena.entities.testing.iface.SingleValuePrimitiveTestInterface;
+import org.xenei.jena.entities.testing.iface.SingleValuePrimitiveInterface;
 
 public class SingleValuePrimitiveEntityTests {
 
-    private SingleValuePrimitiveTestInterface tc;
+    private SingleValuePrimitiveInterface tc;
     private Model model;
 
     @BeforeEach
@@ -34,7 +34,7 @@ public class SingleValuePrimitiveEntityTests {
         model = ModelFactory.createDefaultModel();
         final Resource r = model.createResource( "http://localhost/SingleValuePrimitiveEntityTests" );
         final EntityManager manager = EntityManagerFactory.getEntityManager();
-        tc = manager.read( r, SingleValuePrimitiveTestInterface.class );
+        tc = manager.read( r, SingleValuePrimitiveInterface.class );
     }
 
     @AfterEach
@@ -55,12 +55,12 @@ public class SingleValuePrimitiveEntityTests {
         Assertions.assertFalse( tc.isBool() );
         tc.removeBool();
         Assertions.assertFalse( tc.isBool() );
-//        try {
-//            tc.isBool();
-//            Assertions.fail( "Should have thrown NullPointerException" );
-//        } catch (final NullPointerException e) {
-//            // expected
-//        }
+        // try {
+        // tc.isBool();
+        // Assertions.fail( "Should have thrown NullPointerException" );
+        // } catch (final NullPointerException e) {
+        // // expected
+        // }
     }
 
     @Test

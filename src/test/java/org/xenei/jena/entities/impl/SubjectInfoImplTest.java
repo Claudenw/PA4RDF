@@ -27,7 +27,7 @@ public class SubjectInfoImplTest {
 
         setter = Mockito.mock( PredicateInfo.class );
         Mockito.when( setter.getMethodName() ).thenReturn( "setMockSetter" );
-        Mockito.doReturn( Integer.class ).when( setter ).getValueClass();
+        Mockito.doReturn( Integer.class ).when( setter ).getArgumentType();
         Mockito.when( setter.getActionType() ).thenReturn( ActionType.SETTER );
         Mockito.when( setter.getObjectHandler() ).thenReturn( mockHandler );
         Mockito.when( setter.getProperty() )
@@ -37,7 +37,7 @@ public class SubjectInfoImplTest {
 
         getter = Mockito.mock( PredicateInfo.class );
         Mockito.when( getter.getMethodName() ).thenReturn( "getMockGetter" );
-        Mockito.doReturn( Integer.class ).when( getter ).getValueClass();
+        Mockito.doReturn( Integer.class ).when( getter ).getReturnType();
         Mockito.when( getter.getActionType() ).thenReturn( ActionType.GETTER );
         Mockito.when( getter.getObjectHandler() ).thenReturn( mockHandler );
         Mockito.when( getter.getProperty() )
@@ -47,7 +47,7 @@ public class SubjectInfoImplTest {
 
         remover = Mockito.mock( PredicateInfo.class );
         Mockito.when( remover.getMethodName() ).thenReturn( "removeMockRemover" );
-        Mockito.doReturn( Integer.class ).when( remover ).getValueClass();
+        Mockito.doReturn( Integer.class ).when( remover ).getArgumentType();
         Mockito.when( remover.getActionType() ).thenReturn( ActionType.REMOVER );
         Mockito.when( remover.getObjectHandler() ).thenReturn( mockHandler );
         Mockito.when( remover.getProperty() )
@@ -57,7 +57,7 @@ public class SubjectInfoImplTest {
 
         removerNoArg = Mockito.mock( PredicateInfo.class );
         Mockito.when( removerNoArg.getMethodName() ).thenReturn( "removeMockRemover" );
-        Mockito.when( removerNoArg.getValueClass() ).thenReturn( null );
+        Mockito.doReturn( void.class ).when( removerNoArg ).getArgumentType();
         Mockito.when( removerNoArg.getActionType() ).thenReturn( ActionType.REMOVER );
         Mockito.when( removerNoArg.getObjectHandler() ).thenReturn( noArgHandler );
         Mockito.when( removerNoArg.getProperty() )
@@ -67,7 +67,7 @@ public class SubjectInfoImplTest {
 
         exist = Mockito.mock( PredicateInfo.class );
         Mockito.when( exist.getMethodName() ).thenReturn( "hasMockExist" );
-        Mockito.doReturn( Integer.class ).when( exist ).getValueClass();
+        Mockito.doReturn( Integer.class ).when( exist ).getArgumentType();
         Mockito.when( exist.getActionType() ).thenReturn( ActionType.EXISTENTIAL );
         Mockito.when( exist.getObjectHandler() ).thenReturn( mockHandler );
         Mockito.when( exist.getProperty() )
@@ -77,7 +77,7 @@ public class SubjectInfoImplTest {
 
         existNoArg = Mockito.mock( PredicateInfo.class );
         Mockito.when( existNoArg.getMethodName() ).thenReturn( "hasMockExist" );
-        Mockito.doReturn( null ).when( existNoArg ).getValueClass();
+        Mockito.doReturn( void.class ).when( existNoArg ).getArgumentType();
         Mockito.when( existNoArg.getActionType() ).thenReturn( ActionType.EXISTENTIAL );
         Mockito.when( existNoArg.getObjectHandler() ).thenReturn( noArgHandler );
         Mockito.when( existNoArg.getProperty() )

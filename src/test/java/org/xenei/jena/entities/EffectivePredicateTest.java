@@ -18,16 +18,27 @@ public class EffectivePredicateTest {
     public static void assertValues(final EffectivePredicate ep, final boolean emptyIsNull, final boolean impl,
             final String literalType, final String name, final String namespace, final Class<?> type,
             final boolean upcase, final List<Method> postExec) {
-        Assertions.assertEquals( emptyIsNull, ep.emptyIsNull() );
-        Assertions.assertEquals( impl, ep.impl() );
-        Assertions.assertEquals( literalType, ep.literalType() );
-        Assertions.assertEquals( name, ep.name() );
-        Assertions.assertEquals( namespace, ep.namespace() );
-        Assertions.assertEquals( type, ep.type() );
-        Assertions.assertEquals( upcase, ep.upcase() );
-        Assertions.assertEquals( postExec, ep.postExec() );
+        Assertions.assertEquals( emptyIsNull, ep.emptyIsNull(), "emptyIsNull error" );
+        Assertions.assertEquals( impl, ep.impl(), "impl error" );
+        Assertions.assertEquals( literalType, ep.literalType(), "litealType error" );
+        Assertions.assertEquals( name, ep.name(), "nameError" );
+        Assertions.assertEquals( namespace, ep.namespace(), "namespace error" );
+        Assertions.assertEquals( type, ep.rawType(), "type error" );
+        Assertions.assertEquals( upcase, ep.upcase(), "upcase error" );
+        Assertions.assertEquals( postExec, ep.postExec(), "postExec error" );
     }
 
+    /**
+     *
+     * @param ep
+     * @param emptyIsNull
+     * @param impl
+     * @param literalType
+     * @param name
+     * @param namespace
+     * @param type
+     * @param upcase
+     */
     public static void assertValues(final EffectivePredicate ep, final boolean emptyIsNull, final boolean impl,
             final String literalType, final String name, final String namespace, final Class<?> type,
             final boolean upcase) {

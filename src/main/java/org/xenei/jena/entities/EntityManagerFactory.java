@@ -46,9 +46,6 @@ public class EntityManagerFactory {
      *            calls.
      */
     public static void setEntityManager(final EntityManager manager) {
-        if (manager == null) {
-            throw new EntityManagerRequiredException();
-        }
         EntityManagerFactory.manager = manager;
     }
 

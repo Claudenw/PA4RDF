@@ -71,7 +71,7 @@ public interface PredicateInfo {
      *
      * @return The class
      */
-    public Class<?> getValueClass();
+    // public Class<?> getValueClass();
 
     /**
      * List of methods to execute after the exec.
@@ -86,8 +86,17 @@ public interface PredicateInfo {
      * @return the ObjectHandler.
      */
     public ObjectHandler getObjectHandler();
-    
+
     public EffectivePredicate getPredicate();
-    
-    public Class<?> getConcreteType();
+
+    // public Class<?> getConcreteType();
+
+    public Class<?> getArgumentType();
+
+    public Class<?> getReturnType();
+
+    public Class<?> getEnclosedType();
+
+    public Class<?> getValueType();
+
 }

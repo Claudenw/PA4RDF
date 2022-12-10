@@ -14,8 +14,8 @@ import java.util.zip.ZipInputStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ClassLocator {
-    private static Logger LOG = LoggerFactory.getLogger( ClassLocator.class );
+public class ClassUtils {
+    private static Logger LOG = LoggerFactory.getLogger( ClassUtils.class );
 
     /**
      * Recursive method used to find all classes in a given directory and
@@ -53,8 +53,7 @@ public class ClassLocator {
         for (final File file : files) {
             if (file.isDirectory()) {
                 assert !file.getName().contains( "." );
-                classes.addAll(
-                        ClassLocator.findClasses( file.getAbsolutePath(), packageName + "." + file.getName() ) );
+                classes.addAll( ClassUtils.findClasses( file.getAbsolutePath(), packageName + "." + file.getName() ) );
             } else if (file.getName().endsWith( ".class" )) {
                 classes.add( packageName + '.' + file.getName().substring( 0, file.getName().length() - 6 ) );
             }
@@ -83,7 +82,7 @@ public class ClassLocator {
         try {
             resources = classLoader.getResources( path );
         } catch (final IOException e1) {
-            ClassLocator.LOG.error( e1.toString() );
+            ClassUtils.LOG.error( e1.toString() );
             return Collections.emptyList();
         }
         final Set<Class<?>> classes = new HashSet<>();
@@ -91,15 +90,15 @@ public class ClassLocator {
             while (resources.hasMoreElements()) {
                 final URL resource = resources.nextElement();
                 try {
-                    for (final String clazz : ClassLocator.findClasses( resource.getFile(), packageName )) {
+                    for (final String clazz : ClassUtils.findClasses( resource.getFile(), packageName )) {
                         try {
                             classes.add( Class.forName( clazz ) );
                         } catch (final ClassNotFoundException e) {
-                            ClassLocator.LOG.warn( e.toString() );
+                            ClassUtils.LOG.warn( e.toString() );
                         }
                     }
                 } catch (final IOException e) {
-                    ClassLocator.LOG.warn( e.toString() );
+                    ClassUtils.LOG.warn( e.toString() );
                 }
             }
         } else {
@@ -107,9 +106,13 @@ public class ClassLocator {
             try {
                 classes.add( Class.forName( packageName ) );
             } catch (final ClassNotFoundException e) {
-                ClassLocator.LOG.warn( "{} was neither a package name nor a class name", packageName );
+                ClassUtils.LOG.warn( "{} was neither a package name nor a class name", packageName );
             }
         }
         return classes;
+    }
+
+    public static boolean nullOrVoid(final Class<?> clazz) {
+        return (clazz == null) || clazz.equals( void.class );
     }
 }

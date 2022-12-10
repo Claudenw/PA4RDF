@@ -39,9 +39,9 @@ public class LongDatatype extends XSDBaseNumericType {
     protected Number suitableInteger(final String lexical) {
         return Long.parseLong( lexical );
     }
-    
-    public boolean handles(Class<?> returnType) {
-        return Long.class.equals(  returnType  ) || long.class.equals(  returnType );
+
+    public boolean handles(final Class<?> returnType) {
+        return Long.class.equals( returnType ) || long.class.equals( returnType );
     }
 
 }

@@ -78,6 +78,28 @@ public interface SingleValueObjectInterface {
 
     void removeU();
 
+    Boolean hasBool();
+
+    Boolean hasChar();
+
+    Boolean hasDbl();
+
+    Boolean hasEnt();
+
+    Boolean hasFlt();
+
+    Boolean hasInt();
+
+    Boolean hasLng();
+
+    Boolean hasRDF();
+
+    Boolean hasStr();
+
+    Boolean hasSubPredicate();
+
+    Boolean hasU();
+
     @Predicate
     void setBool(Boolean b);
 

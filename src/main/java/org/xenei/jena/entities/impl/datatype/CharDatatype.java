@@ -46,8 +46,8 @@ public class CharDatatype extends XSDBaseStringType {
 
         return Character.valueOf( val.charAt( 0 ) ).charValue();
     }
-    
-    public boolean handles(Class<?> returnType) {
-        return char.class.equals(  returnType );
+
+    public boolean handles(final Class<?> returnType) {
+        return char.class.equals( returnType );
     }
 }

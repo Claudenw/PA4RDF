@@ -24,7 +24,7 @@ public abstract class BaseMethodParser {
     private final Map<String, Integer> addCount;
     protected final SubjectInfoImpl subjectInfo;
     private final Stack<Method> parseStack;
-    
+
     private AbstractMethodParser abstractMethodParser;
     private ImplMethodParser implMethodParser;
 
@@ -94,17 +94,17 @@ public abstract class BaseMethodParser {
         }
         return pi;
     }
-    
+
     private AbstractMethodParser asAbstractMethodParser() {
         if (abstractMethodParser == null) {
-            abstractMethodParser = new AbstractMethodParser(this);
+            abstractMethodParser = new AbstractMethodParser( this );
         }
         return abstractMethodParser;
     }
-    
+
     private ImplMethodParser asImplMethodParser() {
         if (implMethodParser == null) {
-            implMethodParser = new ImplMethodParser(this);
+            implMethodParser = new ImplMethodParser( this );
         }
         return implMethodParser;
     }
@@ -151,29 +151,18 @@ public abstract class BaseMethodParser {
 
     public void parseRemover(final Method method, final EffectivePredicate predicate) {
         final EffectivePredicate ep = new EffectivePredicate( method ).merge( predicate );
-        Class<?> valueClass = null;
-        if (method.getParameterTypes().length == 1) {
-            valueClass = method.getParameterTypes()[0];
-            if (hasURIParameter( method )) {
-                ep.setType( URI.class );
-            }
-        } else {
-            ep.setType( null );
-        }
-        final PredicateInfoImpl pii = new PredicateInfoImpl( ep, method.getName(), valueClass );
-        subjectInfo.add( pii );
+        subjectInfo.add( new PredicateInfoImpl( ep, method ) );
     }
 
-    protected void processAssociatedSetters(final PredicateInfoImpl pi, final Method m,
+    protected void processAssociatedSetters(final PredicateInfoImpl pi, final Method method,
             final EffectivePredicate predicate) throws MissingAnnotation {
         try {
-            if ((pi.getValueClass() == String.class) && (pi.getObjectHandler().getClass() == UriHandler.class)) {
-                parse( m.getDeclaringClass().getMethod( pi.getMethodName(), RDFNode.class ), predicate );
-
+            if ((pi.getArgumentType() == String.class) && (pi.getObjectHandler().getClass() == UriHandler.class)) {
+                parse( method.getDeclaringClass().getMethod( pi.getMethodName(), RDFNode.class ), predicate );
             }
-            if (pi.getValueClass() == RDFNode.class) {
+            if (pi.getArgumentType() == RDFNode.class) {
 
-                final Method m2 = m.getDeclaringClass().getMethod( pi.getMethodName(), String.class );
+                final Method m2 = method.getDeclaringClass().getMethod( pi.getMethodName(), String.class );
                 if (hasURIParameter( m2 )) {
                     parse( m2, predicate );
                 }

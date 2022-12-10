@@ -15,16 +15,9 @@
 package org.xenei.jena.entities.impl;
 
 import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.LinkedHashSet;
-import java.util.LinkedList;
 import java.util.Map;
-import java.util.Queue;
-import java.util.Set;
 import java.util.Stack;
-import org.xenei.jena.entities.SubjectInfo;
 import org.xenei.jena.entities.impl.method.BaseMethodParser;
 
 /**
@@ -43,10 +36,6 @@ public class MethodParser extends BaseMethodParser {
      */
     public MethodParser(final SubjectInfoImpl subjectInfo) {
         super( new Stack<>(), subjectInfo, MethodParser.countAdders( subjectInfo.getImplementedClass().getMethods() ) );
-    }
-
-    SubjectInfo getSubjectInfo() {
-        return subjectInfo;
     }
 
     private static Map<String, Integer> countAdders(final Method[] methods) {

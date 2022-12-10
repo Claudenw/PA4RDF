@@ -1,14 +1,13 @@
 package org.xenei.jena.entities.impl.method;
 
 import java.lang.reflect.Method;
-import java.util.Collection;
 import org.apache.jena.rdf.model.RDFNode;
-import org.apache.jena.util.iterator.ExtendedIterator;
 import org.xenei.jena.entities.EffectivePredicate;
 import org.xenei.jena.entities.MissingAnnotation;
 import org.xenei.jena.entities.PredicateInfo;
 import org.xenei.jena.entities.annotations.URI;
 import org.xenei.jena.entities.impl.ActionType;
+import org.xenei.jena.entities.impl.ClassUtils;
 import org.xenei.jena.entities.impl.PredicateInfoImpl;
 import org.xenei.jena.entities.impl.TypeChecker;
 
@@ -73,10 +72,10 @@ public class AbstractMethodParser extends BaseMethodParser {
      * @return
      * @throws MissingAnnotation
      */
-    private void parseAssociatedMethod(Class<?> context, final String methodName, final EffectivePredicate parentPredicate,
-            final Class<?> argClass) throws MissingAnnotation {
+    private void parseAssociatedMethod(final Class<?> context, final String methodName,
+            final EffectivePredicate parentPredicate, final Class<?> argClass) throws MissingAnnotation {
         try {
-            final Method method = (argClass == null) ? context.getMethod( methodName )
+            final Method method = ClassUtils.nullOrVoid( argClass ) ? context.getMethod( methodName )
                     : context.getMethod( methodName, argClass );
             parse( method, parentPredicate );
         } catch (final NoSuchMethodException e) {
@@ -88,17 +87,7 @@ public class AbstractMethodParser extends BaseMethodParser {
         // we only parse boolean results
         if (TypeChecker.canBeSetFrom( Boolean.class, method.getReturnType() ) && (method.getParameterCount() <= 1)) {
             final EffectivePredicate predicate = new EffectivePredicate( method ).merge( superPredicate );
-
-            //predicate.setConcreteType( method.getReturnType());
-            if (method.getParameterCount() == 1) {
-                predicate.setType( method.getParameterTypes()[0] );
-            } else {
-                predicate.setType( void.class );
-            }
-
-            PredicateInfoImpl pi =  new PredicateInfoImpl( predicate, method.getName(), predicate.type() );
-            pi.setConcreteType(  method.getReturnType() );
-            subjectInfo.add(pi );
+            subjectInfo.add( new PredicateInfoImpl( predicate, method ) );
         }
     }
 
@@ -109,8 +98,7 @@ public class AbstractMethodParser extends BaseMethodParser {
 
         final EffectivePredicate predicate = new EffectivePredicate( method ).merge( superPredicate );
         // ExtendedIterator or Collection return type
-        if (method.getReturnType().equals( ExtendedIterator.class )
-                || Collection.class.isAssignableFrom( method.getReturnType() )) {
+        if (PredicateInfoImpl.isCollection( method.getReturnType() )) {
             if (!isMultiAdd( nameSuffix )) {
                 // returning a collection and we have a single add method.
                 // so set the return type if not set.
@@ -125,7 +113,7 @@ public class AbstractMethodParser extends BaseMethodParser {
                             throw new IllegalStateException( "Could not parse setter " + setterMethod.getName() );
                         }
                         if (predicate.isTypeNotSet()) {
-                            predicate.setType( setterPI.getValueClass() );
+                            predicate.setType( setterPI.getArgumentType() );
                         } else {
                             if (predicate.type() == URI.class) {
                                 predicate.setType( RDFNode.class );
@@ -147,8 +135,9 @@ public class AbstractMethodParser extends BaseMethodParser {
                 predicate.setType( method.getReturnType() );
             }
         }
-        subjectInfo.add( new PredicateInfoImpl( predicate, method.getName(), method.getReturnType() ) );
-        processAssociatedMethods( ActionType.GETTER, predicate.rawType(), predicate, method );
+        final PredicateInfo pi = new PredicateInfoImpl( predicate, method );
+        subjectInfo.add( pi );
+        processAssociatedMethods( ActionType.GETTER, pi, method );
     }
 
     /**
@@ -164,34 +153,32 @@ public class AbstractMethodParser extends BaseMethodParser {
 
         final Class<?> parms[] = method.getParameterTypes();
         if (parms.length == 1) {
-            final Class<?> valueType = parms[0];
             final EffectivePredicate predicate = new EffectivePredicate( method ).merge( superPredicate );
-
-            final PredicateInfoImpl pi = new PredicateInfoImpl( predicate, method.getName(), valueType );
+            final PredicateInfoImpl pi = new PredicateInfoImpl( predicate, method );
             subjectInfo.add( pi );
 
-            predicate.setType( null );
+            // predicate.setType( null );
             predicate.setLiteralType( "" );
 
             if (multiAdd) {
                 processAssociatedSetters( pi, method, predicate );
             }
-            processAssociatedMethods( ActionType.SETTER, valueType, predicate, method );
+            processAssociatedMethods( ActionType.SETTER, pi, method );
         }
     }
 
-    private void processAssociatedMethods(final ActionType actionType, final Class<?> valueType,
-            final EffectivePredicate predicate, final Method method) throws MissingAnnotation {
-        predicate.setType( valueType );
+    private void processAssociatedMethods(final ActionType actionType, final PredicateInfo pi, final Method method)
+            throws MissingAnnotation {
         final String subName = actionType.extractName( method.getName() );
         final Class<?> context = method.getDeclaringClass();
+        final EffectivePredicate predicate = pi.getPredicate();
         parseAssociatedMethod( context, "get" + subName, predicate, null );
         parseAssociatedMethod( context, "is" + subName, predicate, null );
-        if (ActionType.isMultiple( method )) {
-            parseAssociatedMethod( context, "add" + subName, predicate, valueType );
-            parseAssociatedMethod( context, "has" + subName, predicate, valueType );
-            parseAssociatedMethod( context, "remove" + subName, predicate, valueType );
-            if (valueType == RDFNode.class) {
+        if (actionType.isMultiple( method )) {
+            parseAssociatedMethod( context, "add" + subName, predicate, pi.getValueType() );
+            parseAssociatedMethod( context, "has" + subName, predicate, pi.getValueType() );
+            parseAssociatedMethod( context, "remove" + subName, predicate, pi.getValueType() );
+            if (pi.getValueType() == RDFNode.class) {
                 // look for @URI annotated strings
                 try {
                     final Method m2 = method.getDeclaringClass().getMethod( "has" + subName, String.class );
@@ -211,8 +198,8 @@ public class AbstractMethodParser extends BaseMethodParser {
                 }
             }
         } else {
-            parseAssociatedMethod( context, "set" + subName, predicate, valueType );
-            parseAssociatedMethod( context, "has" + subName, predicate, null );
+            parseAssociatedMethod( context, "set" + subName, predicate, pi.getValueType() );
+            parseAssociatedMethod( context, "has" + subName, predicate, void.class );
             parseAssociatedMethod( context, "remove" + subName, predicate, null );
         }
     }

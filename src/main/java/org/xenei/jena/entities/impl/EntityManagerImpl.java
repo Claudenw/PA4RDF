@@ -172,7 +172,7 @@ public class EntityManagerImpl implements EntityManager {
         boolean hasErrors = false;
         for (final String pkg : packageNames) {
 
-            for (final Class<?> c : ClassLocator.getClasses( pkg )) {
+            for (final Class<?> c : ClassUtils.getClasses( pkg )) {
                 if (c.getAnnotation( Subject.class ) != null) {
                     try {
                         factory.parse( c );

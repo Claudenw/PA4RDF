@@ -32,7 +32,7 @@ public enum ActionType {
     /**
      * Indicates a method that gets a value
      */
-    GETTER(Arrays.asList( "get")),
+    GETTER(Arrays.asList( "get" )),
     /**
      * Indicates a method that sets a value
      */
@@ -44,7 +44,7 @@ public enum ActionType {
     /**
      * Indicates a method that checks for the existance of a value
      */
-    EXISTENTIAL(Arrays.asList( "has", "is"));
+    EXISTENTIAL(Arrays.asList( "has", "is" ));
 
     private final List<String> prefixes;
 
@@ -52,21 +52,20 @@ public enum ActionType {
         this.prefixes = prefixes;
     }
 
-    public static boolean isMultiple(final Method m) {
-        final ActionType at = ActionType.parse( m.getName() );
-        switch (at) {
+    public boolean isMultiple(final Method method) {
+        switch (this) {
         case GETTER:
-            return Iterator.class.isAssignableFrom( m.getReturnType() )
-                    || Collection.class.isAssignableFrom( m.getReturnType() ) || m.getReturnType().isArray();
+            return Iterator.class.isAssignableFrom( method.getReturnType() )
+                    || Collection.class.isAssignableFrom( method.getReturnType() ) || method.getReturnType().isArray();
 
         case SETTER:
-            return m.getName().startsWith( "add" );
+            return method.getName().startsWith( "add" );
 
         case EXISTENTIAL:
         case REMOVER:
-            return m.getParameterCount() > 0;
+            return method.getParameterCount() > 0;
         }
-        throw new IllegalArgumentException( String.format( "%s is not an action type function", m ) );
+        throw new IllegalStateException( String.format( "%s is not an ActionType", this ) );
     }
 
     /**
@@ -137,7 +136,7 @@ public enum ActionType {
                 return functionName.substring( prefix.get().length() );
             }
         }
-        throw new IllegalArgumentException( functionName + " is not an "+this+" ActionType" );
+        throw new IllegalArgumentException( functionName + " is not an " + this + " ActionType" );
     }
 
     public Stream<String> createNames(final String name) {
