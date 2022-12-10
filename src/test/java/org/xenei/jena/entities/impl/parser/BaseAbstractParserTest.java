@@ -59,13 +59,4 @@ abstract public class BaseAbstractParserTest {
     public void tearDown() throws Exception {
     }
 
-    protected void validatePredicateInfo(final PredicateInfo pi, final String name, final ActionType type,
-            final String var, final Class<?> clazz) {
-        Assertions.assertNotNull( pi, name + " not parsed" );
-        Assertions.assertEquals( type, pi.getActionType() );
-        Assertions.assertEquals( name, pi.getMethodName() );
-        Assertions.assertEquals( "http://example.com/", pi.getNamespace() );
-        Assertions.assertEquals( "http://example.com/" + var, pi.getUriString() );
-        Assertions.assertEquals( clazz, pi.getValueClass() );
-    }
 }

@@ -55,12 +55,6 @@ public class SingleValuePrimitiveEntityTests {
         Assertions.assertFalse( tc.isBool() );
         tc.removeBool();
         Assertions.assertFalse( tc.isBool() );
-        // try {
-        // tc.isBool();
-        // Assertions.fail( "Should have thrown NullPointerException" );
-        // } catch (final NullPointerException e) {
-        // // expected
-        // }
     }
 
     @Test
@@ -139,7 +133,6 @@ public class SingleValuePrimitiveEntityTests {
         } catch (final NullPointerException e) {
             // expected
         }
-        ;
     }
 
     @Test

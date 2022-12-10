@@ -236,6 +236,9 @@ public class PredicateInfoImpl implements PredicateInfo {
 
         switch (actionType) {
         case SETTER:
+            dataType = argumentType;
+            break;
+            
         case REMOVER:
             return new VoidHandler();
 
@@ -251,7 +254,6 @@ public class PredicateInfoImpl implements PredicateInfo {
         if ((pred != null) && !pred.literalType().equals( "" )) {
             dt = typeMapper.getSafeTypeByName( pred.literalType() );
         } else {
-
             dt = typeMapper.getTypeByClass( dataType );
         }
         if (dt != null) {
@@ -317,7 +319,11 @@ public class PredicateInfoImpl implements PredicateInfo {
             retval = execRemove( resource, p, args );
             break;
         case EXISTENTIAL:
-            retval = execHas( resource, p, args );
+            if (method.getName().startsWith(  "is"  )) {
+                retval = execIs( resource, p, args );
+            } else {
+                retval = execHas( resource, p, args );
+            }
             break;
         }
         return retval;
@@ -333,6 +339,24 @@ public class PredicateInfoImpl implements PredicateInfo {
         return null;
     }
 
+    private Object execIs(final Resource resource, final Property p, final Object[] args) {
+        Object arg = args == null ? null : args[0];
+        if (arg == null) {
+            arg = (Boolean.class.equals( predicate.type() )|| boolean.class.equals( predicate.type())) ? Boolean.TRUE :null; 
+        }
+            
+        try {
+            resource.getModel().enterCriticalSection( Lock.READ );
+            if (arg == null) {
+                return resource.hasProperty( p );
+            }
+            return resource.hasProperty( p, objectHandler.createRDFNode( arg ) );
+        } finally {
+            resource.getModel().leaveCriticalSection();
+        }
+    }
+
+    
     private Object execHas(final Resource resource, final Property p, final Object[] args) {
         try {
             resource.getModel().enterCriticalSection( Lock.READ );

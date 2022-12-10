@@ -48,13 +48,13 @@ public class MethodParserTest {
         Assertions.assertNotNull(
                 subjectInfo.getPredicateInfo( SingleValuePrimitiveInterface.class.getMethod( "hasChar" ) ) );
 
-        PredicateInfoImplTest.assertValues( pi, ActionType.SETTER, void.class, "setChar", char.class, VoidHandler.class,
-                "VoidHandler", expectedProperty, void.class );
+        String expectedHandler = PredicateInfoImplTest.createHandler( "string", "char" );
+        PredicateInfoImplTest.assertValues( pi, ActionType.SETTER, void.class, "setChar", char.class, 
+                LiteralHandler.class, expectedHandler, expectedProperty, void.class );
         EffectivePredicateTest.assertValues( pi.getPredicate(), false, false, "", "char", namespace, char.class,
                 false );
 
         pi = subjectInfo.getPredicateInfo( SingleValuePrimitiveInterface.class.getMethod( "getChar" ) );
-        String expectedHandler = PredicateInfoImplTest.createHandler( "string", "char" );
         PredicateInfoImplTest.assertValues( pi, ActionType.GETTER, char.class, "getChar", void.class,
                 LiteralHandler.class, expectedHandler, expectedProperty, void.class );
         EffectivePredicateTest.assertValues( pi.getPredicate(), false, false, "", "char", namespace, char.class,
@@ -86,7 +86,7 @@ public class MethodParserTest {
                 subjectInfo.getPredicateInfo( SingleValuePrimitiveInterface.class.getMethod( "hasBool" ) ) );
 
         PredicateInfoImplTest.assertValues( pi, ActionType.SETTER, void.class, "setBool", boolean.class,
-                VoidHandler.class, "VoidHandler", expectedProperty, void.class );
+                LiteralHandler.class, expectedHandler, expectedProperty, void.class );
         EffectivePredicateTest.assertValues( pi.getPredicate(), false, false, "", "bool", namespace, boolean.class,
                 false );
 
@@ -128,13 +128,13 @@ public class MethodParserTest {
         Assertions.assertNotNull(
                 subjectInfo.getPredicateInfo( SingleValueObjectInterface.class.getMethod( "hasChar" ) ) );
 
+        String expectedHandler = PredicateInfoImplTest.createHandler( "string", "class java.lang.Character" );
         PredicateInfoImplTest.assertValues( pi, ActionType.SETTER, void.class, "setChar", Character.class,
-                VoidHandler.class, "VoidHandler", expectedProperty, void.class );
+                LiteralHandler.class, expectedHandler, expectedProperty, void.class );
         EffectivePredicateTest.assertValues( pi.getPredicate(), false, false, "", "char", namespace, Character.class,
                 false );
 
         pi = subjectInfo.getPredicateInfo( SingleValueObjectInterface.class.getMethod( "getChar" ) );
-        String expectedHandler = PredicateInfoImplTest.createHandler( "string", "class java.lang.Character" );
         PredicateInfoImplTest.assertValues( pi, ActionType.GETTER, Character.class, "getChar", void.class,
                 LiteralHandler.class, expectedHandler, expectedProperty, void.class );
         EffectivePredicateTest.assertValues( pi.getPredicate(), false, false, "", "char", namespace, Character.class,
@@ -166,7 +166,7 @@ public class MethodParserTest {
                 subjectInfo.getPredicateInfo( SingleValueObjectInterface.class.getMethod( "hasBool" ) ) );
 
         PredicateInfoImplTest.assertValues( pi, ActionType.SETTER, void.class, "setBool", Boolean.class,
-                VoidHandler.class, "VoidHandler", expectedProperty, void.class );
+                LiteralHandler.class, expectedHandler, expectedProperty, void.class );
         EffectivePredicateTest.assertValues( pi.getPredicate(), false, false, "", "bool", namespace, Boolean.class,
                 false );
 
