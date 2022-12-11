@@ -93,31 +93,6 @@ public class ActionTypeTest {
     }
 
     @Test
-    public void isMultipleTest() throws Exception {
-        Assertions.assertFalse( ActionType.GETTER.isMultiple( MultipleTest.class.getMethod( "getSingle" ) ) );
-        Assertions.assertTrue( ActionType.GETTER.isMultiple( MultipleTest.class.getMethod( "getArray" ) ) );
-        Assertions.assertTrue( ActionType.GETTER.isMultiple( MultipleTest.class.getMethod( "getCollection" ) ) );
-        Assertions.assertTrue( ActionType.GETTER.isMultiple( MultipleTest.class.getMethod( "getIterator" ) ) );
-        Assertions.assertTrue( ActionType.GETTER.isMultiple( MultipleTest.class.getMethod( "getPrimitive" ) ) );
-        Assertions.assertFalse(
-                ActionType.SETTER.isMultiple( MultipleTest.class.getMethod( "setSingle", Integer.class ) ) );
-        Assertions.assertTrue(
-                ActionType.SETTER.isMultiple( MultipleTest.class.getMethod( "addMultiple", Integer.class ) ) );
-        Assertions.assertFalse( ActionType.EXISTENTIAL.isMultiple( MultipleTest.class.getMethod( "hasSingle" ) ) );
-        Assertions.assertTrue(
-                ActionType.EXISTENTIAL.isMultiple( MultipleTest.class.getMethod( "hasMultiple", Integer.class ) ) );
-        Assertions.assertFalse( ActionType.REMOVER.isMultiple( MultipleTest.class.getMethod( "removeSingle" ) ) );
-        Assertions.assertTrue(
-                ActionType.REMOVER.isMultiple( MultipleTest.class.getMethod( "removeMultiple", Integer.class ) ) );
-
-        Assertions.assertFalse( ActionType.GETTER.isMultiple( MultipleTest.class.getMethod( "notAnActionMethod" ) ) );
-        Assertions.assertFalse( ActionType.SETTER.isMultiple( MultipleTest.class.getMethod( "notAnActionMethod" ) ) );
-        Assertions.assertFalse(
-                ActionType.EXISTENTIAL.isMultiple( MultipleTest.class.getMethod( "notAnActionMethod" ) ) );
-        Assertions.assertFalse( ActionType.REMOVER.isMultiple( MultipleTest.class.getMethod( "notAnActionMethod" ) ) );
-    }
-
-    @Test
     public void extractNameTest() {
         Assertions.assertEquals( "X", ActionType.EXISTENTIAL.extractName( "hasX" ) );
         Assertions.assertEquals( "X", ActionType.EXISTENTIAL.extractName( "isX" ) );

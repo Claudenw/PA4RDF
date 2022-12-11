@@ -2,10 +2,11 @@ package org.xenei.jena.entities.impl.method;
 
 import java.lang.reflect.Method;
 import org.apache.jena.rdf.model.RDFNode;
+import org.apache.jena.util.iterator.ExtendedIterator;
 import org.xenei.jena.entities.EffectivePredicate;
-import org.xenei.jena.entities.MissingAnnotation;
 import org.xenei.jena.entities.PredicateInfo;
 import org.xenei.jena.entities.annotations.URI;
+import org.xenei.jena.entities.exceptions.MissingAnnotationException;
 import org.xenei.jena.entities.impl.ActionType;
 import org.xenei.jena.entities.impl.ClassUtils;
 import org.xenei.jena.entities.impl.PredicateInfoImpl;
@@ -20,90 +21,67 @@ public class AbstractMethodParser extends BaseMethodParser {
     /**
      * parses Predicate annotations and abstract methods.
      *
-     * @param subjectInfo
-     *            The subject Info to add data to.
+     * @param action
+     *            The action of the method.
      * @param method
      *            The method that is being processed
      * @param addCount
      *            The count of add methods.
-     * @throws MissingAnnotation
+     * @throws MissingAnnotationException
      *             If an Predicate annotation is missing.
      */
-    void parse(final ActionType actionType, final Method method, final EffectivePredicate predicate)
-            throws MissingAnnotation {
+    void parse(final Action action, final EffectivePredicate predicate)
+            throws MissingAnnotationException {
 
         // process "set" if only one arg and not varargs
-        switch (actionType) {
+        switch (action.actionType) {
         case SETTER:
-            final Integer i = getAddCount( method );
+            final Integer i = getAddCount( action.method );
             if (i != null) {
-                parseSetter( method, predicate, (i > 1) );
+                parseSetter( action, predicate, (i > 1) );
             }
             break;
 
         case EXISTENTIAL:
-            if (method.getParameterTypes().length <= 1) {
-                parseExistential( method, predicate );
+            if (action.method.getParameterTypes().length <= 1) {
+                parseExistential( action, predicate );
             }
             break;
 
         case GETTER:
-            if (method.getParameterTypes().length == 0) {
-                final String nameSuffix = actionType.extractName( method.getName() );
-                parseGetter( nameSuffix, method, predicate );
+            if (action.method.getParameterTypes().length == 0) {
+                parseGetter( action, predicate );
             }
             break;
 
         case REMOVER:
-            parseRemover( method, predicate );
+            parseRemover( action, predicate );
             break;
 
         }
     }
 
-    /**
-     * Adds getter methods from base class
-     *
-     * @param context
-     * @param methodName
-     * @param setterValueType
-     * @param parentPredicate
-     * @param multiAdd
-     * @return
-     * @throws MissingAnnotation
-     */
-    private void parseAssociatedMethod(final Class<?> context, final String methodName,
-            final EffectivePredicate parentPredicate, final Class<?> argClass) throws MissingAnnotation {
-        try {
-            final Method method = ClassUtils.nullOrVoid( argClass ) ? context.getMethod( methodName )
-                    : context.getMethod( methodName, argClass );
-            parse( method, parentPredicate );
-        } catch (final NoSuchMethodException e) {
-            // do nothing
-        }
-    }
-
-    private void parseExistential(final Method method, final EffectivePredicate superPredicate) {
+    private void parseExistential(final Action action, final EffectivePredicate superPredicate) {
         // we only parse boolean results
-        if (TypeChecker.canBeSetFrom( Boolean.class, method.getReturnType() ) && (method.getParameterCount() <= 1)) {
-            final EffectivePredicate predicate = new EffectivePredicate( method ).merge( superPredicate );
-            subjectInfo.add( new PredicateInfoImpl( predicate, method ) );
+        if (TypeChecker.canBeSetFrom( Boolean.class, action.method.getReturnType() ) && (action.method.getParameterCount() <= 1)) {
+            final EffectivePredicate predicate = new EffectivePredicate( action.method ).merge( superPredicate );
+            subjectInfo.add( action.method, new PredicateInfoImpl( predicate, action.method ) );
         }
     }
 
-    private void parseGetter(final String nameSuffix, final Method method, final EffectivePredicate superPredicate)
-            throws MissingAnnotation {
+    private void parseGetter(final Action action, final EffectivePredicate superPredicate)
+            throws MissingAnnotationException {
         // predicate for getter method includes predicate info for setter
         // method.
-
-        final EffectivePredicate predicate = new EffectivePredicate( method ).merge( superPredicate );
+        String actionName = action.name();
+        final EffectivePredicate predicate = new EffectivePredicate( action.method ).merge( superPredicate );
         // ExtendedIterator or Collection return type
-        if (PredicateInfoImpl.isCollection( method.getReturnType() )) {
-            if (!isMultiAdd( nameSuffix )) {
+        if (PredicateInfoImpl.isCollection( action.method.getReturnType() )) {
+            if (!isMultiAdd( actionName )) {
                 // returning a collection and we have a single add method.
                 // so set the return type if not set.
                 if (predicate.isTypeNotSet()) {
-                    for (final Method setterMethod : getSetterMethods( nameSuffix )) {
+                    for (final Method setterMethod : getSetterMethods( actionName )) {
                         // we have a setter method so lets merge info
 
                         final EffectivePredicate ep = new EffectivePredicate( setterMethod );
@@ -125,19 +103,19 @@ public class AbstractMethodParser extends BaseMethodParser {
                 // returning a collection and multple add methods
                 // so we must have a type set.
                 if (predicate.isTypeNotSet()) {
-                    throw new MissingAnnotation( String.format( "%s.%s must have a Predicate annotation to define type",
-                            subjectInfo.getImplementedClass(), method.getName() ) );
+                    throw new MissingAnnotationException( String.format( "%s.%s must have a Predicate annotation to define type",
+                            subjectInfo.getImplementedClass(), action.method.getName() ) );
                 }
             }
         } else {
             // returning a single type so set the type to the return type.
             if (predicate.isTypeNotSet()) {
-                predicate.setType( method.getReturnType() );
+                predicate.setType( action.method.getReturnType() );
             }
         }
-        final PredicateInfo pi = new PredicateInfoImpl( predicate, method );
-        subjectInfo.add( pi );
-        processAssociatedMethods( ActionType.GETTER, pi, method );
+        final PredicateInfo pi = new PredicateInfoImpl( predicate, action.method );
+        subjectInfo.add( action.method, pi );
+        processAssociatedMethods( pi, action);
     }
 
     /**
@@ -146,32 +124,41 @@ public class AbstractMethodParser extends BaseMethodParser {
      * @param subjectInfo
      * @param method
      * @param multiAdd
-     * @throws MissingAnnotation
+     * @throws MissingAnnotationException
      */
-    private void parseSetter(final Method method, final EffectivePredicate superPredicate, final boolean multiAdd)
-            throws MissingAnnotation {
+    private void parseSetter(Action action, final EffectivePredicate superPredicate, final boolean multiAdd)
+            throws MissingAnnotationException {
 
-        final Class<?> parms[] = method.getParameterTypes();
+        final Class<?> parms[] = action.method.getParameterTypes();
         if (parms.length == 1) {
-            final EffectivePredicate predicate = new EffectivePredicate( method ).merge( superPredicate );
-            final PredicateInfoImpl pi = new PredicateInfoImpl( predicate, method );
-            subjectInfo.add( pi );
+            final EffectivePredicate predicate = new EffectivePredicate( action.method ).merge( superPredicate );
+            final PredicateInfoImpl pi = new PredicateInfoImpl( predicate, action.method );
+            subjectInfo.add( action.method, pi );
 
             // predicate.setType( null );
             predicate.setLiteralType( "" );
 
             if (multiAdd) {
-                processAssociatedSetters( pi, method, predicate );
+                processAssociatedSetters( pi, action, predicate );
             }
-            processAssociatedMethods( ActionType.SETTER, pi, method );
+            processAssociatedMethods( pi, action );
         }
     }
 
-    private void processAssociatedMethods(final ActionType actionType, final PredicateInfo pi, final Method method)
-            throws MissingAnnotation {
-        final String subName = actionType.extractName( method.getName() );
+    private void processAssociatedMethods(final PredicateInfo pi, final Action action) {
+        action.getAssociatedActions()
+        .forEach( a -> {
+            try {
+                parse( a.method, pi.getPredicate());
+            } catch (MissingAnnotationException e) {
+                log.error( a.method.toString()+" missing required annotation", e );
+            }
+        });
+        
+        /*
         final Class<?> context = method.getDeclaringClass();
         final EffectivePredicate predicate = pi.getPredicate();
+        
         parseAssociatedMethod( context, "get" + subName, predicate, null );
         parseAssociatedMethod( context, "is" + subName, predicate, null );
         if (actionType.isMultiple( method )) {
@@ -202,5 +189,6 @@ public class AbstractMethodParser extends BaseMethodParser {
             parseAssociatedMethod( context, "has" + subName, predicate, void.class );
             parseAssociatedMethod( context, "remove" + subName, predicate, null );
         }
+        */
     }
 }

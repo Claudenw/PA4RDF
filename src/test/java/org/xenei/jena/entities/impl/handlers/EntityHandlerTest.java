@@ -11,7 +11,8 @@ import org.mockito.ArgumentMatchers;
 import org.mockito.Mockito;
 import org.xenei.jena.entities.EntityManager;
 import org.xenei.jena.entities.EntityManagerFactory;
-import org.xenei.jena.entities.MissingAnnotation;
+import org.xenei.jena.entities.exceptions.MissingAnnotationException;
+import org.xenei.jena.entities.exceptions.NotInterfaceException;
 import org.xenei.jena.entities.testing.iface.TwoValueSimpleInterface;
 
 public class EntityHandlerTest implements HandlerTestInterface {
@@ -68,11 +69,12 @@ public class EntityHandlerTest implements HandlerTestInterface {
         EntityManagerFactory.setEntityManager( null );
         final EntityManager mockEM = Mockito.mock( EntityManager.class );
         try {
-            Mockito.when( mockEM.read( ArgumentMatchers.eq( node.asResource() ),
-                    ArgumentMatchers.eq( TwoValueSimpleInterface.class ) ) ).thenThrow( MissingAnnotation.class );
+            Mockito.doThrow(MissingAnnotationException.class).when( mockEM )
+            .read( ArgumentMatchers.eq( node.asResource() ),
+                    ArgumentMatchers.eq( TwoValueSimpleInterface.class ) );
             handler = new EntityHandler( TwoValueSimpleInterface.class );
             Assertions.assertThrows( RuntimeException.class, () -> handler.parseObject( node ) );
-        } catch (IllegalArgumentException | MissingAnnotation e) {
+        } catch ( MissingAnnotationException | NotInterfaceException e) {
             Assertions.fail( e.getMessage() );
         } finally {
             EntityManagerFactory.setEntityManager( em );

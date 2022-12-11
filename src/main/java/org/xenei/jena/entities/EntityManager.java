@@ -16,6 +16,8 @@
 package org.xenei.jena.entities;
 
 import org.xenei.jena.entities.annotations.Subject;
+import org.xenei.jena.entities.exceptions.MissingAnnotationException;
+import org.xenei.jena.entities.exceptions.NotInterfaceException;
 
 /**
  * An Entity Manager to manage instances of entities annotated with the Subject
@@ -50,10 +52,11 @@ public interface EntityManager {
      * @param clazz
      *            The class to get SubjectInfo for.
      * @return The SubjectInfo
+     * @throws NotInterfaceException 
      * @throws IllegalArgumentException
      *             if clazz is not properly annotated with Subject annotations.
      */
-    public SubjectInfo getSubjectInfo(Class<?> clazz);
+    public SubjectInfo getSubjectInfo(Class<?> clazz) throws NotInterfaceException;
 
     /**
      * Determine if target has all the properties required in the Subject( type
@@ -87,10 +90,11 @@ public interface EntityManager {
      *
      * @param packageName
      *            The name of the package to process
-     * @throws MissingAnnotation
+     * @throws MissingAnnotationException
      *             if a subject annotated class has no predicate annotations.
+     * @throws NotInterfaceException 
      */
-    public void parseClasses(String packageName) throws MissingAnnotation;
+    public void parseClasses(String packageName) throws MissingAnnotationException, NotInterfaceException;
 
     /**
      * Parses the the classes in an array of packages (and subpackages) looking
@@ -106,11 +110,12 @@ public interface EntityManager {
      *
      * @param packageNames
      *            The array of package names to process
-     * @throws MissingAnnotation
+     * @throws MissingAnnotationException
      *             if a subject annotated class has not predicate annotations.
+     * @throws NotInterfaceException 
      * @see java.lang.ClassLoader#getResources(String)
      */
-    public void parseClasses(String[] packageNames) throws MissingAnnotation;
+    public void parseClasses(String[] packageNames) throws MissingAnnotationException, NotInterfaceException;
 
     /**
      * Make an instance of clazz from source.
@@ -129,12 +134,13 @@ public interface EntityManager {
      * @param <T>
      *            the instance type to return.
      * @return primaryClass instance that also implements ResourceWrapper.
-     * @throws MissingAnnotation
+     * @throws MissingAnnotationException
      *             if any of the classes do not have Subject annotations.
+     * @throws NotInterfaceException 
      * @throws IllegalArgumentException
      *             if source implements neither Resource nor ResourceWrapper.
      */
-    public <T> T make(Object source, Class<T> primaryClass, Class<?>... secondaryClasses) throws MissingAnnotation;
+    public <T> T make(Object source, Class<T> primaryClass, Class<?>... secondaryClasses) throws MissingAnnotationException, NotInterfaceException;
 
     /**
      * Read an instance of clazz from source.
@@ -151,13 +157,13 @@ public interface EntityManager {
      * @param <T>
      *            the instance type to return.
      * @return primaryClass instance that also implements ResourceWrapper.
-     * @throws MissingAnnotation
+     * @throws MissingAnnotationException
      *             if any of the classes do not have Subject annotations.
      * @throws IllegalArgumentException
      *             if source implements neither Resource nor ResourceWrapper.
      */
     public <T> T read(Object source, Class<T> primaryClass, Class<?>... secondaryClasses)
-            throws MissingAnnotation, IllegalArgumentException;
+            throws MissingAnnotationException, NotInterfaceException, IllegalArgumentException;
 
     /**
      * Read an instance of clazz from Object source. If source does not have the
@@ -175,12 +181,12 @@ public interface EntityManager {
      * @param <T>
      *            the instance type to return.
      * @return source for chaining
-     * @throws MissingAnnotation
+     * @throws MissingAnnotationException
      *             if clazz does not have Subject annotations.
      * @throws IllegalArgumentException
      *             if source implements neither Resource nor ResourceWrapper.
      */
-    public <T> T addInstanceProperties(final T source, final Class<?> clazz) throws MissingAnnotation;
+    public <T> T addInstanceProperties(final T source, final Class<?> clazz) throws MissingAnnotationException;
 
     /**
      * Calls the target.setX predicate methods with the results of the

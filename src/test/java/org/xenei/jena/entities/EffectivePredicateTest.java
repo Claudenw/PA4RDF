@@ -56,7 +56,7 @@ public class EffectivePredicateTest {
         Mockito.when( pred.name() ).thenReturn( name );
         Mockito.when( pred.namespace() ).thenReturn( namespace );
         Mockito.when( pred.postExec() ).thenReturn( postExec );
-        Mockito.doReturn( type == null ? RDFNode.class : type ).when( pred ).type();
+        Mockito.doReturn( type == null ? void.class : type ).when( pred ).type();
         Mockito.when( pred.upcase() ).thenReturn( upcase );
         return pred;
     }
@@ -134,8 +134,7 @@ public class EffectivePredicateTest {
         EffectivePredicateTest.assertValues( ep, true, false, "", "emptyIsNull", "", boolean.class, false );
 
         ep = new EffectivePredicate( method( "getLiteralType" ) );
-        EffectivePredicateTest.assertValues( ep, false, false, "Integer.class", "literalType", "", int.class,
-                false );
+        EffectivePredicateTest.assertValues( ep, false, false, "Integer.class", "literalType", "", int.class, false );
 
         ep = new EffectivePredicate( method( "getName" ) );
         EffectivePredicateTest.assertValues( ep, false, false, "", "foo", "", int.class, false );
@@ -162,8 +161,7 @@ public class EffectivePredicateTest {
 
         // with Subject
         ep = new EffectivePredicate( TestingInterface2.class.getMethod( "getSimple" ) );
-        EffectivePredicateTest.assertValues( ep, false, false, "", "simple", "http://example.net", int.class,
-                false );
+        EffectivePredicateTest.assertValues( ep, false, false, "", "simple", "http://example.net", int.class, false );
 
         ep = new EffectivePredicate( TestingInterface2.class.getMethod( "getNamespace" ) );
         EffectivePredicateTest.assertValues( ep, false, false, "", "namespace", "http://example.com/", int.class,

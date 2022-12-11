@@ -104,7 +104,7 @@ public @interface Predicate {
      *
      * @return The object class.
      */
-    Class<?> type() default RDFNode.class;
+    Class<?> type() default void.class;
 
     /**
      * determines if the local name should have the first character upper cased.

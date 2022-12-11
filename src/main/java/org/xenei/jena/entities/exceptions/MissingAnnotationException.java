@@ -13,16 +13,16 @@
  * limitations under the License.
  */
 
-package org.xenei.jena.entities;
+package org.xenei.jena.entities.exceptions;
 
 /**
  * Thrown when an annotation is required but not found.
  */
-public class MissingAnnotation extends Exception {
+public class MissingAnnotationException extends Exception {
 
     private static final long serialVersionUID = -5874216486380814195L;
 
-    public MissingAnnotation(final String message) {
+    public MissingAnnotationException(final String message) {
         super( message );
     }
 

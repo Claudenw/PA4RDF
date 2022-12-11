@@ -17,9 +17,10 @@ package org.xenei.jena.entities.impl.handlers;
 import org.apache.jena.rdf.model.RDFNode;
 
 import org.xenei.jena.entities.EntityManagerFactory;
-import org.xenei.jena.entities.MissingAnnotation;
 import org.xenei.jena.entities.ObjectHandler;
 import org.xenei.jena.entities.ResourceWrapper;
+import org.xenei.jena.entities.exceptions.MissingAnnotationException;
+import org.xenei.jena.entities.exceptions.NotInterfaceException;
 
 /**
  * An ObjectHandler that creates EntityManager managed entities from
@@ -75,7 +76,7 @@ public class EntityHandler implements ObjectHandler {
     public Object parseObject(final RDFNode node) {
         try {
             return EntityManagerFactory.getEntityManager().read( node.asResource(), valueClass );
-        } catch (final MissingAnnotation e) {
+        } catch (final MissingAnnotationException | NotInterfaceException e) {
             throw new RuntimeException( e );
         }
     }

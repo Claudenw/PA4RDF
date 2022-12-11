@@ -10,9 +10,10 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.xenei.jena.entities.EntityManager;
 import org.xenei.jena.entities.EntityManagerFactory;
-import org.xenei.jena.entities.MissingAnnotation;
 import org.xenei.jena.entities.annotations.Predicate;
 import org.xenei.jena.entities.annotations.Subject;
+import org.xenei.jena.entities.exceptions.MissingAnnotationException;
+import org.xenei.jena.entities.exceptions.NotInterfaceException;
 
 /**
  * This is a test for the case where a concrete class annotates an implemented
@@ -72,24 +73,13 @@ public class ImplementedAnnotationTest {
 
     @Test
     public void testReadNoAnnotation() {
-        try {
-            em.read( resource, NoAnnotationImplementation.class );
-        } catch (final MissingAnnotation e) {
-            // expected
-        }
+        Assertions.assertThrows(  NotInterfaceException.class, () -> em.read( resource, NoAnnotationImplementation.class ));
     }
 
     @Test
     public void testReadWithAnnotation() throws Exception {
-        try {
-            final AnnotationImplementation ai = em.read( resource, AnnotationImplementation.class );
-            final String name = ai.getName();
-            Assertions.assertEquals( "name", name );
-            final String value = ai.getValue();
-            Assertions.assertEquals( "modelValue", value );
-        } catch (final RuntimeException e) {
-            Assertions.assertEquals( "Not IMPLEMENTED", e.getMessage() );
-        }
+        Assertions.assertThrows(  NotInterfaceException.class, 
+            () -> em.read( resource, AnnotationImplementation.class ));
     }
 
     @Test

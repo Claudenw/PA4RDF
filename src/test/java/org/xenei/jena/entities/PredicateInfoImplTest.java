@@ -136,8 +136,8 @@ public class PredicateInfoImplTest {
         final EffectivePredicate ep = initializePredicate();
 
         final PredicateInfo pi = new PredicateInfoImpl( ep, void.class, "setX", RDFNode.class );
-        PredicateInfoImplTest.assertValues( pi, ActionType.SETTER, void.class, "setX", RDFNode.class, VoidHandler.class,
-                "VoidHandler", expectedProperty, void.class );
+        PredicateInfoImplTest.assertValues( pi, ActionType.SETTER, void.class, "setX", RDFNode.class,
+                ResourceHandler.class, "ResourceHandler", expectedProperty, void.class );
     }
 
     @Test

@@ -7,6 +7,7 @@ import org.apache.jena.rdf.model.Resource;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.xenei.jena.entities.exceptions.MissingAnnotationException;
 import org.xenei.jena.entities.testing.bad.UnannotatedInterface;
 import org.xenei.jena.entities.testing.iface.TwoValueSimpleInterface;
 
@@ -17,7 +18,7 @@ public class DirectInheritanceTest {
     private Resource r;
 
     @BeforeEach
-    public void setup() throws MissingAnnotation {
+    public void setup() throws Exception {
         m = ModelFactory.createDefaultModel();
         r = m.createResource( "http://localhost/DirectInheritanceTest" );
         System.err.println( "getting instance" );
@@ -37,13 +38,7 @@ public class DirectInheritanceTest {
 
     @Test
     public void testNullMethods() {
-        try {
-            manager.read( r, UnannotatedInterface.class );
-            Assertions.fail( "Should have thrown MissingAnnotation" );
-        } catch (final MissingAnnotation e) {
-            // expected
-        }
-
+       Assertions.assertThrows( MissingAnnotationException.class, () -> manager.read( r, UnannotatedInterface.class ));
     }
 
     /*

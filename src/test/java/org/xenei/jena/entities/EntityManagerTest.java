@@ -19,10 +19,13 @@ import org.apache.jena.rdf.model.ModelFactory;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.xenei.jena.entities.exceptions.MissingAnnotationException;
+import org.xenei.jena.entities.exceptions.NotInterfaceException;
 import org.xenei.jena.entities.impl.EntityManagerImpl;
 import org.xenei.jena.entities.testing.bad.UnannotatedInterface;
 import org.xenei.jena.entities.testing.iface.MultiValueInterface;
 import org.xenei.jena.entities.testing.iface.CollectionValueInterface;
+import org.xenei.jena.entities.testing.iface.SimpleInterface;
 
 public class EntityManagerTest {
 
@@ -54,14 +57,23 @@ public class EntityManagerTest {
     }
 
     @Test
-    public void testPathParserWithBadClasses() {
+    public void testPathParserWithBadClasses() throws Exception{
         final Model model = ModelFactory.createDefaultModel();
         try {
-            manager.read( model.createResource(), org.xenei.jena.entities.testing.iface.SimpleInterface.class,
-                    UnannotatedInterface.class );
+            manager.read( model.createResource(), SimpleInterface.class, UnannotatedInterface.class );
             Assertions.fail( "Should have thrown InvokerException" );
-        } catch (final MissingAnnotation e) {
+        } catch (final MissingAnnotationException e) {
             // expected
         }
+    }
+    
+    @Test
+    public void testPathParserWithNonInterface() {
+        final Model model = ModelFactory.createDefaultModel();
+        Assertions.assertThrows( NotInterfaceException.class,
+                () -> manager.read( model.createResource(), Integer.class, UnannotatedInterface.class ));
+        Assertions.assertThrows( NotInterfaceException.class,
+                () -> manager.read( model.createResource(), SimpleInterface.class, Integer.class ));
+        
     }
 }

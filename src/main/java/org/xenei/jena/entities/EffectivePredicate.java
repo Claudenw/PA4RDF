@@ -263,7 +263,7 @@ public class EffectivePredicate {
             setName( StringUtils.isBlank( predicate.name() ) ? name : predicate.name() );
             namespace = StringUtils.isBlank( predicate.namespace() ) ? namespace : predicate.namespace();
             literalType = StringUtils.isBlank( predicate.literalType() ) ? literalType : predicate.literalType();
-            type = RDFNode.class.equals( predicate.type() ) ? type : predicate.type();
+            type = void.class.equals( predicate.type() ) ? type : predicate.type();
             emptyIsNull = predicate.emptyIsNull();
             impl |= predicate.impl();
         }

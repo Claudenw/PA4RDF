@@ -13,6 +13,7 @@ import java.util.zip.ZipInputStream;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.xenei.jena.entities.exceptions.NotInterfaceException;
 
 public class ClassUtils {
     private static Logger LOG = LoggerFactory.getLogger( ClassUtils.class );
@@ -114,5 +115,11 @@ public class ClassUtils {
 
     public static boolean nullOrVoid(final Class<?> clazz) {
         return (clazz == null) || clazz.equals( void.class );
+    }
+
+    public static void validateInterface(Class<?> clazz) throws NotInterfaceException {
+        if (!clazz.isInterface()) {
+            throw new NotInterfaceException( clazz );
+        }
     }
 }

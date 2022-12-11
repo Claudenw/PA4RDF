@@ -7,28 +7,20 @@ import java.util.List;
 import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.xenei.jena.entities.MissingAnnotation;
 import org.xenei.jena.entities.annotations.Predicate;
+import org.xenei.jena.entities.exceptions.MissingAnnotationException;
+import org.xenei.jena.entities.exceptions.NotInterfaceException;
 
 public class SubjectInfoFactory {
     private static Logger LOG = LoggerFactory.getLogger( SubjectInfoFactory.class );
     private final Map<Class<?>, SubjectInfoImpl> classInfo = new HashMap<>();
 
     public SubjectInfoFactory() {
-        // try {
-        // parse( ResourceWrapper.class );
-        // } catch (final MissingAnnotation e) {
-        // throw new RuntimeException( e );
-        // }
+
     }
 
     public void clear() {
         classInfo.clear();
-        // try {
-        // parse( ResourceWrapper.class );
-        // } catch (final MissingAnnotation e) {
-        // throw new RuntimeException( e );
-        // }
     }
 
     /**
@@ -39,9 +31,11 @@ public class SubjectInfoFactory {
      *
      * @param clazz
      * @return The SubjectInfo for the class.
-     * @throws MissingAnnotation
+     * @throws MissingAnnotationException
+     * @throws NotInterfaceException 
      */
-    public SubjectInfoImpl parse(final Class<?> clazz) throws MissingAnnotation {
+    public SubjectInfoImpl parse(final Class<?> clazz) throws MissingAnnotationException, NotInterfaceException {
+        ClassUtils.validateInterface( clazz );
         SubjectInfoImpl subjectInfo = classInfo.get( clazz );
 
         if (subjectInfo == null) {
@@ -69,7 +63,7 @@ public class SubjectInfoFactory {
 
             }
             if (!foundAnnotation) {
-                throw new MissingAnnotation( "No annotated methods in " + clazz.getCanonicalName() );
+                throw new MissingAnnotationException( "No annotated methods in " + clazz.getCanonicalName() );
             }
             // parse the reminder
             for (final Method method : annotated) {

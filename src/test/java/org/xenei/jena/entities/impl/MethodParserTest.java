@@ -14,7 +14,6 @@ import org.xenei.jena.entities.EntityManager;
 import org.xenei.jena.entities.EntityManagerFactory;
 import org.xenei.jena.entities.PredicateInfo;
 import org.xenei.jena.entities.PredicateInfoImplTest;
-import org.xenei.jena.entities.annotations.Predicate;
 import org.xenei.jena.entities.annotations.URI;
 import org.xenei.jena.entities.impl.handlers.LiteralHandler;
 import org.xenei.jena.entities.impl.handlers.UriHandler;
@@ -52,7 +51,7 @@ public class MethodParserTest {
                 subjectInfo.getPredicateInfo( SingleValuePrimitiveInterface.class.getMethod( "hasChar" ) ) );
 
         String expectedHandler = PredicateInfoImplTest.createHandler( "string", "char" );
-        PredicateInfoImplTest.assertValues( pi, ActionType.SETTER, void.class, "setChar", char.class, 
+        PredicateInfoImplTest.assertValues( pi, ActionType.SETTER, void.class, "setChar", char.class,
                 LiteralHandler.class, expectedHandler, expectedProperty, void.class );
         EffectivePredicateTest.assertValues( pi.getPredicate(), false, false, "", "char", namespace, char.class,
                 false );
@@ -193,21 +192,18 @@ public class MethodParserTest {
                 LiteralHandler.class, expectedHandler, expectedProperty, void.class );
         EffectivePredicateTest.assertValues( pi.getPredicate(), false, false, "", "bool", namespace, Boolean.class,
                 false );
-        
 
         // u2
-        //@Predicate(type = URI.class, name = "u")
-        //String getU2();
+        // @Predicate(type = URI.class, name = "u")
+        // String getU2();
         expectedProperty = ResourceFactory.createProperty( namespace, "u" );
         method = SingleValueObjectInterface.class.getMethod( "getU2" );
         pi = methodParser.parse( method );
         expectedHandler = PredicateInfoImplTest.createHandler( "string", "class java.lang.String" );
-        PredicateInfoImplTest.assertValues( pi, ActionType.GETTER, URI.class, "getU2", void.class,
-                UriHandler.class, "UriHandler", expectedProperty, void.class );
-        EffectivePredicateTest.assertValues( pi.getPredicate(), false, false, "", "u", namespace, URI.class,
-                false );
-        Assertions.assertNotNull(  subjectInfo.getPredicateInfo( method ) );
-
+        PredicateInfoImplTest.assertValues( pi, ActionType.GETTER, URI.class, "getU2", void.class, UriHandler.class,
+                "UriHandler", expectedProperty, void.class );
+        EffectivePredicateTest.assertValues( pi.getPredicate(), false, false, "", "u", namespace, URI.class, false );
+        Assertions.assertNotNull( subjectInfo.getPredicateInfo( method ) );
     }
 
 }

@@ -29,7 +29,7 @@ import org.xenei.jena.entities.annotations.Subject;
 
 public class SubjectInfoImpl implements SubjectInfo {
     private final Class<?> implementedClass;
-    private final Map<String, Map<ObjectHandler, PredicateInfo>> predicateInfo = new HashMap<>();
+    private final Map<String, Map<Class<?>, PredicateInfo>> predicateInfo = new HashMap<>();
 
     public SubjectInfoImpl(final Class<?> implementedClass) {
         this.implementedClass = implementedClass;
@@ -41,17 +41,20 @@ public class SubjectInfoImpl implements SubjectInfo {
      * @param pi
      *            The predicateInfo to add.
      */
-    public void add(final PredicateInfo pi) {
+    public void add(final Method method, final PredicateInfo pi) {
+        if (method == null) {
+            throw new IllegalArgumentException( "Method may not be null" );
+        }
         if (pi == null) {
             throw new IllegalArgumentException( "PredicateInfo may not be null" );
         }
-        Map<ObjectHandler, PredicateInfo> map = predicateInfo.get( pi.getMethodName() );
+        Map<Class<?>, PredicateInfo> map = predicateInfo.get( pi.getMethodName() );
         if (map == null) {
             map = new HashMap<>();
             predicateInfo.put( pi.getMethodName(), map );
         }
 
-        map.put( pi.getObjectHandler(), pi );
+        map.put( pi.getActionType().predicateClass( method ), pi );
     }
 
     /*
@@ -81,7 +84,7 @@ public class SubjectInfoImpl implements SubjectInfo {
         }
         try {
             final ActionType action = ActionType.parse( method.getName() );
-            return getPredicateInfo( method.getName(), annotationOrClass( method, action.predicateClass( method ) ));
+            return getPredicateInfo( method.getName(), action.predicateClass( method ) );
         } catch (final IllegalArgumentException ignore) {
             return null;
         }
@@ -97,7 +100,7 @@ public class SubjectInfoImpl implements SubjectInfo {
      *             if the function is not found.
      */
     private PredicateInfo getPredicateInfo(final String function) {
-        final Map<ObjectHandler, PredicateInfo> map = predicateInfo.get( function );
+        final Map<Class<?>, PredicateInfo> map = predicateInfo.get( function );
         if (map == null) {
             throw new IllegalArgumentException( String.format( "Function %s not found", function ) );
         }
@@ -112,51 +115,8 @@ public class SubjectInfoImpl implements SubjectInfo {
      */
     @Override
     public PredicateInfo getPredicateInfo(final String function, final Class<?> clazz) {
-        final Map<ObjectHandler, PredicateInfo> map = predicateInfo.get( function );
-        if (map != null) {
-            for (final PredicateInfo pi : map.values()) {
-                switch (pi.getActionType()) {
-                case SETTER:
-                    if (TypeChecker.canBeSetFrom( pi.getArgumentType(), clazz )) {
-                        return pi;
-                    }
-                    break;
-
-                case GETTER:
-                    if (TypeChecker.canBeSetFrom( clazz, pi.getReturnType() )) {
-                        return pi;
-                    }
-                    break;
-
-                case REMOVER:
-                    if (!ClassUtils.nullOrVoid( pi.getArgumentType() )) {
-                        // it needs an argument
-                        if (TypeChecker.canBeSetFrom( pi.getArgumentType(), clazz )) {
-                            return pi;
-                        }
-                    } else {
-                        if (ClassUtils.nullOrVoid( clazz )) {
-                            return pi;
-                        }
-                    }
-                    break;
-
-                case EXISTENTIAL:
-                    if (pi.getArgumentType() != void.class) {
-                        // it needs an argument
-                        if (TypeChecker.canBeSetFrom( pi.getArgumentType(), clazz )) {
-                            return pi;
-                        }
-                    } else {
-                        if (ClassUtils.nullOrVoid( clazz )) {
-                            return pi;
-                        }
-                    }
-                    break;
-                }
-            }
-        }
-        return null;
+        final Map<Class<?>, PredicateInfo> map = predicateInfo.get( function );
+        return (map != null) ? map.get( clazz==null?void.class:clazz  ) : null;
     }
 
     /**

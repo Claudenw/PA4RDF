@@ -30,10 +30,11 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xenei.jena.entities.EntityManager;
-import org.xenei.jena.entities.MissingAnnotation;
 import org.xenei.jena.entities.ResourceWrapper;
 import org.xenei.jena.entities.SubjectInfo;
 import org.xenei.jena.entities.annotations.Subject;
+import org.xenei.jena.entities.exceptions.MissingAnnotationException;
+import org.xenei.jena.entities.exceptions.NotInterfaceException;
 
 /**
  * An implementation of the EntityManager interface.
@@ -69,18 +70,18 @@ public class EntityManagerImpl implements EntityManager {
      * @param clazz
      *            The class containing the Subject annotation.
      * @return source for chaining
-     * @throws MissingAnnotation
+     * @throws MissingAnnotationException
      *             if clazz does not have Subject annotations.
      * @throws IllegalArgumentException
      *             if source implements neither Resource nor ResourceWrapper.
      */
     @Override
     public <T> T addInstanceProperties(final T source, final Class<?> clazz)
-            throws MissingAnnotation, IllegalArgumentException {
+            throws MissingAnnotationException, IllegalArgumentException {
         final Resource r = ResourceWrapper.getResource( source );
         final Subject e = clazz.getAnnotation( Subject.class );
         if (e == null) {
-            throw new MissingAnnotation( "No Subject annotationin " + clazz.getCanonicalName() );
+            throw new MissingAnnotationException( "No Subject annotationin " + clazz.getCanonicalName() );
         }
         final Model model = r.getModel(); // may be null;
         if (e != null) {
@@ -123,10 +124,10 @@ public class EntityManagerImpl implements EntityManager {
      * )
      */
     @Override
-    public SubjectInfo getSubjectInfo(final Class<?> clazz) {
+    public SubjectInfo getSubjectInfo(final Class<?> clazz) throws NotInterfaceException {
         try {
             return factory.parse( clazz );
-        } catch (final MissingAnnotation e) {
+        } catch (final MissingAnnotationException e) {
             throw new IllegalArgumentException( e );
         }
     }
@@ -163,12 +164,12 @@ public class EntityManagerImpl implements EntityManager {
     }
 
     @Override
-    public void parseClasses(final String packageName) throws MissingAnnotation {
+    public void parseClasses(final String packageName) throws MissingAnnotationException, NotInterfaceException {
         parseClasses( new String[] { packageName } );
     }
 
     @Override
-    public void parseClasses(final String[] packageNames) throws MissingAnnotation {
+    public void parseClasses(final String[] packageNames) throws MissingAnnotationException, NotInterfaceException {
         boolean hasErrors = false;
         for (final String pkg : packageNames) {
 
@@ -176,7 +177,7 @@ public class EntityManagerImpl implements EntityManager {
                 if (c.getAnnotation( Subject.class ) != null) {
                     try {
                         factory.parse( c );
-                    } catch (final MissingAnnotation e) {
+                    } catch (final MissingAnnotationException e) {
                         EntityManagerImpl.LOG.warn( "Error processing {}: {}", c, e.getMessage() );
                         hasErrors = true;
                     }
@@ -184,14 +185,14 @@ public class EntityManagerImpl implements EntityManager {
             }
         }
         if (hasErrors) {
-            throw new MissingAnnotation(
+            throw new MissingAnnotationException(
                     String.format( "Unable to parse all %s See log for more details", Arrays.asList( packageNames ) ) );
         }
     }
 
     @Override
     public <T> T make(final Object source, final Class<T> primaryClass, final Class<?>... secondaryClasses)
-            throws MissingAnnotation {
+            throws MissingAnnotationException, NotInterfaceException {
         Resource r = addInstanceProperties( ResourceWrapper.getResource( source ), primaryClass );
         for (final Class<?> c : secondaryClasses) {
             r = addInstanceProperties( r, c );
@@ -209,8 +210,8 @@ public class EntityManagerImpl implements EntityManager {
     @Override
     @SuppressWarnings("unchecked")
     public <T> T read(final Object source, final Class<T> primaryClass, final Class<?>... secondaryClasses)
-            throws MissingAnnotation, IllegalArgumentException {
-
+            throws MissingAnnotationException, NotInterfaceException {
+        ClassUtils.validateInterface( primaryClass );
         final List<Class<?>> classes = new ArrayList<>();
         final SubjectInfoImpl subjectInfo = factory.parse( primaryClass );
 

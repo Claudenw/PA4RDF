@@ -18,6 +18,8 @@ import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Stack;
+
+import org.slf4j.LoggerFactory;
 import org.xenei.jena.entities.impl.method.BaseMethodParser;
 
 /**
@@ -35,7 +37,9 @@ public class MethodParser extends BaseMethodParser {
      *            A maping of add types to counts.
      */
     public MethodParser(final SubjectInfoImpl subjectInfo) {
-        super( new Stack<>(), subjectInfo, MethodParser.countAdders( subjectInfo.getImplementedClass().getMethods() ) );
+        super( new Stack<Method>(), subjectInfo, 
+                MethodParser.countAdders( subjectInfo.getImplementedClass().getMethods() ),
+                LoggerFactory.getLogger( MethodParser.class ));
     }
 
     private static Map<String, Integer> countAdders(final Method[] methods) {

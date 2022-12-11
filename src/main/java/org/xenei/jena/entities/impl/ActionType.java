@@ -14,6 +14,7 @@
  */
 package org.xenei.jena.entities.impl;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.Collection;
@@ -24,6 +25,9 @@ import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.jena.util.iterator.ExtendedIterator;
+import org.apache.jena.util.iterator.NullIterator;
+import org.xenei.jena.entities.annotations.URI;
 
 /**
  * An enumeration of Action types.
@@ -50,22 +54,6 @@ public enum ActionType {
 
     private ActionType(final List<String> prefixes) {
         this.prefixes = prefixes;
-    }
-
-    public boolean isMultiple(final Method method) {
-        switch (this) {
-        case GETTER:
-            return Iterator.class.isAssignableFrom( method.getReturnType() )
-                    || Collection.class.isAssignableFrom( method.getReturnType() ) || method.getReturnType().isArray();
-
-        case SETTER:
-            return method.getName().startsWith( "add" );
-
-        case EXISTENTIAL:
-        case REMOVER:
-            return method.getParameterCount() > 0;
-        }
-        throw new IllegalStateException( String.format( "%s is not an ActionType", this ) );
     }
 
     /**
@@ -139,8 +127,8 @@ public enum ActionType {
         throw new IllegalArgumentException( functionName + " is not an " + this + " ActionType" );
     }
 
-    public Stream<String> createNames(final String name) {
-        return prefixes.stream().map( t -> t + name );
+    public Iterator<String> createNames(final String name) {
+        return prefixes.stream().map( t -> t + name ).iterator();
     }
 
     /**
@@ -156,18 +144,26 @@ public enum ActionType {
                 : false;
     }
 
-    public Class<?> predicateClass(final Method m) {
+    public Class<?> predicateClass(final Method method) {
         switch (this) {
         case EXISTENTIAL:
         case REMOVER:
         case SETTER:
-            return m.getParameterCount() == 0 ? null : m.getParameterTypes()[0];
+            return method.getParameterCount() == 0 ? void.class : method.getParameterTypes()[0];
 
         case GETTER:
         default:
-            return m.getReturnType();
+            return method.getReturnType();
 
         }
+    }
+    
+    public static ExtendedIterator<String> allNames( String nameSuffix ) {
+        ExtendedIterator<String> result = new NullIterator();
+        for (ActionType type : ActionType.values()) {
+            result = result.andThen( type.createNames( nameSuffix ) );
+        }
+        return result;
     }
 
 }
