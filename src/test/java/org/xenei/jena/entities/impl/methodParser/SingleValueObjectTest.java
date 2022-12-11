@@ -125,10 +125,6 @@ public class SingleValueObjectTest {
     
     @Test
     public void uSeriesTest() throws Exception {
-    
-        // u2
-        // @Predicate(type = URI.class, name = "u")
-        // String getU2();
         Property expectedProperty = ResourceFactory.createProperty( namespace, "u" );
         
         Method method = SingleValueObjectInterface.class.getMethod( "getU2" );

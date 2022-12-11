@@ -7,6 +7,7 @@ import org.xenei.jena.entities.EffectivePredicate;
 import org.xenei.jena.entities.PredicateInfo;
 import org.xenei.jena.entities.annotations.URI;
 import org.xenei.jena.entities.exceptions.MissingAnnotationException;
+import org.xenei.jena.entities.impl.Action;
 import org.xenei.jena.entities.impl.ActionType;
 import org.xenei.jena.entities.impl.ClassUtils;
 import org.xenei.jena.entities.impl.PredicateInfoImpl;
@@ -65,7 +66,7 @@ public class AbstractMethodParser extends BaseMethodParser {
         // we only parse boolean results
         if (TypeChecker.canBeSetFrom( Boolean.class, action.method.getReturnType() ) && (action.method.getParameterCount() <= 1)) {
             final EffectivePredicate predicate = new EffectivePredicate( action.method ).merge( superPredicate );
-            subjectInfo.add( action.method, new PredicateInfoImpl( predicate, action.method ) );
+            subjectInfo.add( action.method, new PredicateInfoImpl( predicate, action ) );
         }
     }
 
@@ -113,7 +114,7 @@ public class AbstractMethodParser extends BaseMethodParser {
                 predicate.setType( action.method.getReturnType() );
             }
         }
-        final PredicateInfo pi = new PredicateInfoImpl( predicate, action.method );
+        final PredicateInfo pi = new PredicateInfoImpl( predicate, action);
         subjectInfo.add( action.method, pi );
         processAssociatedMethods( pi, action);
     }
@@ -132,7 +133,7 @@ public class AbstractMethodParser extends BaseMethodParser {
         final Class<?> parms[] = action.method.getParameterTypes();
         if (parms.length == 1) {
             final EffectivePredicate predicate = new EffectivePredicate( action.method ).merge( superPredicate );
-            final PredicateInfoImpl pi = new PredicateInfoImpl( predicate, action.method );
+            final PredicateInfoImpl pi = new PredicateInfoImpl( predicate, action );
             subjectInfo.add( action.method, pi );
 
             // predicate.setType( null );

@@ -12,6 +12,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.xenei.jena.entities.annotations.Subject;
 import org.xenei.jena.entities.annotations.URI;
+import org.xenei.jena.entities.impl.Action;
 import org.xenei.jena.entities.impl.ActionType;
 import org.xenei.jena.entities.impl.PredicateInfoImpl;
 import org.xenei.jena.entities.impl.handlers.EntityHandler;
@@ -30,9 +31,30 @@ public class PredicateInfoImplTest {
     public static void teardownClass() {
         EntityManagerFactory.setEntityManager( null );
     }
+    
+    public static String createHandler(final String base, final String type) {
+        return String.format( "LiteralHandler{Datatype[http://www.w3.org/2001/XMLSchema#%s -> %s]}", base, type );
+    }
 
-    final Property expectedProperty = ResourceFactory.createProperty( "http://example.com/", "x" );
 
+    Property expectedProperty(String name) {
+        return ResourceFactory.createProperty( "http://example.com/", name );
+    }
+
+    interface TestInterface {
+        Integer getInteger();
+        int getInt();
+        void setInt(int i);
+        Set<Integer> getSet();
+        void setIterator(Iterator<Integer> iter);
+        RDFNode getRDF();
+        void setRDF(RDFNode i);
+        TestInterface2 getZ(); 
+        }
+    
+    @Subject()
+    interface TestInterface2 {
+        }
     /**
      *
      * @param pi
@@ -66,104 +88,105 @@ public class PredicateInfoImplTest {
         return ep;
     }
 
+    
+    
     @Test
-    public void testGetConstructor() {
+    public void testGetConstructor() throws Exception {
         final EffectivePredicate ep = initializePredicate();
         final String expectedHandler = "LiteralHandler{Datatype[http://www.w3.org/2001/XMLSchema#int -> class java.lang.Integer]}";
-
-        final PredicateInfo pi = new PredicateInfoImpl( ep, Integer.class, "getX", void.class );
-        PredicateInfoImplTest.assertValues( pi, ActionType.GETTER, Integer.class, "getX", void.class,
-                LiteralHandler.class, expectedHandler, expectedProperty, void.class );
+        Action action = new Action( TestInterface.class.getMethod(  "getInteger" ) );
+        final PredicateInfo pi = new PredicateInfoImpl( ep, action );
+        PredicateInfoImplTest.assertValues( pi, ActionType.GETTER, Integer.class, "getInteger", void.class,
+                LiteralHandler.class, expectedHandler, expectedProperty("integer"), void.class );
     }
 
     @Test
-    public void testNameChangeConstructor() {
+    public void testNameChangeConstructor() throws Exception {
         final EffectivePredicate ep = initializePredicate();
         ep.setName( "foo" );
         final String expectedHandler = "LiteralHandler{Datatype[http://www.w3.org/2001/XMLSchema#int -> class java.lang.Integer]}";
-        final Property expectedProperty = ResourceFactory.createProperty( ep.namespace(), "foo" );
-
-        final PredicateInfo pi = new PredicateInfoImpl( ep, Integer.class, "getX", void.class );
-        PredicateInfoImplTest.assertValues( pi, ActionType.GETTER, Integer.class, "getX", void.class,
-                LiteralHandler.class, expectedHandler, expectedProperty, void.class );
+        Action action = new Action( TestInterface.class.getMethod( "getInteger" ) );
+        
+        final PredicateInfo pi = new PredicateInfoImpl( ep, action );
+        PredicateInfoImplTest.assertValues( pi, ActionType.GETTER, Integer.class, "getInteger", void.class,
+                LiteralHandler.class, expectedHandler, expectedProperty("foo"), void.class );
     }
 
     @Test
-    public void testURIConstructor() {
+    public void testURIConstructor() throws Exception {
         final EffectivePredicate ep = initializePredicate();
-
         // URI class
         ep.setType( URI.class );
-        final PredicateInfo pi = new PredicateInfoImpl( ep, Integer.class, "getX", void.class );
-        PredicateInfoImplTest.assertValues( pi, ActionType.GETTER, URI.class, "getX", void.class, UriHandler.class,
-                "UriHandler", expectedProperty, void.class );
+        Action action = new Action( TestInterface.class.getMethod(  "getInteger" ) );
+        
+        final PredicateInfo pi = new PredicateInfoImpl( ep, action );
+        PredicateInfoImplTest.assertValues( pi, ActionType.GETTER, URI.class, "getInteger", void.class, UriHandler.class,
+                "UriHandler", expectedProperty("integer"), void.class );
     }
 
     @Test
-    public void testGetterConstructor() {
+    public void testGetterConstructor() throws Exception {
         final EffectivePredicate ep = initializePredicate();
         final String expectedHandler = "LiteralHandler{Datatype[http://www.w3.org/2001/XMLSchema#int -> class java.lang.Integer]}";
-
-        final PredicateInfo pi = new PredicateInfoImpl( ep, Integer.class, "getX", void.class );
-        PredicateInfoImplTest.assertValues( pi, ActionType.GETTER, Integer.class, "getX", void.class,
-                LiteralHandler.class, expectedHandler, expectedProperty, void.class );
+        Action action = new Action( TestInterface.class.getMethod(  "getInteger" ) );
+        
+        final PredicateInfo pi = new PredicateInfoImpl( ep, action );
+        PredicateInfoImplTest.assertValues( pi, ActionType.GETTER, Integer.class, "getInteger", void.class,
+                LiteralHandler.class, expectedHandler, expectedProperty("integer"), void.class );
     }
 
     @Test
-    public void testGetCollectionConstructor() {
+    public void testGetCollectionConstructor() throws Exception {
         // collection type
         final EffectivePredicate ep = initializePredicate();
         final String expectedHandler = "LiteralHandler{Datatype[http://www.w3.org/2001/XMLSchema#int -> class java.lang.Integer]}";
-
         ep.setType( Integer.class );
-        final PredicateInfo pi = new PredicateInfoImpl( ep, Set.class, "getX", void.class );
-        PredicateInfoImplTest.assertValues( pi, ActionType.GETTER, Set.class, "getX", void.class, LiteralHandler.class,
-                expectedHandler, expectedProperty, Integer.class );
+        Action action = new Action( TestInterface.class.getMethod(  "getSet" ) );
+        
+        final PredicateInfo pi = new PredicateInfoImpl( ep, action );
+        PredicateInfoImplTest.assertValues( pi, ActionType.GETTER, Set.class, "getSet", void.class, LiteralHandler.class,
+                expectedHandler, expectedProperty("set"), Integer.class );
     }
 
     @Test
-    public void testSetCollectionConstructor() {
+    public void testSetCollectionConstructor() throws Exception {
         final EffectivePredicate ep = initializePredicate();
-
         ep.setType( int.class );
-        final PredicateInfo pi = new PredicateInfoImpl( ep, void.class, "setX", Iterator.class );
-        PredicateInfoImplTest.assertValues( pi, ActionType.SETTER, void.class, "setX", Iterator.class,
-                VoidHandler.class, "VoidHandler", expectedProperty, int.class );
+        Action action = new Action( TestInterface.class.getMethod(  "setIterator", Iterator.class ) );
+        
+        final PredicateInfo pi = new PredicateInfoImpl( ep, action );
+        PredicateInfoImplTest.assertValues( pi, ActionType.SETTER, void.class, "setIterator", Iterator.class,
+                VoidHandler.class, "VoidHandler", expectedProperty("iterator"), int.class );
     }
 
     @Test
-    public void testResourceSetterConstructor() {
+    public void testResourceSetterConstructor() throws Exception {
         final EffectivePredicate ep = initializePredicate();
-
-        final PredicateInfo pi = new PredicateInfoImpl( ep, void.class, "setX", RDFNode.class );
-        PredicateInfoImplTest.assertValues( pi, ActionType.SETTER, void.class, "setX", RDFNode.class,
-                ResourceHandler.class, "ResourceHandler", expectedProperty, void.class );
+        Action action = new Action( TestInterface.class.getMethod(  "setRDF", RDFNode.class ) );
+        
+        final PredicateInfo pi = new PredicateInfoImpl( ep, action );
+        PredicateInfoImplTest.assertValues( pi, ActionType.SETTER, void.class, "setRDF", RDFNode.class,
+                ResourceHandler.class, "ResourceHandler", expectedProperty("rDF"), void.class );
     }
 
     @Test
-    public void testResourceGetterConstructor() {
+    public void testResourceGetterConstructor() throws Exception {
         final EffectivePredicate ep = initializePredicate();
-
-        final PredicateInfo pi = new PredicateInfoImpl( ep, RDFNode.class, "getX", void.class );
-        PredicateInfoImplTest.assertValues( pi, ActionType.GETTER, RDFNode.class, "getX", void.class,
-                ResourceHandler.class, "ResourceHandler", expectedProperty, void.class );
+        Action action = new Action( TestInterface.class.getMethod( "getRDF" ) );
+        
+        final PredicateInfo pi = new PredicateInfoImpl( ep, action );
+        PredicateInfoImplTest.assertValues( pi, ActionType.GETTER, RDFNode.class, "getRDF", void.class,
+                ResourceHandler.class, "ResourceHandler", expectedProperty("rDF"), void.class );
     }
 
     @Test
-    public void testSubjectAnnotatedValueConstructor() {
+    public void testSubjectAnnotatedValueConstructor() throws Exception {
         final EffectivePredicate ep = initializePredicate();
-
-        final PredicateInfo pi = new PredicateInfoImpl( ep, PITestInterface.class, "getX", void.class );
-        PredicateInfoImplTest.assertValues( pi, ActionType.GETTER, PITestInterface.class, "getX", void.class,
-                EntityHandler.class, "EntityHandler", expectedProperty, void.class );
+        Action action = new Action( TestInterface.class.getMethod( "getZ" ) );
+        
+        final PredicateInfo pi = new PredicateInfoImpl( ep, action );
+        PredicateInfoImplTest.assertValues( pi, ActionType.GETTER, TestInterface2.class, "getZ", void.class,
+                EntityHandler.class, "EntityHandler", expectedProperty("z"), void.class );
     }
 
-    public static String createHandler(final String base, final String type) {
-        return String.format( "LiteralHandler{Datatype[http://www.w3.org/2001/XMLSchema#%s -> %s]}", base, type );
-    }
-
-    @Subject()
-    interface PITestInterface {
-
-    }
 }

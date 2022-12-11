@@ -124,16 +124,15 @@ public class PredicateInfoImpl implements PredicateInfo {
         }
         return initial;
     }
-
+    
     public static boolean isCollection(final Class<?> clazz) {
         return (clazz != null)
                 && (Iterator.class.isAssignableFrom( clazz ) || Collection.class.isAssignableFrom( clazz ));
     }
-
-    public PredicateInfoImpl(final EffectivePredicate predicate, final Method method) {
-        this( predicate, method.getReturnType(), method.getName(),
-                method.getParameterCount() == 0 ? void.class : method.getParameterTypes()[0] );
-    }
+//
+//    public PredicateInfoImpl(final EffectivePredicate predicate, final Method method) {
+//        this( predicate, method.getReturnType(), method.getName(), method.getParameterCount() == 0 ? void.class : method.getParameterTypes()[0] );
+//    }
 
     /**
      * Constructor.
@@ -145,19 +144,23 @@ public class PredicateInfoImpl implements PredicateInfo {
      * @param valueClass
      *            The class type for the return (getter) or parameter (setter)
      */
-    public PredicateInfoImpl(final EffectivePredicate predicate, final Class<?> returnType, final String methodName,
-            final Class<?> argumentType) {
+    public PredicateInfoImpl(final EffectivePredicate predicate, Action action) {
         if (predicate == null) {
             throw new IllegalArgumentException( "Predicate may not be null" );
         }
-        actionType = ActionType.parse( methodName );
+        if (action == null) {
+            throw new IllegalArgumentException( "Action may not be null" );
+        }
+        actionType = action.actionType;
+        Class<?> tempArgumentType = action.getArgument();
+        Class<?> tempReturnType = action.getReturn();
         Class<?> tempEnclosedType = void.class;
         switch (actionType) {
         case SETTER:
-            tempEnclosedType = PredicateInfoImpl.isCollection( argumentType ) ? predicate.type() : void.class;
+            tempEnclosedType = PredicateInfoImpl.isCollection( tempArgumentType ) ? predicate.type() : void.class;
             break;
         case GETTER:
-            tempEnclosedType = PredicateInfoImpl.isCollection( returnType ) ? predicate.type() : void.class;
+            tempEnclosedType = PredicateInfoImpl.isCollection( tempReturnType ) ? predicate.type() : void.class;
             break;
         default:
             // do nothing
@@ -166,17 +169,17 @@ public class PredicateInfoImpl implements PredicateInfo {
 
         if (StringUtils.isBlank( predicate.name() )) {
             try {
-                predicate.setName( actionType.extractName( methodName ) );
+                predicate.setName( action.name() );
             } catch (final IllegalArgumentException e) {
                 // expected when not an action method.
             }
         }
 
-        this.methodName = methodName;
-        this.argumentType = ClassUtils.nullOrVoid( argumentType ) ? void.class : argumentType;
+        this.methodName = action.method.getName();
+        this.argumentType = ClassUtils.nullOrVoid( tempArgumentType ) ? void.class : tempArgumentType;
         this.predicate = predicate;
         enclosedType = tempEnclosedType;
-        this.returnType = URI.class.equals( predicate.type() ) ? URI.class : returnType;
+        this.returnType = URI.class.equals( predicate.type() ) ? URI.class : tempReturnType;
         objectHandler = getHandler( predicate );
         property = ResourceFactory.createProperty( predicate.namespace() + predicate.name() );
     }

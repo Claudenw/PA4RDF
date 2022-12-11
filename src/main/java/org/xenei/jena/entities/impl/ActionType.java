@@ -152,9 +152,10 @@ public enum ActionType {
             return method.getParameterCount() == 0 ? void.class : method.getParameterTypes()[0];
 
         case GETTER:
-        default:
             return method.getReturnType();
-
+            
+        default:
+            return void.class;
         }
     }
     

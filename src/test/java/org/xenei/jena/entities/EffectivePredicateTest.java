@@ -154,7 +154,7 @@ public class EffectivePredicateTest {
         EffectivePredicateTest.assertValues( ep, false, false, "", "Upcase", "", int.class, true );
 
         ep = new EffectivePredicate( method( "isImpl" ) );
-        EffectivePredicateTest.assertValues( ep, false, true, "", "impl", "", null, false );
+        EffectivePredicateTest.assertValues( ep, false, true, "", "impl", "", void.class, false );
 
         ep = new EffectivePredicate( TestingInterface.class.getMethod( "setUriParam", String.class ) );
         EffectivePredicateTest.assertValues( ep, false, false, "", "uriParam", "", URI.class, false );

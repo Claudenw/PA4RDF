@@ -11,6 +11,7 @@ import java.util.Set;
 import org.xenei.jena.entities.EffectivePredicate;
 import org.xenei.jena.entities.PredicateInfo;
 import org.xenei.jena.entities.exceptions.MissingAnnotationException;
+import org.xenei.jena.entities.impl.Action;
 import org.xenei.jena.entities.impl.ActionType;
 import org.xenei.jena.entities.impl.PredicateInfoImpl;
 
@@ -60,9 +61,11 @@ class ImplMethodParser extends BaseMethodParser {
             antecedentPI = parse( antecedent );
         }
         predicate.merge( antecedentPI.getPredicate() );
+
         // PredicateInfoImpl pi = new PredicateInfoImpl( antecedentPI, method,
         // predicate );
-        final PredicateInfoImpl pi = new PredicateInfoImpl( predicate.merge( antecedentPI.getPredicate() ), action.method );
+        
+        final PredicateInfoImpl pi = new PredicateInfoImpl( predicate, action );
         subjectInfo.add( action.method, pi );
     }
 }
