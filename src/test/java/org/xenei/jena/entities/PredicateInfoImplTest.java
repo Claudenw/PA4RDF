@@ -115,13 +115,14 @@ public class PredicateInfoImplTest {
     @Test
     public void testURIConstructor() throws Exception {
         final EffectivePredicate ep = initializePredicate();
+        String handlerStr = "LiteralHandler{Datatype[http://www.w3.org/2001/XMLSchema#int -> class java.lang.Integer]}";
         // URI class
         ep.setType( URI.class );
-        Action action = new Action( TestInterface.class.getMethod(  "getInteger" ) );
+        Action action = new Action( TestInterface.class.getMethod( "getInteger" ) );
         
         final PredicateInfo pi = new PredicateInfoImpl( ep, action );
-        PredicateInfoImplTest.assertValues( pi, ActionType.GETTER, URI.class, "getInteger", void.class, UriHandler.class,
-                "UriHandler", expectedProperty("integer"), void.class );
+        PredicateInfoImplTest.assertValues( pi, ActionType.GETTER, Integer.class, "getInteger", void.class, LiteralHandler.class,
+                handlerStr, expectedProperty("integer"), void.class );
     }
 
     @Test
@@ -153,10 +154,11 @@ public class PredicateInfoImplTest {
         final EffectivePredicate ep = initializePredicate();
         ep.setType( int.class );
         Action action = new Action( TestInterface.class.getMethod(  "setIterator", Iterator.class ) );
+        String handlerStr = "LiteralHandler{Datatype[http://www.w3.org/2001/XMLSchema#int -> class java.lang.Integer]}";
         
         final PredicateInfo pi = new PredicateInfoImpl( ep, action );
         PredicateInfoImplTest.assertValues( pi, ActionType.SETTER, void.class, "setIterator", Iterator.class,
-                VoidHandler.class, "VoidHandler", expectedProperty("iterator"), int.class );
+                LiteralHandler.class, handlerStr, expectedProperty("iterator"), int.class );
     }
 
     @Test

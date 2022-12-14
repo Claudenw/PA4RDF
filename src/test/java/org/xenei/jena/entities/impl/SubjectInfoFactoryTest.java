@@ -17,26 +17,15 @@ import org.xenei.jena.entities.testing.iface.SingleValuePrimitiveInterface;
 public class SubjectInfoFactoryTest {
 
     private String namespace = "http://localhost/test#";
-    private boolean upcase;
-    private boolean emptyIsNull;
-    private boolean impl;
-    private String literalType;
-
-    private void reset() {
-        upcase = false;
-        emptyIsNull = false;
-        impl = false;
-        literalType = "";
-    }
 
     @Test
     public void parseBadAddersTest() throws Exception {
         final SubjectInfoFactory factory = new SubjectInfoFactory();
         final SubjectInfo subjectInfo = factory.parse( BadAddersInterface.NullArgs.class );
-        Assertions.assertThrows( IllegalArgumentException.class, () -> subjectInfo.getPredicateProperty( "addX" ) );
+        Assertions.assertNull( subjectInfo.getPredicateProperty( "addX" ) );
 
         final SubjectInfo subjectInfo2 = factory.parse( BadAddersInterface.TwoArgs.class );
-        Assertions.assertThrows( IllegalArgumentException.class, () -> subjectInfo2.getPredicateProperty( "addX" ) );
+        Assertions.assertNull( subjectInfo2.getPredicateProperty( "addX" ) );
     }
 
     @Test
@@ -46,70 +35,34 @@ public class SubjectInfoFactoryTest {
         final SubjectInfo subjectInfo = factory.parse( SingleValuePrimitiveInterface.class );
         Assertions.assertEquals( SingleValuePrimitiveInterface.class, subjectInfo.getImplementedClass() );
 
-        reset();
-        final String expectedHandler = PredicateInfoImplTest.createHandler( "string", "char" );
-        final Property expectedProperty = ResourceFactory.createProperty( namespace, "char" );
-        PredicateInfo pi = subjectInfo.getPredicateInfo( "getChar", char.class );
-        PredicateInfoImplTest.assertValues( pi, ActionType.GETTER, char.class, "getChar", void.class,
-                LiteralHandler.class, expectedHandler, expectedProperty, void.class );
-        EffectivePredicateTest.assertValues( pi.getPredicate(), emptyIsNull, impl, literalType, "char", namespace,
-                char.class, upcase );
+        Assertions.assertNotNull( subjectInfo.getPredicateInfo( "getChar", char.class ) );
+        Assertions.assertNotNull( subjectInfo.getPredicateInfo( "setChar", char.class ));
+        Assertions.assertNotNull( subjectInfo.getPredicateInfo( "removeChar", void.class ));
+        Assertions.assertNotNull( subjectInfo.getPredicateInfo( "hasChar", void.class ) );
+        
+        Assertions.assertNotNull( subjectInfo.getPredicateInfo( "getDbl", double.class ) );
+        Assertions.assertNotNull( subjectInfo.getPredicateInfo( "setDbl", double.class ));
+        Assertions.assertNotNull( subjectInfo.getPredicateInfo( "removeDbl", void.class ));
+        Assertions.assertNotNull( subjectInfo.getPredicateInfo( "hasDbl", void.class ) );
+        
+        Assertions.assertNotNull( subjectInfo.getPredicateInfo( "getFlt", float.class ) );
+        Assertions.assertNotNull( subjectInfo.getPredicateInfo( "setFlt", float.class ));
+        Assertions.assertNotNull( subjectInfo.getPredicateInfo( "removeFlt", void.class ));
+        Assertions.assertNotNull( subjectInfo.getPredicateInfo( "hasFlt", void.class ) );
+       
+        Assertions.assertNotNull( subjectInfo.getPredicateInfo( "getInt", int.class ) );
+        Assertions.assertNotNull( subjectInfo.getPredicateInfo( "setInt", int.class ));
+        Assertions.assertNotNull( subjectInfo.getPredicateInfo( "removeInt", void.class ));
+        Assertions.assertNotNull( subjectInfo.getPredicateInfo( "hasInt", void.class ) );
 
-        reset();
-        pi = subjectInfo.getPredicateInfo( "setChar", char.class );
-        PredicateInfoImplTest.assertValues( pi, ActionType.SETTER, void.class, "setChar", char.class,
-                LiteralHandler.class, "VoidHandler", expectedProperty, void.class );
-        EffectivePredicateTest.assertValues( pi.getPredicate(), emptyIsNull, impl, literalType, "char", namespace, null,
-                upcase );
+        Assertions.assertNotNull( subjectInfo.getPredicateInfo( "getLng", long.class ) );
+        Assertions.assertNotNull( subjectInfo.getPredicateInfo( "setLng", long.class ));
+        Assertions.assertNotNull( subjectInfo.getPredicateInfo( "removeLng", void.class ));
+        Assertions.assertNotNull( subjectInfo.getPredicateInfo( "hasLng", void.class ) );
 
-        reset();
-        pi = subjectInfo.getPredicateInfo( "removeChar", void.class );
-        PredicateInfoImplTest.assertValues( pi, ActionType.REMOVER, void.class, "removeChar", void.class,
-                VoidHandler.class, "VoidHandler", expectedProperty, void.class );
-        EffectivePredicateTest.assertValues( pi.getPredicate(), emptyIsNull, impl, literalType, "char", namespace,
-                char.class, upcase );
-
-        reset();
-
-        /*
-         *
-         * char getChar();
-         *
-         * double getDbl();
-         *
-         * float getFlt();
-         *
-         * int getInt();
-         *
-         * long getLng();
-         *
-         * boolean isBool();
-         *
-         * void removeBool();
-         *
-         * void removeChar();
-         *
-         * void removeDbl();
-         *
-         * void removeFlt();
-         *
-         * void removeInt();
-         *
-         * void removeLng();
-         *
-         * @Predicate void setBool(boolean b);
-         *
-         * @Predicate void setChar(char b);
-         *
-         * @Predicate void setDbl(double b);
-         *
-         * @Predicate void setFlt(float b);
-         *
-         * @Predicate void setInt(int b);
-         *
-         * @Predicate void setLng(long b);
-         *
-         */
-
+        Assertions.assertNotNull( subjectInfo.getPredicateInfo( "isBool", void.class ) );
+        Assertions.assertNotNull( subjectInfo.getPredicateInfo( "setBool", boolean.class ));
+        Assertions.assertNotNull( subjectInfo.getPredicateInfo( "removeBool", void.class ));
+        Assertions.assertNotNull( subjectInfo.getPredicateInfo( "hasBool", void.class ) );
     }
 }
