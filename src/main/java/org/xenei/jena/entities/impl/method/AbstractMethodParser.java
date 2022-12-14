@@ -37,10 +37,8 @@ public class AbstractMethodParser extends BaseMethodParser {
         // process "set" if only one arg and not varargs
         switch (action.actionType) {
         case SETTER:
-            final Integer i = getAddCount( action.method );
-            if (i != null) {
-                parseSetter( action, predicate, (i > 1) );
-            }
+            parseSetter( action, predicate );
+
             break;
 
         case EXISTENTIAL:
@@ -127,7 +125,7 @@ public class AbstractMethodParser extends BaseMethodParser {
      * @param multiAdd
      * @throws MissingAnnotationException
      */
-    private void parseSetter(Action action, final EffectivePredicate superPredicate, final boolean multiAdd)
+    private void parseSetter(Action action, final EffectivePredicate superPredicate)
             throws MissingAnnotationException {
 
         final Class<?> parms[] = action.method.getParameterTypes();
@@ -138,16 +136,14 @@ public class AbstractMethodParser extends BaseMethodParser {
 
             // predicate.setType( null );
             predicate.setLiteralType( "" );
-
-            if (multiAdd) {
-                processAssociatedSetters( pi, action, predicate );
-            }
             processAssociatedMethods( pi, action );
         }
     }
 
     private void processAssociatedMethods(final PredicateInfo pi, final Action action) {
-        action.getAssociatedActions()
+        java.util.function.Predicate<Method> p = m -> parseStack.contains( m );
+        p.or( m -> this.subjectInfo.getPredicateInfo( m ) != null);
+        action.getAssociatedActions( p )
         .forEach( a -> {
             try {
                 parse( a.method, pi.getPredicate());
@@ -155,41 +151,5 @@ public class AbstractMethodParser extends BaseMethodParser {
                 log.error( a.method.toString()+" missing required annotation", e );
             }
         });
-        
-        /*
-        final Class<?> context = method.getDeclaringClass();
-        final EffectivePredicate predicate = pi.getPredicate();
-        
-        parseAssociatedMethod( context, "get" + subName, predicate, null );
-        parseAssociatedMethod( context, "is" + subName, predicate, null );
-        if (actionType.isMultiple( method )) {
-            parseAssociatedMethod( context, "add" + subName, predicate, pi.getValueType() );
-            parseAssociatedMethod( context, "has" + subName, predicate, pi.getValueType() );
-            parseAssociatedMethod( context, "remove" + subName, predicate, pi.getValueType() );
-            if (pi.getValueType() == RDFNode.class) {
-                // look for @URI annotated strings
-                try {
-                    final Method m2 = method.getDeclaringClass().getMethod( "has" + subName, String.class );
-                    if (hasURIParameter( m2 )) {
-                        parseAssociatedMethod( context, "has" + subName, predicate, String.class );
-                    }
-                } catch (final NoSuchMethodException acceptable) {
-                    // do nothing
-                }
-                try {
-                    final Method m2 = method.getDeclaringClass().getMethod( "remove" + subName, String.class );
-                    if (hasURIParameter( m2 )) {
-                        parseAssociatedMethod( context, "remove" + subName, predicate, String.class );
-                    }
-                } catch (final NoSuchMethodException acceptable) {
-                    // do nothing
-                }
-            }
-        } else {
-            parseAssociatedMethod( context, "set" + subName, predicate, pi.getValueType() );
-            parseAssociatedMethod( context, "has" + subName, predicate, void.class );
-            parseAssociatedMethod( context, "remove" + subName, predicate, null );
-        }
-        */
     }
 }

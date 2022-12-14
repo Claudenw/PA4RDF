@@ -21,6 +21,7 @@ import org.xenei.jena.entities.impl.ActionType;
 import org.xenei.jena.entities.impl.MethodParser;
 import org.xenei.jena.entities.impl.SubjectInfoImpl;
 import org.xenei.jena.entities.impl.handlers.LiteralHandler;
+import org.xenei.jena.entities.impl.handlers.ResourceHandler;
 import org.xenei.jena.entities.impl.handlers.UriHandler;
 import org.xenei.jena.entities.impl.handlers.VoidHandler;
 import org.xenei.jena.entities.testing.iface.SingleValueObjectInterface;
@@ -129,8 +130,8 @@ public class SingleValueObjectTest {
         
         Method method = SingleValueObjectInterface.class.getMethod( "getU2" );
         PredicateInfo pi = methodParser.parse( method );
-        PredicateInfoImplTest.assertValues( pi, ActionType.GETTER, URI.class, "getU2", void.class, UriHandler.class,
-                "UriHandler", expectedProperty, void.class );
+        PredicateInfoImplTest.assertValues( pi, ActionType.GETTER, String.class, "getU2", void.class, UriHandler.class,
+                "UriHandler", expectedProperty, URI.class );
         EffectivePredicateTest.assertValues( pi.getPredicate(), false, false, "", "u", namespace, URI.class, false );
         Assertions.assertNotNull( subjectInfo.getPredicateInfo( method ) );
 
@@ -143,15 +144,15 @@ public class SingleValueObjectTest {
         
         method = SingleValueObjectInterface.class.getMethod( "setU", RDFNode.class );
         pi = methodParser.parse( method );
-        PredicateInfoImplTest.assertValues( pi, ActionType.SETTER, void.class, "setU", RDFNode.class, UriHandler.class,
-                "UriHandler", expectedProperty, URI.class );
+        PredicateInfoImplTest.assertValues( pi, ActionType.SETTER, void.class, "setU", RDFNode.class, 
+                ResourceHandler.class, "ResourceHandler", expectedProperty, void.class);
         EffectivePredicateTest.assertValues( pi.getPredicate(), false, false, "", "u", namespace, URI.class, false );
         Assertions.assertNotNull( subjectInfo.getPredicateInfo( method ) );
 
-        method = SingleValueObjectInterface.class.getMethod( "setU", RDFNode.class );
+        method = SingleValueObjectInterface.class.getMethod( "getU" );
         pi = methodParser.parse( method );
-        PredicateInfoImplTest.assertValues( pi, ActionType.SETTER, RDFNode.class, "getU", void.class, UriHandler.class,
-                "UriHandler", expectedProperty, URI.class );
+        PredicateInfoImplTest.assertValues( pi, ActionType.GETTER, RDFNode.class, "getU", void.class, ResourceHandler.class,
+                "ResourceHandler", expectedProperty, void.class );
         EffectivePredicateTest.assertValues( pi.getPredicate(), false, false, "", "u", namespace, URI.class, false );
         Assertions.assertNotNull( subjectInfo.getPredicateInfo( method ) );
 

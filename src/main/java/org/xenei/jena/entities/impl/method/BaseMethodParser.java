@@ -77,7 +77,7 @@ public abstract class BaseMethodParser {
                     parseStack.push( method );
 
                     try {
-                        final Action action = new BaseAction( method );
+                        final Action action = new Action( method );
                         final EffectivePredicate ep = new EffectivePredicate( predicate );
                         if (Modifier.isAbstract( method.getModifiers() )) {
                             asAbstractMethodParser().parse( action, ep );
@@ -162,39 +162,5 @@ public abstract class BaseMethodParser {
     public void parseRemover(final Action action, final EffectivePredicate predicate) {
         final EffectivePredicate ep = new EffectivePredicate( action.method ).merge( predicate );
         subjectInfo.add( action.method, new PredicateInfoImpl( ep, action) );
-    }
-
-    protected void processAssociatedSetters(final PredicateInfoImpl pi, final Action action,
-            final EffectivePredicate predicate) throws MissingAnnotationException {
-        try {
-            if ((pi.getArgumentType() == String.class) && (pi.getObjectHandler().getClass() == UriHandler.class)) {
-                parse( action.method.getDeclaringClass().getMethod( pi.getMethodName(), RDFNode.class ), predicate );
-            }
-            if (pi.getArgumentType() == RDFNode.class) {
-                final Method m2 = action.method.getDeclaringClass().getMethod( pi.getMethodName(), String.class );
-                if (hasURIParameter( m2 )) {
-                    parse( m2, predicate );
-                }
-            }
-        } catch (NoSuchMethodException | SecurityException e) {
-            // ignore
-        }
-    }
-    
-    class BaseAction extends Action {
-        public BaseAction(Method method) {
-            super( method );
-        }
-
-        public ExtendedIterator<Action> getAssociatedActions() {
-            Set<String> newNames = ActionType.allNames( name() ).toSet();
-            return WrappedIterator.create( Arrays.asList( context().getMethods() ).iterator() )
-                .filterKeep( m -> newNames.contains( m.getName() ) )
-                .mapWith( actionMap )
-                .filterDrop( a -> {return a==null;} )
-                .filterDrop( a -> parseStack.contains( a.method ) )
-                .filterDrop( a -> subjectInfo.getPredicateInfo( a.method ) != null)
-                .filterDrop( a -> this.method.equals( a.method ) );
-        }
     }
 }

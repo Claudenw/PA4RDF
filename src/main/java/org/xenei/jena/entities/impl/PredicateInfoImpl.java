@@ -129,11 +129,34 @@ public class PredicateInfoImpl implements PredicateInfo {
         return (clazz != null)
                 && (Iterator.class.isAssignableFrom( clazz ) || Collection.class.isAssignableFrom( clazz ));
     }
-//
-//    public PredicateInfoImpl(final EffectivePredicate predicate, final Method method) {
-//        this( predicate, method.getReturnType(), method.getName(), method.getParameterCount() == 0 ? void.class : method.getParameterTypes()[0] );
-//    }
 
+    /**
+     * if A is a collection b
+     * @param a
+     * @param b
+     * @return
+     */
+    private static Class<?> replaceCollection( Class<?> a, Class<?> b) {
+        return PredicateInfoImpl.isCollection(a)?b:a;
+    }
+    /**
+     * if a is null or void then b
+     * @param a
+     * @param b
+     * @return
+     */
+    private static Class<?> or( Class<?> a, Class<?> b ) {
+        return ClassUtils.nullOrVoid( a ) ? b : a;
+    }
+    
+    /**
+     * if a is null void.class
+     * @param a
+     * @return
+     */
+    private static Class<?> notNull( Class<?> a ) {
+        return ClassUtils.nullOrVoid( a ) ? void.class : a;
+    }
     /**
      * Constructor.
      *
@@ -157,10 +180,12 @@ public class PredicateInfoImpl implements PredicateInfo {
         Class<?> tempEnclosedType = void.class;
         switch (actionType) {
         case SETTER:
-            tempEnclosedType = PredicateInfoImpl.isCollection( tempArgumentType ) ? predicate.type() : void.class;
+            tempEnclosedType = PredicateInfoImpl.isCollection( tempArgumentType ) ? predicate.type() : 
+                (action.hasArgumentAnnotation(URI.class) ? URI.class : void.class);
             break;
         case GETTER:
-            tempEnclosedType = PredicateInfoImpl.isCollection( tempReturnType ) ? predicate.type() : void.class;
+            tempEnclosedType = PredicateInfoImpl.isCollection( tempReturnType ) ? predicate.type() :
+                (action.hasMethodTypeAnnotation(URI.class) ? URI.class : void.class);
             break;
         default:
             // do nothing
@@ -176,11 +201,11 @@ public class PredicateInfoImpl implements PredicateInfo {
         }
 
         this.methodName = action.method.getName();
-        this.argumentType = ClassUtils.nullOrVoid( tempArgumentType ) ? void.class : tempArgumentType;
+        this.argumentType = notNull( tempArgumentType );
         this.predicate = predicate;
         enclosedType = tempEnclosedType;
-        this.returnType = URI.class.equals( predicate.type() ) ? URI.class : tempReturnType;
-        objectHandler = getHandler( predicate );
+        this.returnType = notNull( tempReturnType );
+        objectHandler = getHandler( action );
         property = ResourceFactory.createProperty( predicate.namespace() + predicate.name() );
     }
 
@@ -231,7 +256,7 @@ public class PredicateInfoImpl implements PredicateInfo {
      *            The EffectivePredicate definition.
      * @return The object handler.
      */
-    private ObjectHandler getHandler(final EffectivePredicate pred) {
+    private ObjectHandler getHandler(final Action action) {
 
         final TypeMapper typeMapper = TypeMapper.getInstance();
         RDFDatatype dt = null;
@@ -239,23 +264,26 @@ public class PredicateInfoImpl implements PredicateInfo {
 
         switch (actionType) {
         case SETTER:
-            dataType = argumentType;
+            dataType = or( enclosedType, argumentType);
             break;
             
         case REMOVER:
             return new VoidHandler();
 
         case GETTER:
-            dataType = PredicateInfoImpl.isCollection( returnType ) ? enclosedType : returnType;
+            if (action.hasMethodTypeAnnotation( URI.class )) {
+                return new UriHandler();
+            }
+            dataType = replaceCollection( returnType, enclosedType);
             break;
 
         case EXISTENTIAL:
-            dataType = returnType;
+            dataType = notNull(returnType);
             break;
 
         }
-        if ((pred != null) && !pred.literalType().equals( "" )) {
-            dt = typeMapper.getSafeTypeByName( pred.literalType() );
+        if (!predicate.literalType().equals( "" )) {
+            dt = typeMapper.getSafeTypeByName( predicate.literalType() );
         } else {
             dt = typeMapper.getTypeByClass( dataType );
         }
