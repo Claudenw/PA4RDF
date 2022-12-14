@@ -52,7 +52,7 @@ public interface EntityManager {
      * @param clazz
      *            The class to get SubjectInfo for.
      * @return The SubjectInfo
-     * @throws NotInterfaceException 
+     * @throws NotInterfaceException
      * @throws IllegalArgumentException
      *             if clazz is not properly annotated with Subject annotations.
      */
@@ -92,7 +92,7 @@ public interface EntityManager {
      *            The name of the package to process
      * @throws MissingAnnotationException
      *             if a subject annotated class has no predicate annotations.
-     * @throws NotInterfaceException 
+     * @throws NotInterfaceException
      */
     public void parseClasses(String packageName) throws MissingAnnotationException, NotInterfaceException;
 
@@ -112,7 +112,7 @@ public interface EntityManager {
      *            The array of package names to process
      * @throws MissingAnnotationException
      *             if a subject annotated class has not predicate annotations.
-     * @throws NotInterfaceException 
+     * @throws NotInterfaceException
      * @see java.lang.ClassLoader#getResources(String)
      */
     public void parseClasses(String[] packageNames) throws MissingAnnotationException, NotInterfaceException;
@@ -136,11 +136,12 @@ public interface EntityManager {
      * @return primaryClass instance that also implements ResourceWrapper.
      * @throws MissingAnnotationException
      *             if any of the classes do not have Subject annotations.
-     * @throws NotInterfaceException 
+     * @throws NotInterfaceException
      * @throws IllegalArgumentException
      *             if source implements neither Resource nor ResourceWrapper.
      */
-    public <T> T make(Object source, Class<T> primaryClass, Class<?>... secondaryClasses) throws MissingAnnotationException, NotInterfaceException;
+    public <T> T make(Object source, Class<T> primaryClass, Class<?>... secondaryClasses)
+            throws MissingAnnotationException, NotInterfaceException;
 
     /**
      * Read an instance of clazz from source.

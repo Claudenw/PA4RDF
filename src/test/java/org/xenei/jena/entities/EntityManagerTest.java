@@ -57,7 +57,7 @@ public class EntityManagerTest {
     }
 
     @Test
-    public void testPathParserWithBadClasses() throws Exception{
+    public void testPathParserWithBadClasses() throws Exception {
         final Model model = ModelFactory.createDefaultModel();
         try {
             manager.read( model.createResource(), SimpleInterface.class, UnannotatedInterface.class );
@@ -66,14 +66,14 @@ public class EntityManagerTest {
             // expected
         }
     }
-    
+
     @Test
     public void testPathParserWithNonInterface() {
         final Model model = ModelFactory.createDefaultModel();
         Assertions.assertThrows( NotInterfaceException.class,
-                () -> manager.read( model.createResource(), Integer.class, UnannotatedInterface.class ));
+                () -> manager.read( model.createResource(), Integer.class, UnannotatedInterface.class ) );
         Assertions.assertThrows( NotInterfaceException.class,
-                () -> manager.read( model.createResource(), SimpleInterface.class, Integer.class ));
-        
+                () -> manager.read( model.createResource(), SimpleInterface.class, Integer.class ) );
+
     }
 }

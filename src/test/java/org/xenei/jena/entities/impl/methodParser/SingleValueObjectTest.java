@@ -15,7 +15,6 @@ import org.xenei.jena.entities.EntityManager;
 import org.xenei.jena.entities.EntityManagerFactory;
 import org.xenei.jena.entities.PredicateInfo;
 import org.xenei.jena.entities.PredicateInfoImplTest;
-import org.xenei.jena.entities.annotations.Predicate;
 import org.xenei.jena.entities.annotations.URI;
 import org.xenei.jena.entities.impl.ActionType;
 import org.xenei.jena.entities.impl.MethodParser;
@@ -25,10 +24,9 @@ import org.xenei.jena.entities.impl.handlers.ResourceHandler;
 import org.xenei.jena.entities.impl.handlers.UriHandler;
 import org.xenei.jena.entities.impl.handlers.VoidHandler;
 import org.xenei.jena.entities.testing.iface.SingleValueObjectInterface;
-import org.xenei.jena.entities.testing.iface.SingleValuePrimitiveInterface;
 
 public class SingleValueObjectTest {
-    
+
     final String namespace = "http://localhost/test#";
     final SubjectInfoImpl subjectInfo = new SubjectInfoImpl( SingleValueObjectInterface.class );
     final MethodParser methodParser = new MethodParser( subjectInfo );
@@ -46,8 +44,8 @@ public class SingleValueObjectTest {
     @Test
     public void charTest() throws Exception {
 
-        Property expectedProperty = ResourceFactory.createProperty( namespace, "char" );
-        Method method = SingleValueObjectInterface.class.getMethod( "setChar", Character.class );
+        final Property expectedProperty = ResourceFactory.createProperty( namespace, "char" );
+        final Method method = SingleValueObjectInterface.class.getMethod( "setChar", Character.class );
         PredicateInfo pi = methodParser.parse( method );
         Assertions.assertNotNull( subjectInfo.getPredicateInfo( method ) );
         Assertions.assertNotNull(
@@ -82,13 +80,13 @@ public class SingleValueObjectTest {
         EffectivePredicateTest.assertValues( pi.getPredicate(), false, false, "", "char", namespace, Character.class,
                 false );
     }
-    
+
     @Test
     public void booleanTest() throws Exception {
         // boolean
         String expectedHandler = PredicateInfoImplTest.createHandler( "boolean", "class java.lang.Boolean" );
-        Property expectedProperty = ResourceFactory.createProperty( namespace, "bool" );
-        Method method = SingleValueObjectInterface.class.getMethod( "setBool", Boolean.class );
+        final Property expectedProperty = ResourceFactory.createProperty( namespace, "bool" );
+        final Method method = SingleValueObjectInterface.class.getMethod( "setBool", Boolean.class );
         PredicateInfo pi = methodParser.parse( method );
         Assertions.assertNotNull( subjectInfo.getPredicateInfo( method ) );
         Assertions.assertNotNull(
@@ -122,12 +120,11 @@ public class SingleValueObjectTest {
         EffectivePredicateTest.assertValues( pi.getPredicate(), false, false, "", "bool", namespace, Boolean.class,
                 false );
     }
-    
-    
+
     @Test
     public void uSeriesTest() throws Exception {
-        Property expectedProperty = ResourceFactory.createProperty( namespace, "u" );
-        
+        final Property expectedProperty = ResourceFactory.createProperty( namespace, "u" );
+
         Method method = SingleValueObjectInterface.class.getMethod( "getU2" );
         PredicateInfo pi = methodParser.parse( method );
         PredicateInfoImplTest.assertValues( pi, ActionType.GETTER, String.class, "getU2", void.class, UriHandler.class,
@@ -141,18 +138,18 @@ public class SingleValueObjectTest {
                 "UriHandler", expectedProperty, URI.class );
         EffectivePredicateTest.assertValues( pi.getPredicate(), false, false, "", "u", namespace, URI.class, false );
         Assertions.assertNotNull( subjectInfo.getPredicateInfo( method ) );
-        
+
         method = SingleValueObjectInterface.class.getMethod( "setU", RDFNode.class );
         pi = methodParser.parse( method );
-        PredicateInfoImplTest.assertValues( pi, ActionType.SETTER, void.class, "setU", RDFNode.class, 
-                ResourceHandler.class, "ResourceHandler", expectedProperty, void.class);
+        PredicateInfoImplTest.assertValues( pi, ActionType.SETTER, void.class, "setU", RDFNode.class,
+                ResourceHandler.class, "ResourceHandler", expectedProperty, void.class );
         EffectivePredicateTest.assertValues( pi.getPredicate(), false, false, "", "u", namespace, URI.class, false );
         Assertions.assertNotNull( subjectInfo.getPredicateInfo( method ) );
 
         method = SingleValueObjectInterface.class.getMethod( "getU" );
         pi = methodParser.parse( method );
-        PredicateInfoImplTest.assertValues( pi, ActionType.GETTER, RDFNode.class, "getU", void.class, ResourceHandler.class,
-                "ResourceHandler", expectedProperty, void.class );
+        PredicateInfoImplTest.assertValues( pi, ActionType.GETTER, RDFNode.class, "getU", void.class,
+                ResourceHandler.class, "ResourceHandler", expectedProperty, void.class );
         EffectivePredicateTest.assertValues( pi.getPredicate(), false, false, "", "u", namespace, URI.class, false );
         Assertions.assertNotNull( subjectInfo.getPredicateInfo( method ) );
 

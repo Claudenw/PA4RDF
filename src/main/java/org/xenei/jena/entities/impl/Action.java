@@ -11,25 +11,23 @@ import java.util.function.Function;
 import org.apache.jena.util.iterator.ExtendedIterator;
 import org.apache.jena.util.iterator.WrappedIterator;
 import org.xenei.jena.entities.annotations.Predicate;
-import org.xenei.jena.entities.annotations.URI;
 
 public class Action {
     public final ActionType actionType;
     public final boolean isMultiple;
     public final Method method;
-    
+
     protected static final Function<Method, Action> actionMap = new Function<>() {
 
         @Override
-        public Action apply(Method method) {
+        public Action apply(final Method method) {
             try {
                 return new Action( method );
-            } catch (IllegalArgumentException e) {
+            } catch (final IllegalArgumentException e) {
                 return null;
             }
         }
     };
-
 
     private boolean deriveMultiple(final ActionType actionType, final Method method) {
         switch (actionType) {
@@ -57,14 +55,14 @@ public class Action {
         return actionType.extractName( method.getName() );
     }
 
-    public Class<?> voidOrClass(Class<?> dflt) {
+    public Class<?> voidOrClass(final Class<?> dflt) {
         return dflt == null ? void.class : dflt;
     }
 
-    public boolean hasArgumentAnnotation(Class<?> ann) {
+    public boolean hasArgumentAnnotation(final Class<?> ann) {
         if (method.getParameterCount() > 0) {
-            Annotation[] annotations = method.getParameterAnnotations()[0];
-            for (Annotation a : annotations) {
+            final Annotation[] annotations = method.getParameterAnnotations()[0];
+            for (final Annotation a : annotations) {
                 if (a.annotationType().isAssignableFrom( ann )) {
                     return true;
                 }
@@ -73,11 +71,11 @@ public class Action {
         return false;
     }
 
-    public boolean hasMethodTypeAnnotation(Class<?> ann) {
-        Predicate p = method.getAnnotation( Predicate.class );
-        return p == null? false : p.type().isAssignableFrom( ann );
+    public boolean hasMethodTypeAnnotation(final Class<?> ann) {
+        final Predicate p = method.getAnnotation( Predicate.class );
+        return p == null ? false : p.type().isAssignableFrom( ann );
     }
-    
+
     public Class<?> getArgument() {
         return voidOrClass( method.getParameterCount() > 0 ? method.getParameterTypes()[0] : null );
     }
@@ -90,12 +88,11 @@ public class Action {
         return method.getDeclaringClass();
     }
 
-    public ExtendedIterator<Action> getAssociatedActions(java.util.function.Predicate<Method> dropFilter) {
-        Set<String> newNames = ActionType.allNames( name() ).toSet();
+    public ExtendedIterator<Action> getAssociatedActions(final java.util.function.Predicate<Method> dropFilter) {
+        final Set<String> newNames = ActionType.allNames( name() ).toSet();
         return WrappedIterator.create( Arrays.asList( context().getMethods() ).iterator() )
-                .filterKeep( m -> newNames.contains( m.getName() ) )
-                .filterDrop( m -> this.method.equals( m ))
-                .filterDrop( dropFilter ).mapWith( actionMap ).filterDrop( a -> {
+                .filterKeep( m -> newNames.contains( m.getName() ) ).filterDrop( m -> method.equals( m ) )
+                .filterDrop( dropFilter ).mapWith( Action.actionMap ).filterDrop( a -> {
                     return a == null;
                 } );
     }

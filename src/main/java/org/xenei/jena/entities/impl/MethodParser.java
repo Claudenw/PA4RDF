@@ -37,9 +37,9 @@ public class MethodParser extends BaseMethodParser {
      *            A maping of add types to counts.
      */
     public MethodParser(final SubjectInfoImpl subjectInfo) {
-        super( new Stack<Method>(), subjectInfo, 
+        super( new Stack<Method>(), subjectInfo,
                 MethodParser.countAdders( subjectInfo.getImplementedClass().getMethods() ),
-                LoggerFactory.getLogger( MethodParser.class ));
+                LoggerFactory.getLogger( MethodParser.class ) );
     }
 
     private static Map<String, Integer> countAdders(final Method[] methods) {

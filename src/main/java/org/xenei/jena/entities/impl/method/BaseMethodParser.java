@@ -3,16 +3,12 @@ package org.xenei.jena.entities.impl.method;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.Stack;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import org.apache.jena.rdf.model.RDFNode;
-import org.apache.jena.util.iterator.ExtendedIterator;
 import org.apache.jena.util.iterator.WrappedIterator;
 import org.slf4j.Logger;
 import org.xenei.jena.entities.EffectivePredicate;
@@ -24,19 +20,18 @@ import org.xenei.jena.entities.impl.Action;
 import org.xenei.jena.entities.impl.ActionType;
 import org.xenei.jena.entities.impl.PredicateInfoImpl;
 import org.xenei.jena.entities.impl.SubjectInfoImpl;
-import org.xenei.jena.entities.impl.handlers.UriHandler;
 
 public abstract class BaseMethodParser {
-    protected final Logger log ;
+    protected final Logger log;
     private final Map<String, Integer> addCount;
     protected final SubjectInfoImpl subjectInfo;
     final Stack<Method> parseStack;
 
     private AbstractMethodParser abstractMethodParser;
     private ImplMethodParser implMethodParser;
-    
+
     protected BaseMethodParser(final Stack<Method> parseStack, final SubjectInfoImpl subjectInfo,
-            final Map<String, Integer> addCount, Logger log) {
+            final Map<String, Integer> addCount, final Logger log) {
         this.parseStack = parseStack;
         this.subjectInfo = subjectInfo;
         this.addCount = addCount;
@@ -123,8 +118,7 @@ public abstract class BaseMethodParser {
 
     protected boolean isMultiAdd(final String nameSuffix) {
         return WrappedIterator.create( ActionType.SETTER.createNames( nameSuffix ) )
-                .filterKeep( n -> addCount.get( n ) != null )
-                .hasNext();
+                .filterKeep( n -> addCount.get( n ) != null ).hasNext();
     }
 
     protected List<Method> getSetterMethods(final String nameSuffix) {
@@ -161,6 +155,6 @@ public abstract class BaseMethodParser {
 
     public void parseRemover(final Action action, final EffectivePredicate predicate) {
         final EffectivePredicate ep = new EffectivePredicate( action.method ).merge( predicate );
-        subjectInfo.add( action.method, new PredicateInfoImpl( ep, action) );
+        subjectInfo.add( action.method, new PredicateInfoImpl( ep, action ) );
     }
 }

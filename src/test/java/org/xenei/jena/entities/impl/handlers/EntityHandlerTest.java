@@ -69,12 +69,11 @@ public class EntityHandlerTest implements HandlerTestInterface {
         final EntityManager mockEM = Mockito.mock( EntityManager.class );
         EntityManagerFactory.setEntityManager( mockEM );
         try {
-            Mockito.doThrow(MissingAnnotationException.class).when( mockEM )
-            .read( ArgumentMatchers.eq( node.asResource() ),
-                    ArgumentMatchers.eq( TwoValueSimpleInterface.class ) );
+            Mockito.doThrow( MissingAnnotationException.class ).when( mockEM ).read(
+                    ArgumentMatchers.eq( node.asResource() ), ArgumentMatchers.eq( TwoValueSimpleInterface.class ) );
             handler = new EntityHandler( TwoValueSimpleInterface.class );
             Assertions.assertThrows( RuntimeException.class, () -> handler.parseObject( node ) );
-        } catch ( MissingAnnotationException | NotInterfaceException e) {
+        } catch (MissingAnnotationException | NotInterfaceException e) {
             Assertions.fail( e.getMessage() );
         } finally {
             EntityManagerFactory.setEntityManager( em );

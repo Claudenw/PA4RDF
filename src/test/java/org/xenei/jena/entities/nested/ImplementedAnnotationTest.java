@@ -12,7 +12,6 @@ import org.xenei.jena.entities.EntityManager;
 import org.xenei.jena.entities.EntityManagerFactory;
 import org.xenei.jena.entities.annotations.Predicate;
 import org.xenei.jena.entities.annotations.Subject;
-import org.xenei.jena.entities.exceptions.MissingAnnotationException;
 import org.xenei.jena.entities.exceptions.NotInterfaceException;
 
 /**
@@ -73,13 +72,14 @@ public class ImplementedAnnotationTest {
 
     @Test
     public void testReadNoAnnotation() {
-        Assertions.assertThrows(  NotInterfaceException.class, () -> em.read( resource, NoAnnotationImplementation.class ));
+        Assertions.assertThrows( NotInterfaceException.class,
+                () -> em.read( resource, NoAnnotationImplementation.class ) );
     }
 
     @Test
     public void testReadWithAnnotation() throws Exception {
-        Assertions.assertThrows(  NotInterfaceException.class, 
-            () -> em.read( resource, AnnotationImplementation.class ));
+        Assertions.assertThrows( NotInterfaceException.class,
+                () -> em.read( resource, AnnotationImplementation.class ) );
     }
 
     @Test

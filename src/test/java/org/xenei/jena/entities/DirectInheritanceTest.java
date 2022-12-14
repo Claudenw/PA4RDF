@@ -38,7 +38,8 @@ public class DirectInheritanceTest {
 
     @Test
     public void testNullMethods() {
-       Assertions.assertThrows( MissingAnnotationException.class, () -> manager.read( r, UnannotatedInterface.class ));
+        Assertions.assertThrows( MissingAnnotationException.class,
+                () -> manager.read( r, UnannotatedInterface.class ) );
     }
 
     /*

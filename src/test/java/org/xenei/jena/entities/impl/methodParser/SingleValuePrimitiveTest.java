@@ -3,7 +3,6 @@ package org.xenei.jena.entities.impl.methodParser;
 import java.lang.reflect.Method;
 
 import org.apache.jena.rdf.model.Property;
-import org.apache.jena.rdf.model.RDFNode;
 import org.apache.jena.rdf.model.ResourceFactory;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
@@ -15,15 +14,11 @@ import org.xenei.jena.entities.EntityManager;
 import org.xenei.jena.entities.EntityManagerFactory;
 import org.xenei.jena.entities.PredicateInfo;
 import org.xenei.jena.entities.PredicateInfoImplTest;
-import org.xenei.jena.entities.annotations.Predicate;
-import org.xenei.jena.entities.annotations.URI;
 import org.xenei.jena.entities.impl.ActionType;
 import org.xenei.jena.entities.impl.MethodParser;
 import org.xenei.jena.entities.impl.SubjectInfoImpl;
 import org.xenei.jena.entities.impl.handlers.LiteralHandler;
-import org.xenei.jena.entities.impl.handlers.UriHandler;
 import org.xenei.jena.entities.impl.handlers.VoidHandler;
-import org.xenei.jena.entities.testing.iface.SingleValueObjectInterface;
 import org.xenei.jena.entities.testing.iface.SingleValuePrimitiveInterface;
 
 public class SingleValuePrimitiveTest {
@@ -44,9 +39,9 @@ public class SingleValuePrimitiveTest {
 
     @Test
     public void charTest() throws Exception {
-        
-        Property expectedProperty = ResourceFactory.createProperty( namespace, "char" );
-        Method method = SingleValuePrimitiveInterface.class.getMethod( "setChar", char.class );
+
+        final Property expectedProperty = ResourceFactory.createProperty( namespace, "char" );
+        final Method method = SingleValuePrimitiveInterface.class.getMethod( "setChar", char.class );
         PredicateInfo pi = methodParser.parse( method );
         Assertions.assertNotNull( subjectInfo.getPredicateInfo( method ) );
         Assertions.assertNotNull(
@@ -81,12 +76,12 @@ public class SingleValuePrimitiveTest {
         EffectivePredicateTest.assertValues( pi.getPredicate(), false, false, "", "char", namespace, char.class,
                 false );
     }
-    
+
     @Test
     public void booleanTest() throws Exception {
         String expectedHandler = PredicateInfoImplTest.createHandler( "boolean", "class java.lang.Boolean" );
-        Property expectedProperty = ResourceFactory.createProperty( namespace, "bool" );
-        Method method = SingleValuePrimitiveInterface.class.getMethod( "setBool", boolean.class );
+        final Property expectedProperty = ResourceFactory.createProperty( namespace, "bool" );
+        final Method method = SingleValuePrimitiveInterface.class.getMethod( "setBool", boolean.class );
         PredicateInfo pi = methodParser.parse( method );
         Assertions.assertNotNull( subjectInfo.getPredicateInfo( method ) );
         Assertions.assertNotNull(

@@ -124,7 +124,7 @@ public class PredicateInfoImpl implements PredicateInfo {
         }
         return initial;
     }
-    
+
     public static boolean isCollection(final Class<?> clazz) {
         return (clazz != null)
                 && (Iterator.class.isAssignableFrom( clazz ) || Collection.class.isAssignableFrom( clazz ));
@@ -132,31 +132,36 @@ public class PredicateInfoImpl implements PredicateInfo {
 
     /**
      * if A is a collection b
+     *
      * @param a
      * @param b
      * @return
      */
-    private static Class<?> replaceCollection( Class<?> a, Class<?> b) {
-        return PredicateInfoImpl.isCollection(a)?b:a;
+    private static Class<?> replaceCollection(final Class<?> a, final Class<?> b) {
+        return PredicateInfoImpl.isCollection( a ) ? b : a;
     }
+
     /**
      * if a is null or void then b
+     *
      * @param a
      * @param b
      * @return
      */
-    private static Class<?> or( Class<?> a, Class<?> b ) {
+    private static Class<?> or(final Class<?> a, final Class<?> b) {
         return ClassUtils.nullOrVoid( a ) ? b : a;
     }
-    
+
     /**
      * if a is null void.class
+     *
      * @param a
      * @return
      */
-    private static Class<?> notNull( Class<?> a ) {
+    private static Class<?> notNull(final Class<?> a) {
         return ClassUtils.nullOrVoid( a ) ? void.class : a;
     }
+
     /**
      * Constructor.
      *
@@ -167,7 +172,7 @@ public class PredicateInfoImpl implements PredicateInfo {
      * @param valueClass
      *            The class type for the return (getter) or parameter (setter)
      */
-    public PredicateInfoImpl(final EffectivePredicate predicate, Action action) {
+    public PredicateInfoImpl(final EffectivePredicate predicate, final Action action) {
         if (predicate == null) {
             throw new IllegalArgumentException( "Predicate may not be null" );
         }
@@ -175,17 +180,17 @@ public class PredicateInfoImpl implements PredicateInfo {
             throw new IllegalArgumentException( "Action may not be null" );
         }
         actionType = action.actionType;
-        Class<?> tempArgumentType = action.getArgument();
-        Class<?> tempReturnType = action.getReturn();
+        final Class<?> tempArgumentType = action.getArgument();
+        final Class<?> tempReturnType = action.getReturn();
         Class<?> tempEnclosedType = void.class;
         switch (actionType) {
         case SETTER:
-            tempEnclosedType = PredicateInfoImpl.isCollection( tempArgumentType ) ? predicate.type() : 
-                (action.hasArgumentAnnotation(URI.class) ? URI.class : void.class);
+            tempEnclosedType = PredicateInfoImpl.isCollection( tempArgumentType ) ? predicate.type()
+                    : (action.hasArgumentAnnotation( URI.class ) ? URI.class : void.class);
             break;
         case GETTER:
-            tempEnclosedType = PredicateInfoImpl.isCollection( tempReturnType ) ? predicate.type() :
-                (action.hasMethodTypeAnnotation(URI.class) ? URI.class : void.class);
+            tempEnclosedType = PredicateInfoImpl.isCollection( tempReturnType ) ? predicate.type()
+                    : (action.hasMethodTypeAnnotation( URI.class ) ? URI.class : void.class);
             break;
         default:
             // do nothing
@@ -200,11 +205,11 @@ public class PredicateInfoImpl implements PredicateInfo {
             }
         }
 
-        this.methodName = action.method.getName();
-        this.argumentType = notNull( tempArgumentType );
+        methodName = action.method.getName();
+        argumentType = PredicateInfoImpl.notNull( tempArgumentType );
         this.predicate = predicate;
         enclosedType = tempEnclosedType;
-        this.returnType = notNull( tempReturnType );
+        returnType = PredicateInfoImpl.notNull( tempReturnType );
         objectHandler = getHandler( action );
         property = ResourceFactory.createProperty( predicate.namespace() + predicate.name() );
     }
@@ -264,9 +269,9 @@ public class PredicateInfoImpl implements PredicateInfo {
 
         switch (actionType) {
         case SETTER:
-            dataType = or( enclosedType, argumentType);
+            dataType = PredicateInfoImpl.or( enclosedType, argumentType );
             break;
-            
+
         case REMOVER:
             return new VoidHandler();
 
@@ -274,11 +279,11 @@ public class PredicateInfoImpl implements PredicateInfo {
             if (action.hasMethodTypeAnnotation( URI.class )) {
                 return new UriHandler();
             }
-            dataType = replaceCollection( returnType, enclosedType);
+            dataType = PredicateInfoImpl.replaceCollection( returnType, enclosedType );
             break;
 
         case EXISTENTIAL:
-            dataType = notNull(returnType);
+            dataType = PredicateInfoImpl.notNull( returnType );
             break;
 
         }
@@ -350,7 +355,7 @@ public class PredicateInfoImpl implements PredicateInfo {
             retval = execRemove( resource, p, args );
             break;
         case EXISTENTIAL:
-            if (method.getName().startsWith(  "is"  )) {
+            if (method.getName().startsWith( "is" )) {
                 retval = execIs( resource, p, args );
             } else {
                 retval = execHas( resource, p, args );
@@ -373,9 +378,10 @@ public class PredicateInfoImpl implements PredicateInfo {
     private Object execIs(final Resource resource, final Property p, final Object[] args) {
         Object arg = args == null ? null : args[0];
         if (arg == null) {
-            arg = (Boolean.class.equals( predicate.type() )|| boolean.class.equals( predicate.type())) ? Boolean.TRUE :null; 
+            arg = (Boolean.class.equals( predicate.type() ) || boolean.class.equals( predicate.type() )) ? Boolean.TRUE
+                    : null;
         }
-            
+
         try {
             resource.getModel().enterCriticalSection( Lock.READ );
             if (arg == null) {
@@ -387,7 +393,6 @@ public class PredicateInfoImpl implements PredicateInfo {
         }
     }
 
-    
     private Object execHas(final Resource resource, final Property p, final Object[] args) {
         try {
             resource.getModel().enterCriticalSection( Lock.READ );

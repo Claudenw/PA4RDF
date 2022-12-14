@@ -14,20 +14,15 @@
  */
 package org.xenei.jena.entities.impl;
 
-import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Predicate;
-import java.util.stream.Stream;
-
 import org.apache.commons.lang3.StringUtils;
 import org.apache.jena.util.iterator.ExtendedIterator;
 import org.apache.jena.util.iterator.NullIterator;
-import org.xenei.jena.entities.annotations.URI;
 
 /**
  * An enumeration of Action types.
@@ -153,15 +148,15 @@ public enum ActionType {
 
         case GETTER:
             return method.getReturnType();
-            
+
         default:
             return void.class;
         }
     }
-    
-    public static ExtendedIterator<String> allNames( String nameSuffix ) {
-        ExtendedIterator<String> result = new NullIterator();
-        for (ActionType type : ActionType.values()) {
+
+    public static ExtendedIterator<String> allNames(final String nameSuffix) {
+        ExtendedIterator<String> result = new NullIterator<>();
+        for (final ActionType type : ActionType.values()) {
             result = result.andThen( type.createNames( nameSuffix ) );
         }
         return result;

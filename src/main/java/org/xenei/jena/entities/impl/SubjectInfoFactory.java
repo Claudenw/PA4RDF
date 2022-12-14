@@ -32,7 +32,7 @@ public class SubjectInfoFactory {
      * @param clazz
      * @return The SubjectInfo for the class.
      * @throws MissingAnnotationException
-     * @throws NotInterfaceException 
+     * @throws NotInterfaceException
      */
     public SubjectInfoImpl parse(final Class<?> clazz) throws MissingAnnotationException, NotInterfaceException {
         ClassUtils.validateInterface( clazz );

@@ -27,7 +27,7 @@ public class SubjectInfoImplTest {
     private PredicateInfo exist;
     private Method existNoArgMethod;
     private PredicateInfo existNoArg;
-    
+
     interface TestInterface {
         void setMockSetter(Integer i);
 
@@ -47,24 +47,23 @@ public class SubjectInfoImplTest {
 
         void fakeMethod();
     }
-    
+
     private void setupMethods() throws Exception {
         setterMethod = TestInterface.class.getMethod( "setMockSetter", Integer.class );
         getterMethod = TestInterface.class.getMethod( "getMockGetter" );
         removerMethod = TestInterface.class.getMethod( "removeMockRemover", Integer.class );
         removerNoArgMethod = TestInterface.class.getMethod( "removeMockRemover" );
-        existMethod = TestInterface.class.getMethod( "hasMockExist", Integer.class);
+        existMethod = TestInterface.class.getMethod( "hasMockExist", Integer.class );
         existNoArgMethod = TestInterface.class.getMethod( "hasMockExist" );
-        
+
     }
-    
+
     private void setupMock() throws Exception {
         setupMethods();
         subjectInfo = new SubjectInfoImpl( SimpleInterface.class );
         final ObjectHandler mockHandler = Mockito.mock( ObjectHandler.class );
         final ObjectHandler noArgHandler = Mockito.mock( ObjectHandler.class );
 
-        
         setter = Mockito.mock( PredicateInfo.class );
         Mockito.when( setter.getMethodName() ).thenReturn( "setMockSetter" );
         Mockito.doReturn( Integer.class ).when( setter ).getArgumentType();
@@ -155,18 +154,12 @@ public class SubjectInfoImplTest {
     @Test
     public void getPredicateInfoByMethodTest() throws Exception {
         setupMock();
-        Assertions.assertEquals( setter,
-                subjectInfo.getPredicateInfo( setterMethod ) );
-        Assertions.assertEquals( getter,
-                subjectInfo.getPredicateInfo( getterMethod ) );
-        Assertions.assertEquals( remover,
-                subjectInfo.getPredicateInfo( removerMethod ) );
-        Assertions.assertEquals( removerNoArg,
-                subjectInfo.getPredicateInfo( removerNoArgMethod ) );
-        Assertions.assertEquals( exist,
-                subjectInfo.getPredicateInfo( existMethod ) );
-        Assertions.assertEquals( existNoArg,
-                subjectInfo.getPredicateInfo( existNoArgMethod ) );
+        Assertions.assertEquals( setter, subjectInfo.getPredicateInfo( setterMethod ) );
+        Assertions.assertEquals( getter, subjectInfo.getPredicateInfo( getterMethod ) );
+        Assertions.assertEquals( remover, subjectInfo.getPredicateInfo( removerMethod ) );
+        Assertions.assertEquals( removerNoArg, subjectInfo.getPredicateInfo( removerNoArgMethod ) );
+        Assertions.assertEquals( exist, subjectInfo.getPredicateInfo( existMethod ) );
+        Assertions.assertEquals( existNoArg, subjectInfo.getPredicateInfo( existNoArgMethod ) );
         Assertions.assertNull( subjectInfo.getPredicateInfo( TestInterface.class.getMethod( "fakeMethod" ) ) );
         Assertions.assertNull(
                 subjectInfo.getPredicateInfo( TestInterface.class.getMethod( "setMockSetter", Integer[].class ) ) );
@@ -254,5 +247,4 @@ public class SubjectInfoImplTest {
         Assertions.assertEquals( SubjectInfoImplTest.namespace, s.namespace() );
     }
 
-    
 }

@@ -117,7 +117,7 @@ public class ClassUtils {
         return (clazz == null) || clazz.equals( void.class );
     }
 
-    public static void validateInterface(Class<?> clazz) throws NotInterfaceException {
+    public static void validateInterface(final Class<?> clazz) throws NotInterfaceException {
         if (!clazz.isInterface()) {
             throw new NotInterfaceException( clazz );
         }

@@ -86,8 +86,7 @@ public class EffectivePredicate {
              * returnType; } }
              */
             final ActionType actionType = ActionType.parse( method.getName() );
-            if (type == null)
-            {
+            if (type == null) {
                 type = actionType.predicateClass( method );
             }
             final Subject s = method.getDeclaringClass().getAnnotation( Subject.class );

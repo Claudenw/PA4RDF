@@ -2,14 +2,11 @@ package org.xenei.jena.entities.impl.method;
 
 import java.lang.reflect.Method;
 import org.apache.jena.rdf.model.RDFNode;
-import org.apache.jena.util.iterator.ExtendedIterator;
 import org.xenei.jena.entities.EffectivePredicate;
 import org.xenei.jena.entities.PredicateInfo;
 import org.xenei.jena.entities.annotations.URI;
 import org.xenei.jena.entities.exceptions.MissingAnnotationException;
 import org.xenei.jena.entities.impl.Action;
-import org.xenei.jena.entities.impl.ActionType;
-import org.xenei.jena.entities.impl.ClassUtils;
 import org.xenei.jena.entities.impl.PredicateInfoImpl;
 import org.xenei.jena.entities.impl.TypeChecker;
 
@@ -31,8 +28,7 @@ public class AbstractMethodParser extends BaseMethodParser {
      * @throws MissingAnnotationException
      *             If an Predicate annotation is missing.
      */
-    void parse(final Action action, final EffectivePredicate predicate)
-            throws MissingAnnotationException {
+    void parse(final Action action, final EffectivePredicate predicate) throws MissingAnnotationException {
 
         // process "set" if only one arg and not varargs
         switch (action.actionType) {
@@ -62,7 +58,8 @@ public class AbstractMethodParser extends BaseMethodParser {
 
     private void parseExistential(final Action action, final EffectivePredicate superPredicate) {
         // we only parse boolean results
-        if (TypeChecker.canBeSetFrom( Boolean.class, action.method.getReturnType() ) && (action.method.getParameterCount() <= 1)) {
+        if (TypeChecker.canBeSetFrom( Boolean.class, action.method.getReturnType() )
+                && (action.method.getParameterCount() <= 1)) {
             final EffectivePredicate predicate = new EffectivePredicate( action.method ).merge( superPredicate );
             subjectInfo.add( action.method, new PredicateInfoImpl( predicate, action ) );
         }
@@ -72,7 +69,7 @@ public class AbstractMethodParser extends BaseMethodParser {
             throws MissingAnnotationException {
         // predicate for getter method includes predicate info for setter
         // method.
-        String actionName = action.name();
+        final String actionName = action.name();
         final EffectivePredicate predicate = new EffectivePredicate( action.method ).merge( superPredicate );
         // ExtendedIterator or Collection return type
         if (PredicateInfoImpl.isCollection( action.method.getReturnType() )) {
@@ -102,8 +99,9 @@ public class AbstractMethodParser extends BaseMethodParser {
                 // returning a collection and multple add methods
                 // so we must have a type set.
                 if (predicate.isTypeNotSet()) {
-                    throw new MissingAnnotationException( String.format( "%s.%s must have a Predicate annotation to define type",
-                            subjectInfo.getImplementedClass(), action.method.getName() ) );
+                    throw new MissingAnnotationException(
+                            String.format( "%s.%s must have a Predicate annotation to define type",
+                                    subjectInfo.getImplementedClass(), action.method.getName() ) );
                 }
             }
         } else {
@@ -112,9 +110,9 @@ public class AbstractMethodParser extends BaseMethodParser {
                 predicate.setType( action.method.getReturnType() );
             }
         }
-        final PredicateInfo pi = new PredicateInfoImpl( predicate, action);
+        final PredicateInfo pi = new PredicateInfoImpl( predicate, action );
         subjectInfo.add( action.method, pi );
-        processAssociatedMethods( pi, action);
+        processAssociatedMethods( pi, action );
     }
 
     /**
@@ -125,7 +123,7 @@ public class AbstractMethodParser extends BaseMethodParser {
      * @param multiAdd
      * @throws MissingAnnotationException
      */
-    private void parseSetter(Action action, final EffectivePredicate superPredicate)
+    private void parseSetter(final Action action, final EffectivePredicate superPredicate)
             throws MissingAnnotationException {
 
         final Class<?> parms[] = action.method.getParameterTypes();
@@ -141,15 +139,14 @@ public class AbstractMethodParser extends BaseMethodParser {
     }
 
     private void processAssociatedMethods(final PredicateInfo pi, final Action action) {
-        java.util.function.Predicate<Method> p = m -> parseStack.contains( m );
-        p.or( m -> this.subjectInfo.getPredicateInfo( m ) != null);
-        action.getAssociatedActions( p )
-        .forEach( a -> {
+        final java.util.function.Predicate<Method> p = m -> parseStack.contains( m );
+        p.or( m -> subjectInfo.getPredicateInfo( m ) != null );
+        action.getAssociatedActions( p ).forEach( a -> {
             try {
-                parse( a.method, pi.getPredicate());
-            } catch (MissingAnnotationException e) {
-                log.error( a.method.toString()+" missing required annotation", e );
+                parse( a.method, pi.getPredicate() );
+            } catch (final MissingAnnotationException e) {
+                log.error( a.method.toString() + " missing required annotation", e );
             }
-        });
+        } );
     }
 }

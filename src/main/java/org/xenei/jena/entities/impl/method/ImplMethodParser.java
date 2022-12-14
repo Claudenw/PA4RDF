@@ -12,7 +12,6 @@ import org.xenei.jena.entities.EffectivePredicate;
 import org.xenei.jena.entities.PredicateInfo;
 import org.xenei.jena.entities.exceptions.MissingAnnotationException;
 import org.xenei.jena.entities.impl.Action;
-import org.xenei.jena.entities.impl.ActionType;
 import org.xenei.jena.entities.impl.PredicateInfoImpl;
 
 class ImplMethodParser extends BaseMethodParser {
@@ -43,8 +42,7 @@ class ImplMethodParser extends BaseMethodParser {
         return null;
     }
 
-    void parse(final Action action, final EffectivePredicate predicate)
-            throws MissingAnnotationException {
+    void parse(final Action action, final EffectivePredicate predicate) throws MissingAnnotationException {
 
         Method antecedent = ImplMethodParser.findAntecedentMethod( action.method );
         if (antecedent == null) {
@@ -64,7 +62,7 @@ class ImplMethodParser extends BaseMethodParser {
 
         // PredicateInfoImpl pi = new PredicateInfoImpl( antecedentPI, method,
         // predicate );
-        
+
         final PredicateInfoImpl pi = new PredicateInfoImpl( predicate, action );
         subjectInfo.add( action.method, pi );
     }

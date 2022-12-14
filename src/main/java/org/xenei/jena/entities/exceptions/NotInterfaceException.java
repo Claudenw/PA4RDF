@@ -21,14 +21,14 @@ package org.xenei.jena.entities.exceptions;
 public class NotInterfaceException extends Exception {
 
     private static final long serialVersionUID = -5874216486380814195L;
-    
-    private Class<?> clazz;
+
+    private final Class<?> clazz;
 
     public NotInterfaceException(final Class<?> clazz) {
         super( String.format( "%s is not an interface", clazz ) );
         this.clazz = clazz;
     }
-    
+
     public Class<?> getNonInterface() {
         return clazz;
     }

@@ -176,7 +176,6 @@ public class SingleValueMixedObjectEntityTests {
         final long c = 3;
         final Long cc = Long.valueOf( c );
         tc.setL( c );
-        final long l = tc.getL();
         Assertions.assertEquals( cc, Long.valueOf( tc.getL() ) );
         tc.setL( 0L );
         Assertions.assertTrue( !cc.equals( tc.getL() ) );

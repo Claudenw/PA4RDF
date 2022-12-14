@@ -15,16 +15,12 @@
 package org.xenei.jena.entities.impl;
 
 import org.apache.jena.rdf.model.Property;
-import org.apache.jena.rdf.model.RDFNode;
-
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.xenei.jena.entities.ObjectHandler;
 import org.xenei.jena.entities.PredicateInfo;
 import org.xenei.jena.entities.SubjectInfo;
-import org.xenei.jena.entities.annotations.Predicate;
 import org.xenei.jena.entities.annotations.Subject;
 
 public class SubjectInfoImpl implements SubjectInfo {
@@ -67,10 +63,6 @@ public class SubjectInfoImpl implements SubjectInfo {
         return implementedClass;
     }
 
-    private Class<?> annotationOrClass( Method method, Class<?> dflt) {
-        Predicate p = method.getAnnotation(  Predicate.class  );
-        return (p!=null && p.type() != RDFNode.class) ?  p.type() : dflt;
-    }
     /*
      * (non-Javadoc)
      *
@@ -116,7 +108,7 @@ public class SubjectInfoImpl implements SubjectInfo {
     @Override
     public PredicateInfo getPredicateInfo(final String function, final Class<?> clazz) {
         final Map<Class<?>, PredicateInfo> map = predicateInfo.get( function );
-        return (map != null) ? map.get( clazz==null?void.class:clazz  ) : null;
+        return (map != null) ? map.get( clazz == null ? void.class : clazz ) : null;
     }
 
     /**
