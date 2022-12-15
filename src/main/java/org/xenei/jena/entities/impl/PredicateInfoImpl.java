@@ -125,11 +125,6 @@ public class PredicateInfoImpl implements PredicateInfo {
         return initial;
     }
 
-    public static boolean isCollection(final Class<?> clazz) {
-        return (clazz != null)
-                && (Iterator.class.isAssignableFrom( clazz ) || Collection.class.isAssignableFrom( clazz ));
-    }
-
     /**
      * if A is a collection b
      *
@@ -138,7 +133,7 @@ public class PredicateInfoImpl implements PredicateInfo {
      * @return
      */
     private static Class<?> replaceCollection(final Class<?> a, final Class<?> b) {
-        return PredicateInfoImpl.isCollection( a ) ? b : a;
+        return ClassUtils.isCollection( a ) ? b : a;
     }
 
     /**
@@ -185,11 +180,11 @@ public class PredicateInfoImpl implements PredicateInfo {
         Class<?> tempEnclosedType = void.class;
         switch (actionType) {
         case SETTER:
-            tempEnclosedType = PredicateInfoImpl.isCollection( tempArgumentType ) ? predicate.type()
+            tempEnclosedType = ClassUtils.isCollection( tempArgumentType ) ? predicate.type()
                     : (action.hasArgumentAnnotation( URI.class ) ? URI.class : void.class);
             break;
         case GETTER:
-            tempEnclosedType = PredicateInfoImpl.isCollection( tempReturnType ) ? predicate.type()
+            tempEnclosedType = ClassUtils.isCollection( tempReturnType ) ? predicate.type()
                     : (action.hasMethodTypeAnnotation( URI.class ) ? URI.class : void.class);
             break;
         default:
@@ -220,7 +215,7 @@ public class PredicateInfoImpl implements PredicateInfo {
         enclosedType = pi.getEnclosedType();
         methodName = pi.getMethodName();
         objectHandler = pi.getObjectHandler();
-        predicate = new EffectivePredicate( pi.getPredicate() );
+        predicate = pi.getPredicate().copy();
         property = ResourceFactory.createProperty( predicate.namespace() + predicate.name() );
         returnType = pi.getReturnType();
     }

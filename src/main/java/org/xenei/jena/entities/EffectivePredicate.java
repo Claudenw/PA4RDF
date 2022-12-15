@@ -29,6 +29,7 @@ import org.xenei.jena.entities.annotations.Predicate;
 import org.xenei.jena.entities.annotations.Subject;
 import org.xenei.jena.entities.annotations.URI;
 import org.xenei.jena.entities.impl.ActionType;
+import org.xenei.jena.entities.impl.ClassUtils;
 
 /**
  * An class that mimics the Predicate annotation but allows processing to modify
@@ -53,17 +54,6 @@ public class EffectivePredicate {
     }
 
     /**
-     * Constructs an effective predicate as a copy of the argument.
-     *
-     * @param ep
-     *            the predicate to copy.
-     */
-    public EffectivePredicate(final EffectivePredicate ep) {
-        this();
-        merge( ep );
-    }
-
-    /**
      * Constructs an effective predicate by parsing the method and its
      * annotations.
      *
@@ -71,75 +61,96 @@ public class EffectivePredicate {
      *            the method to parse.
      */
     public EffectivePredicate(final Method method) {
-        if (method != null) {
-            if (method.getParameterCount() > 0) {
-                for (final Annotation a : method.getParameterAnnotations()[0]) {
-                    if (a instanceof URI) {
-                        type = URI.class;
-                    }
-                }
-            }
-            /*
-             * if (URI.class.equals( predicate.type() )) { tempReturnType =
-             * URI.class; } else { if (isCollection(returnType)) {
-             * tempReturnType = predicate.type(); } else { tempEnclosedType =
-             * returnType; } }
-             */
-            final ActionType actionType = ActionType.parse( method.getName() );
-            if (type == null) {
-                type = actionType.predicateClass( method );
-            }
-            final Subject s = method.getDeclaringClass().getAnnotation( Subject.class );
-            if (s != null) {
-                namespace = s.namespace();
-            }
-            final Predicate p = method.getAnnotation( Predicate.class );
-            if (p != null) {
-                merge( p );
-                if (StringUtils.isNotBlank( p.postExec() )) {
-                    final String mName = p.postExec().trim();
-                    try {
-                        final Class<?> argType = actionType.predicateClass( method );
-                        if (argType == null) {
-                            throw new IllegalArgumentException( String.format( "%s is not an Action method", method ) );
-                        }
-                        final Method peMethod = method.getDeclaringClass().getMethod( mName, argType );
-                        if (argType.equals( peMethod.getReturnType() )) {
-                            addPostExec( peMethod );
-                        } else {
-                            throw new RuntimeException(
-                                    String.format( "%s does not return its parameter type", peMethod ) );
-                        }
-                    } catch (final NoSuchMethodException e) {
-                        throw new RuntimeException( "Error parsing predicate annotation", e );
-                    } catch (final SecurityException e) {
-                        throw new RuntimeException( "Error parsing predicate annotation", e );
-                    } catch (final IllegalArgumentException e) {
-                        throw new RuntimeException( "Error parsing predicate annotation action type", e );
-                    }
-                }
-            }
-            if (StringUtils.isBlank( name )) {
-                try {
-                    setName( actionType.extractName( method.getName() ) );
-                } catch (final IllegalArgumentException e) {
-                    // expected when not an action method.
+
+        /* lower priority settings get done first */
+
+        // type based on argumnet/return type
+        final ActionType actionType = ActionType.parse( method.getName() );
+        
+        type = actionType.predicateClass( method );
+        if (ClassUtils.isCollection( type )) {
+            type = void.class;
+        }
+        
+        // method parameter annotation overrides argument/return type.
+        if (method.getParameterCount() > 0) {
+            for (final Annotation a : method.getParameterAnnotations()[0]) {
+                if (a instanceof URI) {
+                    type = URI.class;
                 }
             }
         }
+
+        // Subject annotation on class sets default namespace.
+        final Subject s = method.getDeclaringClass().getAnnotation( Subject.class );
+        if (s != null) {
+            namespace = s.namespace();
+        }
+
+        // if there is a predicate it sets the values
+        final Predicate predicate = method.getAnnotation( Predicate.class );
+        // set upcase before name
+        if (predicate != null) {
+            upcase = predicate.upcase();
+
+            if (StringUtils.isNotBlank( predicate.name() )) {
+                setName( predicate.name() );
+            }
+            if (StringUtils.isNotBlank( predicate.namespace() )) {
+                namespace = predicate.namespace();
+            }
+            if (StringUtils.isNotBlank( predicate.literalType() )) {
+                literalType = predicate.literalType();
+            }
+            emptyIsNull = predicate.emptyIsNull();
+
+            impl = predicate.impl();
+
+            if (void.class != predicate.type()) {
+                type = predicate.type();
+            }
+            if (StringUtils.isNotBlank( predicate.postExec() )) {
+                final String mName = predicate.postExec().trim();
+                try {
+                    final Class<?> argType = actionType.predicateClass( method );
+                    if (argType == null) {
+                        throw new IllegalArgumentException( String.format( "%s is not an Action method", method ) );
+                    }
+                    final Method peMethod = method.getDeclaringClass().getMethod( mName, argType );
+                    if (argType.equals( peMethod.getReturnType() )) {
+                        addPostExec( peMethod );
+                    } else {
+                        throw new RuntimeException(
+                                String.format( "%s does not return its parameter type", peMethod ) );
+                    }
+                } catch (final NoSuchMethodException e) {
+                    throw new RuntimeException( "Error parsing predicate annotation", e );
+                } catch (final SecurityException e) {
+                    throw new RuntimeException( "Error parsing predicate annotation", e );
+                } catch (final IllegalArgumentException e) {
+                    throw new RuntimeException( "Error parsing predicate annotation action type", e );
+                }
+            }
+        }
+        if (StringUtils.isBlank( name )) {
+            setName( actionType.extractName( method.getName() ));
+        }
     }
 
-    /**
-     * Constructs an effective predicate from a Predicate annotation.
-     *
-     * @param p
-     *            the predicate to parse.
-     */
-    public EffectivePredicate(final Predicate p) {
-        this();
-        merge( p );
+    public EffectivePredicate copy() {
+        EffectivePredicate result = new EffectivePredicate();
+        result.upcase = this.upcase;
+        result.emptyIsNull = this.emptyIsNull;
+        result.impl = this.impl;
+        result.name = this.name;
+        result.namespace = this.namespace;
+        result.literalType = this.literalType;
+        result.type = this.type;
+        if (this.postExec != null) {
+            result.addPostExec( this.postExec );
+        }
+        return result;
     }
-
     /**
      * Add postExec processing to the predicate.
      *
@@ -233,40 +244,22 @@ public class EffectivePredicate {
      * @return this EffectivePredicate.
      */
     public EffectivePredicate merge(final EffectivePredicate predicate) {
-        if (predicate != null) {
-            upcase = predicate.upcase();
-            setName( StringUtils.isBlank( predicate.name() ) ? name : predicate.name() );
-            namespace = StringUtils.isBlank( predicate.namespace() ) ? namespace : predicate.namespace();
-            literalType = StringUtils.isBlank( predicate.literalType() ) ? literalType : predicate.literalType();
-            type = RDFNode.class.equals( predicate.type() ) ? type : predicate.type();
-            impl |= predicate.impl();
-            if (predicate.postExec != null) {
-                for (final Method m : predicate.postExec) {
-                    addPostExec( m );
-                }
-            }
+        if (predicate == null) {
+            return this.copy();
         }
-        return this;
-    }
-
-    /**
-     * Merges a Predicate into this one.
-     *
-     * @param predicate
-     *            the predicate to merge.
-     * @return this EffectivePredicate.
-     */
-    public EffectivePredicate merge(final Predicate predicate) {
-        if (predicate != null) {
-            upcase = predicate.upcase();
-            setName( StringUtils.isBlank( predicate.name() ) ? name : predicate.name() );
-            namespace = StringUtils.isBlank( predicate.namespace() ) ? namespace : predicate.namespace();
-            literalType = StringUtils.isBlank( predicate.literalType() ) ? literalType : predicate.literalType();
-            type = void.class.equals( predicate.type() ) ? type : predicate.type();
-            emptyIsNull = predicate.emptyIsNull();
-            impl |= predicate.impl();
+        EffectivePredicate result = new EffectivePredicate();
+        result.upcase = this.upcase || predicate.upcase;
+        result.impl = this.impl || predicate.impl;
+        result.emptyIsNull = this.emptyIsNull;
+        result.name =  StringUtils.isNotBlank( this.name ) ? this.name : predicate.name;
+        result.namespace =  StringUtils.isNotBlank(this.namespace) ? this.namespace : predicate.namespace;
+        result.literalType = StringUtils.isNotBlank(this.literalType) ? this.literalType : predicate.literalType;
+        result.type = void.class.equals( this.type ) ? predicate.type : this.type;   
+        result.impl = this.impl;
+        if (this.postExec != null) {
+            result.addPostExec(this.postExec);
         }
-        return this;
+        return result;
     }
 
     /**

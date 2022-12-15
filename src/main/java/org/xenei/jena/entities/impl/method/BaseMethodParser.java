@@ -73,11 +73,10 @@ public abstract class BaseMethodParser {
 
                     try {
                         final Action action = new Action( method );
-                        final EffectivePredicate ep = new EffectivePredicate( predicate );
+                        final EffectivePredicate ep = new EffectivePredicate( method ).merge( predicate );
                         if (Modifier.isAbstract( method.getModifiers() )) {
                             asAbstractMethodParser().parse( action, ep );
                         } else {
-                            ep.merge( method.getAnnotation( Predicate.class ) );
                             if (ep.impl()) {
                                 asImplMethodParser().parse( action, ep );
                             }
@@ -118,7 +117,7 @@ public abstract class BaseMethodParser {
 
     protected boolean isMultiAdd(final String nameSuffix) {
         return WrappedIterator.create( ActionType.SETTER.createNames( nameSuffix ) )
-                .filterKeep( n -> addCount.get( n ) != null ).hasNext();
+                .filterKeep( n -> { Integer i = addCount.get( n ); return i != null && i>1;}).hasNext();
     }
 
     protected List<Method> getSetterMethods(final String nameSuffix) {

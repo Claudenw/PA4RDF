@@ -32,9 +32,8 @@ public class Action {
     private boolean deriveMultiple(final ActionType actionType, final Method method) {
         switch (actionType) {
         case GETTER:
-            return Iterator.class.isAssignableFrom( method.getReturnType() )
-                    || Collection.class.isAssignableFrom( method.getReturnType() ) || method.getReturnType().isArray();
-
+            return ClassUtils.isCollection( method.getReturnType() );
+            
         case SETTER:
             return method.getName().startsWith( "add" );
 
@@ -60,15 +59,19 @@ public class Action {
     }
 
     public boolean hasArgumentAnnotation(final Class<?> ann) {
+        return getArgumentAnnotation(ann) != null;
+    }
+    
+    public <T> T getArgumentAnnotation(final Class<T> ann) {
         if (method.getParameterCount() > 0) {
             final Annotation[] annotations = method.getParameterAnnotations()[0];
             for (final Annotation a : annotations) {
                 if (a.annotationType().isAssignableFrom( ann )) {
-                    return true;
+                    return ann.cast( a );
                 }
             }
         }
-        return false;
+        return null;
     }
 
     public boolean hasMethodTypeAnnotation(final Class<?> ann) {
@@ -76,6 +79,7 @@ public class Action {
         return p == null ? false : p.type().isAssignableFrom( ann );
     }
 
+    
     public Class<?> getArgument() {
         return voidOrClass( method.getParameterCount() > 0 ? method.getParameterTypes()[0] : null );
     }

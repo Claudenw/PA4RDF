@@ -7,6 +7,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
@@ -121,5 +122,12 @@ public class ClassUtils {
         if (!clazz.isInterface()) {
             throw new NotInterfaceException( clazz );
         }
+    }
+
+    public static boolean isCollection(final Class<?> clazz) {
+        return (clazz != null)
+                && (Iterator.class.isAssignableFrom( clazz ) 
+                        || Collection.class.isAssignableFrom( clazz ))
+                || clazz.isArray();
     }
 }

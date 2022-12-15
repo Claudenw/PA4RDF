@@ -7,6 +7,7 @@ import org.xenei.jena.entities.PredicateInfo;
 import org.xenei.jena.entities.annotations.URI;
 import org.xenei.jena.entities.exceptions.MissingAnnotationException;
 import org.xenei.jena.entities.impl.Action;
+import org.xenei.jena.entities.impl.ClassUtils;
 import org.xenei.jena.entities.impl.PredicateInfoImpl;
 import org.xenei.jena.entities.impl.TypeChecker;
 
@@ -34,7 +35,6 @@ public class AbstractMethodParser extends BaseMethodParser {
         switch (action.actionType) {
         case SETTER:
             parseSetter( action, predicate );
-
             break;
 
         case EXISTENTIAL:
@@ -65,14 +65,14 @@ public class AbstractMethodParser extends BaseMethodParser {
         }
     }
 
-    private void parseGetter(final Action action, final EffectivePredicate superPredicate)
+    private void parseGetter(final Action action, final EffectivePredicate predicate)
             throws MissingAnnotationException {
         // predicate for getter method includes predicate info for setter
         // method.
         final String actionName = action.name();
-        final EffectivePredicate predicate = new EffectivePredicate( action.method ).merge( superPredicate );
+        //final EffectivePredicate predicate = new EffectivePredicate( action.method ).merge( superPredicate );
         // ExtendedIterator or Collection return type
-        if (PredicateInfoImpl.isCollection( action.method.getReturnType() )) {
+        if (action.isMultiple) {
             if (!isMultiAdd( actionName )) {
                 // returning a collection and we have a single add method.
                 // so set the return type if not set.
