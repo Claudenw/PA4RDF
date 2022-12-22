@@ -9,7 +9,9 @@ import java.util.Queue;
 import java.util.Set;
 
 import org.xenei.jena.entities.EffectivePredicate;
+import org.xenei.jena.entities.EntityManagerFactory;
 import org.xenei.jena.entities.PredicateInfo;
+import org.xenei.jena.entities.SubjectInfo;
 import org.xenei.jena.entities.exceptions.MissingAnnotationException;
 import org.xenei.jena.entities.impl.Action;
 import org.xenei.jena.entities.impl.PredicateInfoImpl;
@@ -44,11 +46,8 @@ class ImplMethodParser extends BaseMethodParser {
 
     void parse(final Action action, final EffectivePredicate predicate) throws MissingAnnotationException {
 
-        Method antecedent = ImplMethodParser.findAntecedentMethod( action.method );
-        if (antecedent == null) {
-            return;
-        }
-        PredicateInfo antecedentPI = parse( antecedent );
+        Method antecedent = action.method;
+        PredicateInfo antecedentPI = null;
 
         while ((antecedentPI == null) && (antecedent != null)) {
 
@@ -56,14 +55,20 @@ class ImplMethodParser extends BaseMethodParser {
             if (antecedent == null) {
                 return;
             }
-            antecedentPI = parse( antecedent );
+            final SubjectInfo info = EntityManagerFactory.getEntityManager()
+                    .getSubjectInfo( antecedent.getDeclaringClass() );
+            antecedentPI = info.getPredicateInfo( antecedent );
         }
-        predicate.merge( antecedentPI.getPredicate() );
 
-        // PredicateInfoImpl pi = new PredicateInfoImpl( antecedentPI, method,
-        // predicate );
-
-        final PredicateInfoImpl pi = new PredicateInfoImpl( predicate, action );
+        final PredicateInfoImpl pi = new PredicateInfoImpl( predicate.merge( antecedentPI.getPredicate() ), action );
         subjectInfo.add( action.method, pi );
+        switch (action.actionType) {
+        case GETTER:
+        case SETTER:
+            processAssociatedMethods( pi, action );
+            break;
+        default:
+            break;
+        }
     }
 }

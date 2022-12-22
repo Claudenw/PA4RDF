@@ -143,14 +143,16 @@ public class SingleValueObjectTest {
         pi = methodParser.parse( method );
         PredicateInfoImplTest.assertValues( pi, ActionType.SETTER, void.class, "setU", RDFNode.class,
                 ResourceHandler.class, "ResourceHandler", expectedProperty, void.class );
-        EffectivePredicateTest.assertValues( pi.getPredicate(), false, false, "", "u", namespace, RDFNode.class, false );
+        EffectivePredicateTest.assertValues( pi.getPredicate(), false, false, "", "u", namespace, RDFNode.class,
+                false );
         Assertions.assertNotNull( subjectInfo.getPredicateInfo( method ) );
 
         method = SingleValueObjectInterface.class.getMethod( "getU" );
         pi = methodParser.parse( method );
         PredicateInfoImplTest.assertValues( pi, ActionType.GETTER, RDFNode.class, "getU", void.class,
                 ResourceHandler.class, "ResourceHandler", expectedProperty, void.class );
-        EffectivePredicateTest.assertValues( pi.getPredicate(), false, false, "", "u", namespace, RDFNode.class, false );
+        EffectivePredicateTest.assertValues( pi.getPredicate(), false, false, "", "u", namespace, RDFNode.class,
+                false );
         Assertions.assertNotNull( subjectInfo.getPredicateInfo( method ) );
 
     }

@@ -171,4 +171,9 @@ public class SubjectInfoImpl implements SubjectInfo {
     public Subject getSubject() {
         return implementedClass.getAnnotation( Subject.class );
     }
+
+    @Override
+    public String toString() {
+        return String.format( "SubjectInfo: %s", implementedClass.getCanonicalName() );
+    }
 }

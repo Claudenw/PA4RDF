@@ -7,7 +7,6 @@ import org.xenei.jena.entities.PredicateInfo;
 import org.xenei.jena.entities.annotations.URI;
 import org.xenei.jena.entities.exceptions.MissingAnnotationException;
 import org.xenei.jena.entities.impl.Action;
-import org.xenei.jena.entities.impl.ClassUtils;
 import org.xenei.jena.entities.impl.PredicateInfoImpl;
 import org.xenei.jena.entities.impl.TypeChecker;
 
@@ -70,7 +69,8 @@ public class AbstractMethodParser extends BaseMethodParser {
         // predicate for getter method includes predicate info for setter
         // method.
         final String actionName = action.name();
-        //final EffectivePredicate predicate = new EffectivePredicate( action.method ).merge( superPredicate );
+        // final EffectivePredicate predicate = new EffectivePredicate(
+        // action.method ).merge( superPredicate );
         // ExtendedIterator or Collection return type
         if (action.isMultiple) {
             if (!isMultiAdd( actionName )) {
@@ -123,12 +123,11 @@ public class AbstractMethodParser extends BaseMethodParser {
      * @param multiAdd
      * @throws MissingAnnotationException
      */
-    private void parseSetter(final Action action, final EffectivePredicate superPredicate)
+    private void parseSetter(final Action action, final EffectivePredicate predicate)
             throws MissingAnnotationException {
 
         final Class<?> parms[] = action.method.getParameterTypes();
         if (parms.length == 1) {
-            final EffectivePredicate predicate = new EffectivePredicate( action.method ).merge( superPredicate );
             final PredicateInfoImpl pi = new PredicateInfoImpl( predicate, action );
             subjectInfo.add( action.method, pi );
 
@@ -136,17 +135,5 @@ public class AbstractMethodParser extends BaseMethodParser {
             predicate.setLiteralType( "" );
             processAssociatedMethods( pi, action );
         }
-    }
-
-    private void processAssociatedMethods(final PredicateInfo pi, final Action action) {
-        final java.util.function.Predicate<Method> p = m -> parseStack.contains( m );
-        p.or( m -> subjectInfo.getPredicateInfo( m ) != null );
-        action.getAssociatedActions( p ).forEach( a -> {
-            try {
-                parse( a.method, pi.getPredicate() );
-            } catch (final MissingAnnotationException e) {
-                log.error( a.method.toString() + " missing required annotation", e );
-            }
-        } );
     }
 }

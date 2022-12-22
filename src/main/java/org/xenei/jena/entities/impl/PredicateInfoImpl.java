@@ -268,7 +268,14 @@ public class PredicateInfoImpl implements PredicateInfo {
             break;
 
         case REMOVER:
-            return new VoidHandler();
+            if (!action.isMultiple) {
+                return new VoidHandler();
+            }
+            if (action.hasMethodTypeAnnotation( URI.class )) {
+                return new UriHandler();
+            }
+            dataType = action.getArgument();
+            break;
 
         case GETTER:
             if (action.hasMethodTypeAnnotation( URI.class )) {

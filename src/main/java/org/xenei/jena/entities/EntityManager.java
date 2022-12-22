@@ -56,7 +56,7 @@ public interface EntityManager {
      * @throws IllegalArgumentException
      *             if clazz is not properly annotated with Subject annotations.
      */
-    public SubjectInfo getSubjectInfo(Class<?> clazz) throws NotInterfaceException;
+    public SubjectInfo getSubjectInfo(Class<?> clazz);
 
     /**
      * Determine if target has all the properties required in the Subject( type

@@ -64,65 +64,89 @@ public class EffectivePredicateTest {
         return TestingInterface.class.getMethod( name );
     }
 
-//    @Test
-//    public void mergePredicateTest() {
-//        final EffectivePredicate ep = new EffectivePredicate();
-//
-//        ep.merge( makePred( false, false, "", "", "http://example.com", "", null, false ) );
-//        EffectivePredicateTest.assertValues( ep, false, false, "", "", "http://example.com", null, false );
-//
-//        ep.merge( makePred( false, false, "", "", "", "", Integer.class, false ) );
-//        EffectivePredicateTest.assertValues( ep, false, false, "", "", "http://example.com", Integer.class, false );
-//
-//        ep.merge( makePred( true, false, "", "", "", "", null, false ) );
-//        EffectivePredicateTest.assertValues( ep, true, false, "", "", "http://example.com", Integer.class, false );
-//
-//        ep.merge( makePred( false, true, "", "", "", "", null, false ) );
-//        EffectivePredicateTest.assertValues( ep, false, true, "", "", "http://example.com", Integer.class, false );
-//
-//        ep.merge( makePred( false, false, "", "name", "", "", null, false ) );
-//        EffectivePredicateTest.assertValues( ep, false, true, "", "name", "http://example.com", Integer.class, false );
-//
-//        ep.merge( makePred( false, false, "", "", "", "", null, true ) );
-//        EffectivePredicateTest.assertValues( ep, false, true, "", "Name", "http://example.com", Integer.class, true );
-//
-//        ep.merge( makePred( false, false, "", "", "", "SomeMethod", null, false ) );
-//        EffectivePredicateTest.assertValues( ep, false, true, "", "name", "http://example.com", Integer.class, false );
-//    }
-//
-//    @Test
-//    public void mergeEffectivePredicateTest() {
-//        EffectivePredicate tempEp;
-//        final EffectivePredicate ep = new EffectivePredicate();
-//
-//        tempEp = new EffectivePredicate( makePred( false, false, "", "", "http://example.com", "", null, false ) );
-//        ep.merge( tempEp );
-//        EffectivePredicateTest.assertValues( ep, false, false, "", "", "http://example.com", null, false );
-//
-//        tempEp = new EffectivePredicate( makePred( false, false, "", "", "", "", Integer.class, false ) );
-//        ep.merge( tempEp );
-//        EffectivePredicateTest.assertValues( ep, false, false, "", "", "http://example.com", Integer.class, false );
-//
-//        tempEp = new EffectivePredicate( makePred( true, false, "", "", "", "", null, false ) );
-//        ep.merge( tempEp );
-//        EffectivePredicateTest.assertValues( ep, false, false, "", "", "http://example.com", Integer.class, false );
-//
-//        tempEp = new EffectivePredicate( makePred( false, true, "", "", "", "", null, false ) );
-//        ep.merge( tempEp );
-//        EffectivePredicateTest.assertValues( ep, false, true, "", "", "http://example.com", Integer.class, false );
-//
-//        tempEp = new EffectivePredicate( makePred( false, false, "", "name", "", "", null, false ) );
-//        ep.merge( tempEp );
-//        EffectivePredicateTest.assertValues( ep, false, true, "", "name", "http://example.com", Integer.class, false );
-//
-//        tempEp = new EffectivePredicate( makePred( false, false, "", "", "", "", null, true ) );
-//        ep.merge( tempEp );
-//        EffectivePredicateTest.assertValues( ep, false, true, "", "Name", "http://example.com", Integer.class, true );
-//
-//        tempEp = new EffectivePredicate( makePred( false, false, "", "", "", "SomeMethod", null, false ) );
-//        ep.merge( tempEp );
-//        EffectivePredicateTest.assertValues( ep, false, true, "", "name", "http://example.com", Integer.class, false );
-//    }
+    // @Test
+    // public void mergePredicateTest() {
+    // final EffectivePredicate ep = new EffectivePredicate();
+    //
+    // ep.merge( makePred( false, false, "", "", "http://example.com", "", null,
+    // false ) );
+    // EffectivePredicateTest.assertValues( ep, false, false, "", "",
+    // "http://example.com", null, false );
+    //
+    // ep.merge( makePred( false, false, "", "", "", "", Integer.class, false )
+    // );
+    // EffectivePredicateTest.assertValues( ep, false, false, "", "",
+    // "http://example.com", Integer.class, false );
+    //
+    // ep.merge( makePred( true, false, "", "", "", "", null, false ) );
+    // EffectivePredicateTest.assertValues( ep, true, false, "", "",
+    // "http://example.com", Integer.class, false );
+    //
+    // ep.merge( makePred( false, true, "", "", "", "", null, false ) );
+    // EffectivePredicateTest.assertValues( ep, false, true, "", "",
+    // "http://example.com", Integer.class, false );
+    //
+    // ep.merge( makePred( false, false, "", "name", "", "", null, false ) );
+    // EffectivePredicateTest.assertValues( ep, false, true, "", "name",
+    // "http://example.com", Integer.class, false );
+    //
+    // ep.merge( makePred( false, false, "", "", "", "", null, true ) );
+    // EffectivePredicateTest.assertValues( ep, false, true, "", "Name",
+    // "http://example.com", Integer.class, true );
+    //
+    // ep.merge( makePred( false, false, "", "", "", "SomeMethod", null, false )
+    // );
+    // EffectivePredicateTest.assertValues( ep, false, true, "", "name",
+    // "http://example.com", Integer.class, false );
+    // }
+    //
+    // @Test
+    // public void mergeEffectivePredicateTest() {
+    // EffectivePredicate tempEp;
+    // final EffectivePredicate ep = new EffectivePredicate();
+    //
+    // tempEp = new EffectivePredicate( makePred( false, false, "", "",
+    // "http://example.com", "", null, false ) );
+    // ep.merge( tempEp );
+    // EffectivePredicateTest.assertValues( ep, false, false, "", "",
+    // "http://example.com", null, false );
+    //
+    // tempEp = new EffectivePredicate( makePred( false, false, "", "", "", "",
+    // Integer.class, false ) );
+    // ep.merge( tempEp );
+    // EffectivePredicateTest.assertValues( ep, false, false, "", "",
+    // "http://example.com", Integer.class, false );
+    //
+    // tempEp = new EffectivePredicate( makePred( true, false, "", "", "", "",
+    // null, false ) );
+    // ep.merge( tempEp );
+    // EffectivePredicateTest.assertValues( ep, false, false, "", "",
+    // "http://example.com", Integer.class, false );
+    //
+    // tempEp = new EffectivePredicate( makePred( false, true, "", "", "", "",
+    // null, false ) );
+    // ep.merge( tempEp );
+    // EffectivePredicateTest.assertValues( ep, false, true, "", "",
+    // "http://example.com", Integer.class, false );
+    //
+    // tempEp = new EffectivePredicate( makePred( false, false, "", "name", "",
+    // "", null, false ) );
+    // ep.merge( tempEp );
+    // EffectivePredicateTest.assertValues( ep, false, true, "", "name",
+    // "http://example.com", Integer.class, false );
+    //
+    // tempEp = new EffectivePredicate( makePred( false, false, "", "", "", "",
+    // null, true ) );
+    // ep.merge( tempEp );
+    // EffectivePredicateTest.assertValues( ep, false, true, "", "Name",
+    // "http://example.com", Integer.class, true );
+    //
+    // tempEp = new EffectivePredicate( makePred( false, false, "", "", "",
+    // "SomeMethod", null, false ) );
+    // ep.merge( tempEp );
+    // EffectivePredicateTest.assertValues( ep, false, true, "", "name",
+    // "http://example.com", Integer.class, false );
+    // }
 
     @Test
     public void constructorFromMethodTests() throws Exception {
@@ -167,30 +191,44 @@ public class EffectivePredicateTest {
                 false );
     }
 
-//    @Test
-//    public void constructorFromPredicateTests() throws Exception {
-//        EffectivePredicate ep = new EffectivePredicate(
-//                makePred( false, false, "", "", "http://example.com", "", null, false ) );
-//        EffectivePredicateTest.assertValues( ep, false, false, "", "", "http://example.com", null, false );
-//
-//        ep = new EffectivePredicate( makePred( false, false, "", "", "", "", Integer.class, false ) );
-//        EffectivePredicateTest.assertValues( ep, false, false, "", "", "", Integer.class, false );
-//
-//        ep = new EffectivePredicate( makePred( true, false, "", "", "", "", null, false ) );
-//        EffectivePredicateTest.assertValues( ep, true, false, "", "", "", null, false );
-//
-//        ep = new EffectivePredicate( makePred( false, true, "", "", "", "", null, false ) );
-//        EffectivePredicateTest.assertValues( ep, false, true, "", "", "", null, false );
-//
-//        ep = new EffectivePredicate( makePred( false, false, "", "name", "", "", null, false ) );
-//        EffectivePredicateTest.assertValues( ep, false, false, "", "name", "", null, false );
-//
-//        ep = new EffectivePredicate( makePred( false, false, "", "", "", "", null, true ) );
-//        EffectivePredicateTest.assertValues( ep, false, false, "", "", "", null, true );
-//
-//        ep = new EffectivePredicate( makePred( false, false, "", "", "", "SomeMethod", null, false ) );
-//        EffectivePredicateTest.assertValues( ep, false, false, "", "", "", null, false );
-//    }
+    // @Test
+    // public void constructorFromPredicateTests() throws Exception {
+    // EffectivePredicate ep = new EffectivePredicate(
+    // makePred( false, false, "", "", "http://example.com", "", null, false )
+    // );
+    // EffectivePredicateTest.assertValues( ep, false, false, "", "",
+    // "http://example.com", null, false );
+    //
+    // ep = new EffectivePredicate( makePred( false, false, "", "", "", "",
+    // Integer.class, false ) );
+    // EffectivePredicateTest.assertValues( ep, false, false, "", "", "",
+    // Integer.class, false );
+    //
+    // ep = new EffectivePredicate( makePred( true, false, "", "", "", "", null,
+    // false ) );
+    // EffectivePredicateTest.assertValues( ep, true, false, "", "", "", null,
+    // false );
+    //
+    // ep = new EffectivePredicate( makePred( false, true, "", "", "", "", null,
+    // false ) );
+    // EffectivePredicateTest.assertValues( ep, false, true, "", "", "", null,
+    // false );
+    //
+    // ep = new EffectivePredicate( makePred( false, false, "", "name", "", "",
+    // null, false ) );
+    // EffectivePredicateTest.assertValues( ep, false, false, "", "name", "",
+    // null, false );
+    //
+    // ep = new EffectivePredicate( makePred( false, false, "", "", "", "",
+    // null, true ) );
+    // EffectivePredicateTest.assertValues( ep, false, false, "", "", "", null,
+    // true );
+    //
+    // ep = new EffectivePredicate( makePred( false, false, "", "", "",
+    // "SomeMethod", null, false ) );
+    // EffectivePredicateTest.assertValues( ep, false, false, "", "", "", null,
+    // false );
+    // }
 
     interface TestingInterface {
         int getSimple();

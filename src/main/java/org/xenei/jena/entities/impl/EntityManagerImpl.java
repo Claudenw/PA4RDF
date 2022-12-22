@@ -124,7 +124,7 @@ public class EntityManagerImpl implements EntityManager {
      * )
      */
     @Override
-    public SubjectInfo getSubjectInfo(final Class<?> clazz) throws NotInterfaceException {
+    public SubjectInfo getSubjectInfo(final Class<?> clazz) {
         try {
             return factory.parse( clazz );
         } catch (final MissingAnnotationException e) {

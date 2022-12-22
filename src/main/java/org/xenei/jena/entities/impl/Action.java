@@ -3,8 +3,6 @@ package org.xenei.jena.entities.impl;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.Arrays;
-import java.util.Collection;
-import java.util.Iterator;
 import java.util.Set;
 import java.util.function.Function;
 
@@ -33,7 +31,7 @@ public class Action {
         switch (actionType) {
         case GETTER:
             return ClassUtils.isCollection( method.getReturnType() );
-            
+
         case SETTER:
             return method.getName().startsWith( "add" );
 
@@ -50,6 +48,11 @@ public class Action {
         this.method = method;
     }
 
+    /**
+     * Returns the local portion of the method name.
+     *
+     * @return the local name, the part after the action prefix.
+     */
     public String name() {
         return actionType.extractName( method.getName() );
     }
@@ -59,9 +62,9 @@ public class Action {
     }
 
     public boolean hasArgumentAnnotation(final Class<?> ann) {
-        return getArgumentAnnotation(ann) != null;
+        return getArgumentAnnotation( ann ) != null;
     }
-    
+
     public <T> T getArgumentAnnotation(final Class<T> ann) {
         if (method.getParameterCount() > 0) {
             final Annotation[] annotations = method.getParameterAnnotations()[0];
@@ -79,7 +82,6 @@ public class Action {
         return p == null ? false : p.type().isAssignableFrom( ann );
     }
 
-    
     public Class<?> getArgument() {
         return voidOrClass( method.getParameterCount() > 0 ? method.getParameterTypes()[0] : null );
     }

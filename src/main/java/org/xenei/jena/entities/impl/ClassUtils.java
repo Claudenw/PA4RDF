@@ -125,9 +125,8 @@ public class ClassUtils {
     }
 
     public static boolean isCollection(final Class<?> clazz) {
-        return (clazz != null)
-                && (Iterator.class.isAssignableFrom( clazz ) 
-                        || Collection.class.isAssignableFrom( clazz ))
+        return ((clazz != null)
+                && (Iterator.class.isAssignableFrom( clazz ) || Collection.class.isAssignableFrom( clazz )))
                 || clazz.isArray();
     }
 }

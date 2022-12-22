@@ -34,8 +34,8 @@ public class SubjectInfoFactory {
      * @throws MissingAnnotationException
      * @throws NotInterfaceException
      */
-    public SubjectInfoImpl parse(final Class<?> clazz) throws MissingAnnotationException, NotInterfaceException {
-        ClassUtils.validateInterface( clazz );
+    public SubjectInfoImpl parse(final Class<?> clazz) throws MissingAnnotationException {
+        // ClassUtils.validateInterface( clazz );
         SubjectInfoImpl subjectInfo = classInfo.get( clazz );
 
         if (subjectInfo == null) {

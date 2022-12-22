@@ -89,8 +89,6 @@ public interface PredicateInfo {
 
     public EffectivePredicate getPredicate();
 
-    // public Class<?> getConcreteType();
-
     public Class<?> getArgumentType();
 
     public Class<?> getReturnType();

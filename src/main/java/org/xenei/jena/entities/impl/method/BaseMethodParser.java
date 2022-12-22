@@ -1,6 +1,5 @@
 package org.xenei.jena.entities.impl.method;
 
-import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.List;
@@ -14,7 +13,6 @@ import org.slf4j.Logger;
 import org.xenei.jena.entities.EffectivePredicate;
 import org.xenei.jena.entities.PredicateInfo;
 import org.xenei.jena.entities.annotations.Predicate;
-import org.xenei.jena.entities.annotations.URI;
 import org.xenei.jena.entities.exceptions.MissingAnnotationException;
 import org.xenei.jena.entities.impl.Action;
 import org.xenei.jena.entities.impl.ActionType;
@@ -38,7 +36,7 @@ public abstract class BaseMethodParser {
         this.log = log;
     }
 
-    BaseMethodParser(final BaseMethodParser other) {
+    protected BaseMethodParser(final BaseMethodParser other) {
         this( other.parseStack, other.subjectInfo, other.addCount, other.log );
     }
 
@@ -60,7 +58,8 @@ public abstract class BaseMethodParser {
         return parse( method, null );
     }
 
-    PredicateInfo parse(final Method method, final EffectivePredicate predicate) throws MissingAnnotationException {
+    protected PredicateInfo parse(final Method method, final EffectivePredicate predicate)
+            throws MissingAnnotationException {
         PredicateInfo pi = subjectInfo.getPredicateInfo( method );
 
         // only process if we havn't yet.
@@ -70,7 +69,7 @@ public abstract class BaseMethodParser {
                 // only process if we are not already processing
                 if (!parseStack.contains( method )) {
                     parseStack.push( method );
-
+                    log.debug( "parsing {}", method );
                     try {
                         final Action action = new Action( method );
                         final EffectivePredicate ep = new EffectivePredicate( method ).merge( predicate );
@@ -111,30 +110,18 @@ public abstract class BaseMethodParser {
         return implMethodParser;
     }
 
-    public Integer getAddCount(final Method method) {
-        return addCount.get( method.getName() );
-    }
-
     protected boolean isMultiAdd(final String nameSuffix) {
-        return WrappedIterator.create( ActionType.SETTER.createNames( nameSuffix ) )
-                .filterKeep( n -> { Integer i = addCount.get( n ); return i != null && i>1;}).hasNext();
+        return WrappedIterator.create( ActionType.SETTER.createNames( nameSuffix ) ).filterKeep( n -> {
+            final Integer i = addCount.get( n );
+            return (i != null) && (i > 1);
+        } ).hasNext();
     }
 
     protected List<Method> getSetterMethods(final String nameSuffix) {
-        // find the setter
         return Stream.of( subjectInfo.getImplementedClass().getMethods() )
-                .filter( m -> ActionType.SETTER.isA( m.getName() ) ).collect( Collectors.toList() );
-    }
-
-    protected boolean hasURIParameter(final Method m) {
-        if (m.getParameterAnnotations() != null) {
-            for (final Annotation a : m.getParameterAnnotations()[0]) {
-                if (a instanceof URI) {
-                    return true;
-                }
-            }
-        }
-        return false;
+                .filter( m -> ActionType.SETTER.isA( m.getName() ) )
+                .filter( m -> nameSuffix.equals( ActionType.SETTER.extractName( m.getName() ) ) )
+                .collect( Collectors.toList() );
     }
 
     /**
@@ -152,8 +139,19 @@ public abstract class BaseMethodParser {
         return retval;
     }
 
-    public void parseRemover(final Action action, final EffectivePredicate predicate) {
-        final EffectivePredicate ep = new EffectivePredicate( action.method ).merge( predicate );
-        subjectInfo.add( action.method, new PredicateInfoImpl( ep, action ) );
+    protected void parseRemover(final Action action, final EffectivePredicate predicate) {
+        subjectInfo.add( action.method, new PredicateInfoImpl( predicate, action ) );
+    }
+
+    protected void processAssociatedMethods(final PredicateInfo pi, final Action action) {
+        java.util.function.Predicate<Method> p = m -> parseStack.contains( m );
+        p = p.or( m -> subjectInfo.getPredicateInfo( m ) != null );
+        action.getAssociatedActions( p ).forEach( a -> {
+            try {
+                parse( a.method, pi.getPredicate() );
+            } catch (final MissingAnnotationException e) {
+                log.error( a.method.toString() + " missing required annotation", e );
+            }
+        } );
     }
 }

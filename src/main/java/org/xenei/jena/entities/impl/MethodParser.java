@@ -42,7 +42,7 @@ public class MethodParser extends BaseMethodParser {
                 LoggerFactory.getLogger( MethodParser.class ) );
     }
 
-    private static Map<String, Integer> countAdders(final Method[] methods) {
+    public static Map<String, Integer> countAdders(final Method[] methods) {
         final Map<String, Integer> addCount = new HashMap<>();
         for (final Method m : methods) {
             if (ActionType.SETTER.isA( m.getName() ) && (m.getParameterCount() == 1)) {

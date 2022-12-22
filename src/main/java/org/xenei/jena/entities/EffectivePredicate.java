@@ -66,12 +66,12 @@ public class EffectivePredicate {
 
         // type based on argumnet/return type
         final ActionType actionType = ActionType.parse( method.getName() );
-        
+
         type = actionType.predicateClass( method );
         if (ClassUtils.isCollection( type )) {
             type = void.class;
         }
-        
+
         // method parameter annotation overrides argument/return type.
         if (method.getParameterCount() > 0) {
             for (final Annotation a : method.getParameterAnnotations()[0]) {
@@ -133,24 +133,25 @@ public class EffectivePredicate {
             }
         }
         if (StringUtils.isBlank( name )) {
-            setName( actionType.extractName( method.getName() ));
+            setName( actionType.extractName( method.getName() ) );
         }
     }
 
     public EffectivePredicate copy() {
-        EffectivePredicate result = new EffectivePredicate();
-        result.upcase = this.upcase;
-        result.emptyIsNull = this.emptyIsNull;
-        result.impl = this.impl;
-        result.name = this.name;
-        result.namespace = this.namespace;
-        result.literalType = this.literalType;
-        result.type = this.type;
-        if (this.postExec != null) {
-            result.addPostExec( this.postExec );
+        final EffectivePredicate result = new EffectivePredicate();
+        result.upcase = upcase;
+        result.emptyIsNull = emptyIsNull;
+        result.impl = impl;
+        result.name = name;
+        result.namespace = namespace;
+        result.literalType = literalType;
+        result.type = type;
+        if (postExec != null) {
+            result.addPostExec( postExec );
         }
         return result;
     }
+
     /**
      * Add postExec processing to the predicate.
      *
@@ -245,19 +246,19 @@ public class EffectivePredicate {
      */
     public EffectivePredicate merge(final EffectivePredicate predicate) {
         if (predicate == null) {
-            return this.copy();
+            return copy();
         }
-        EffectivePredicate result = new EffectivePredicate();
-        result.upcase = this.upcase || predicate.upcase;
-        result.impl = this.impl || predicate.impl;
-        result.emptyIsNull = this.emptyIsNull;
-        result.name =  StringUtils.isNotBlank( this.name ) ? this.name : predicate.name;
-        result.namespace =  StringUtils.isNotBlank(this.namespace) ? this.namespace : predicate.namespace;
-        result.literalType = StringUtils.isNotBlank(this.literalType) ? this.literalType : predicate.literalType;
-        result.type = void.class.equals( this.type ) ? predicate.type : this.type;   
-        result.impl = this.impl;
-        if (this.postExec != null) {
-            result.addPostExec(this.postExec);
+        final EffectivePredicate result = new EffectivePredicate();
+        result.upcase = upcase || predicate.upcase;
+        result.impl = impl || predicate.impl;
+        result.emptyIsNull = emptyIsNull;
+        result.name = StringUtils.isNotBlank( name ) ? name : predicate.name;
+        result.namespace = StringUtils.isNotBlank( namespace ) ? namespace : predicate.namespace;
+        result.literalType = StringUtils.isNotBlank( literalType ) ? literalType : predicate.literalType;
+        result.type = void.class.equals( type ) ? predicate.type : type;
+        result.impl = impl;
+        if (postExec != null) {
+            result.addPostExec( postExec );
         }
         return result;
     }
