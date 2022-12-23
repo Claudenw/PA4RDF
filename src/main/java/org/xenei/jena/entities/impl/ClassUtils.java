@@ -118,6 +118,14 @@ public class ClassUtils {
         return (clazz == null) || clazz.equals( void.class );
     }
 
+    /**
+     * Validates class is an interface.
+     *
+     * @param clazz
+     *            the class to verify.
+     * @throws NotInterfaceException
+     *             on non-interface
+     */
     public static void validateInterface(final Class<?> clazz) throws NotInterfaceException {
         if (!clazz.isInterface()) {
             throw new NotInterfaceException( clazz );

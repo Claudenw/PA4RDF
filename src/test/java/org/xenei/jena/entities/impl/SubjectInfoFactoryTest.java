@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import org.xenei.jena.entities.SubjectInfo;
 import org.xenei.jena.entities.testing.bad.BadAddersInterface;
 import org.xenei.jena.entities.testing.iface.SingleValuePrimitiveInterface;
+import org.xenei.jena.entities.testing.tClass.SimpleTestImpl;
 
 public class SubjectInfoFactoryTest {
 
@@ -53,5 +54,17 @@ public class SubjectInfoFactoryTest {
         Assertions.assertNotNull( subjectInfo.getPredicateInfo( "setBool", boolean.class ) );
         Assertions.assertNotNull( subjectInfo.getPredicateInfo( "removeBool", void.class ) );
         Assertions.assertNotNull( subjectInfo.getPredicateInfo( "hasBool", void.class ) );
+    }
+
+    @Test
+    public void parseSimpleTestImplTest() throws Exception {
+        final SubjectInfoFactory factory = new SubjectInfoFactory();
+        final SubjectInfo subjectInfo = factory.parse( SimpleTestImpl.class );
+        Assertions.assertEquals( SimpleTestImpl.class, subjectInfo.getImplementedClass() );
+
+        Assertions.assertNotNull( subjectInfo.getPredicateInfo( "getX", String.class ) );
+        Assertions.assertNotNull( subjectInfo.getPredicateInfo( "hasX", void.class ) );
+        Assertions.assertNotNull( subjectInfo.getPredicateInfo( "setX", String.class ) );
+        Assertions.assertNotNull( subjectInfo.getPredicateInfo( "removeX", void.class ) );
     }
 }

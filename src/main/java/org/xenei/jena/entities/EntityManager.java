@@ -127,20 +127,20 @@ public interface EntityManager {
      * @see #isInstance(Object, Class)
      * @param source
      *            Must either implement Resource or ResourceWrapper interfaces.
-     * @param primaryClass
+     * @param result
      *            The class of the object to be returned.
-     * @param secondaryClasses
-     *            A lost of other classes that are implemented.
+     * @param interfaces
+     *            A list of other classes that are implemented.
      * @param <T>
      *            the instance type to return.
-     * @return primaryClass instance that also implements ResourceWrapper.
+     * @return result instance that also implements ResourceWrapper.
      * @throws MissingAnnotationException
      *             if any of the classes do not have Subject annotations.
      * @throws NotInterfaceException
      * @throws IllegalArgumentException
      *             if source implements neither Resource nor ResourceWrapper.
      */
-    public <T> T make(Object source, Class<T> primaryClass, Class<?>... secondaryClasses)
+    public <T> T make(Object source, Class<T> result, Class<?>... interfaces)
             throws MissingAnnotationException, NotInterfaceException;
 
     /**
@@ -151,19 +151,19 @@ public interface EntityManager {
      * @see #isInstance(Object, Class)
      * @param source
      *            Must either implement Resource or ResourceWrapper interfaces.
-     * @param primaryClass
+     * @param result
      *            The class of the object to be returned.
-     * @param secondaryClasses
+     * @param interfaces
      *            A list of other classes that are implemented.
      * @param <T>
      *            the instance type to return.
-     * @return primaryClass instance that also implements ResourceWrapper.
+     * @return result instance that also implements ResourceWrapper.
      * @throws MissingAnnotationException
      *             if any of the classes do not have Subject annotations.
      * @throws IllegalArgumentException
      *             if source implements neither Resource nor ResourceWrapper.
      */
-    public <T> T read(Object source, Class<T> primaryClass, Class<?>... secondaryClasses)
+    public <T> T read(Object source, Class<T> result, Class<?>... interfaces)
             throws MissingAnnotationException, NotInterfaceException, IllegalArgumentException;
 
     /**

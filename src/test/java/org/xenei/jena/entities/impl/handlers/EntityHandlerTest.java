@@ -59,7 +59,7 @@ public class EntityHandlerTest implements HandlerTestInterface {
         Assertions.assertNotNull( o );
         Assertions.assertTrue( o instanceof TwoValueSimpleInterface );
         final TwoValueSimpleInterface a2 = (TwoValueSimpleInterface) o;
-        Assertions.assertEquals( instance, a2 );
+        Assertions.assertEquals( a2, instance );
     }
 
     @Test

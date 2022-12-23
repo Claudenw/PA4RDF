@@ -15,17 +15,15 @@
 package org.xenei.jena.entities.impl;
 
 import org.apache.jena.rdf.model.Resource;
+import org.apache.jena.shared.NotFoundException;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
-
 import org.apache.commons.proxy.exception.InvokerException;
 import org.xenei.jena.entities.EntityManager;
 import org.xenei.jena.entities.PredicateInfo;
 import org.xenei.jena.entities.ResourceWrapper;
 import org.xenei.jena.entities.SubjectInfo;
-import org.xenei.jena.entities.annotations.Predicate;
 
 /**
  * Implements the invoker that the proxy uses.
@@ -34,9 +32,11 @@ import org.xenei.jena.entities.annotations.Predicate;
  * ResourceWrapper.getResource() method.
  */
 public class ResourceEntityProxy implements InvocationHandler {
+    private final Object source;
     private final Resource resource;
     private final SubjectInfo subjectInfo;
     private final EntityManager entityManager;
+    private final SubjectInfo sourceSubjectInfo;
 
     /**
      * The constructor
@@ -48,11 +48,13 @@ public class ResourceEntityProxy implements InvocationHandler {
      * @param subjectInfo
      *            The subjectInfo for the resource.
      */
-    public ResourceEntityProxy(final EntityManager entityManager, final Resource resource,
-            final SubjectInfo subjectInfo) {
-        this.resource = resource;
+    public ResourceEntityProxy(final EntityManager entityManager, final Object source, final SubjectInfo subjectInfo,
+            final SubjectInfo sourceSubjectInfo) {
+        this.source = source;
+        resource = ResourceWrapper.getResource( source );
         this.entityManager = entityManager;
         this.subjectInfo = subjectInfo;
+        this.sourceSubjectInfo = sourceSubjectInfo;
     }
 
     /**
@@ -60,9 +62,11 @@ public class ResourceEntityProxy implements InvocationHandler {
      */
     @Override
     public Object invoke(final Object self, final Method thisMethod, final Object[] args) throws Throwable {
-        // handle the cases where the method is not abstract
-        if (!Modifier.isAbstract( thisMethod.getModifiers() )) {
-            return interceptNonAbstract( self, thisMethod, args );
+        final PredicateInfo pi = sourceSubjectInfo == null ? null : sourceSubjectInfo.getPredicateInfo( thisMethod );
+        if (pi != null) {
+            if (pi.getPredicate().impl()) {
+                return interceptNonAbstract( self, thisMethod, args, pi );
+            }
         }
         return interceptAnnotated( self, thisMethod, args );
     }
@@ -71,12 +75,16 @@ public class ResourceEntityProxy implements InvocationHandler {
             throws Throwable {
         // handle the resource wrapper method call.
         // if (ResourceEntityProxy.GET_RESOURCE.equals(m))
+        // Pair<Boolean,Object> result = execute( self, thisMethod, args);
+        // if (result.getLeft() ) {
+        // return result.getRight();
+        // }
         if (thisMethod.getName().equals( "getResource" ) && (thisMethod.getParameterTypes().length == 0)
                 && (thisMethod.getReturnType() == Resource.class)) {
             return resource;
         }
 
-        SubjectInfo workingInfo = subjectInfo;
+        SubjectInfo workingInfo = null;
         if (thisMethod.getDeclaringClass() != subjectInfo.getImplementedClass()) {
             // handle the case where T implements Resource and the method is
             // declared in the Resource interface.
@@ -86,18 +94,25 @@ public class ResourceEntityProxy implements InvocationHandler {
             }
             workingInfo = entityManager.getSubjectInfo( thisMethod.getDeclaringClass() );
         }
+        workingInfo = workingInfo == null ? subjectInfo : workingInfo;
+
         final PredicateInfo pi = workingInfo.getPredicateInfo( thisMethod );
 
         if (pi == null) {
-            if (TypeChecker.canBeSetFrom( workingInfo.getImplementedClass(), subjectInfo.getImplementedClass() )
-                    && TypeChecker.canBeSetFrom( workingInfo.getImplementedClass(), Resource.class )) {
-                final Class<?>[] argTypes = new Class<?>[args.length];
-                for (int i = 0; i < args.length; i++) {
+            try {
+                return MethodLibrary.INSTANCE.exec( thisMethod, this, args );
+            } catch (final NotFoundException e) {
+                // expected
+            }
+            if (TypeChecker.canBeSetFrom( thisMethod.getDeclaringClass(), subjectInfo.getImplementedClass() )
+                    && TypeChecker.canBeSetFrom( thisMethod.getDeclaringClass(), Resource.class )) {
+                final Class<?>[] argTypes = new Class<?>[args == null ? 0 : args.length];
+                for (int i = 0; i < argTypes.length; i++) {
                     argTypes[i] = args[i].getClass();
                 }
                 try {
                     final Method resourceMethod = Resource.class.getMethod( thisMethod.getName(), argTypes );
-                    return resourceMethod.invoke( resource, args );
+                    return thisMethod.invoke( resource, args );
                 } catch (final Exception e) {
                     // do nothing throw exception outside of if.
                 }
@@ -117,39 +132,47 @@ public class ResourceEntityProxy implements InvocationHandler {
                 String.format( "Internal predicateinfo class (%s) not (%s)", pi.getClass(), PredicateInfoImpl.class ) );
     }
 
-    // non abstract annotated methods
-    // override the implementation unless annotatation includes the
-    // update=true value -- not implemented
-    private Object interceptAnnotatedNonAbstract(final Object self, final Method thisMethod, final Object[] args,
-            final Predicate p) throws Throwable {
-        return interceptAnnotated( self, thisMethod, args );
-    }
-
     // handle the cases where the method is not abstract
-    private Object interceptNonAbstract(final Object self, final Method thisMethod, final Object[] args)
-            throws Throwable {
+    private Object interceptNonAbstract(final Object self, final Method thisMethod, final Object[] args,
+            final PredicateInfo pi) throws Throwable {
         // handle the special case methods
         if (thisMethod.getName().equals( "toString" ) && !thisMethod.isVarArgs()
                 && (thisMethod.getParameterTypes().length == 0)) {
-            return String.format( "%s[%s]", subjectInfo.getClass(), resource );
+            return source.toString();
         }
         if (thisMethod.getName().equals( "hashCode" )) {
-            return resource.hashCode();
+            return source.hashCode();
         }
         if (thisMethod.getName().equals( "equals" )) {
-            if (args[0] instanceof ResourceWrapper) {
-                return resource.equals( ((ResourceWrapper) args[0]).getResource() );
-            }
-            if (args[0] instanceof Resource) {
-                return resource.equals( args[0] );
-            }
-            return false;
+            return source.equals( args[0] );
         }
 
-        final Predicate p = thisMethod.getAnnotation( Predicate.class );
-        if (p != null) {
-            return interceptAnnotatedNonAbstract( self, thisMethod, args, p );
+        Object result = interceptAnnotated( self, thisMethod, args );
+        for (final Method m : pi.getPostExec()) {
+            result = m.invoke( source, result );
         }
-        return thisMethod.invoke( self, args );
+        return result;
+    }
+
+    @Override
+    public boolean equals(final Object o) {
+        if (o == this) {
+            return true;
+        }
+        if (o instanceof ResourceWrapper) {
+            final ResourceWrapper other = (ResourceWrapper) o;
+            return other.getResource().equals( resource );
+        }
+        return false;
+    }
+
+    @Override
+    public String toString() {
+        return resource.toString();
+    }
+
+    @Override
+    public int hashCode() {
+        return resource.hashCode();
     }
 }

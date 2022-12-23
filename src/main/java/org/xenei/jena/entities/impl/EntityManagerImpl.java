@@ -191,13 +191,14 @@ public class EntityManagerImpl implements EntityManager {
     }
 
     @Override
-    public <T> T make(final Object source, final Class<T> primaryClass, final Class<?>... secondaryClasses)
+    public <T> T make(final Object source, final Class<T> result, final Class<?>... secondaryClasses)
             throws MissingAnnotationException, NotInterfaceException {
-        Resource r = addInstanceProperties( ResourceWrapper.getResource( source ), primaryClass );
+        ClassUtils.validateInterface( result );
+        Resource r = addInstanceProperties( ResourceWrapper.getResource( source ), result );
         for (final Class<?> c : secondaryClasses) {
             r = addInstanceProperties( r, c );
         }
-        return read( r, primaryClass, secondaryClasses );
+        return read( r, result, secondaryClasses );
     }
 
     /*
@@ -209,28 +210,45 @@ public class EntityManagerImpl implements EntityManager {
      */
     @Override
     @SuppressWarnings("unchecked")
-    public <T> T read(final Object source, final Class<T> primaryClass, final Class<?>... secondaryClasses)
+    public <T> T read(final Object source, final Class<T> result, final Class<?>... interfaces)
             throws MissingAnnotationException, NotInterfaceException {
-        ClassUtils.validateInterface( primaryClass );
+        if (result == null) {
+            throw new IllegalArgumentException( "result type may not be null or empty." );
+        }
         final List<Class<?>> classes = new ArrayList<>();
-        final SubjectInfoImpl subjectInfo = factory.parse( primaryClass );
 
-        classes.add( primaryClass );
+        ClassUtils.validateInterface( result );
+        final SubjectInfoImpl subjectInfo = factory.parse( result );
+        if (subjectInfo == null) {
+            throw new MissingAnnotationException( result );
+        }
+        classes.add( result );
 
-        for (final Class<?> cla : secondaryClasses) {
-            if (!classes.contains( cla )) {
-                factory.parse( cla );
-                classes.add( cla );
+        if ((interfaces != null) && (interfaces.length > 0)) {
+            for (final Class<?> cla : interfaces) {
+                ClassUtils.validateInterface( cla );
+                if (!classes.contains( cla )) {
+                    if (factory.parse( cla ) == null) {
+                        throw new MissingAnnotationException( result );
+                    }
+                    classes.add( cla );
+                }
             }
         }
         if (!classes.contains( ResourceWrapper.class )) {
             classes.add( ResourceWrapper.class );
         }
 
-        final ResourceEntityProxy resourceEntityProxy = new ResourceEntityProxy( this,
-                ResourceWrapper.getResource( source ), subjectInfo );
+        SubjectInfo sourceSubject = null;
+        try {
+            sourceSubject = factory.parse( source.getClass() );
+        } catch (final MissingAnnotationException expected) {
+            // ignore as is expected in some cases.
+        }
+        final ResourceEntityProxy resourceEntityProxy = new ResourceEntityProxy( this, source, subjectInfo,
+                sourceSubject );
         final Class<?>[] classArray = new Class<?>[classes.size()];
-        return (T) Proxy.newProxyInstance( primaryClass.getClassLoader(), classes.toArray( classArray ),
+        return (T) Proxy.newProxyInstance( result.getClassLoader(), classes.toArray( classArray ),
                 resourceEntityProxy );
     }
 

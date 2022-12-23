@@ -20,23 +20,21 @@ public class ActionTest {
     public void getAssociatedActionsTest() throws Exception {
         final Method method = SimpleInterface.class.getMethod( "getX" );
         final Action action = new Action( method );
-        getActions( "", action );
+        getActions( action );
         Assertions.assertEquals( 2, processed.size() );
         Assertions.assertEquals( 4, seen.size() );
     }
 
-    private void getActions(final String prefix, final Action action) {
+    private void getActions(final Action action) {
         processed.add( action.method );
-        System.out.println( String.format( "starting %s", action.method ) );
         final java.util.function.Predicate<Method> p = m -> seen.contains( m );
         final ExtendedIterator<Action> iter = action.getAssociatedActions( p );
         iter.forEach( a -> {
-            System.out.println( String.format( "%s %s", prefix, a.method ) );
             seen.add( a.method );
             switch (a.actionType) {
             case GETTER:
             case SETTER:
-                getActions( prefix + ">", a );
+                getActions( a );
             default:
                 break;
             }

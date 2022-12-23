@@ -110,25 +110,27 @@ public class EffectivePredicate {
                 type = predicate.type();
             }
             if (StringUtils.isNotBlank( predicate.postExec() )) {
-                final String mName = predicate.postExec().trim();
-                try {
-                    final Class<?> argType = actionType.predicateClass( method );
-                    if (argType == null) {
-                        throw new IllegalArgumentException( String.format( "%s is not an Action method", method ) );
+                for (String mName : predicate.postExec().split( "," )) {
+                    mName = mName.trim();
+                    try {
+                        final Class<?> argType = actionType.predicateClass( method );
+                        if (argType == null) {
+                            throw new IllegalArgumentException( String.format( "%s is not an Action method", method ) );
+                        }
+                        final Method peMethod = method.getDeclaringClass().getMethod( mName, argType );
+                        if (argType.equals( peMethod.getReturnType() )) {
+                            addPostExec( peMethod );
+                        } else {
+                            throw new RuntimeException(
+                                    String.format( "%s does not return its parameter type", peMethod ) );
+                        }
+                    } catch (final NoSuchMethodException e) {
+                        throw new RuntimeException( "Error parsing predicate annotation", e );
+                    } catch (final SecurityException e) {
+                        throw new RuntimeException( "Error parsing predicate annotation", e );
+                    } catch (final IllegalArgumentException e) {
+                        throw new RuntimeException( "Error parsing predicate annotation action type", e );
                     }
-                    final Method peMethod = method.getDeclaringClass().getMethod( mName, argType );
-                    if (argType.equals( peMethod.getReturnType() )) {
-                        addPostExec( peMethod );
-                    } else {
-                        throw new RuntimeException(
-                                String.format( "%s does not return its parameter type", peMethod ) );
-                    }
-                } catch (final NoSuchMethodException e) {
-                    throw new RuntimeException( "Error parsing predicate annotation", e );
-                } catch (final SecurityException e) {
-                    throw new RuntimeException( "Error parsing predicate annotation", e );
-                } catch (final IllegalArgumentException e) {
-                    throw new RuntimeException( "Error parsing predicate annotation action type", e );
                 }
             }
         }

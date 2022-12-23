@@ -59,12 +59,8 @@ public class EntityManagerTest {
     @Test
     public void testPathParserWithBadClasses() throws Exception {
         final Model model = ModelFactory.createDefaultModel();
-        try {
-            manager.read( model.createResource(), SimpleInterface.class, UnannotatedInterface.class );
-            Assertions.fail( "Should have thrown InvokerException" );
-        } catch (final MissingAnnotationException e) {
-            // expected
-        }
+        Assertions.assertThrows( MissingAnnotationException.class,
+                () -> manager.read( model.createResource(), SimpleInterface.class, UnannotatedInterface.class ) );
     }
 
     @Test

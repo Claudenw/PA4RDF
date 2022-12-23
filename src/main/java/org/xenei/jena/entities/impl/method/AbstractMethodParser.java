@@ -123,8 +123,7 @@ public class AbstractMethodParser extends BaseMethodParser {
      * @param multiAdd
      * @throws MissingAnnotationException
      */
-    private void parseSetter(final Action action, final EffectivePredicate predicate)
-            throws MissingAnnotationException {
+    private void parseSetter(final Action action, final EffectivePredicate predicate) {
 
         final Class<?> parms[] = action.method.getParameterTypes();
         if (parms.length == 1) {

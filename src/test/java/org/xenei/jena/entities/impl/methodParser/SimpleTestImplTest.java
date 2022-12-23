@@ -1,5 +1,6 @@
 package org.xenei.jena.entities.impl.methodParser;
 
+import java.lang.reflect.AnnotatedType;
 import java.lang.reflect.Method;
 
 import org.apache.jena.rdf.model.Model;
@@ -10,6 +11,7 @@ import org.junit.jupiter.api.Test;
 import org.xenei.jena.entities.EffectivePredicateTest;
 import org.xenei.jena.entities.PredicateInfo;
 import org.xenei.jena.entities.PredicateInfoImplTest;
+import org.xenei.jena.entities.annotations.Subject;
 import org.xenei.jena.entities.impl.ActionType;
 import org.xenei.jena.entities.impl.MethodParser;
 import org.xenei.jena.entities.impl.SubjectInfoImpl;
@@ -37,6 +39,16 @@ public class SimpleTestImplTest {
         PredicateInfoImplTest.assertValues( pi, ActionType.SETTER, void.class, "setX", String.class,
                 LiteralHandler.class, expectedHandler, expectedProperty, void.class );
         EffectivePredicateTest.assertValues( pi.getPredicate(), false, true, "", "x", namespace, String.class, false );
+    }
+
+    @Test
+    public void x() throws Exception {
+        System.out.println( SimpleTestImpl.class.getAnnotation( Subject.class ) );
+        for (final AnnotatedType o : SimpleTestImpl.class.getAnnotatedInterfaces()) {
+
+            System.out.println( o.getType() );
+        }
+        System.out.format( "Annotated Superclass %s", SimpleTestImpl.class.getAnnotatedSuperclass().getType() );
     }
 
 }

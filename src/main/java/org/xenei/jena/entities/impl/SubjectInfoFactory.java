@@ -10,13 +10,17 @@ import org.slf4j.LoggerFactory;
 import org.xenei.jena.entities.annotations.Predicate;
 import org.xenei.jena.entities.exceptions.MissingAnnotationException;
 import org.xenei.jena.entities.exceptions.NotInterfaceException;
+import org.apache.jena.atlas.lib.CacheSet;
+
+import org.apache.jena.atlas.lib.cache.CacheSimple;
+import org.apache.jena.atlas.lib.cache.CacheSetImpl;
 
 public class SubjectInfoFactory {
     private static Logger LOG = LoggerFactory.getLogger( SubjectInfoFactory.class );
     private final Map<Class<?>, SubjectInfoImpl> classInfo = new HashMap<>();
+    private final CacheSet<Class<?>> notAnnotated = new CacheSetImpl<>( new CacheSimple<Class<?>, Object>( 50 ) );
 
     public SubjectInfoFactory() {
-
     }
 
     public void clear() {
@@ -35,10 +39,9 @@ public class SubjectInfoFactory {
      * @throws NotInterfaceException
      */
     public SubjectInfoImpl parse(final Class<?> clazz) throws MissingAnnotationException {
-        // ClassUtils.validateInterface( clazz );
         SubjectInfoImpl subjectInfo = classInfo.get( clazz );
 
-        if (subjectInfo == null) {
+        if ((subjectInfo == null) && !notAnnotated.contains( clazz )) {
             SubjectInfoFactory.LOG.info( "Parsing {}", clazz );
             subjectInfo = new SubjectInfoImpl( clazz );
             final MethodParser parser = new MethodParser( subjectInfo );
@@ -63,7 +66,9 @@ public class SubjectInfoFactory {
 
             }
             if (!foundAnnotation) {
-                throw new MissingAnnotationException( "No annotated methods in " + clazz.getCanonicalName() );
+                notAnnotated.add( clazz );
+                SubjectInfoFactory.LOG.debug( "caching {}", clazz );
+                return null;
             }
             // parse the reminder
             for (final Method method : annotated) {

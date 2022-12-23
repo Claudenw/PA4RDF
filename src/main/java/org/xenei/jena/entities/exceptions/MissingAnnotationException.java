@@ -26,4 +26,8 @@ public class MissingAnnotationException extends Exception {
         super( message );
     }
 
+    public MissingAnnotationException(final Class<?> clazz) {
+        this( String.format( "Class %s does not have PA4RDF annotations", clazz ) );
+    }
+
 }
