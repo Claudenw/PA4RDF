@@ -15,9 +15,7 @@
 package org.xenei.jena.entities.impl;
 
 import org.apache.jena.rdf.model.Property;
-
 import java.lang.reflect.Method;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -26,13 +24,11 @@ import org.xenei.jena.entities.SubjectInfo;
 import org.xenei.jena.entities.annotations.Subject;
 
 public class SubjectInfoImpl implements SubjectInfo {
-    private boolean validated;
     private final Class<?> implementedClass;
-    private final Map<String, Map<ObjectHandler, PredicateInfo>> predicateInfo = new HashMap<>();
+    private final Map<String, Map<Class<?>, PredicateInfo>> predicateInfo = new HashMap<>();
 
     public SubjectInfoImpl(final Class<?> implementedClass) {
         this.implementedClass = implementedClass;
-        validated = false;
     }
 
     /**
@@ -41,17 +37,20 @@ public class SubjectInfoImpl implements SubjectInfo {
      * @param pi
      *            The predicateInfo to add.
      */
-    public void add(final PredicateInfoImpl pi) {
+    public void add(final Method method, final PredicateInfo pi) {
+        if (method == null) {
+            throw new IllegalArgumentException( "Method may not be null" );
+        }
         if (pi == null) {
             throw new IllegalArgumentException( "PredicateInfo may not be null" );
         }
-        Map<ObjectHandler, PredicateInfo> map = predicateInfo.get( pi.getMethodName() );
+        Map<Class<?>, PredicateInfo> map = predicateInfo.get( pi.getMethodName() );
         if (map == null) {
             map = new HashMap<>();
             predicateInfo.put( pi.getMethodName(), map );
         }
 
-        map.put( pi.getObjectHandler(), pi );
+        map.put( pi.getActionType().predicateClass( method ), pi );
     }
 
     /*
@@ -71,27 +70,31 @@ public class SubjectInfoImpl implements SubjectInfo {
      * reflect .Method)
      */
     @Override
-    public PredicateInfo getPredicateInfo(final Method m) {
-        if (m.isVarArgs() || (m.getParameterTypes().length > 1)) {
+    public PredicateInfo getPredicateInfo(final Method method) {
+        if (method.isVarArgs() || (method.getParameterCount() > 1)) {
             return null;
         }
-        if (m.getParameterTypes().length == 0) {
-            // must be a getter or single value remove
-            return getPredicateInfo( m.getName(), m.getReturnType() );
-        } else {
-            return getPredicateInfo( m.getName(), m.getParameterTypes()[0] );
+        try {
+            final ActionType action = ActionType.parse( method.getName() );
+            return getPredicateInfo( method.getName(), action.predicateClass( method ) );
+        } catch (final IllegalArgumentException ignore) {
+            return null;
         }
     }
 
+    /**
+     * Get the first predicateinfo for the function name.
+     *
+     * @param function
+     *            the function to find.
+     * @return A predicate info for the name.
+     * @throws IllegalArgumentException
+     *             if the function is not found.
+     */
     private PredicateInfo getPredicateInfo(final String function) {
-        final Map<ObjectHandler, PredicateInfo> map = predicateInfo.get( function );
+        final Map<Class<?>, PredicateInfo> map = predicateInfo.get( function );
         if (map == null) {
             throw new IllegalArgumentException( String.format( "Function %s not found", function ) );
-        }
-        if (map.values().isEmpty()) {
-            {
-                throw new IllegalArgumentException( String.format( "Function %s not found", function ) );
-            }
         }
         return map.values().iterator().next();
     }
@@ -104,52 +107,20 @@ public class SubjectInfoImpl implements SubjectInfo {
      */
     @Override
     public PredicateInfo getPredicateInfo(final String function, final Class<?> clazz) {
-        final Map<ObjectHandler, PredicateInfo> map = predicateInfo.get( function );
-        if (map != null) {
-            for (final PredicateInfo pi : map.values()) {
-                final Class<?> valueClass = pi.getValueClass();
-                switch (pi.getActionType()) {
-                case SETTER:
-                    if (TypeChecker.canBeSetFrom( valueClass, clazz )) {
-                        return pi;
-                    }
-                    break;
-
-                case GETTER:
-                    if (TypeChecker.canBeSetFrom( clazz, valueClass )) {
-                        return pi;
-                    }
-                    break;
-
-                case REMOVER:
-                case EXISTENTIAL:
-                    if (valueClass != null) {
-                        // it needs an argument
-                        if (TypeChecker.canBeSetFrom( valueClass, clazz )) {
-                            return pi;
-                        }
-                    } else {
-                        // it does not want an argument
-                        if ((clazz == null) || clazz.equals( void.class )) {
-                            return pi;
-                        }
-                    }
-                    break;
-                }
-            }
-        }
-        return null;
+        final Map<Class<?>, PredicateInfo> map = predicateInfo.get( function );
+        return (map != null) ? map.get( clazz == null ? void.class : clazz ) : null;
     }
 
     /**
      * Get the RDF Property for the method
      *
-     * @param m
+     * @param method
      *            The method to get the property for.
      */
     @Override
-    public Property getPredicateProperty(final Method m) {
-        return getPredicateInfo( m ).getProperty();
+    public Property getPredicateProperty(final Method method) {
+        final PredicateInfo pi = getPredicateInfo( method );
+        return pi == null ? null : pi.getProperty();
     }
 
     /**
@@ -157,10 +128,16 @@ public class SubjectInfoImpl implements SubjectInfo {
      *
      * @param methodName
      *            The method name to locate
+     * @return the Property or null if the method was not a predicate property.
      */
     @Override
     public Property getPredicateProperty(final String methodName) {
-        return getPredicateInfo( methodName ).getProperty();
+        try {
+            final PredicateInfo pi = getPredicateInfo( methodName );
+            return pi == null ? null : pi.getProperty();
+        } catch (final IllegalArgumentException ignore) {
+            return null;
+        }
     }
 
     /*
@@ -170,8 +147,9 @@ public class SubjectInfoImpl implements SubjectInfo {
      * org.xenei.jena.entities.impl.SubjectInfo#getUri(java.lang.reflect.Method)
      */
     @Override
-    public String getPredicateUriStr(final Method m) {
-        return getPredicateInfo( m ).getUriString();
+    public String getPredicateUriStr(final Method method) {
+        final PredicateInfo pi = getPredicateInfo( method );
+        return pi == null ? null : pi.getUriString();
     }
 
     /*
@@ -193,62 +171,4 @@ public class SubjectInfoImpl implements SubjectInfo {
     public Subject getSubject() {
         return implementedClass.getAnnotation( Subject.class );
     }
-
-    /**
-     * Remove a predicate info from this subject.
-     *
-     * @param m
-     *            the method to remove
-     */
-    public void removePredicateInfo(final Method m) {
-        if (m.isVarArgs() || (m.getParameterTypes().length > 1)) {
-            return;
-        }
-        if (m.getParameterTypes().length == 0) {
-            // must be a getter
-            removePredicateInfo( m.getName(), m.getReturnType() );
-        } else {
-            removePredicateInfo( m.getName(), m.getParameterTypes()[0] );
-        }
-    }
-
-    /**
-     * Remove a predicate info from this subject.
-     *
-     * @param function
-     *            The function to remove
-     * @param clazz
-     *            The class that is expected for the parameter (setter) or for
-     *            return (getter).
-     */
-    public void removePredicateInfo(final String function, final Class<?> clazz) {
-        final Map<ObjectHandler, PredicateInfo> map = predicateInfo.get( function );
-        if (map != null) {
-            for (Map.Entry<ObjectHandler,PredicateInfo> entry : map.entrySet())
-            {
-                if (entry.getValue().getValueClass().equals( clazz )) {
-                    map.remove(entry.getKey());
-                }
-            }
-            if (map.isEmpty()) {
-                predicateInfo.remove( function );
-            }
-        }
-    }
-
-    @Override
-    public void validate(final Collection<Class<?>> iface) {
-        if (validated) {
-            return;
-        }
-        // final Collection<Class<?>> clazz = new ArrayList<Class<?>>(iface);
-        // if (!implementedClass.isInterface())
-        // {
-        // clazz.add(implementedClass);
-        // }
-        // // clazz.remove(Resource.class);
-        // verifyNoNullMethods(clazz);
-        validated = true;
-    }
-
 }

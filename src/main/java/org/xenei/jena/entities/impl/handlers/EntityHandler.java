@@ -16,10 +16,11 @@ package org.xenei.jena.entities.impl.handlers;
 
 import org.apache.jena.rdf.model.RDFNode;
 
-import org.xenei.jena.entities.EntityManager;
-import org.xenei.jena.entities.MissingAnnotation;
+import org.xenei.jena.entities.EntityManagerFactory;
+import org.xenei.jena.entities.ObjectHandler;
 import org.xenei.jena.entities.ResourceWrapper;
-import org.xenei.jena.entities.impl.ObjectHandler;
+import org.xenei.jena.entities.exceptions.MissingAnnotationException;
+import org.xenei.jena.entities.exceptions.NotInterfaceException;
 
 /**
  * An ObjectHandler that creates EntityManager managed entities from
@@ -28,18 +29,14 @@ import org.xenei.jena.entities.impl.ObjectHandler;
  */
 public class EntityHandler implements ObjectHandler {
     private final Class<?> valueClass;
-    private final EntityManager entityManager;
 
     /**
      * Constructor.
-     * 
-     * @param entityManager
-     *            The EntityManager to use.
+     *
      * @param valueClass
      *            The Subject annotated class to create.
      */
-    public EntityHandler(final EntityManager entityManager, final Class<?> valueClass) {
-        this.entityManager = entityManager;
+    public EntityHandler(final Class<?> valueClass) {
         this.valueClass = valueClass;
     }
 
@@ -70,7 +67,7 @@ public class EntityHandler implements ObjectHandler {
      * Use the entity manager to create an instance of the valueClass from the
      * resource. Effectively calls entityManager.read( node.asResource,
      * valueClass )
-     * 
+     *
      * @param node
      *            The RDFNode to wrap with the valueClass.
      * @return the instance of the valueClass.
@@ -78,8 +75,8 @@ public class EntityHandler implements ObjectHandler {
     @Override
     public Object parseObject(final RDFNode node) {
         try {
-            return entityManager.read( node.asResource(), valueClass );
-        } catch (final MissingAnnotation e) {
+            return EntityManagerFactory.getEntityManager().read( node.asResource(), valueClass );
+        } catch (final MissingAnnotationException | NotInterfaceException e) {
             throw new RuntimeException( e );
         }
     }

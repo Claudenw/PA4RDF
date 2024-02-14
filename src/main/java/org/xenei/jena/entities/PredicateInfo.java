@@ -37,41 +37,41 @@ public interface PredicateInfo {
 
     /**
      * Get the method name that this predicate info is describing.
-     * 
+     *
      * @return the method name
      */
     public String getMethodName();
 
     /**
      * Get the namespace URI for the predicate.
-     * 
+     *
      * @return The namespace URI.
      */
     public String getNamespace();
 
     /**
      * Get the predicate as a property.
-     * 
+     *
      * @return The property for the predicate.
      */
     public Property getProperty();
 
     /**
      * Get the predicate URI as a string.
-     * 
+     *
      * @return The URI for the predicate.
      */
     public String getUriString();
 
     /**
      * get the value class.
-     * 
+     *
      * The value class is the class that is returned (for a getter type method)
      * or the class type of the argument (for a setter type method).
-     * 
+     *
      * @return The class
      */
-    public Class<?> getValueClass();
+    // public Class<?> getValueClass();
 
     /**
      * List of methods to execute after the exec.
@@ -79,5 +79,24 @@ public interface PredicateInfo {
      * @return The list of methods to execute after exec.
      */
     public List<Method> getPostExec();
+
+    /**
+     * return the object handler for the predicate info type.
+     *
+     * @return the ObjectHandler.
+     */
+    public ObjectHandler getObjectHandler();
+
+    public EffectivePredicate getPredicate();
+
+    // public Class<?> getConcreteType();
+
+    public Class<?> getArgumentType();
+
+    public Class<?> getReturnType();
+
+    public Class<?> getEnclosedType();
+
+    public Class<?> getValueType();
 
 }

@@ -14,385 +14,277 @@
  */
 package org.xenei.jena.entities;
 
+import java.util.Set;
+
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
-import org.apache.jena.rdf.model.RDFNode;
 import org.apache.jena.rdf.model.Resource;
-import org.apache.jena.rdf.model.ResourceFactory;
-
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-import org.xenei.jena.entities.testing.abst.CollectionValueAnnoatedAbst;
-import org.xenei.jena.entities.testing.iface.TestInterface;
-
-public class CollectionValueEntityTests
-{
-
-	// BOOLEAN, CHAR, DOUBLE, FLOAT, LONG, INTEGER, STRING, RDFNODE, ENTITY,
-	// URI, VOID
-
-	private CollectionValueAnnoatedAbst tc;
-	private Model m;
-	private final EntityManager manager = EntityManagerFactory
-			.getEntityManager();
-
-	@Before
-	public void setup() throws MissingAnnotation
-	{
-		m = ModelFactory.createDefaultModel();
-		final Resource r = m
-				.createResource("http://localhost/CollectionValueEntityTests");
-		tc = manager.read(r, CollectionValueAnnoatedAbst.class);
-	}
-
-	@After
-	public void teardown()
-	{
-		m.close();
-	}
-
-	@Test
-	public void testBoolean()
-	{
-		tc.addBool(true);
-		Assert.assertTrue(tc.hasBool(true));
-		Assert.assertTrue(!tc.hasBool(false));
-		Assert.assertEquals(1, tc.getBool().size());
-
-		tc.addBool(false);
-		Assert.assertTrue(tc.hasBool(true));
-		Assert.assertTrue(tc.hasBool(false));
-		Assert.assertEquals(2, tc.getBool().size());
-
-		tc.addBool(false);
-		Assert.assertEquals(2, tc.getBool().size());
-
-		tc.removeBool(false);
-		Assert.assertTrue(tc.hasBool(true));
-		Assert.assertTrue(!tc.hasBool(false));
-		Assert.assertEquals(1, tc.getBool().size());
-
-	}
-
-	@Test
-	public void testChar()
-	{
-		final char c = 'a';
-		final Character cc = Character.valueOf( c ) ;
-		final char d = 'b';
-		final Character dd = Character.valueOf(d);
-
-		tc.addChar(c);
-		Assert.assertTrue(tc.hasChar(c));
-		Assert.assertTrue(tc.hasChar(cc));
-		Assert.assertTrue(!tc.hasChar(d));
-		Assert.assertTrue(!tc.hasChar(dd));
-		Assert.assertEquals(1, tc.getChar().size());
-
-		tc.addChar(dd);
-		Assert.assertTrue(tc.hasChar(c));
-		Assert.assertTrue(tc.hasChar(cc));
-		Assert.assertTrue(tc.hasChar(d));
-		Assert.assertTrue(tc.hasChar(dd));
-		Assert.assertEquals(2, tc.getChar().size());
-
-		tc.removeChar(cc);
-		Assert.assertTrue(!tc.hasChar(c));
-		Assert.assertTrue(!tc.hasChar(cc));
-		Assert.assertTrue(tc.hasChar(d));
-		Assert.assertTrue(tc.hasChar(dd));
-		Assert.assertEquals(1, tc.getChar().size());
-
-		tc.removeChar(d);
-		Assert.assertTrue(!tc.hasChar(c));
-		Assert.assertTrue(!tc.hasChar(cc));
-		Assert.assertTrue(!tc.hasChar(d));
-		Assert.assertTrue(!tc.hasChar(dd));
-		Assert.assertEquals(0, tc.getChar().size());
-
-	}
-
-	@Test
-	public void testDbl()
-	{
-		final double c = 3.14;
-		final Double cc = Double.valueOf(c);
-
-		final double d = 2.157;
-		final Double dd = Double.valueOf(d);
-
-		tc.addDbl(c);
-		Assert.assertTrue(tc.hasDbl(c));
-		Assert.assertTrue(tc.hasDbl(cc));
-		Assert.assertTrue(!tc.hasDbl(d));
-		Assert.assertTrue(!tc.hasDbl(dd));
-		Assert.assertEquals(1, tc.getDbl().size());
-
-		tc.addDbl(dd);
-		Assert.assertTrue(tc.hasDbl(c));
-		Assert.assertTrue(tc.hasDbl(cc));
-		Assert.assertTrue(tc.hasDbl(d));
-		Assert.assertTrue(tc.hasDbl(dd));
-		Assert.assertEquals(2, tc.getDbl().size());
-
-		tc.removeDbl(cc);
-		Assert.assertTrue(!tc.hasDbl(c));
-		Assert.assertTrue(!tc.hasDbl(cc));
-		Assert.assertTrue(tc.hasDbl(d));
-		Assert.assertTrue(tc.hasDbl(dd));
-		Assert.assertEquals(1, tc.getDbl().size());
-
-		tc.removeDbl(d);
-		Assert.assertTrue(!tc.hasDbl(c));
-		Assert.assertTrue(!tc.hasDbl(cc));
-		Assert.assertTrue(!tc.hasDbl(d));
-		Assert.assertTrue(!tc.hasDbl(dd));
-		Assert.assertEquals(0, tc.getDbl().size());
-
-	}
-
-	@Test
-	public void testEntity() throws MissingAnnotation
-	{
-		Resource r = m.createResource("cc");
-		final TestInterface cc = manager.read(r, TestInterface.class);
-		r = m.createResource("dd");
-		final TestInterface dd = manager.read(r, TestInterface.class);
-
-		tc.addEnt(cc);
-		Assert.assertTrue(tc.hasEnt(cc));
-		Assert.assertTrue(!tc.hasEnt(dd));
-		Assert.assertEquals(1, tc.getEnt().size());
-
-		tc.addEnt(dd);
-		Assert.assertTrue(tc.hasEnt(cc));
-		Assert.assertTrue(tc.hasEnt(dd));
-		Assert.assertEquals(2, tc.getEnt().size());
-
-		tc.removeEnt(cc);
-		Assert.assertTrue(!tc.hasEnt(cc));
-		Assert.assertTrue(tc.hasEnt(dd));
-		Assert.assertEquals(1, tc.getEnt().size());
-
-		tc.removeEnt(dd);
-		Assert.assertTrue(!tc.hasEnt(cc));
-		Assert.assertTrue(!tc.hasEnt(dd));
-		Assert.assertEquals(0, tc.getEnt().size());
-
-	}
-
-	@Test
-	public void testFlt()
-	{
-		final float c = 3.14F;
-		final Float cc = Float.valueOf(c);
-
-		final float d = 2.157F;
-		final Float dd = Float.valueOf(d);
-
-		tc.addFlt(c);
-		Assert.assertTrue(tc.hasFlt(c));
-		Assert.assertTrue(tc.hasFlt(cc));
-		Assert.assertTrue(!tc.hasFlt(d));
-		Assert.assertTrue(!tc.hasFlt(dd));
-		Assert.assertEquals(1, tc.getFlt().size());
-
-		tc.addFlt(dd);
-		Assert.assertTrue(tc.hasFlt(c));
-		Assert.assertTrue(tc.hasFlt(cc));
-		Assert.assertTrue(tc.hasFlt(d));
-		Assert.assertTrue(tc.hasFlt(dd));
-		Assert.assertEquals(2, tc.getFlt().size());
-
-		tc.removeFlt(cc);
-		Assert.assertTrue(!tc.hasFlt(c));
-		Assert.assertTrue(!tc.hasFlt(cc));
-		Assert.assertTrue(tc.hasFlt(d));
-		Assert.assertTrue(tc.hasFlt(dd));
-		Assert.assertEquals(1, tc.getFlt().size());
-
-		tc.removeFlt(d);
-		Assert.assertTrue(!tc.hasFlt(c));
-		Assert.assertTrue(!tc.hasFlt(cc));
-		Assert.assertTrue(!tc.hasFlt(d));
-		Assert.assertTrue(!tc.hasFlt(dd));
-		Assert.assertEquals(0, tc.getFlt().size());
-	}
-
-	@Test
-	public void testInt()
-	{
-		final int c = 3;
-		final Integer cc = Integer.valueOf(c);
-
-		final int d = 42;
-		final Integer dd = Integer.valueOf(d);
-
-		tc.addInt(c);
-		Assert.assertTrue(tc.hasInt(c));
-		Assert.assertTrue(tc.hasInt(cc));
-		Assert.assertTrue(!tc.hasInt(d));
-		Assert.assertTrue(!tc.hasInt(dd));
-		Assert.assertEquals(1, tc.getInt().size());
-
-		tc.addInt(dd);
-		Assert.assertTrue(tc.hasInt(c));
-		Assert.assertTrue(tc.hasInt(cc));
-		Assert.assertTrue(tc.hasInt(d));
-		Assert.assertTrue(tc.hasInt(dd));
-		Assert.assertEquals(2, tc.getInt().size());
-
-		tc.removeInt(cc);
-		Assert.assertTrue(!tc.hasInt(c));
-		Assert.assertTrue(!tc.hasInt(cc));
-		Assert.assertTrue(tc.hasInt(d));
-		Assert.assertTrue(tc.hasInt(dd));
-		Assert.assertEquals(1, tc.getInt().size());
-
-		tc.removeInt(d);
-		Assert.assertTrue(!tc.hasInt(c));
-		Assert.assertTrue(!tc.hasInt(cc));
-		Assert.assertTrue(!tc.hasInt(d));
-		Assert.assertTrue(!tc.hasInt(dd));
-		Assert.assertEquals(0, tc.getInt().size());
-	}
-
-	@Test
-	public void testLng()
-	{
-		final long c = 3;
-		final Long cc = Long.valueOf(c);
-
-		final long d = 42;
-		final Long dd = Long.valueOf(d);
-
-		tc.addLng(c);
-		Assert.assertTrue(tc.hasLng(c));
-		Assert.assertTrue(tc.hasLng(cc));
-		Assert.assertTrue(!tc.hasLng(d));
-		Assert.assertTrue(!tc.hasLng(dd));
-		Assert.assertEquals(1, tc.getLng().size());
-
-		tc.addLng(dd);
-		Assert.assertTrue(tc.hasLng(c));
-		Assert.assertTrue(tc.hasLng(cc));
-		Assert.assertTrue(tc.hasLng(d));
-		Assert.assertTrue(tc.hasLng(dd));
-		Assert.assertEquals(2, tc.getLng().size());
-
-		tc.removeLng(cc);
-		Assert.assertTrue(!tc.hasLng(c));
-		Assert.assertTrue(!tc.hasLng(cc));
-		Assert.assertTrue(tc.hasLng(d));
-		Assert.assertTrue(tc.hasLng(dd));
-		Assert.assertEquals(1, tc.getLng().size());
-
-		tc.removeLng(d);
-		Assert.assertTrue(!tc.hasLng(c));
-		Assert.assertTrue(!tc.hasLng(cc));
-		Assert.assertTrue(!tc.hasLng(d));
-		Assert.assertTrue(!tc.hasLng(dd));
-		Assert.assertEquals(0, tc.getLng().size());
-
-	}
-
-	@Test
-	public void testRdf()
-	{
-		final RDFNode cc = ResourceFactory.createResource("cc");
-
-		final RDFNode dd = ResourceFactory.createResource("dd");
-		;
-
-		tc.addRDF(cc);
-		Assert.assertTrue(tc.hasRDF(cc));
-		Assert.assertTrue(!tc.hasRDF(dd));
-		Assert.assertEquals(1, tc.getRDF().size());
-
-		tc.addRDF(dd);
-		Assert.assertTrue(tc.hasRDF(cc));
-		Assert.assertTrue(tc.hasRDF(dd));
-		Assert.assertEquals(2, tc.getRDF().size());
-
-		tc.removeRDF(cc);
-		Assert.assertTrue(!tc.hasRDF(cc));
-		Assert.assertTrue(tc.hasRDF(dd));
-		Assert.assertEquals(1, tc.getRDF().size());
-
-		tc.removeRDF(dd);
-		Assert.assertTrue(!tc.hasRDF(cc));
-		Assert.assertTrue(!tc.hasRDF(dd));
-		Assert.assertEquals(0, tc.getRDF().size());
-	}
-
-	@Test
-	public void testStr()
-	{
-		final String cc = "c";
-
-		final String dd = "d";
-
-		tc.addStr(cc);
-		Assert.assertTrue(tc.hasStr(cc));
-		Assert.assertTrue(!tc.hasStr(dd));
-		Assert.assertEquals(1, tc.getStr().size());
-
-		tc.addStr(dd);
-		Assert.assertTrue(tc.hasStr(cc));
-		Assert.assertTrue(tc.hasStr(dd));
-		Assert.assertEquals(2, tc.getStr().size());
-
-		tc.removeStr(cc);
-		Assert.assertTrue(!tc.hasStr(cc));
-		Assert.assertTrue(tc.hasStr(dd));
-		Assert.assertEquals(1, tc.getStr().size());
-
-		tc.removeStr(dd);
-		Assert.assertTrue(!tc.hasStr(cc));
-		Assert.assertTrue(!tc.hasStr(dd));
-		Assert.assertEquals(0, tc.getStr().size());
-	}
-
-	@Test
-	public void testURI()
-	{
-
-		final Resource cc = ResourceFactory.createResource("cc");
-		final Resource dd = ResourceFactory.createResource("dd");
-
-		tc.addU("cc");
-		Assert.assertTrue(tc.hasU(cc));
-		Assert.assertTrue(tc.hasU("cc"));
-		Assert.assertTrue(!tc.hasU(dd));
-		Assert.assertTrue(!tc.hasU("dd"));
-		Assert.assertEquals(1, tc.getU().size());
-		Assert.assertEquals(1, tc.getU2().size());
-
-		tc.addU("dd");
-		Assert.assertTrue(tc.hasU(cc));
-		Assert.assertTrue(tc.hasU("cc"));
-		Assert.assertTrue(tc.hasU(dd));
-		Assert.assertTrue(tc.hasU("dd"));
-		Assert.assertEquals(2, tc.getU().size());
-		Assert.assertEquals(2, tc.getU2().size());
-
-		tc.removeU(cc);
-		Assert.assertTrue(!tc.hasU(cc));
-		Assert.assertTrue(!tc.hasU("cc"));
-		Assert.assertTrue(tc.hasU(dd));
-		Assert.assertTrue(tc.hasU("dd"));
-		Assert.assertEquals(1, tc.getU().size());
-		Assert.assertEquals(1, tc.getU2().size());
-
-		tc.removeU("dd");
-		Assert.assertTrue(!tc.hasU(cc));
-		Assert.assertTrue(!tc.hasU("cc"));
-		Assert.assertTrue(!tc.hasU(dd));
-		Assert.assertTrue(!tc.hasU("dd"));
-		Assert.assertEquals(0, tc.getU().size());
-		Assert.assertEquals(0, tc.getU2().size());
-
-	}
+
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.xenei.jena.entities.testing.iface.CollectionValueInterface;
+import org.xenei.jena.entities.testing.iface.SingleValuePrimitiveInterface;
+
+public class CollectionValueEntityTests {
+
+    private CollectionValueInterface tc;
+    private Model model;
+
+    @BeforeEach
+    public void setup() throws Exception {
+        model = ModelFactory.createDefaultModel();
+        final Resource r = model.createResource( "http://localhost/CollectionValueEntityTests" );
+        final EntityManager manager = EntityManagerFactory.getEntityManager();
+        tc = manager.read( r, CollectionValueInterface.class );
+    }
+
+    @AfterEach
+    public void teardown() {
+        model.close();
+    }
+
+    @Test
+    public void testBoolean() {
+        Assertions.assertTrue( tc.getBool().isEmpty() );
+        Assertions.assertTrue( tc.getBool() instanceof Set );
+        tc.addBool( true );
+        Assertions.assertEquals(1,  tc.getBool().size() );
+        Assertions.assertTrue(tc.getBool().iterator().next());
+        tc.addBool( false );
+        Assertions.assertEquals(2,  tc.getBool().size() );
+        Assertions.assertTrue(tc.getBool().contains(true));
+        Assertions.assertTrue(tc.getBool().contains(false));
+        
+        tc.removeBool(Boolean.FALSE);
+        Assertions.assertEquals(1,  tc.getBool().size() );
+        Assertions.assertTrue(tc.getBool().iterator().next());
+    }
+
+    @Test
+    public void testChar() {
+        final char c = 'a';
+        final Character cc = Character.valueOf( c );
+        tc.setChar( c );
+        Assertions.assertEquals( cc, Character.valueOf( tc.getChar() ) );
+        tc.setChar( 'x' );
+        Assertions.assertTrue( !cc.equals( tc.getChar() ) );
+        tc.setChar( cc );
+        Assertions.assertEquals( cc, Character.valueOf( tc.getChar() ) );
+        tc.removeChar();
+        try {
+            tc.getChar();
+            Assertions.fail( "Should have thrown NullPointerException" );
+        } catch (final NullPointerException e) {
+            // expected
+        }
+    }
+
+    @Test
+    public void testDbl() {
+        final double c = 3.14;
+        final Double cc = Double.valueOf( c );
+        tc.setDbl( c );
+        Assertions.assertEquals( cc, Double.valueOf( tc.getDbl() ) );
+        tc.setDbl( 0.0 );
+        Assertions.assertTrue( !cc.equals( tc.getDbl() ) );
+        tc.setDbl( cc );
+        Assertions.assertEquals( cc, Double.valueOf( tc.getDbl() ) );
+        tc.removeDbl();
+        try {
+            tc.getDbl();
+            Assertions.fail( "Should have thrown NullPointerException" );
+        } catch (final NullPointerException e) {
+            // expected
+        }
+        ;
+    }
+
+    @Test
+    public void testFlt() {
+        final float c = 3.14F;
+        final Float cc = Float.valueOf( c );
+        tc.setFlt( c );
+        Assertions.assertEquals( cc, Float.valueOf( tc.getFlt() ) );
+        tc.setFlt( 0.0F );
+        Assertions.assertTrue( !cc.equals( tc.getFlt() ) );
+        tc.setFlt( cc );
+        Assertions.assertEquals( cc, Float.valueOf( tc.getFlt() ) );
+        tc.removeFlt();
+        try {
+            tc.getFlt();
+            Assertions.fail( "Should have thrown NullPointerException" );
+        } catch (final NullPointerException e) {
+            // expected
+        }
+        ;
+    }
+
+    @Test
+    public void testInt() {
+        final int c = 3;
+        final Integer cc = Integer.valueOf( c );
+        tc.setInt( c );
+        Assertions.assertEquals( cc, Integer.valueOf( tc.getInt() ) );
+        tc.setInt( 0 );
+        Assertions.assertTrue( !cc.equals( tc.getInt() ) );
+        tc.setInt( cc );
+        Assertions.assertEquals( cc, Integer.valueOf( tc.getInt() ) );
+        tc.removeInt();
+        try {
+            tc.getInt();
+            Assertions.fail( "Should have thrown NullPointerException" );
+        } catch (final NullPointerException e) {
+            // expected
+        }
+    }
+
+    @Test
+    public void testLng() {
+        final long c = 3;
+        final Long cc = Long.valueOf( c );
+        tc.setLng( c );
+        Assertions.assertEquals( cc, Long.valueOf( tc.getLng() ) );
+        tc.setLng( 0L );
+        Assertions.assertTrue( !cc.equals( tc.getLng() ) );
+        tc.setLng( cc );
+        Assertions.assertEquals( cc, Long.valueOf( tc.getLng() ) );
+        tc.removeLng();
+        try {
+            tc.getLng();
+            Assertions.fail( "Should have thrown NullPointerException" );
+        } catch (final NullPointerException e) {
+            // expected
+        }
+        ;
+    }
+
+    /*
+     * /*
+ 
+public interface CollectionValueInterface {
+
+    @Predicate
+    void addBool(Boolean b);
+
+    @Predicate
+    void addChar(Character b);
+
+    @Predicate
+    void addDbl(Double b);
+
+    @Predicate
+    void addEnt(TestInterface b);
+
+    @Predicate
+    void addFlt(Float b);
+
+    @Predicate
+    void addInt(Integer b);
+
+    @Predicate
+    void addLng(Long b);
+
+    @Predicate
+    void addRDF(RDFNode b);
+
+    @Predicate
+    void addStr(String b);
+
+    void addU(RDFNode b);
+
+    @Predicate
+    void addU(@URI String b);
+
+    @Predicate
+    void addU3(RDFNode b);
+
+    void addU3(@URI String b);
+
+    Set<Boolean> getBool();
+
+    List<Character> getChar();
+
+    Queue<Double> getDbl();
+
+    Queue<TestInterface> getEnt();
+
+    Set<Float> getFlt();
+
+    Queue<Integer> getInt();
+
+    List<Long> getLng();
+
+    List<RDFNode> getRDF();
+
+    Set<String> getStr();
+
+    @Predicate(type = RDFNode.class)
+    Set<RDFNode> getU();
+
+    @Predicate(type = URI.class, name = "u")
+    List<String> getU2();
+
+    @Predicate(type = RDFNode.class)
+    Queue<RDFNode> getU3();
+
+    @Predicate(type = URI.class, name = "u3")
+    Set<String> getU4();
+
+    Boolean hasBool(Boolean b);
+
+    Boolean hasChar(Character b);
+
+    Boolean hasDbl(Double b);
+
+    Boolean hasEnt(TestInterface b);
+
+    Boolean hasFlt(Float b);
+
+    Boolean hasInt(Integer b);
+
+    Boolean hasLng(Long b);
+
+    Boolean hasRDF(RDFNode b);
+
+    Boolean hasStr(String b);
+
+    Boolean hasU(RDFNode b);
+
+    Boolean hasU(@URI String b);
+
+    Boolean hasU3(RDFNode b);
+
+    Boolean hasU3(@URI String b);
+
+    void removeBool(Boolean b);
+
+    void removeChar(Character b);
+
+    void removeDbl(Double b);
+
+    void removeEnt(TestInterface b);
+
+    void removeFlt(Float b);
+
+    void removeInt(Integer b);
+
+    void removeLng(Long b);
+
+    void removeRDF(RDFNode b);
+
+    void removeStr(String b);
+
+    void removeU(RDFNode b);
+
+    void removeU(@URI String b);
+
+    void removeU3(RDFNode b);
+
+    void removeU3(@URI String b);
+
+}
+
+     */
 }

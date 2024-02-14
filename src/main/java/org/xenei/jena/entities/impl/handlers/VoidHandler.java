@@ -15,8 +15,7 @@
 package org.xenei.jena.entities.impl.handlers;
 
 import org.apache.jena.rdf.model.RDFNode;
-
-import org.xenei.jena.entities.impl.ObjectHandler;
+import org.xenei.jena.entities.ObjectHandler;
 
 /**
  * An ObjectHandler that always returns null.
@@ -24,7 +23,7 @@ import org.xenei.jena.entities.impl.ObjectHandler;
 public class VoidHandler implements ObjectHandler {
     /**
      * Convert the object to null
-     * 
+     *
      * @param obj
      *            The object to convert
      * @return null
@@ -51,7 +50,7 @@ public class VoidHandler implements ObjectHandler {
 
     /**
      * convert the node to a null
-     * 
+     *
      * @param node
      *            The node to convert.
      * @return null.

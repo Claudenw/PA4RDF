@@ -5,59 +5,58 @@ import org.apache.jena.rdf.model.Literal;
 import org.apache.jena.rdf.model.RDFNode;
 import org.apache.jena.rdf.model.ResourceFactory;
 
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-public class LiteralHandlerTest implements HandlerTestInterface
-{
-	LiteralHandler handler;
-	RDFNode node;
-	Integer instance;
+public class LiteralHandlerTest implements HandlerTestInterface {
+    private LiteralHandler handler;
+    private RDFNode node;
+    private Integer instance;
 
-	@Before
-	public void setup()
-	{
-		handler = new LiteralHandler(XSDDatatype.XSDinteger);
-		node = ResourceFactory.createPlainLiteral("5");
-		instance = 5;
-	}
+    @BeforeEach
+    public void setup() {
+        handler = new LiteralHandler( XSDDatatype.XSDinteger );
+        node = ResourceFactory.createPlainLiteral( "5" );
+        instance = 5;
+    }
 
-	@Override
-	@Test
-	public void testCreateRDFNode()
-	{
-		final RDFNode n = handler.createRDFNode(Integer.valueOf(5));
-		Assert.assertNotNull(n);
-		final Literal l = ResourceFactory.createTypedLiteral("5",
-				XSDDatatype.XSDinteger);
-		Assert.assertEquals(l, n);
-	}
+    @Override
+    @Test
+    public void testCreateRDFNode() {
+        final RDFNode n = handler.createRDFNode( Integer.valueOf( 5 ) );
+        Assertions.assertNotNull( n );
+        final Literal l = ResourceFactory.createTypedLiteral( "5", XSDDatatype.XSDinteger );
+        Assertions.assertEquals( l, n );
+    }
 
-	@Override
-	@Test
-	public void testIsEmpty()
-	{
-		Assert.assertTrue(handler.isEmpty(null));
-		Assert.assertFalse(handler.isEmpty(instance));
-		handler = new LiteralHandler(XSDDatatype.XSDstring);
-		Assert.assertTrue(handler.isEmpty(null));
-		Assert.assertTrue(handler.isEmpty(""));
-		Assert.assertTrue(handler.isEmpty(" "));
-		Assert.assertFalse(handler.isEmpty(instance));
-		Assert.assertFalse(handler.isEmpty("foo"));
+    @Override
+    @Test
+    public void testIsEmpty() {
+        Assertions.assertTrue( handler.isEmpty( null ) );
+        Assertions.assertFalse( handler.isEmpty( instance ) );
+        handler = new LiteralHandler( XSDDatatype.XSDstring );
+        Assertions.assertTrue( handler.isEmpty( null ) );
+        Assertions.assertTrue( handler.isEmpty( "" ) );
+        Assertions.assertTrue( handler.isEmpty( " " ) );
+        Assertions.assertFalse( handler.isEmpty( instance ) );
+        Assertions.assertFalse( handler.isEmpty( "foo" ) );
 
-	}
+    }
 
-	@Override
-	@Test
-	public void testParseObject()
-	{
-		final Object o = handler.parseObject(node);
-		Assert.assertNotNull(o);
-		Assert.assertTrue(o instanceof Integer);
-		final Integer a2 = (Integer) o;
-		Assert.assertEquals(instance, a2);
+    @Override
+    @Test
+    public void testParseObject() {
+        final Object o = handler.parseObject( node );
+        Assertions.assertNotNull( o );
+        Assertions.assertTrue( o instanceof Integer );
+        final Integer a2 = (Integer) o;
+        Assertions.assertEquals( instance, a2 );
 
-	}
+    }
+
+    @Test
+    public void testNotEquals() {
+        Assertions.assertFalse( handler.equals( Integer.valueOf( 1 ) ) );
+    }
 }

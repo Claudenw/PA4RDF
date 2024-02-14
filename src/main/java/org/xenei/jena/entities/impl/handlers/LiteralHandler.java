@@ -19,9 +19,8 @@ import org.apache.jena.datatypes.RDFDatatype;
 import org.apache.jena.rdf.model.Literal;
 import org.apache.jena.rdf.model.RDFNode;
 import org.apache.jena.rdf.model.ResourceFactory;
-
+import org.xenei.jena.entities.ObjectHandler;
 import org.apache.commons.lang3.StringUtils;
-import org.xenei.jena.entities.impl.ObjectHandler;
 
 /**
  * An ObjectHandler that encodes objects as Literals and visa versa.
@@ -32,7 +31,7 @@ public class LiteralHandler implements ObjectHandler {
 
     /**
      * Create a LiteralHandler that converts literalDatatype objects.
-     * 
+     *
      * @param literalDatatype
      *            The RDFDatatype that will be converted to/from.
      */
@@ -42,7 +41,7 @@ public class LiteralHandler implements ObjectHandler {
 
     /**
      * Convert the object to a Literal using the literalDatatype.
-     * 
+     *
      * @param obj
      *            the Object to convert.
      * @return The literal representation of the object.
@@ -76,12 +75,13 @@ public class LiteralHandler implements ObjectHandler {
 
     /**
      * Convert a Literal to an object using the Literaldata type to parse it.
-     * 
+     *
      * @param node
      *            The literal node.
      * @return The parsed object
      * @throws DatatypeFormatException
-     *             if node is not a Liter that can be parsed by literalDatatype.
+     *             if node is not a Literal that can be parsed by
+     *             literalDatatype.
      */
     @Override
     public Object parseObject(final RDFNode node) throws DatatypeFormatException {

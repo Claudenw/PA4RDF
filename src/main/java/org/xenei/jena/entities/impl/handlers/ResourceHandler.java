@@ -15,9 +15,8 @@
 package org.xenei.jena.entities.impl.handlers;
 
 import org.apache.jena.rdf.model.RDFNode;
-
+import org.xenei.jena.entities.ObjectHandler;
 import org.apache.commons.lang3.StringUtils;
-import org.xenei.jena.entities.impl.ObjectHandler;
 
 /**
  * An ObjectHandler that does not convert RDFNodes.
@@ -25,7 +24,7 @@ import org.xenei.jena.entities.impl.ObjectHandler;
 public class ResourceHandler implements ObjectHandler {
     /**
      * Convert an object to an RDFNode.
-     * 
+     *
      * @throws IllegalArgumentException
      *             if obj is not an instance of RDFNode
      */
@@ -64,7 +63,7 @@ public class ResourceHandler implements ObjectHandler {
 
     /**
      * Returns the argument
-     * 
+     *
      * @param node
      *            The RDFNode to parse/return
      * @return The node parameter

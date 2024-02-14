@@ -25,7 +25,9 @@ import org.apache.jena.datatypes.xsd.impl.XSDBaseNumericType;
  */
 public class LongDatatype extends XSDBaseNumericType {
 
-    public LongDatatype() {
+    public static final LongDatatype INSTANCE = new LongDatatype();
+
+    private LongDatatype() {
         super( "long", Long.class );
     }
 
@@ -36,6 +38,10 @@ public class LongDatatype extends XSDBaseNumericType {
     @Override
     protected Number suitableInteger(final String lexical) {
         return Long.parseLong( lexical );
+    }
+
+    public boolean handles(final Class<?> returnType) {
+        return Long.class.equals( returnType ) || long.class.equals( returnType );
     }
 
 }

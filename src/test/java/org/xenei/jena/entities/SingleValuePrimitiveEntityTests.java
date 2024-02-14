@@ -18,174 +18,141 @@ import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.rdf.model.Resource;
 
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-import org.xenei.jena.entities.testing.abst.SingleValuePrimitiveTestClass;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.xenei.jena.entities.testing.iface.SingleValuePrimitiveInterface;
 
-public class SingleValuePrimitiveEntityTests
-{
+public class SingleValuePrimitiveEntityTests {
 
-	private SingleValuePrimitiveTestClass tc;
-	private Model model;
+    private SingleValuePrimitiveInterface tc;
+    private Model model;
 
-	@Before
-	public void setup() throws Exception
-	{
-		model = ModelFactory.createDefaultModel();
-		final Resource r = model
-				.createResource("http://localhost/SingleValuePrimitiveEntityTests");
-		final EntityManager manager = EntityManagerFactory.getEntityManager();
-		tc = manager.read(r, SingleValuePrimitiveTestClass.class);
-	}
+    @BeforeEach
+    public void setup() throws Exception {
+        model = ModelFactory.createDefaultModel();
+        final Resource r = model.createResource( "http://localhost/SingleValuePrimitiveEntityTests" );
+        final EntityManager manager = EntityManagerFactory.getEntityManager();
+        tc = manager.read( r, SingleValuePrimitiveInterface.class );
+    }
 
-	@After
-	public void teardown()
-	{
-		model.close();
-	}
+    @AfterEach
+    public void teardown() {
+        model.close();
+    }
 
-	@Test
-	public void testBoolean()
-	{
-		tc.setBool(true);
-		Assert.assertTrue(tc.isBool());
-		tc.setBool(false);
-		Assert.assertTrue(!tc.isBool());
-		tc.setBool(Boolean.TRUE);
-		Assert.assertTrue(tc.isBool());
-		tc.setBool(Boolean.FALSE);
-		Assert.assertTrue(!tc.isBool());
-		tc.removeBool();
-		try
-		{
-			tc.isBool();
-			Assert.fail("Should have thrown NullPointerException");
-		}
-		catch (final NullPointerException e)
-		{
-			// expected
-		}
-	}
+    @Test
+    public void testBoolean() {
+        Assertions.assertFalse( tc.isBool() );
+        tc.setBool( true );
+        Assertions.assertTrue( tc.isBool() );
+        tc.setBool( false );
+        Assertions.assertFalse( tc.isBool() );
+        tc.setBool( Boolean.TRUE );
+        Assertions.assertTrue( tc.isBool() );
+        tc.setBool( Boolean.FALSE );
+        Assertions.assertFalse( tc.isBool() );
+        tc.removeBool();
+        Assertions.assertFalse( tc.isBool() );
+    }
 
-	@Test
-	public void testChar()
-	{
-		final char c = 'a';
-		final Character cc = Character.valueOf(c);
-		tc.setChar(c);
-		Assert.assertEquals(cc, Character.valueOf(tc.getChar()));
-		tc.setChar('x');
-		Assert.assertTrue(!cc.equals(tc.getChar()));
-		tc.setChar(cc);
-		Assert.assertEquals(cc, Character.valueOf(tc.getChar()));
-		tc.removeChar();
-		try
-		{
-			tc.getChar();
-			Assert.fail("Should have thrown NullPointerException");
-		}
-		catch (final NullPointerException e)
-		{
-			// expected
-		}
-	}
+    @Test
+    public void testChar() {
+        final char c = 'a';
+        final Character cc = Character.valueOf( c );
+        tc.setChar( c );
+        Assertions.assertEquals( cc, Character.valueOf( tc.getChar() ) );
+        tc.setChar( 'x' );
+        Assertions.assertTrue( !cc.equals( tc.getChar() ) );
+        tc.setChar( cc );
+        Assertions.assertEquals( cc, Character.valueOf( tc.getChar() ) );
+        tc.removeChar();
+        try {
+            tc.getChar();
+            Assertions.fail( "Should have thrown NullPointerException" );
+        } catch (final NullPointerException e) {
+            // expected
+        }
+    }
 
-	@Test
-	public void testDbl()
-	{
-		final double c = 3.14;
-		final Double cc = Double.valueOf(c);
-		tc.setDbl(c);
-		Assert.assertEquals(cc, Double.valueOf(tc.getDbl()));
-		tc.setDbl(0.0);
-		Assert.assertTrue(!cc.equals(tc.getDbl()));
-		tc.setDbl(cc);
-		Assert.assertEquals(cc, Double.valueOf(tc.getDbl()));
-		tc.removeDbl();
-		try
-		{
-			tc.getDbl();
-			Assert.fail("Should have thrown NullPointerException");
-		}
-		catch (final NullPointerException e)
-		{
-			// expected
-		}
-		;
-	}
+    @Test
+    public void testDbl() {
+        final double c = 3.14;
+        final Double cc = Double.valueOf( c );
+        tc.setDbl( c );
+        Assertions.assertEquals( cc, Double.valueOf( tc.getDbl() ) );
+        tc.setDbl( 0.0 );
+        Assertions.assertTrue( !cc.equals( tc.getDbl() ) );
+        tc.setDbl( cc );
+        Assertions.assertEquals( cc, Double.valueOf( tc.getDbl() ) );
+        tc.removeDbl();
+        try {
+            tc.getDbl();
+            Assertions.fail( "Should have thrown NullPointerException" );
+        } catch (final NullPointerException e) {
+            // expected
+        }
+        ;
+    }
 
-	@Test
-	public void testFlt()
-	{
-		final float c = 3.14F;
-		final Float cc = Float.valueOf(c);
-		tc.setFlt(c);
-		Assert.assertEquals(cc, Float.valueOf(tc.getFlt()));
-		tc.setFlt(0.0F);
-		Assert.assertTrue(!cc.equals(tc.getFlt()));
-		tc.setFlt(cc);
-		Assert.assertEquals(cc, Float.valueOf(tc.getFlt()));
-		tc.removeFlt();
-		try
-		{
-			tc.getFlt();
-			Assert.fail("Should have thrown NullPointerException");
-		}
-		catch (final NullPointerException e)
-		{
-			// expected
-		}
-		;
-	}
+    @Test
+    public void testFlt() {
+        final float c = 3.14F;
+        final Float cc = Float.valueOf( c );
+        tc.setFlt( c );
+        Assertions.assertEquals( cc, Float.valueOf( tc.getFlt() ) );
+        tc.setFlt( 0.0F );
+        Assertions.assertTrue( !cc.equals( tc.getFlt() ) );
+        tc.setFlt( cc );
+        Assertions.assertEquals( cc, Float.valueOf( tc.getFlt() ) );
+        tc.removeFlt();
+        try {
+            tc.getFlt();
+            Assertions.fail( "Should have thrown NullPointerException" );
+        } catch (final NullPointerException e) {
+            // expected
+        }
+        ;
+    }
 
-	@Test
-	public void testInt()
-	{
-		final int c = 3;
-		final Integer cc = Integer.valueOf(c);
-		tc.setInt(c);
-		Assert.assertEquals(cc, Integer.valueOf(tc.getInt()));
-		tc.setInt(0);
-		Assert.assertTrue(!cc.equals(tc.getInt()));
-		tc.setInt(cc);
-		Assert.assertEquals(cc, Integer.valueOf(tc.getInt()));
-		tc.removeInt();
-		try
-		{
-			tc.getInt();
-			Assert.fail("Should have thrown NullPointerException");
-		}
-		catch (final NullPointerException e)
-		{
-			// expected
-		}
-		;
-	}
+    @Test
+    public void testInt() {
+        final int c = 3;
+        final Integer cc = Integer.valueOf( c );
+        tc.setInt( c );
+        Assertions.assertEquals( cc, Integer.valueOf( tc.getInt() ) );
+        tc.setInt( 0 );
+        Assertions.assertTrue( !cc.equals( tc.getInt() ) );
+        tc.setInt( cc );
+        Assertions.assertEquals( cc, Integer.valueOf( tc.getInt() ) );
+        tc.removeInt();
+        try {
+            tc.getInt();
+            Assertions.fail( "Should have thrown NullPointerException" );
+        } catch (final NullPointerException e) {
+            // expected
+        }
+    }
 
-	@Test
-	public void testLng()
-	{
-		final long c = 3;
-		final Long cc = Long.valueOf(c);
-		tc.setLng(c);
-		Assert.assertEquals(cc, Long.valueOf(tc.getLng()));
-		tc.setLng(0L);
-		Assert.assertTrue(!cc.equals(tc.getLng()));
-		tc.setLng(cc);
-		Assert.assertEquals(cc, Long.valueOf(tc.getLng()));
-		tc.removeLng();
-		try
-		{
-			tc.getLng();
-			Assert.fail("Should have thrown NullPointerException");
-		}
-		catch (final NullPointerException e)
-		{
-			// expected
-		}
-		;
-	}
+    @Test
+    public void testLng() {
+        final long c = 3;
+        final Long cc = Long.valueOf( c );
+        tc.setLng( c );
+        Assertions.assertEquals( cc, Long.valueOf( tc.getLng() ) );
+        tc.setLng( 0L );
+        Assertions.assertTrue( !cc.equals( tc.getLng() ) );
+        tc.setLng( cc );
+        Assertions.assertEquals( cc, Long.valueOf( tc.getLng() ) );
+        tc.removeLng();
+        try {
+            tc.getLng();
+            Assertions.fail( "Should have thrown NullPointerException" );
+        } catch (final NullPointerException e) {
+            // expected
+        }
+        ;
+    }
 
 }

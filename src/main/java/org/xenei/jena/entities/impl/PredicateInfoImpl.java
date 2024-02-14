@@ -39,10 +39,14 @@ import java.util.Set;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.xenei.jena.entities.EntityManager;
+import org.xenei.jena.entities.EffectivePredicate;
+import org.xenei.jena.entities.ObjectHandler;
 import org.xenei.jena.entities.PredicateInfo;
 import org.xenei.jena.entities.annotations.Subject;
 import org.xenei.jena.entities.annotations.URI;
+import org.xenei.jena.entities.impl.datatype.CharDatatype;
+import org.xenei.jena.entities.impl.datatype.CharacterDatatype;
+import org.xenei.jena.entities.impl.datatype.LongDatatype;
 import org.xenei.jena.entities.impl.handlers.EntityHandler;
 import org.xenei.jena.entities.impl.handlers.LiteralHandler;
 import org.xenei.jena.entities.impl.handlers.ResourceHandler;
@@ -58,10 +62,11 @@ import org.xenei.jena.entities.impl.handlers.VoidHandler;
  */
 public class PredicateInfoImpl implements PredicateInfo {
     private final ObjectHandler objectHandler;
-    private Class<?> concreteType;
-    private final Class<?> valueClass;
+    private final Class<?> argumentType;
+    private final Class<?> returnType;
+    private final Class<?> enclosedType;
     private final String methodName;
-    private Property property;
+    private final Property property;
     private final ActionType actionType;
     private final EffectivePredicate predicate;
 
@@ -109,6 +114,137 @@ public class PredicateInfoImpl implements PredicateInfo {
         return clazz.getName();
     }
 
+    private static RDFDatatype adjustDataType(final RDFDatatype initial, final Class<?> returnType) {
+        if (CharDatatype.INSTANCE.handles( returnType )) {
+            return CharDatatype.INSTANCE;
+        } else if (CharacterDatatype.INSTANCE.handles( returnType )) {
+            return CharacterDatatype.INSTANCE;
+        } else if (LongDatatype.INSTANCE.handles( returnType )) {
+            return LongDatatype.INSTANCE;
+        }
+        return initial;
+    }
+
+    /**
+     * if A is a collection b
+     *
+     * @param a
+     * @param b
+     * @return
+     */
+    private static Class<?> replaceCollection(final Class<?> a, final Class<?> b) {
+        return ClassUtils.isCollection( a ) ? b : a;
+    }
+
+    /**
+     * if a is null or void then b
+     *
+     * @param a
+     * @param b
+     * @return
+     */
+    private static Class<?> or(final Class<?> a, final Class<?> b) {
+        return ClassUtils.nullOrVoid( a ) ? b : a;
+    }
+
+    /**
+     * if a is null void.class
+     *
+     * @param a
+     * @return
+     */
+    private static Class<?> notNull(final Class<?> a) {
+        return ClassUtils.nullOrVoid( a ) ? void.class : a;
+    }
+
+    /**
+     * Constructor.
+     *
+     * @param predicate
+     *            The EffectivePredicate instance that describes the predicate.
+     * @param methodName
+     *            The name of the method that this predicate calls.
+     * @param valueClass
+     *            The class type for the return (getter) or parameter (setter)
+     */
+    public PredicateInfoImpl(final EffectivePredicate predicate, final Action action) {
+        if (predicate == null) {
+            throw new IllegalArgumentException( "Predicate may not be null" );
+        }
+        if (action == null) {
+            throw new IllegalArgumentException( "Action may not be null" );
+        }
+        actionType = action.actionType;
+        final Class<?> tempArgumentType = action.getArgument();
+        final Class<?> tempReturnType = action.getReturn();
+        Class<?> tempEnclosedType = void.class;
+        switch (actionType) {
+        case SETTER:
+            tempEnclosedType = ClassUtils.isCollection( tempArgumentType ) ? predicate.type()
+                    : (action.hasArgumentAnnotation( URI.class ) ? URI.class : void.class);
+            break;
+        case GETTER:
+            tempEnclosedType = ClassUtils.isCollection( tempReturnType ) ? predicate.type()
+                    : (action.hasMethodTypeAnnotation( URI.class ) ? URI.class : void.class);
+            break;
+        default:
+            // do nothing
+            break;
+        }
+
+        if (StringUtils.isBlank( predicate.name() )) {
+            try {
+                predicate.setName( action.name() );
+            } catch (final IllegalArgumentException e) {
+                // expected when not an action method.
+            }
+        }
+
+        methodName = action.method.getName();
+        argumentType = PredicateInfoImpl.notNull( tempArgumentType );
+        this.predicate = predicate;
+        enclosedType = tempEnclosedType;
+        returnType = PredicateInfoImpl.notNull( tempReturnType );
+        objectHandler = getHandler( action );
+        property = ResourceFactory.createProperty( predicate.namespace() + predicate.name() );
+    }
+
+    public PredicateInfoImpl(final PredicateInfo pi) {
+        actionType = pi.getActionType();
+        argumentType = pi.getArgumentType();
+        enclosedType = pi.getEnclosedType();
+        methodName = pi.getMethodName();
+        objectHandler = pi.getObjectHandler();
+        predicate = pi.getPredicate().copy();
+        property = ResourceFactory.createProperty( predicate.namespace() + predicate.name() );
+        returnType = pi.getReturnType();
+    }
+
+    public PredicateInfoImpl(final PredicateInfo pi, final EffectivePredicate predicate) {
+        actionType = pi.getActionType();
+        argumentType = pi.getArgumentType();
+        enclosedType = pi.getEnclosedType();
+        methodName = pi.getMethodName();
+        objectHandler = pi.getObjectHandler();
+        this.predicate = predicate.merge( pi.getPredicate() );
+        property = ResourceFactory.createProperty( this.predicate.namespace() + this.predicate.name() );
+        returnType = pi.getReturnType();
+    }
+
+    @Override
+    public Class<?> getValueType() {
+        switch (actionType) {
+        case SETTER:
+        case REMOVER:
+        case EXISTENTIAL:
+            return argumentType;
+
+        case GETTER:
+            return returnType;
+        }
+        return null;
+    }
+
     /**
      * Get the ObjectHandler for a predicate.
      *
@@ -120,85 +256,61 @@ public class PredicateInfoImpl implements PredicateInfo {
      *            The EffectivePredicate definition.
      * @return The object handler.
      */
-    public static ObjectHandler getHandler(final EntityManager entityManager, final Class<?> returnType,
-            final EffectivePredicate pred) {
+    private ObjectHandler getHandler(final Action action) {
+
         final TypeMapper typeMapper = TypeMapper.getInstance();
         RDFDatatype dt = null;
-        if ((pred != null) && !pred.literalType().equals( "" )) {
-            dt = typeMapper.getSafeTypeByName( pred.literalType() );
-        } else {
-            dt = typeMapper.getTypeByClass( returnType );
-        }
-        if (dt != null) {
-            return new LiteralHandler( dt );
-        }
-        if (returnType != null) {
-            if (returnType.getAnnotation( Subject.class ) != null) {
-                return new EntityHandler( entityManager, returnType );
-            }
-            if (RDFNode.class.isAssignableFrom( returnType )) {
-                return new ResourceHandler();
-            }
-            if (returnType.equals( URI.class )) {
+        Class<?> dataType = null;
+
+        switch (actionType) {
+        case SETTER:
+            dataType = PredicateInfoImpl.or( enclosedType, argumentType );
+            break;
+
+        case REMOVER:
+            return new VoidHandler();
+
+        case GETTER:
+            if (action.hasMethodTypeAnnotation( URI.class )) {
                 return new UriHandler();
             }
+            dataType = PredicateInfoImpl.replaceCollection( returnType, enclosedType );
+            break;
+
+        case EXISTENTIAL:
+            dataType = PredicateInfoImpl.notNull( returnType );
+            break;
+
+        }
+        if (!predicate.literalType().equals( "" )) {
+            dt = typeMapper.getSafeTypeByName( predicate.literalType() );
+        } else {
+            dt = typeMapper.getTypeByClass( dataType );
+        }
+        if (dt != null) {
+            return new LiteralHandler( PredicateInfoImpl.adjustDataType( dt, dataType ) );
+        }
+
+        if (dataType.getAnnotation( Subject.class ) != null) {
+            return new EntityHandler( dataType );
+        }
+        if (RDFNode.class.isAssignableFrom( dataType )) {
+            return new ResourceHandler();
+        }
+        if (dataType.equals( URI.class )) {
+            return new UriHandler();
         }
         return new VoidHandler();
     }
 
-    /**
-     * Constructor.
-     *
-     * @param entityManager
-     *            The EntityManager that this predicate is assocatied with.
-     * @param predicate
-     *            The EffectivePredicate instance that describes the predicate.
-     * @param methodName
-     *            The name of the method that this predicate calls.
-     * @param valueClass
-     *            The class type for the return (getter) or parameter (setter)
-     */
-    public PredicateInfoImpl(final EntityManager entityManager, final EffectivePredicate predicate,
-            final String methodName, final Class<?> valueClass) {
-        this.methodName = methodName;
-        actionType = ActionType.parse( methodName );
-        this.valueClass = valueClass;
-        if (predicate == null) {
-            throw new IllegalArgumentException( "Predicate may not be null" );
-        }
-        this.predicate = predicate;
-        if (URI.class.equals( predicate.type() )) {
-            concreteType = URI.class;
-        } else {
-            if ((valueClass != null) && (Iterator.class.isAssignableFrom( valueClass )
-                    || Collection.class.isAssignableFrom( valueClass ))) {
-                concreteType = predicate.type();
-            } else {
-                concreteType = valueClass;
-            }
-        }
-
-        if ((concreteType != null) && (valueClass != null)) {
-            if (concreteType.isPrimitive() && !valueClass.isPrimitive()) {
-                // This allows us to have setters that take primitives but
-                // getters
-                // that return objects.
-                concreteType = valueClass;
-            } else if (!concreteType.isPrimitive() && valueClass.isPrimitive()) {
-                concreteType = valueClass;
-            }
-        }
-        objectHandler = PredicateInfoImpl.getHandler( entityManager, concreteType, predicate );
+    @Override
+    public Class<?> getReturnType() {
+        return returnType;
     }
 
-    public PredicateInfoImpl(final PredicateInfoImpl pi) {
-        actionType = pi.actionType;
-        concreteType = pi.concreteType;
-        methodName = pi.methodName;
-        objectHandler = pi.objectHandler;
-        predicate = new EffectivePredicate( pi.predicate );
-        property = pi.property;
-        valueClass = pi.valueClass;
+    @Override
+    public EffectivePredicate getPredicate() {
+        return predicate;
     }
 
     private Property createResourceProperty(final Resource resource) {
@@ -238,15 +350,18 @@ public class PredicateInfoImpl implements PredicateInfo {
             retval = execRemove( resource, p, args );
             break;
         case EXISTENTIAL:
-            retval = execHas( resource, p, args );
+            if (method.getName().startsWith( "is" )) {
+                retval = execIs( resource, p, args );
+            } else {
+                retval = execHas( resource, p, args );
+            }
             break;
         }
         return retval;
     }
 
     private Object execAdd(final Resource resource, final Property p, final Object[] args) {
-        final boolean empty = objectHandler.isEmpty( args[0] );
-        if (!empty || !predicate.emptyIsNull()) {
+        if (!objectHandler.isEmpty( args[0] ) || !predicate.emptyIsNull()) {
             final RDFNode o = objectHandler.createRDFNode( args[0] );
             if (o != null) {
                 resource.addProperty( p, o );
@@ -255,10 +370,30 @@ public class PredicateInfoImpl implements PredicateInfo {
         return null;
     }
 
+    private Object execIs(final Resource resource, final Property p, final Object[] args) {
+        Object arg = args == null ? null : args[0];
+        if (arg == null) {
+            arg = (Boolean.class.equals( predicate.type() ) || boolean.class.equals( predicate.type() )) ? Boolean.TRUE
+                    : null;
+        }
+
+        try {
+            resource.getModel().enterCriticalSection( Lock.READ );
+            if (arg == null) {
+                return resource.hasProperty( p );
+            }
+            return resource.hasProperty( p, objectHandler.createRDFNode( arg ) );
+        } finally {
+            resource.getModel().leaveCriticalSection();
+        }
+    }
+
     private Object execHas(final Resource resource, final Property p, final Object[] args) {
         try {
             resource.getModel().enterCriticalSection( Lock.READ );
-
+            if (args == null) {
+                return resource.hasProperty( p );
+            }
             return resource.hasProperty( p, objectHandler.createRDFNode( args[0] ) );
         } finally {
             resource.getModel().leaveCriticalSection();
@@ -266,9 +401,9 @@ public class PredicateInfoImpl implements PredicateInfo {
     }
 
     private Object execRead(final Resource resource, final Property p) {
-        if (Iterator.class.isAssignableFrom( valueClass )) {
+        if (Iterator.class.isAssignableFrom( returnType )) {
             return execReadMultiple( resource, p );
-        } else if (Collection.class.isAssignableFrom( valueClass )) {
+        } else if (Collection.class.isAssignableFrom( returnType )) {
             return execReadCollection( resource, p );
         } else {
             return execReadSingle( resource, p );
@@ -281,11 +416,11 @@ public class PredicateInfoImpl implements PredicateInfo {
             final NodeIterator iter = resource.getModel().listObjectsOfProperty( resource, p );
 
             final ExtendedIterator<Object> oIter = iter.mapWith( rdfNode -> objectHandler.parseObject( rdfNode ) );
-            if (List.class.isAssignableFrom( valueClass )) {
+            if (List.class.isAssignableFrom( returnType )) {
                 return oIter.toList();
-            } else if (Set.class.isAssignableFrom( valueClass )) {
+            } else if (Set.class.isAssignableFrom( returnType )) {
                 return oIter.toSet();
-            } else if (Queue.class.isAssignableFrom( valueClass )) {
+            } else if (Queue.class.isAssignableFrom( returnType )) {
                 return new LinkedList<>( oIter.toList() );
             } else {
                 return oIter.toList();
@@ -322,10 +457,10 @@ public class PredicateInfoImpl implements PredicateInfo {
                 iter.close();
             }
             if (retval == null) {
-                if (concreteType.isPrimitive()) {
+                if (returnType.isPrimitive()) {
                     throw new NullPointerException(
                             String.format( "Null valueClass (%s) was assigned to a variable of primitive type: %s",
-                                    methodName, concreteType ) );
+                                    methodName, returnType ) );
                 }
 
             }
@@ -338,7 +473,7 @@ public class PredicateInfoImpl implements PredicateInfo {
     private Object execRemove(final Resource resource, final Property p, final Object[] args) {
         try {
             resource.getModel().enterCriticalSection( Lock.WRITE );
-            if (valueClass == null) {
+            if (argumentType == void.class) {
                 resource.removeAll( p );
             } else {
                 resource.getModel().remove( resource, p, objectHandler.createRDFNode( args[0] ) );
@@ -406,6 +541,7 @@ public class PredicateInfoImpl implements PredicateInfo {
         return predicate.namespace();
     }
 
+    @Override
     public ObjectHandler getObjectHandler() {
         return objectHandler;
     }
@@ -417,9 +553,6 @@ public class PredicateInfoImpl implements PredicateInfo {
      */
     @Override
     public Property getProperty() {
-        if (property == null) {
-            property = ResourceFactory.createProperty( getUriString() );
-        }
         return property;
     }
 
@@ -439,17 +572,22 @@ public class PredicateInfoImpl implements PredicateInfo {
      * @see org.xenei.jena.entities.impl.PredicateInfo#getValue()
      */
     @Override
-    public Class<?> getValueClass() {
-        return valueClass;
+    public Class<?> getArgumentType() {
+        return argumentType;
     }
 
     @Override
     public String toString() {
-        return String.format( "%s(%s)", methodName, valueClass );
+        return String.format( "%s %s(%s)", returnType, methodName, argumentType );
     }
 
     @Override
     public List<Method> getPostExec() {
         return predicate.postExec();
+    }
+
+    @Override
+    public Class<?> getEnclosedType() {
+        return enclosedType;
     }
 }

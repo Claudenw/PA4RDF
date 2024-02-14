@@ -24,19 +24,23 @@ import org.xenei.jena.entities.impl.EntityManagerImpl;
 public class EntityManagerFactory {
     private static EntityManager manager;
 
+    private EntityManagerFactory() {
+        // no not instantiate.
+    }
+
     /**
      * @return the entity manager
      */
     public static EntityManager getEntityManager() {
         if (EntityManagerFactory.manager == null) {
-            EntityManagerFactory.manager = new EntityManagerImpl();
+            EntityManagerFactory.setEntityManager( new EntityManagerImpl() );
         }
         return EntityManagerFactory.manager;
     }
 
     /**
      * Set the entity manager that the factory will return.
-     * 
+     *
      * @param manager
      *            The manager to be returned on subsequent getEntityManager()
      *            calls.

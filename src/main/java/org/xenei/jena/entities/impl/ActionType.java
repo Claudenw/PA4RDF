@@ -15,8 +15,14 @@
 package org.xenei.jena.entities.impl;
 
 import java.lang.reflect.Method;
-import java.util.Collection;
+import java.util.Arrays;
 import java.util.Iterator;
+import java.util.List;
+import java.util.Optional;
+import java.util.function.Predicate;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.jena.util.iterator.ExtendedIterator;
+import org.apache.jena.util.iterator.NullIterator;
 
 /**
  * An enumeration of Action types.
@@ -25,45 +31,34 @@ public enum ActionType {
     /**
      * Indicates a method that gets a value
      */
-    GETTER(),
+    GETTER(Arrays.asList( "get" )),
     /**
      * Indicates a method that sets a value
      */
-    SETTER(),
+    SETTER(Arrays.asList( "set", "add" )),
     /**
      * Indicates a method that removes a value
      */
-    REMOVER(),
+    REMOVER(Arrays.asList( "remove" )),
     /**
      * Indicates a method that checks for the existance of a value
      */
-    EXISTENTIAL();
+    EXISTENTIAL(Arrays.asList( "has", "is" ));
 
-    public static boolean isMultiple(final Method m) {
-        final ActionType at = ActionType.parse( m.getName() );
-        switch (at) {
-        case GETTER:
-            return Iterator.class.isAssignableFrom( m.getReturnType() )
-                    || Collection.class.isAssignableFrom( m.getReturnType() );
+    private final List<String> prefixes;
 
-        case SETTER:
-            return m.getName().startsWith( "set" );
-
-        case EXISTENTIAL:
-        case REMOVER:
-            return m.getParameterTypes().length > 0;
-        }
-        throw new IllegalArgumentException( String.format( "%s is not an action type function", m ) );
+    private ActionType(final List<String> prefixes) {
+        this.prefixes = prefixes;
     }
 
     /**
      * Parse the action type from the function name.
-     * 
+     *
      * Action types are defined from known function name prefixes. In general
      * the function prefix will define the action type and the remaining portion
      * of the name will define the local name for the predicate. @see @link{
      * org.xenei.jena.annotations.Predicate }
-     * 
+     *
      * <table summary="List of function prefixes and ActionType mappings">
      * <tr>
      * <th>Function prefix</th>
@@ -86,7 +81,7 @@ public enum ActionType {
      * <td>EXISTENTIAL</td>
      * </tr>
      * </table>
-     * 
+     *
      * @param functionName
      *            The name of the function being parsed.
      * @return ActionType
@@ -94,74 +89,77 @@ public enum ActionType {
      *             if the function does not have an action type prefix.
      */
     public static ActionType parse(final String functionName) {
-        if (functionName.startsWith( "get" ) || functionName.startsWith( "is" )) {
-            return GETTER;
-        }
-        if (functionName.startsWith( "set" ) || functionName.startsWith( "add" )) {
-            return SETTER;
-        }
-        if (functionName.startsWith( "remove" )) {
-            return REMOVER;
-        }
-        if (functionName.startsWith( "has" )) {
-            return EXISTENTIAL;
+        for (final ActionType action : ActionType.values()) {
+            if (action.prefixes.stream().anyMatch( (prefix) -> functionName.startsWith( prefix ) )) {
+                return action;
+            }
         }
         throw new IllegalArgumentException( String.format( "%s is not an action type function", functionName ) );
-
     }
 
     /**
      * Extract the local name portion of the function name/
-     * 
-     * @param name
+     *
+     * @param functionName
      *            The function name to extract the local portion from.
      * @return The local name.
      * @throws IllegalArgumentException
      *             fur unrecognized ActionType instances.
      */
-    public String extractName(final String name) {
-        switch (this) {
-        case GETTER:
-            if (name.startsWith( "get" )) {
-                return name.substring( 3 );
+    public String extractName(final String functionName) {
+        if (isA( functionName )) {
+            final Predicate<String> predicate = new Predicate<>() {
+                @Override
+                public boolean test(final String prefix) {
+                    return functionName.startsWith( prefix );
+                }
+            };
+            final Optional<String> prefix = prefixes.stream().filter( predicate ).findFirst();
+            if (prefix.isPresent()) {
+                return functionName.substring( prefix.get().length() );
             }
-            return name.substring( 2 );
-
-        case SETTER:
-        case EXISTENTIAL:
-            return name.substring( 3 );
-
-        case REMOVER:
-            return name.substring( 6 );
         }
-        throw new IllegalArgumentException( this.getClass().getName() + " does not seem to be a valid ActionType" );
+        throw new IllegalArgumentException( functionName + " is not an " + this + " ActionType" );
+    }
+
+    public Iterator<String> createNames(final String name) {
+        return prefixes.stream().map( t -> t + name ).iterator();
     }
 
     /**
      * Test to see if the function name is of this action type.
-     * 
+     *
      * @param functionName
      *            The name to test
      * @return true if the function is of this type, false otherwise.
      */
     public boolean isA(final String functionName) {
-        if (functionName == null) {
-            return false;
-        }
+        return StringUtils.isNotBlank( functionName )
+                ? prefixes.stream().anyMatch( (prefix) -> functionName.startsWith( prefix ) )
+                : false;
+    }
+
+    public Class<?> predicateClass(final Method method) {
         switch (this) {
         case EXISTENTIAL:
-            return functionName.startsWith( "has" );
+        case REMOVER:
+        case SETTER:
+            return method.getParameterCount() == 0 ? void.class : method.getParameterTypes()[0];
 
         case GETTER:
-            return functionName.startsWith( "get" ) || functionName.startsWith( "is" );
+            return method.getReturnType();
 
-        case REMOVER:
-            return functionName.startsWith( "remove" );
-
-        case SETTER:
-            return functionName.startsWith( "set" ) || functionName.startsWith( "add" );
+        default:
+            return void.class;
         }
-        return false;
+    }
+
+    public static ExtendedIterator<String> allNames(final String nameSuffix) {
+        ExtendedIterator<String> result = new NullIterator<>();
+        for (final ActionType type : ActionType.values()) {
+            result = result.andThen( type.createNames( nameSuffix ) );
+        }
+        return result;
     }
 
 }

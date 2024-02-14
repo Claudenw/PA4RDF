@@ -20,9 +20,13 @@ package org.xenei.jena.entities.impl;
  */
 public class TypeChecker {
 
+    private TypeChecker() {
+        // do not instantiate
+    }
+
     /**
      * True if <code>a</code> can be set from <code>b</code>
-     * 
+     *
      * @param a
      *            The resulting class.
      * @param b
@@ -46,10 +50,10 @@ public class TypeChecker {
 
     /**
      * Get the primitive class that is equivalent to clazz.
-     * 
+     *
      * If clazz is a primitive returns clazz. If clazz does not wrap a primitive
      * returns null.
-     * 
+     *
      * @param clazz
      *            the class to unwrap.
      * @return The primitive class or null.
@@ -60,11 +64,7 @@ public class TypeChecker {
         }
         try {
             return (Class<?>) clazz.getField( "TYPE" ).get( null );
-        } catch (final IllegalArgumentException e) {
-            new RuntimeException( e );
-        } catch (final SecurityException e) {
-            new RuntimeException( e );
-        } catch (final IllegalAccessException e) {
+        } catch (final IllegalArgumentException | SecurityException | IllegalAccessException e) {
             new RuntimeException( e );
         } catch (final NoSuchFieldException e) {
             // expected in some cases

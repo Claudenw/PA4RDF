@@ -14,46 +14,27 @@
  */
 package org.xenei.jena.entities.impl;
 
-import org.apache.jena.datatypes.RDFDatatype;
-import org.apache.jena.datatypes.TypeMapper;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.Resource;
 import org.apache.jena.rdf.model.ResourceFactory;
 import org.apache.jena.vocabulary.RDF;
 
-import java.io.File;
-import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.net.URL;
+import java.lang.reflect.Proxy;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipInputStream;
-
-import net.sf.cglib.proxy.Enhancer;
-import net.sf.cglib.proxy.MethodInterceptor;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xenei.jena.entities.EntityManager;
-import org.xenei.jena.entities.MissingAnnotation;
 import org.xenei.jena.entities.ResourceWrapper;
 import org.xenei.jena.entities.SubjectInfo;
-import org.xenei.jena.entities.annotations.Predicate;
 import org.xenei.jena.entities.annotations.Subject;
-import org.xenei.jena.entities.impl.datatype.CharDatatype;
-import org.xenei.jena.entities.impl.datatype.CharacterDatatype;
-import org.xenei.jena.entities.impl.datatype.LongDatatype;
+import org.xenei.jena.entities.exceptions.MissingAnnotationException;
+import org.xenei.jena.entities.exceptions.NotInterfaceException;
 
 /**
  * An implementation of the EntityManager interface.
@@ -61,58 +42,18 @@ import org.xenei.jena.entities.impl.datatype.LongDatatype;
  */
 public class EntityManagerImpl implements EntityManager {
     private static Logger LOG = LoggerFactory.getLogger( EntityManagerImpl.class );
-
-    private final Map<Class<?>, SubjectInfoImpl> classInfo = new HashMap<>();
-
-    static {
-        EntityManagerImpl.registerTypes();
-    }
-
-    /**
-     * Register the datatypes used by the entity manger specifically xsd:long :
-     * java.util.Long xsd:string : java.util.Character xsd:string :
-     * java.lang.char
-     * 
-     * and finally resetting xsd:string to java.lang.String
-     */
-    public static void registerTypes() {
-        RDFDatatype rtype = null;
-        // handle the string types
-        // preserve string class and put it back later.
-        final RDFDatatype stype = TypeMapper.getInstance().getTypeByClass( String.class );
-        rtype = new CharacterDatatype();
-        TypeMapper.getInstance().registerDatatype( rtype );
-        rtype = new CharDatatype();
-        TypeMapper.getInstance().registerDatatype( rtype );
-        // put the string type back so that it is the registered type for
-        // xsd:string
-        TypeMapper.getInstance().registerDatatype( stype );
-
-        // change the long type.
-        rtype = new LongDatatype();
-        TypeMapper.getInstance().registerDatatype( rtype );
-    }
+    private final SubjectInfoFactory factory;
 
     /**
      * Constructor.
      */
     public EntityManagerImpl() {
-        try {
-            parse( ResourceWrapper.class );
-        } catch (final MissingAnnotation e) {
-            throw new RuntimeException( e );
-        }
+        factory = new SubjectInfoFactory();
     }
 
     @Override
     public void reset() {
-        classInfo.clear();
-        EntityManagerImpl.registerTypes();
-        try {
-            parse( ResourceWrapper.class );
-        } catch (final MissingAnnotation e) {
-            throw new RuntimeException( e );
-        }
+        factory.clear();
     }
 
     /**
@@ -123,24 +64,24 @@ public class EntityManagerImpl implements EntityManager {
      * This method may modify the graph and should be called within the scope of
      * a transaction if the underlying graph requires them.
      * </p>
-     * 
+     *
      * @param source
      *            Must either implement Resource or ResourceWrapper interfaces.
      * @param clazz
      *            The class containing the Subject annotation.
      * @return source for chaining
-     * @throws MissingAnnotation
+     * @throws MissingAnnotationException
      *             if clazz does not have Subject annotations.
      * @throws IllegalArgumentException
      *             if source implements neither Resource nor ResourceWrapper.
      */
     @Override
     public <T> T addInstanceProperties(final T source, final Class<?> clazz)
-            throws MissingAnnotation, IllegalArgumentException {
-        final Resource r = getResource( source );
+            throws MissingAnnotationException, IllegalArgumentException {
+        final Resource r = ResourceWrapper.getResource( source );
         final Subject e = clazz.getAnnotation( Subject.class );
         if (e == null) {
-            throw new MissingAnnotation( "No Subject annotationin " + clazz.getCanonicalName() );
+            throw new MissingAnnotationException( "No Subject annotationin " + clazz.getCanonicalName() );
         }
         final Model model = r.getModel(); // may be null;
         if (e != null) {
@@ -153,128 +94,6 @@ public class EntityManagerImpl implements EntityManager {
             }
         }
         return source;
-    }
-
-    private Map<String, Integer> countAdders(final Method[] methods) {
-        final Map<String, Integer> addCount = new HashMap<>();
-        for (final Method m : methods) {
-            if (isAdd( m )) {
-                Integer i = addCount.get( m.getName() );
-                if (i == null) {
-                    i = 1;
-                } else {
-                    i = i + 1;
-                }
-                addCount.put( m.getName(), i );
-            }
-        }
-        return addCount;
-    }
-
-    /**
-     * Recursive method used to find all classes in a given directory and
-     * subdirs. Adapted from http://snippets.dzone.com/posts/show/4831 and
-     * extended to support use of JAR files
-     * 
-     * @param directory
-     *            The base directory
-     * @param packageName
-     *            The package name for classes found inside the base directory
-     * @return The classes
-     * @throws IOException
-     * @throws ClassNotFoundException
-     */
-    private Set<String> findClasses(final String directory, final String packageName) throws IOException {
-        final Set<String> classes = new HashSet<>();
-        if (directory.startsWith( "file:" ) && directory.contains( "!" )) {
-            final String[] split = directory.split( "!" );
-            final URL jar = new URL( split[0] );
-            final ZipInputStream zip = new ZipInputStream( jar.openStream() );
-            ZipEntry entry = null;
-            while ((entry = zip.getNextEntry()) != null) {
-                if (entry.getName().endsWith( ".class" )) {
-                    final String className = entry.getName().replaceAll( "[$].*", "" ).replaceAll( "[.]class", "" )
-                            .replace( '/', '.' );
-                    classes.add( className );
-                }
-            }
-        }
-        final File dir = new File( directory );
-        if (!dir.exists()) {
-            return classes;
-        }
-        final File[] files = dir.listFiles();
-        for (final File file : files) {
-            if (file.isDirectory()) {
-                assert !file.getName().contains( "." );
-                classes.addAll( findClasses( file.getAbsolutePath(), packageName + "." + file.getName() ) );
-            } else if (file.getName().endsWith( ".class" )) {
-                classes.add( packageName + '.' + file.getName().substring( 0, file.getName().length() - 6 ) );
-            }
-        }
-        return classes;
-    }
-
-    /**
-     * Scans all classes accessible from the context class loader which belong
-     * to the given package and subpackages. Adapted from
-     * http://snippets.dzone.com/posts/show/4831 and extended to support use of
-     * JAR files
-     * 
-     * @param packageName
-     *            The base package or class name
-     * @return The classes
-     * @throws ClassNotFoundException
-     * @throws IOException
-     */
-    private Collection<Class<?>> getClasses(final String packageName) {
-
-        final ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-        assert classLoader != null;
-        final String path = packageName.replace( '.', '/' );
-        Enumeration<URL> resources;
-        try {
-            resources = classLoader.getResources( path );
-        } catch (final IOException e1) {
-            EntityManagerImpl.LOG.error( e1.toString() );
-            return Collections.emptyList();
-        }
-        final Set<Class<?>> classes = new HashSet<>();
-        if (resources.hasMoreElements()) {
-            while (resources.hasMoreElements()) {
-                final URL resource = resources.nextElement();
-                try {
-                    for (final String clazz : findClasses( resource.getFile(), packageName )) {
-                        try {
-                            classes.add( Class.forName( clazz ) );
-                        } catch (final ClassNotFoundException e) {
-                            EntityManagerImpl.LOG.warn( e.toString() );
-                        }
-                    }
-                } catch (final IOException e) {
-                    EntityManagerImpl.LOG.warn( e.toString() );
-                }
-            }
-        } else {
-            // there are no resources at that path so see if it is a class
-            try {
-                classes.add( Class.forName( packageName ) );
-            } catch (final ClassNotFoundException e) {
-                EntityManagerImpl.LOG.warn( "{} was neither a package name nor a class name", packageName );
-            }
-        }
-        return classes;
-    }
-
-    private Resource getResource(final Object target) throws IllegalArgumentException {
-        if (target instanceof ResourceWrapper) {
-            return ((ResourceWrapper) target).getResource();
-        }
-        if (target instanceof Resource) {
-            return (Resource) target;
-        }
-        throw new IllegalArgumentException(
-                String.format( "%s implements neither Resource nor ResourceWrapper", target.getClass() ) );
     }
 
     @Override
@@ -299,35 +118,23 @@ public class EntityManagerImpl implements EntityManager {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * org.xenei.jena.entities.impl.EntityManager#getSubjectInfo(java.lang.Class
      * )
      */
     @Override
-    public SubjectInfo getSubjectInfo(final Class<?> clazz) {
+    public SubjectInfo getSubjectInfo(final Class<?> clazz) throws NotInterfaceException {
         try {
-            return parse( clazz );
-        } catch (final MissingAnnotation e) {
+            return factory.parse( clazz );
+        } catch (final MissingAnnotationException e) {
             throw new IllegalArgumentException( e );
         }
     }
 
-    private boolean isAdd(final Method m) {
-        try {
-            if (ActionType.parse( m.getName() ) == ActionType.SETTER) {
-                final Class<?> parms[] = m.getParameterTypes();
-                return (parms != null) && (parms.length == 1);
-            }
-        } catch (final IllegalArgumentException expected) {
-            // do nothing
-        }
-        return false;
-    }
-
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * org.xenei.jena.entities.impl.EntityManager#isInstance(org.apache.jena
      * .rdf.model.Resource, java.lang.Class)
@@ -341,7 +148,7 @@ public class EntityManagerImpl implements EntityManager {
 
         Resource r = null;
         try {
-            r = getResource( target );
+            r = ResourceWrapper.getResource( target );
         } catch (final IllegalArgumentException e) {
             return false;
         }
@@ -356,70 +163,21 @@ public class EntityManagerImpl implements EntityManager {
         return true;
     }
 
-    /**
-     * Parse the class if necessary.
-     * 
-     * The first time the class is seen it is parsed, after that a cached
-     * version is returned.
-     * 
-     * @param clazz
-     * @return The SubjectInfo for the class.
-     * @throws MissingAnnotation
-     */
-    private SubjectInfoImpl parse(final Class<?> clazz) throws MissingAnnotation {
-        SubjectInfoImpl subjectInfo = classInfo.get( clazz );
-
-        if (subjectInfo == null) {
-            EntityManagerImpl.LOG.info( "Parsing {}", clazz );
-            subjectInfo = new SubjectInfoImpl( clazz );
-
-            final MethodParser parser = new MethodParser( this, subjectInfo, countAdders( clazz.getMethods() ) );
-
-            boolean foundAnnotation = false;
-            final List<Method> annotated = new ArrayList<>();
-            for (final Method method : clazz.getMethods()) {
-                try {
-                    final ActionType actionType = ActionType.parse( method.getName() );
-                    if (method.getAnnotation( Predicate.class ) != null) {
-                        foundAnnotation = true;
-                        if (ActionType.GETTER == actionType) {
-                            parser.parse( method );
-                        } else {
-                            annotated.add( method );
-                        }
-                    }
-                } catch (final IllegalArgumentException expected) {
-                    // not an action type ignore method
-                }
-
-            }
-            if (!foundAnnotation) {
-                throw new MissingAnnotation( "No annotated methods in " + clazz.getCanonicalName() );
-            }
-
-            for (final Method method : annotated) {
-                parser.parse( method );
-            }
-            classInfo.put( clazz, subjectInfo );
-        }
-        return subjectInfo;
-    }
-
     @Override
-    public void parseClasses(final String packageName) throws MissingAnnotation {
+    public void parseClasses(final String packageName) throws MissingAnnotationException, NotInterfaceException {
         parseClasses( new String[] { packageName } );
     }
 
     @Override
-    public void parseClasses(final String[] packageNames) throws MissingAnnotation {
+    public void parseClasses(final String[] packageNames) throws MissingAnnotationException, NotInterfaceException {
         boolean hasErrors = false;
         for (final String pkg : packageNames) {
 
-            for (final Class<?> c : getClasses( pkg )) {
+            for (final Class<?> c : ClassUtils.getClasses( pkg )) {
                 if (c.getAnnotation( Subject.class ) != null) {
                     try {
-                        parse( c );
-                    } catch (final MissingAnnotation e) {
+                        factory.parse( c );
+                    } catch (final MissingAnnotationException e) {
                         EntityManagerImpl.LOG.warn( "Error processing {}: {}", c, e.getMessage() );
                         hasErrors = true;
                     }
@@ -427,15 +185,15 @@ public class EntityManagerImpl implements EntityManager {
             }
         }
         if (hasErrors) {
-            throw new MissingAnnotation(
+            throw new MissingAnnotationException(
                     String.format( "Unable to parse all %s See log for more details", Arrays.asList( packageNames ) ) );
         }
     }
 
     @Override
     public <T> T make(final Object source, final Class<T> primaryClass, final Class<?>... secondaryClasses)
-            throws MissingAnnotation {
-        Resource r = addInstanceProperties( getResource( source ), primaryClass );
+            throws MissingAnnotationException, NotInterfaceException {
+        Resource r = addInstanceProperties( ResourceWrapper.getResource( source ), primaryClass );
         for (final Class<?> c : secondaryClasses) {
             r = addInstanceProperties( r, c );
         }
@@ -444,7 +202,7 @@ public class EntityManagerImpl implements EntityManager {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * org.xenei.jena.entities.impl.EntityManager#read(org.apache.jena.rdf.model
      * .Resource, java.lang.Class, java.lang.Class)
@@ -452,34 +210,28 @@ public class EntityManagerImpl implements EntityManager {
     @Override
     @SuppressWarnings("unchecked")
     public <T> T read(final Object source, final Class<T> primaryClass, final Class<?>... secondaryClasses)
-            throws MissingAnnotation, IllegalArgumentException {
+            throws MissingAnnotationException, NotInterfaceException {
+        ClassUtils.validateInterface( primaryClass );
         final List<Class<?>> classes = new ArrayList<>();
-        SubjectInfoImpl subjectInfo;
-        subjectInfo = parse( primaryClass );
+        final SubjectInfoImpl subjectInfo = factory.parse( primaryClass );
 
-        if (primaryClass.isInterface()) {
-            classes.add( primaryClass );
-        }
+        classes.add( primaryClass );
+
         for (final Class<?> cla : secondaryClasses) {
             if (!classes.contains( cla )) {
-                parse( cla );
+                factory.parse( cla );
                 classes.add( cla );
             }
         }
         if (!classes.contains( ResourceWrapper.class )) {
             classes.add( ResourceWrapper.class );
         }
-        subjectInfo.validate( classes );
-        final MethodInterceptor interceptor = new ResourceEntityProxy( this, getResource( source ), subjectInfo );
-        final Class<?>[] classArray = new Class<?>[classes.size()];
 
-        final Enhancer e = new Enhancer();
-        if (!primaryClass.isInterface()) {
-            e.setSuperclass( primaryClass );
-        }
-        e.setInterfaces( classes.toArray( classArray ) );
-        e.setCallback( interceptor );
-        return (T) e.create();
+        final ResourceEntityProxy resourceEntityProxy = new ResourceEntityProxy( this,
+                ResourceWrapper.getResource( source ), subjectInfo );
+        final Class<?>[] classArray = new Class<?>[classes.size()];
+        return (T) Proxy.newProxyInstance( primaryClass.getClassLoader(), classes.toArray( classArray ),
+                resourceEntityProxy );
     }
 
     /**
@@ -488,7 +240,7 @@ public class EntityManagerImpl implements EntityManager {
      * the source to the target. It reads scans the target class for "set"
      * methods and the source class for associated "get" methods. If a pairing
      * is found the value of the "get" call is passed to the "set" call.
-     * 
+     *
      * @param source
      *            The object that has the values to transfer.
      * @param target

@@ -28,10 +28,21 @@ import org.xenei.jena.entities.annotations.Subject;
 public interface ResourceWrapper {
     /**
      * Get the wrapped resource.
-     * 
+     *
      * @return The jena model resource.
      */
     @Predicate
     public Resource getResource();
+
+    public static Resource getResource(final Object target) throws IllegalArgumentException {
+        if (target instanceof ResourceWrapper) {
+            return ((ResourceWrapper) target).getResource();
+        }
+        if (target instanceof Resource) {
+            return (Resource) target;
+        }
+        throw new IllegalArgumentException(
+                String.format( "%s implements neither Resource nor ResourceWrapper", target.getClass() ) );
+    }
 
 }
