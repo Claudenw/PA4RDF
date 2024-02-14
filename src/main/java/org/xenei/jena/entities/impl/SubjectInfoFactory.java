@@ -48,7 +48,7 @@ public class SubjectInfoFactory {
 
             boolean foundAnnotation = false;
             final List<Method> annotated = new ArrayList<>();
-            // parse all the getters first to pickup general parameters
+            // parse all the setter annotated methods, parse other annotated methods later
 
             for (final Method method : clazz.getMethods()) {
                 try {

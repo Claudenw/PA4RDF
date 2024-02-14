@@ -15,24 +15,24 @@ import org.xenei.jena.entities.impl.ActionType;
 import org.xenei.jena.entities.impl.MethodParser;
 import org.xenei.jena.entities.impl.SubjectInfoImpl;
 import org.xenei.jena.entities.impl.handlers.LiteralHandler;
-import org.xenei.jena.entities.testing.tClass.SimpleTestImpl;
+import org.xenei.jena.entities.testing.tClass.SimpleOverrideTestImpl;
 
-public class SimpleTestImplTest {
-    public SimpleTestImpl impl;
+public class SimpleOverrideTestImplTest {
+    public SimpleOverrideTestImpl impl;
 
     final String namespace = "http://example.com/";
-    final SubjectInfoImpl subjectInfo = new SubjectInfoImpl( SimpleTestImpl.class );
+    final SubjectInfoImpl subjectInfo = new SubjectInfoImpl( SimpleOverrideTestImpl.class );
     final MethodParser methodParser = new MethodParser( subjectInfo );
 
     @Test
     public void implParsingTest() throws Exception {
         final Property expectedProperty = ResourceFactory.createProperty( namespace, "x" );
-        final Method method = SimpleTestImpl.class.getMethod( "setX", String.class );
+        final Method method = SimpleOverrideTestImpl.class.getMethod( "setX", String.class );
         final PredicateInfo pi = methodParser.parse( method );
         Assertions.assertNotNull( subjectInfo.getPredicateInfo( method ) );
-        Assertions.assertNotNull( subjectInfo.getPredicateInfo( SimpleTestImpl.class.getMethod( "removeX" ) ) );
-        Assertions.assertNotNull( subjectInfo.getPredicateInfo( SimpleTestImpl.class.getMethod( "getX" ) ) );
-        Assertions.assertNotNull( subjectInfo.getPredicateInfo( SimpleTestImpl.class.getMethod( "hasX" ) ) );
+        Assertions.assertNotNull( subjectInfo.getPredicateInfo( SimpleOverrideTestImpl.class.getMethod( "removeX" ) ) );
+        Assertions.assertNull( subjectInfo.getPredicateInfo( SimpleOverrideTestImpl.class.getMethod( "getX" ) ) );
+        Assertions.assertNotNull( subjectInfo.getPredicateInfo( SimpleOverrideTestImpl.class.getMethod( "hasX" ) ) );
         final String expectedHandler = PredicateInfoImplTest.createHandler( "string", String.class.toString() );
         PredicateInfoImplTest.assertValues( pi, ActionType.SETTER, void.class, "setX", String.class,
                 LiteralHandler.class, expectedHandler, expectedProperty, void.class );
@@ -41,12 +41,12 @@ public class SimpleTestImplTest {
 
     @Test
     public void x() throws Exception {
-        System.out.println( SimpleTestImpl.class.getAnnotation( Subject.class ) );
-        for (final AnnotatedType o : SimpleTestImpl.class.getAnnotatedInterfaces()) {
+        System.out.println( SimpleOverrideTestImpl.class.getAnnotation( Subject.class ) );
+        for (final AnnotatedType o : SimpleOverrideTestImpl.class.getAnnotatedInterfaces()) {
 
             System.out.println( o.getType() );
         }
-        System.out.format( "Annotated Superclass %s", SimpleTestImpl.class.getAnnotatedSuperclass().getType() );
+        System.out.format( "Annotated Superclass %s", SimpleOverrideTestImpl.class.getAnnotatedSuperclass().getType() );
     }
 
 }

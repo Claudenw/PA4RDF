@@ -285,7 +285,7 @@ public class PredicateInfoImpl implements PredicateInfo {
             break;
 
         case EXISTENTIAL:
-            dataType = PredicateInfoImpl.notNull( returnType );
+            dataType = PredicateInfoImpl.or( argumentType, returnType );
             break;
 
         }
