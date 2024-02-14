@@ -100,7 +100,7 @@ public class CollectionValueObjectTest {
         pi = methodParser.parse( method );
         PredicateInfoImplTest.assertValues( pi, ActionType.SETTER, void.class, "addU", RDFNode.class,
                 ResourceHandler.class, "ResourceHandler", expectedProperty, void.class );
-        EffectivePredicateTest.assertValues( pi.getPredicate(), false, false, "", "u", namespace, URI.class, false );
+        EffectivePredicateTest.assertValues( pi.getPredicate(), false, false, "", "u", namespace, RDFNode.class, false );
         Assertions.assertNotNull( subjectInfo.getPredicateInfo( method ) );
 
         method = CollectionValueInterface.class.getMethod( "getU" );
@@ -113,7 +113,7 @@ public class CollectionValueObjectTest {
         method = CollectionValueInterface.class.getMethod( "getU2" );
         pi = methodParser.parse( method );
         PredicateInfoImplTest.assertValues( pi, ActionType.GETTER, List.class, "getU2", void.class,
-                UriHandler.class, "UriHandler", expectedProperty, String.class );
+                UriHandler.class, "UriHandler", expectedProperty, URI.class );
         EffectivePredicateTest.assertValues( pi.getPredicate(), false, false, "", "u", namespace, URI.class, false );
         Assertions.assertNotNull( subjectInfo.getPredicateInfo( method ) );
         
