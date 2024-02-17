@@ -273,14 +273,14 @@ public class PredicateInfoImpl implements PredicateInfo {
         case REMOVER:
             if (!action.isMultiple) {
                 // is this already handled by argumentType?
-                return new VoidHandler();
+                return VoidHandler.INSTANCE;
             }
             dataType = argumentType;
             break;
 
         case GETTER:
             if (action.hasMethodTypeAnnotation( URI.class )) {
-                return new UriHandler();
+                return UriHandler.INSTANCE;
             }
             dataType = PredicateInfoImpl.replaceCollection( returnType, enclosedType );
             break;
@@ -303,12 +303,12 @@ public class PredicateInfoImpl implements PredicateInfo {
             return new EntityHandler( dataType );
         }
         if (RDFNode.class.isAssignableFrom( dataType )) {
-            return new ResourceHandler();
+            return ResourceHandler.INSTANCE;
         }
         if (dataType.equals( URI.class )) {
-            return new UriHandler();
+            return UriHandler.INSTANCE;
         }
-        return new VoidHandler();
+        return VoidHandler.INSTANCE;
     }
 
     @Override

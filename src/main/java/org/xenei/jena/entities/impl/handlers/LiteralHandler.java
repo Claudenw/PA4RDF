@@ -54,10 +54,9 @@ public class LiteralHandler implements ObjectHandler {
 
     @Override
     public boolean equals(final Object o) {
-        if (o instanceof LiteralHandler) {
-            return literalDatatype.equals( ((LiteralHandler) o).literalDatatype );
-        }
-        return false;
+        return this == o || 
+                (o instanceof LiteralHandler && 
+             literalDatatype.equals( ((LiteralHandler) o).literalDatatype));
     }
 
     @Override

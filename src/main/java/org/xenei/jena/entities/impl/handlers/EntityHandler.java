@@ -50,12 +50,12 @@ public class EntityHandler implements ObjectHandler {
 
     @Override
     public boolean equals(final Object o) {
-        return o instanceof EntityHandler;
+        return this == o || (o instanceof EntityHandler && valueClass.equals(((EntityHandler)o).valueClass));
     }
 
     @Override
     public int hashCode() {
-        return toString().hashCode();
+        return valueClass.hashCode();
     }
 
     @Override

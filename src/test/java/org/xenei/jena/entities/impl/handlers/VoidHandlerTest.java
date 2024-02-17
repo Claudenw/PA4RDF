@@ -14,7 +14,7 @@ public class VoidHandlerTest implements HandlerTestInterface {
 
     @BeforeEach
     public void setup() {
-        handler = new VoidHandler();
+        handler = VoidHandler.INSTANCE;
         node = ResourceFactory.createPlainLiteral( "5" );
         instance = 5;
     }

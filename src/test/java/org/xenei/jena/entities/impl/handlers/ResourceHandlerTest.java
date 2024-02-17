@@ -14,7 +14,7 @@ public class ResourceHandlerTest implements HandlerTestInterface {
 
     @BeforeEach
     public void setup() {
-        handler = new ResourceHandler();
+        handler = ResourceHandler.INSTANCE;
         node = ResourceFactory.createResource();
     }
 

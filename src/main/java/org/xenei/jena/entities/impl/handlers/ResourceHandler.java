@@ -22,6 +22,11 @@ import org.apache.commons.lang3.StringUtils;
  * An ObjectHandler that does not convert RDFNodes.
  */
 public class ResourceHandler implements ObjectHandler {
+    
+    public static final ResourceHandler INSTANCE = new ResourceHandler();
+    
+    private  ResourceHandler() {
+    }
     /**
      * Convert an object to an RDFNode.
      *
@@ -34,16 +39,6 @@ public class ResourceHandler implements ObjectHandler {
             return (RDFNode) obj;
         }
         throw new IllegalArgumentException( String.format( "%s is not an RDFNode", obj ) );
-    }
-
-    @Override
-    public boolean equals(final Object o) {
-        return o instanceof ResourceHandler;
-    }
-
-    @Override
-    public int hashCode() {
-        return toString().hashCode();
     }
 
     @Override

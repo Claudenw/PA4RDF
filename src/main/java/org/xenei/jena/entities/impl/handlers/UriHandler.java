@@ -24,6 +24,12 @@ import org.apache.commons.lang3.StringUtils;
  * versa
  */
 public class UriHandler implements ObjectHandler {
+    
+    public static final UriHandler INSTANCE = new UriHandler();
+    
+    private UriHandler() {
+    }
+    
     /**
      * Convert the object as a string to an RDFNode.
      *
@@ -34,16 +40,6 @@ public class UriHandler implements ObjectHandler {
     @Override
     public RDFNode createRDFNode(final Object obj) {
         return ResourceFactory.createResource( String.valueOf( obj ) );
-    }
-
-    @Override
-    public boolean equals(final Object o) {
-        return o instanceof UriHandler;
-    }
-
-    @Override
-    public int hashCode() {
-        return toString().hashCode();
     }
 
     @Override

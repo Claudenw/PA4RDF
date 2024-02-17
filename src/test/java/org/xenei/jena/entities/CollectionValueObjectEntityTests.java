@@ -18,15 +18,13 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.lang.reflect.TypeVariable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Queue;
 import java.util.Set;
 import java.util.stream.Stream;
 
@@ -40,19 +38,17 @@ import org.apache.jena.rdf.model.ResourceFactory;
 import org.apache.jena.riot.RDFFormat;
 import org.apache.jena.riot.RDFWriter;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.xenei.jena.entities.annotations.Predicate;
 import org.xenei.jena.entities.annotations.URI;
-import org.xenei.jena.entities.exceptions.MissingAnnotationException;
 import org.xenei.jena.entities.impl.ActionType;
-import org.xenei.jena.entities.impl.SubjectInfoFactory;
-import org.xenei.jena.entities.impl.SubjectInfoImpl;
+import org.xenei.jena.entities.impl.handlers.EntityHandler;
 import org.xenei.jena.entities.impl.handlers.LiteralHandler;
+import org.xenei.jena.entities.impl.handlers.ResourceHandler;
+import org.xenei.jena.entities.impl.handlers.UriHandler;
 import org.xenei.jena.entities.testing.iface.CollectionValueInterface;
 import org.xenei.jena.entities.testing.iface.TestInterface;
 
@@ -79,112 +75,10 @@ public class CollectionValueObjectEntityTests {
     public void teardown() {
         model.close();
     }
-    /*
-     * @Test public void testBoolean() { Assertions.assertFalse( tc.hasBool(
-     * true ) ); tc.addBool( true ); Assertions.assertTrue( tc.hasBool( true )
-     * ); Assertions.assertFalse( tc.hasBool( false ) ); tc.addBool( false );
-     * Assertions.assertTrue( tc.hasBool( false ) ); Assertions.assertEquals( 2,
-     * tc.getBool().size() ); tc.addBool( Boolean.TRUE ); Assertions.assertTrue(
-     * tc.hasBool( Boolean.TRUE ) ); Assertions.assertEquals( 2,
-     * tc.getBool().size() ); tc.addBool( Boolean.FALSE );
-     * Assertions.assertTrue( tc.hasBool( Boolean.FALSE ) );
-     * Assertions.assertEquals( 2, tc.getBool().size() ); tc.removeBool(
-     * Boolean.FALSE ); Assertions.assertFalse( tc.hasBool( Boolean.FALSE ) );
-     * Assertions.assertEquals( 1, tc.getBool().size() ); }
-     */
-
-//    @Test
-//    public void testChar() {
-//        final char c = 'a';
-//        final Character cc = Character.valueOf( c );
-//        tc.addChar( c );
-//        Assertions.assertTrue( tc.getChar().contains( c ) );
-//        tc.addChar( 'x' );
-//        Assertions.assertTrue( tc.getChar().contains( 'x' ) );
-//        tc.addChar( cc );
-//        Assertions.assertTrue( tc.getChar().contains( cc ) );
-//        tc.removeChar( cc );
-//        Assertions.assertFalse( tc.getChar().contains( cc ) );
-//        Assertions.assertFalse( tc.getChar().contains( c ) );
-//        Assertions.assertTrue( tc.getChar().contains( 'x' ) );
-//    }
-    /*
-     * @Test public void testDbl() { final double c = 3.14; final Double cc =
-     * Double.valueOf( c ); tc.setDbl( c ); Assertions.assertEquals( cc,
-     * tc.getDbl() ); tc.setDbl( 0.0 ); Assertions.assertTrue( !cc.equals(
-     * tc.getDbl() ) ); tc.setDbl( cc ); Assertions.assertEquals( cc,
-     * tc.getDbl() ); tc.removeDbl(); Assertions.assertNull( tc.getDbl() ); }
-     *
-     * @Test public void testEntity() throws Exception { Resource r =
-     * model.createResource( "testclass" ); final TestInterface c =
-     * manager.read( r, TestInterface.class ); tc.setEnt( c );
-     * Assertions.assertEquals( c, tc.getEnt() ); r = model.createResource(
-     * "testclass2" ); final TestInterface cc = manager.read( r,
-     * TestInterface.class ); tc.setEnt( cc ); Assertions.assertTrue( !c.equals(
-     * tc.getEnt() ) ); tc.removeEnt(); Assertions.assertNull( tc.getEnt() );
-     *
-     * }
-     *
-     * @Test public void testFlt() { final float c = 3.14F; final Float cc =
-     * Float.valueOf( c ); tc.setFlt( c ); Assertions.assertEquals( cc,
-     * tc.getFlt() ); tc.setFlt( 0.0F ); Assertions.assertTrue( !cc.equals(
-     * tc.getFlt() ) ); tc.setFlt( cc ); Assertions.assertEquals( cc,
-     * tc.getFlt() ); tc.removeFlt(); Assertions.assertNull( tc.getFlt() ); }
-     *
-     * @Test public void testInt() { final int c = 3; final Integer cc =
-     * Integer.valueOf( c ); tc.setInt( c ); Assertions.assertEquals( cc,
-     * tc.getInt() ); tc.setInt( 0 ); Assertions.assertTrue( !cc.equals(
-     * tc.getInt() ) ); tc.setInt( cc ); Assertions.assertEquals( cc,
-     * tc.getInt() ); tc.removeInt(); Assertions.assertNull( tc.getInt() ); }
-     *
-     * @Test public void testLng() { final long c = 3; final Long cc =
-     * Long.valueOf( c ); tc.setLng( c ); Assertions.assertEquals( cc,
-     * tc.getLng() ); tc.setLng( 0L ); Assertions.assertTrue( !cc.equals(
-     * tc.getLng() ) ); tc.setLng( cc ); Assertions.assertEquals( cc,
-     * tc.getLng() ); tc.removeLng(); Assertions.assertNull( tc.getLng() ); }
-     *
-     * @Test public void testRdf() { final RDFNode n = model.createResource(
-     * "rdfNode" ); tc.setRDF( n ); Assertions.assertEquals( n, tc.getRDF() );
-     * tc.setRDF( model.createResource( "anotherRdfNode" ) );
-     * Assertions.assertTrue( !n.equals( tc.getStr() ) ); tc.removeRDF();
-     * Assertions.assertNull( tc.getRDF() );
-     *
-     * }
-     *
-     * @Test public void testStr() { final String cc = "string"; tc.setStr(
-     * "string" ); Assertions.assertEquals( cc, tc.getStr() ); tc.setStr( "foo"
-     * ); Assertions.assertTrue( !cc.equals( tc.getStr() ) ); tc.setStr( cc );
-     * Assertions.assertEquals( cc, tc.getStr() ); tc.removeStr();
-     * Assertions.assertNull( tc.getStr() ); }
-     *
-     * @Test public void testSubPredicate() throws Exception { Resource r =
-     * model.createResource( "http://localhost/SubPredicateTest1" ); final
-     * SubPredicate sp = manager.read( r, SubPredicate.class ); sp.setName(
-     * "spTest" );
-     *
-     * r = model.createResource( "http://localhost/SubPredicateTest2" ); final
-     * SubPredicate sp2 = manager.read( r, SubPredicate.class ); sp2.setName(
-     * "spTest2" );
-     *
-     * tc.setSubPredicate( sp ); Assertions.assertNotNull( tc.getSubPredicate()
-     * ); Assertions.assertEquals( sp.getName(), tc.getSubPredicate().getName()
-     * );
-     *
-     * tc.setSubPredicate( sp2 ); Assertions.assertNotNull( tc.getSubPredicate()
-     * ); Assertions.assertEquals( sp2.getName(), tc.getSubPredicate().getName()
-     * );
-     *
-     * tc.removeSubPredicate(); Assertions.assertNull( tc.getSubPredicate() );
-     *
-     * }
-     *
-     * @Test public void testURI() { final Resource r =
-     * ResourceFactory.createResource( "uriTest" ); tc.setU( r );
-     * Assertions.assertEquals( r, tc.getU() ); Assertions.assertEquals(
-     * "uriTest", tc.getU2() ); tc.setU( "uriTest2" ); Assertions.assertTrue(
-     * !r.equals( tc.getU() ) ); tc.removeU(); Assertions.assertNull( tc.getU()
-     * ); Assertions.assertNull( tc.getU2() ); }
-     */
+    
+    static String getUri(String shortName) {
+        return NAMESPACE+shortName.substring( 0,1 ).toLowerCase()+shortName.substring(1);
+    }
     
     Method setter(String shortName, Class<?> dataType) throws NoSuchMethodException, SecurityException {
         return CollectionValueInterface.class.getMethod("add"+shortName, dataType);
@@ -207,15 +101,15 @@ public class CollectionValueObjectEntityTests {
     }
     
     @ParameterizedTest
-    @MethodSource("testFullSetParams")
-    void testFullSet(String shortName, Class<?> dataType, Object first, Object second ) throws Exception {
-        Property p = model.createProperty( NAMESPACE, shortName.substring( 0,1 ).toLowerCase()+shortName.substring(1));
+    @MethodSource("normalSuiteTestParams")
+    void normalSuiteTest(String shortName, Class<?> dataType, Object first, Object second ) throws Exception {
+        Property p = model.createProperty( getUri(shortName));
         Method setter = setter(shortName, dataType);
         Method getter = getter(shortName);
         Method exist = exist(shortName, dataType);
         Method remover = remover(shortName, dataType);
         
-        assertTrue(model.isEmpty());        
+        assertTrue(model.isEmpty());
         assertFalse((Boolean) exist.invoke(underTest, first));
         assertFalse((Boolean) exist.invoke(underTest, second));
         
@@ -245,12 +139,11 @@ public class CollectionValueObjectEntityTests {
         assertFalse((Boolean) exist.invoke(underTest, second));
     }
     
-    public static final Stream<Arguments> testFullSetParams() {
+    public static final Stream<Arguments> normalSuiteTestParams() {
         List<Arguments> args = new ArrayList<>();
         args.add( Arguments.of( "Bool", Boolean.class, true, Boolean.FALSE ));
         args.add( Arguments.of( "Char", Character.class, Character.valueOf('A'), Character.valueOf( 'b' ) ));
         args.add( Arguments.of( "Dbl", Double.class, Double.MAX_VALUE, 3.14d ));
-        //args.add( Arguments.of( "Ent", TestInterface.class, new TestInterface, 3.14d ));
         args.add( Arguments.of( "Flt", Float.class, Float.MAX_VALUE, 3.14f ));
         args.add( Arguments.of( "Int", Integer.class, Integer.MAX_VALUE, 314 ));
         args.add( Arguments.of( "Lng", Long.class, Long.MAX_VALUE, 314l));
@@ -262,8 +155,8 @@ public class CollectionValueObjectEntityTests {
     }
     
     @ParameterizedTest
-    @MethodSource("uTestsParams")
-    public void uTests(String shortName, String shortName2) throws Exception {
+    @MethodSource("uriSuiteTestParams")
+    public void uriSuiteTest(String shortName, String shortName2) throws Exception {
         String first = "http://example.com#first";
         Resource firstR = model.createResource(first);
         String second = "http://example.com#second";
@@ -281,22 +174,20 @@ public class CollectionValueObjectEntityTests {
         
         setter.invoke( underTest, first );
         setterR.invoke( underTest, secondR );
-        
-        RDFWriter.source(model)
-        .format(RDFFormat.TURTLE_LONG)
-        .output(System.out);
-        
+
         assertTrue( (Boolean) exist.invoke( underTest, first ));
         assertTrue( (Boolean) existR.invoke( underTest, firstR ));
         assertTrue( (Boolean) exist.invoke( underTest,  second ));
         assertTrue( (Boolean) existR.invoke( underTest, secondR ));
         
+        @SuppressWarnings("unchecked")
         Collection<RDFNode> collection = (Collection<RDFNode>) getterR.invoke( underTest );
         assertEquals(2, collection.size());
         collection.remove( firstR  );
         collection.remove( secondR );
         assertEquals(0, collection.size());
         
+        @SuppressWarnings("unchecked")
         Collection<String> collectionStr = (Collection<String>) getter.invoke( underTest );
         assertEquals(2, collectionStr.size());
         collectionStr.remove( first  );
@@ -314,7 +205,7 @@ public class CollectionValueObjectEntityTests {
         assertFalse( (Boolean) existR.invoke( underTest, secondR ));
     }
     
-    public static final Stream<Arguments> uTestsParams() {
+    public static final Stream<Arguments> uriSuiteTestParams() {
         List<Arguments> args = new ArrayList<>();
         args.add( Arguments.of( "U", "U2" ));
         args.add( Arguments.of( "U3", "U4"));
@@ -333,42 +224,135 @@ public class CollectionValueObjectEntityTests {
         assertEquals( expected.getNamespace(), actual.getNamespace());
         assertEquals( expected.getObjectHandler().getClass(), actual.getObjectHandler().getClass());
         assertEquals( expected.getPostExec(), actual.getPostExec());
-        //assertEquivalent( predicateInfo.getPredicate())
+        EffectivePredicate ep = actual.getPredicate();
+        Class<?> epType = null;
+        switch (expected.getActionType()) {
+        case SETTER:
+            epType = expected.getEnclosedType() == void.class ? expected.getArgumentType() : expected.getEnclosedType();
+            break;
+        case GETTER:
+            epType = expected.getEnclosedType();
+            break;
+        case EXISTENTIAL:
+            epType = expected.getValueType();
+            break;
+        case REMOVER:
+            epType = expected.getArgumentType();
+            break;
+        }
+        EffectivePredicateTest.assertValues( ep, false, false, "", expected.getProperty().getLocalName(), 
+                NAMESPACE, epType, false );
         assertEquals( expected.getProperty(), actual.getProperty());
         assertEquals( expected.getReturnType(), actual.getReturnType());
         assertEquals( expected.getUriString(), actual.getUriString());
         assertEquals( expected.getValueType(), actual.getValueType());
-        //assertEquivalent( expected.getPredicate(), predicateInfo.getPredicate());
         
     }
    
     public static final Stream<Arguments> subjectInfoTestParams() {
-        final TypeMapper typeMapper = TypeMapper.getInstance();
-        List<Arguments> args = new ArrayList<>();
-        args.add( makeInfo( Boolean.class, ActionType.SETTER, Boolean.class, void.class, "addBool",
-                new LiteralHandler( typeMapper.getTypeByClass( Boolean.class ) ), Collections.emptyList(), void.class,
-                NAMESPACE + "bool", Boolean.class ) );
 
-        args.add( makeInfo( Set.class, ActionType.GETTER, void.class, Boolean.class, "getBool",
-                new LiteralHandler( typeMapper.getTypeByClass( Boolean.class ) ), Collections.emptyList(), Set.class,
-                NAMESPACE + "bool", Set.class ) );
+        List<Arguments> args = literalFunctions( new ArrayList<>(), "Bool", Boolean.class, Set.class);
+        args = literalFunctions( args, "Char", Character.class, List.class);
+        args = literalFunctions( args, "Dbl", Double.class, Queue.class);
+        args = literalFunctions( args, "Flt", Float.class, Set.class);
+        args = literalFunctions( args, "Int", Integer.class, Queue.class);
+        args = literalFunctions( args, "Lng", Long.class, List.class);
+        args = literalFunctions( args, "Str", String.class, Set.class);
+
+        args = resourceFunctions( args, "RDF", RDFNode.class, List.class);
+        args = resourceFunctions( args, "U", RDFNode.class, Set.class);
+        args = resourceFunctions( args, "U3", RDFNode.class, Queue.class);
         
-        args.add( makeInfo( Boolean.class, ActionType.EXISTENTIAL, Boolean.class, void.class, "hasBool",
-                new LiteralHandler( typeMapper.getTypeByClass( Boolean.class ) ), Collections.emptyList(), Boolean.class,
-                NAMESPACE + "bool", Boolean.class ) );
+        args = uriFunctions( args, "U", "U2", List.class);
+        args = uriFunctions( args, "U3", "U4", Set.class);
+        args = entFunctions( args, "Ent", TestInterface.class, Queue.class);
 
-        args.add( makeInfo( Boolean.class, ActionType.REMOVER, Boolean.class, void.class, "removeBool",
-                new LiteralHandler( typeMapper.getTypeByClass( Boolean.class ) ), Collections.emptyList(), void.class,
-                NAMESPACE + "bool", Boolean.class ) );
-
-        /**
-         * private PredicateInfo makeInfo(ActionType actionType, Class<?> argumentType, Class<?> enclosedType,
-            String methodName, ObjectHandler objectHandler, List<Method> postExec,
-            Property property, Class<?> returnType, String uriString, Class<?> valueType){
-         */
         return args.stream();
     }
     
+    private static List<Arguments> literalFunctions(List<Arguments> args, String shortName, Class<?> valueType,
+            Class<?> collectionType) {
+        final TypeMapper typeMapper = TypeMapper.getInstance();
+        final String namespace = getUri(shortName);
+        args.add( makeInfo( valueType, ActionType.SETTER, valueType, void.class, "add"+shortName,
+                new LiteralHandler( typeMapper.getTypeByClass( valueType ) ), Collections.emptyList(), void.class,
+                namespace, valueType ) );
+
+        args.add( makeInfo( collectionType, ActionType.GETTER, void.class, valueType, "get"+shortName,
+                new LiteralHandler( typeMapper.getTypeByClass( valueType ) ), Collections.emptyList(), collectionType,
+                namespace, collectionType ) );
+        
+        args.add( makeInfo( valueType, ActionType.EXISTENTIAL, valueType, void.class, "has"+shortName,
+                new LiteralHandler( typeMapper.getTypeByClass( Boolean.class ) ), Collections.emptyList(), Boolean.class,
+                namespace, valueType ) );
+
+        args.add( makeInfo( valueType, ActionType.REMOVER, valueType, void.class, "remove"+shortName,
+                new LiteralHandler( typeMapper.getTypeByClass( valueType ) ), Collections.emptyList(), void.class,
+                namespace, valueType ) );
+        return args;
+    }
+    
+    private static List<Arguments> resourceFunctions(List<Arguments> args, String shortName, Class<?> valueType,
+            Class<?> collectionType) {
+        final String namespace = getUri(shortName);        
+        args.add( makeInfo( valueType, ActionType.SETTER, valueType, void.class, "add"+shortName,
+                ResourceHandler.INSTANCE, Collections.emptyList(), void.class,
+                namespace, valueType ) );
+
+        args.add( makeInfo( collectionType, ActionType.GETTER, void.class, valueType, "get"+shortName,
+                ResourceHandler.INSTANCE, Collections.emptyList(), collectionType,
+                namespace, collectionType ) );
+        
+        args.add( makeInfo( valueType, ActionType.EXISTENTIAL, valueType, void.class, "has"+shortName,
+                ResourceHandler.INSTANCE, Collections.emptyList(), Boolean.class,
+                namespace, valueType ) );
+
+        args.add( makeInfo( valueType, ActionType.REMOVER, valueType, void.class, "remove"+shortName,
+                ResourceHandler.INSTANCE, Collections.emptyList(), void.class,
+                namespace, valueType ) );
+        return args;
+    }
+    
+    private static List<Arguments> uriFunctions(List<Arguments> args, String shortName, String collectionName, Class<?> collectionType) {
+        final String namespace = getUri(shortName);
+        args.add( makeInfo( String.class, ActionType.SETTER, String.class, URI.class, "add"+shortName,
+                UriHandler.INSTANCE, Collections.emptyList(), void.class,
+                namespace, String.class ) );
+
+        args.add( makeInfo( collectionType, ActionType.GETTER, void.class, URI.class, "get"+collectionName,
+                UriHandler.INSTANCE, Collections.emptyList(), collectionType,
+                namespace, collectionType ) );
+        
+        args.add( makeInfo( String.class, ActionType.EXISTENTIAL, URI.class, void.class, "has"+shortName,
+                UriHandler.INSTANCE, Collections.emptyList(), Boolean.class,
+                namespace, URI.class ) );
+
+        args.add( makeInfo( String.class, ActionType.REMOVER, URI.class, void.class, "remove"+shortName,
+                UriHandler.INSTANCE, Collections.emptyList(), void.class,
+                namespace, URI.class ) );
+        return args;
+    }
+    
+    private static List<Arguments> entFunctions(List<Arguments> args, String shortName, Class<?> valueType,
+            Class<?> collectionType) {
+        final String namespace = getUri(shortName);
+        args.add( makeInfo( valueType, ActionType.SETTER, valueType, void.class, "add"+shortName,
+                new EntityHandler(valueType), Collections.emptyList(), void.class,
+                namespace, valueType ) );
+
+        args.add( makeInfo( collectionType, ActionType.GETTER, void.class, valueType, "get"+shortName,
+                new EntityHandler(valueType), Collections.emptyList(), collectionType,
+                namespace, collectionType ) );
+        
+        args.add( makeInfo( valueType, ActionType.EXISTENTIAL, valueType, void.class, "has"+shortName,
+                new EntityHandler(valueType), Collections.emptyList(), Boolean.class,
+                namespace, valueType ) );
+
+        args.add( makeInfo( valueType, ActionType.REMOVER, valueType, void.class, "remove"+shortName,
+                new EntityHandler(valueType), Collections.emptyList(), void.class,
+                namespace, valueType ) );
+        return args;
+    }
     
     private static Arguments makeInfo(Class<?> methodArgType, ActionType actionType, Class<?> argumentType, Class<?> enclosedType,
             String methodName, ObjectHandler objectHandler, List<Method> postExec,
@@ -438,20 +422,50 @@ public class CollectionValueObjectEntityTests {
         
     }
 
+    /* separate test because we have to create the test interface in the graph */
     @Test
-    public void testEnt() {
-
-    /*
-
-
-@Predicate
-void addEnt(TestInterface b);
-
-
-
-     
-     */
+    public void testEnt() throws Exception {
+        assertTrue(model.isEmpty());
+        Property p = model.createProperty( getUri("Ent"));
         
-        fail("Not implemented");
+        Resource t1r = model.createResource( getUri("t1p"));
+        TestInterface first = manager.read( t1r, TestInterface.class );
+        Resource t2r = model.createResource( getUri("t2p"));
+        TestInterface second = manager.read( t2r, TestInterface.class );
+
+        assertFalse(underTest.hasEnt(first));
+        assertFalse(underTest.hasEnt(second));
+        
+        underTest.addEnt( first );
+        
+        
+        RDFWriter.source(model)
+        .format(RDFFormat.TURTLE_LONG)
+        .output(System.out);
+        
+        
+        assertEquals( 1, model.listObjectsOfProperty(p).toList().size());
+        assertTrue(underTest.hasEnt( first));
+        assertFalse(underTest.hasEnt(second));
+        
+        underTest.addEnt( second);
+        assertEquals( 2, model.listObjectsOfProperty(p).toList().size());
+        assertTrue(underTest.hasEnt( first));
+        assertTrue(underTest.hasEnt( second));
+        
+        Collection<TestInterface> collection = underTest.getEnt();
+        assertEquals(2, collection.size());
+        assertTrue(collection.remove(first));
+        assertTrue(collection.remove(second));
+
+        underTest.removeEnt( first);
+        assertEquals( 1, model.listObjectsOfProperty(p).toList().size());
+        assertFalse(underTest.hasEnt( first));
+        assertTrue(underTest.hasEnt( second));
+
+        underTest.removeEnt( second);
+        assertEquals( 0, model.listObjectsOfProperty(p).toList().size());
+        assertFalse(underTest.hasEnt(first));
+        assertFalse(underTest.hasEnt(second));
     }
 }

@@ -14,7 +14,7 @@ public class UriHandlerTest implements HandlerTestInterface {
 
     @BeforeEach
     public void setup() {
-        handler = new UriHandler();
+        handler = UriHandler.INSTANCE;
         node = ResourceFactory.createResource( "http://example.com" );
         instance = 5;
     }

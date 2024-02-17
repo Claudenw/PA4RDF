@@ -21,6 +21,11 @@ import org.xenei.jena.entities.ObjectHandler;
  * An ObjectHandler that always returns null.
  */
 public class VoidHandler implements ObjectHandler {
+    
+    public static final VoidHandler INSTANCE = new VoidHandler();
+    
+    private VoidHandler() {
+    }
     /**
      * Convert the object to null
      *
