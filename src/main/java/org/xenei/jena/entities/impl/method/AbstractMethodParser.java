@@ -55,11 +55,12 @@ public class AbstractMethodParser extends BaseMethodParser {
         }
     }
 
-    private void parseExistential(final Action action, final EffectivePredicate superPredicate) {
+    private void parseExistential(final Action action, final EffectivePredicate predicate) {
         // we only parse boolean results
         if (TypeChecker.canBeSetFrom( Boolean.class, action.method.getReturnType() )
                 && (action.method.getParameterCount() <= 1)) {
-            final EffectivePredicate predicate = new EffectivePredicate( action.method ).merge( superPredicate );
+            // TODO remove this line?
+            //final EffectivePredicate predicate = new EffectivePredicate( action.method ).merge( superPredicate );
             subjectInfo.add( action.method, new PredicateInfoImpl( predicate, action ) );
         }
     }

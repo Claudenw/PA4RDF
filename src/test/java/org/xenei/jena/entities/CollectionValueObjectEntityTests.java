@@ -16,22 +16,29 @@ package org.xenei.jena.entities;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.TypeVariable;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Stream;
 
+import org.apache.jena.datatypes.TypeMapper;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.rdf.model.Property;
 import org.apache.jena.rdf.model.RDFNode;
 import org.apache.jena.rdf.model.Resource;
 import org.apache.jena.rdf.model.ResourceFactory;
+import org.apache.jena.riot.RDFFormat;
+import org.apache.jena.riot.RDFWriter;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -41,6 +48,11 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.xenei.jena.entities.annotations.Predicate;
 import org.xenei.jena.entities.annotations.URI;
+import org.xenei.jena.entities.exceptions.MissingAnnotationException;
+import org.xenei.jena.entities.impl.ActionType;
+import org.xenei.jena.entities.impl.SubjectInfoFactory;
+import org.xenei.jena.entities.impl.SubjectInfoImpl;
+import org.xenei.jena.entities.impl.handlers.LiteralHandler;
 import org.xenei.jena.entities.testing.iface.CollectionValueInterface;
 import org.xenei.jena.entities.testing.iface.TestInterface;
 
@@ -52,11 +64,13 @@ public class CollectionValueObjectEntityTests {
     private CollectionValueInterface underTest;
     private Model model;
     private EntityManager manager;
+    private SubjectInfo subjectInfo;
 
     @BeforeEach
     public void setup() throws Exception {
         manager = EntityManagerFactory.getEntityManager();
         model = ModelFactory.createDefaultModel();
+        subjectInfo = manager.getSubjectInfo( CollectionValueInterface.class );
         final Resource r = model.createResource( "http://localhost/CollectionValueObjectEntityTest" );
         underTest = manager.read( r, CollectionValueInterface.class );
     }
@@ -242,29 +256,202 @@ public class CollectionValueObjectEntityTests {
         args.add( Arguments.of( "Lng", Long.class, Long.MAX_VALUE, 314l));
         args.add( Arguments.of( "RDF", RDFNode.class, ResourceFactory.createStringLiteral( "foo" ), ResourceFactory.createResource()));
         args.add( Arguments.of( "Str", String.class, "first", "second"));
-        args.add( Arguments.of( "U", String.class, "http://example.com#first", "http://example.com#second"));
-/*9*/        args.add( Arguments.of( "U", RDFNode.class, ResourceFactory.createStringLiteral( "foo" ), ResourceFactory.createResource()));
-        args.add( Arguments.of( "U3", String.class, "http://example.com#first", "http://example.com#second"));
-/*11*/        args.add( Arguments.of( "U3", RDFNode.class, ResourceFactory.createStringLiteral( "foo" ), ResourceFactory.createResource()));
-
-        /*
-   
-
-    @Predicate
-    void addEnt(TestInterface b);
-
-    void addU(RDFNode b);
-
-    @Predicate
-    void addU(@URI String b);
-
-    @Predicate
-    void addU3(RDFNode b);
-
-    void addU3(@URI String b);
-
-         */
-        
+        args.add( Arguments.of( "U", RDFNode.class, ResourceFactory.createStringLiteral( "foo" ), ResourceFactory.createResource()));
+        args.add( Arguments.of( "U3", RDFNode.class, ResourceFactory.createStringLiteral( "foo" ), ResourceFactory.createResource()));
         return args.stream();
+    }
+    
+    @ParameterizedTest
+    @MethodSource("uTestsParams")
+    public void uTests(String shortName, String shortName2) throws Exception {
+        String first = "http://example.com#first";
+        Resource firstR = model.createResource(first);
+        String second = "http://example.com#second";
+        Resource secondR = model.createResource(second);
+        
+        Method setter = setter(shortName, String.class);
+        Method getter = getter(shortName2);
+        Method exist = exist(shortName, String.class);
+        Method remover = remover(shortName, String.class);
+        
+        Method setterR = setter(shortName, RDFNode.class);
+        Method getterR = getter(shortName);
+        Method existR = exist(shortName, RDFNode.class);
+        Method removerR = remover(shortName, RDFNode.class);
+        
+        setter.invoke( underTest, first );
+        setterR.invoke( underTest, secondR );
+        
+        RDFWriter.source(model)
+        .format(RDFFormat.TURTLE_LONG)
+        .output(System.out);
+        
+        assertTrue( (Boolean) exist.invoke( underTest, first ));
+        assertTrue( (Boolean) existR.invoke( underTest, firstR ));
+        assertTrue( (Boolean) exist.invoke( underTest,  second ));
+        assertTrue( (Boolean) existR.invoke( underTest, secondR ));
+        
+        Collection<RDFNode> collection = (Collection<RDFNode>) getterR.invoke( underTest );
+        assertEquals(2, collection.size());
+        collection.remove( firstR  );
+        collection.remove( secondR );
+        assertEquals(0, collection.size());
+        
+        Collection<String> collectionStr = (Collection<String>) getter.invoke( underTest );
+        assertEquals(2, collectionStr.size());
+        collectionStr.remove( first  );
+        collectionStr.remove( second );
+        assertEquals(0, collectionStr.size());
+
+        removerR.invoke( underTest, firstR);
+        assertFalse( (Boolean) exist.invoke( underTest, first ));
+        assertFalse( (Boolean) existR.invoke( underTest, firstR ));
+        assertTrue( (Boolean) exist.invoke( underTest,  second ));
+        assertTrue( (Boolean) existR.invoke( underTest, secondR ));
+
+        remover.invoke( underTest, second );
+        assertFalse( (Boolean) exist.invoke( underTest,  second ));
+        assertFalse( (Boolean) existR.invoke( underTest, secondR ));
+    }
+    
+    public static final Stream<Arguments> uTestsParams() {
+        List<Arguments> args = new ArrayList<>();
+        args.add( Arguments.of( "U", "U2" ));
+        args.add( Arguments.of( "U3", "U4"));
+        return args.stream();
+    }
+    
+    @ParameterizedTest
+    @MethodSource("subjectInfoTestParams")
+    public void subjectInfoTest(String methodName, Class<?> methodArg, PredicateInfo expected) {
+        PredicateInfo actual = subjectInfo.getPredicateInfo(methodName, methodArg);
+        assertNotNull(actual, "Method not found");
+        assertEquals( expected.getActionType(), actual.getActionType());
+        assertEquals( expected.getArgumentType(), actual.getArgumentType());
+        assertEquals( expected.getEnclosedType(), actual.getEnclosedType());
+        assertEquals( expected.getMethodName(), actual.getMethodName());
+        assertEquals( expected.getNamespace(), actual.getNamespace());
+        assertEquals( expected.getObjectHandler().getClass(), actual.getObjectHandler().getClass());
+        assertEquals( expected.getPostExec(), actual.getPostExec());
+        //assertEquivalent( predicateInfo.getPredicate())
+        assertEquals( expected.getProperty(), actual.getProperty());
+        assertEquals( expected.getReturnType(), actual.getReturnType());
+        assertEquals( expected.getUriString(), actual.getUriString());
+        assertEquals( expected.getValueType(), actual.getValueType());
+        //assertEquivalent( expected.getPredicate(), predicateInfo.getPredicate());
+        
+    }
+   
+    public static final Stream<Arguments> subjectInfoTestParams() {
+        final TypeMapper typeMapper = TypeMapper.getInstance();
+        List<Arguments> args = new ArrayList<>();
+        args.add( makeInfo( Boolean.class, ActionType.SETTER, Boolean.class, void.class, "addBool",
+                new LiteralHandler( typeMapper.getTypeByClass( Boolean.class ) ), Collections.emptyList(), void.class,
+                NAMESPACE + "bool", Boolean.class ) );
+
+        args.add( makeInfo( Set.class, ActionType.GETTER, void.class, Boolean.class, "getBool",
+                new LiteralHandler( typeMapper.getTypeByClass( Boolean.class ) ), Collections.emptyList(), Set.class,
+                NAMESPACE + "bool", Set.class ) );
+        
+        args.add( makeInfo( Boolean.class, ActionType.EXISTENTIAL, Boolean.class, void.class, "hasBool",
+                new LiteralHandler( typeMapper.getTypeByClass( Boolean.class ) ), Collections.emptyList(), Boolean.class,
+                NAMESPACE + "bool", Boolean.class ) );
+
+        args.add( makeInfo( Boolean.class, ActionType.REMOVER, Boolean.class, void.class, "removeBool",
+                new LiteralHandler( typeMapper.getTypeByClass( Boolean.class ) ), Collections.emptyList(), void.class,
+                NAMESPACE + "bool", Boolean.class ) );
+
+        /**
+         * private PredicateInfo makeInfo(ActionType actionType, Class<?> argumentType, Class<?> enclosedType,
+            String methodName, ObjectHandler objectHandler, List<Method> postExec,
+            Property property, Class<?> returnType, String uriString, Class<?> valueType){
+         */
+        return args.stream();
+    }
+    
+    
+    private static Arguments makeInfo(Class<?> methodArgType, ActionType actionType, Class<?> argumentType, Class<?> enclosedType,
+            String methodName, ObjectHandler objectHandler, List<Method> postExec,
+            Class<?> returnType, String uriString, Class<?> valueType){
+        return Arguments.of( methodName, methodArgType,  new PredicateInfo() {
+
+            @Override
+            public ActionType getActionType() {
+                return actionType;
+            }
+
+            @Override
+            public String getMethodName() {
+                return methodName;
+            }
+
+            @Override
+            public String getNamespace() {
+                return NAMESPACE;
+            }
+
+            @Override
+            public Property getProperty() {
+                return ResourceFactory.createProperty( uriString );
+            }
+
+            @Override
+            public String getUriString() {
+                return uriString;
+            }
+
+            @Override
+            public List<Method> getPostExec() {
+                return postExec;
+            }
+
+            @Override
+            public ObjectHandler getObjectHandler() {
+                return objectHandler;
+            }
+
+            @Override
+            public EffectivePredicate getPredicate() {
+                return null;
+            }
+
+            @Override
+            public Class<?> getArgumentType() {
+                return argumentType;
+            }
+
+            @Override
+            public Class<?> getReturnType() {
+                return returnType;
+            }
+
+            @Override
+            public Class<?> getEnclosedType() {
+                return enclosedType;
+            }
+
+            @Override
+            public Class<?> getValueType() {
+                return valueType;
+            }}
+            );
+        
+    }
+
+    @Test
+    public void testEnt() {
+
+    /*
+
+
+@Predicate
+void addEnt(TestInterface b);
+
+
+
+     
+     */
+        
+        fail("Not implemented");
     }
 }

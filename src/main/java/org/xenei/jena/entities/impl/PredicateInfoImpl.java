@@ -175,20 +175,23 @@ public class PredicateInfoImpl implements PredicateInfo {
             throw new IllegalArgumentException( "Action may not be null" );
         }
         actionType = action.actionType;
-        final Class<?> tempArgumentType = action.getArgument();
+        Class<?> tempArgumentType = action.getArgument();
         final Class<?> tempReturnType = action.getReturn();
         Class<?> tempEnclosedType = void.class;
         switch (actionType) {
         case SETTER:
+            // effective predicate should already have the URI class set as the type
             tempEnclosedType = ClassUtils.isCollection( tempArgumentType ) ? predicate.type()
                     : (action.hasArgumentAnnotation( URI.class ) ? URI.class : void.class);
             break;
         case GETTER:
+            // effective predicat should already have the URI class set as the type.
             tempEnclosedType = ClassUtils.isCollection( tempReturnType ) ? predicate.type()
                     : (action.hasMethodTypeAnnotation( URI.class ) ? URI.class : void.class);
             break;
-        default:
-            // do nothing
+        case EXISTENTIAL:
+        case REMOVER:
+            tempArgumentType = action.hasArgumentAnnotation( URI.class ) ? URI.class : tempArgumentType;
             break;
         }
 
@@ -269,12 +272,10 @@ public class PredicateInfoImpl implements PredicateInfo {
 
         case REMOVER:
             if (!action.isMultiple) {
+                // is this already handled by argumentType?
                 return new VoidHandler();
             }
-            if (action.hasMethodTypeAnnotation( URI.class )) {
-                return new UriHandler();
-            }
-            dataType = action.getArgument();
+            dataType = argumentType;
             break;
 
         case GETTER:
