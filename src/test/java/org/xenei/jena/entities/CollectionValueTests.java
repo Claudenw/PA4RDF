@@ -49,11 +49,12 @@ import org.xenei.jena.entities.impl.handlers.EntityHandler;
 import org.xenei.jena.entities.impl.handlers.LiteralHandler;
 import org.xenei.jena.entities.impl.handlers.ResourceHandler;
 import org.xenei.jena.entities.impl.handlers.UriHandler;
+import org.xenei.jena.entities.testing.iface.CollectionValueHelper;
 import org.xenei.jena.entities.testing.iface.CollectionValueInterface;
 import org.xenei.jena.entities.testing.iface.TestInterface;
 
 
-public class CollectionValueObjectEntityTests {
+public class CollectionValueTests {
     
     private static final String NAMESPACE = "http://localhost/test#";
 
@@ -74,10 +75,6 @@ public class CollectionValueObjectEntityTests {
     @AfterEach
     public void teardown() {
         model.close();
-    }
-    
-    static String getUri(String shortName) {
-        return NAMESPACE+shortName.substring( 0,1 ).toLowerCase()+shortName.substring(1);
     }
     
     Method setter(String shortName, Class<?> dataType) throws NoSuchMethodException, SecurityException {
@@ -103,7 +100,7 @@ public class CollectionValueObjectEntityTests {
     @ParameterizedTest
     @MethodSource("normalSuiteTestParams")
     void normalSuiteTest(String shortName, Class<?> dataType, Object first, Object second ) throws Exception {
-        Property p = model.createProperty( getUri(shortName));
+        Property p = model.createProperty( CollectionValueHelper.getUri(shortName));
         Method setter = setter(shortName, dataType);
         Method getter = getter(shortName);
         Method exist = exist(shortName, dataType);
@@ -217,232 +214,29 @@ public class CollectionValueObjectEntityTests {
     public void subjectInfoTest(String methodName, Class<?> methodArg, PredicateInfo expected) {
         PredicateInfo actual = subjectInfo.getPredicateInfo(methodName, methodArg);
         assertNotNull(actual, "Method not found");
-        assertEquals( expected.getActionType(), actual.getActionType());
-        assertEquals( expected.getArgumentType(), actual.getArgumentType());
-        assertEquals( expected.getEnclosedType(), actual.getEnclosedType());
-        assertEquals( expected.getMethodName(), actual.getMethodName());
-        assertEquals( expected.getNamespace(), actual.getNamespace());
-        assertEquals( expected.getObjectHandler().getClass(), actual.getObjectHandler().getClass());
-        assertEquals( expected.getPostExec(), actual.getPostExec());
-        EffectivePredicate ep = actual.getPredicate();
-        Class<?> epType = null;
-        switch (expected.getActionType()) {
-        case SETTER:
-            epType = expected.getEnclosedType() == void.class ? expected.getArgumentType() : expected.getEnclosedType();
-            break;
-        case GETTER:
-            epType = expected.getEnclosedType();
-            break;
-        case EXISTENTIAL:
-            epType = expected.getValueType();
-            break;
-        case REMOVER:
-            epType = expected.getArgumentType();
-            break;
-        }
-        EffectivePredicateTest.assertValues( ep, false, false, "", expected.getProperty().getLocalName(), 
-                NAMESPACE, epType, false );
-        assertEquals( expected.getProperty(), actual.getProperty());
-        assertEquals( expected.getReturnType(), actual.getReturnType());
-        assertEquals( expected.getUriString(), actual.getUriString());
-        assertEquals( expected.getValueType(), actual.getValueType());
-        
+        CollectionValueHelper.assertSame( expected, actual );
     }
    
     public static final Stream<Arguments> subjectInfoTestParams() {
-
-        List<Arguments> args = literalFunctions( new ArrayList<>(), "Bool", Boolean.class, Set.class);
-        args = literalFunctions( args, "Char", Character.class, List.class);
-        args = literalFunctions( args, "Dbl", Double.class, Queue.class);
-        args = literalFunctions( args, "Flt", Float.class, Set.class);
-        args = literalFunctions( args, "Int", Integer.class, Queue.class);
-        args = literalFunctions( args, "Lng", Long.class, List.class);
-        args = literalFunctions( args, "Str", String.class, Set.class);
-
-        args = resourceFunctions( args, "RDF", RDFNode.class, List.class);
-        args = resourceFunctions( args, "U", RDFNode.class, Set.class);
-        args = resourceFunctions( args, "U3", RDFNode.class, Queue.class);
-        
-        args = uriFunctions( args, "U", "U2", List.class);
-        args = uriFunctions( args, "U3", "U4", Set.class);
-        args = entFunctions( args, "Ent", TestInterface.class, Queue.class);
-
-        return args.stream();
-    }
-    
-    private static List<Arguments> literalFunctions(List<Arguments> args, String shortName, Class<?> valueType,
-            Class<?> collectionType) {
-        final TypeMapper typeMapper = TypeMapper.getInstance();
-        final String namespace = getUri(shortName);
-        args.add( makeInfo( valueType, ActionType.SETTER, valueType, void.class, "add"+shortName,
-                new LiteralHandler( typeMapper.getTypeByClass( valueType ) ), Collections.emptyList(), void.class,
-                namespace, valueType ) );
-
-        args.add( makeInfo( collectionType, ActionType.GETTER, void.class, valueType, "get"+shortName,
-                new LiteralHandler( typeMapper.getTypeByClass( valueType ) ), Collections.emptyList(), collectionType,
-                namespace, collectionType ) );
-        
-        args.add( makeInfo( valueType, ActionType.EXISTENTIAL, valueType, void.class, "has"+shortName,
-                new LiteralHandler( typeMapper.getTypeByClass( Boolean.class ) ), Collections.emptyList(), Boolean.class,
-                namespace, valueType ) );
-
-        args.add( makeInfo( valueType, ActionType.REMOVER, valueType, void.class, "remove"+shortName,
-                new LiteralHandler( typeMapper.getTypeByClass( valueType ) ), Collections.emptyList(), void.class,
-                namespace, valueType ) );
-        return args;
-    }
-    
-    private static List<Arguments> resourceFunctions(List<Arguments> args, String shortName, Class<?> valueType,
-            Class<?> collectionType) {
-        final String namespace = getUri(shortName);        
-        args.add( makeInfo( valueType, ActionType.SETTER, valueType, void.class, "add"+shortName,
-                ResourceHandler.INSTANCE, Collections.emptyList(), void.class,
-                namespace, valueType ) );
-
-        args.add( makeInfo( collectionType, ActionType.GETTER, void.class, valueType, "get"+shortName,
-                ResourceHandler.INSTANCE, Collections.emptyList(), collectionType,
-                namespace, collectionType ) );
-        
-        args.add( makeInfo( valueType, ActionType.EXISTENTIAL, valueType, void.class, "has"+shortName,
-                ResourceHandler.INSTANCE, Collections.emptyList(), Boolean.class,
-                namespace, valueType ) );
-
-        args.add( makeInfo( valueType, ActionType.REMOVER, valueType, void.class, "remove"+shortName,
-                ResourceHandler.INSTANCE, Collections.emptyList(), void.class,
-                namespace, valueType ) );
-        return args;
-    }
-    
-    private static List<Arguments> uriFunctions(List<Arguments> args, String shortName, String collectionName, Class<?> collectionType) {
-        final String namespace = getUri(shortName);
-        args.add( makeInfo( String.class, ActionType.SETTER, String.class, URI.class, "add"+shortName,
-                UriHandler.INSTANCE, Collections.emptyList(), void.class,
-                namespace, String.class ) );
-
-        args.add( makeInfo( collectionType, ActionType.GETTER, void.class, URI.class, "get"+collectionName,
-                UriHandler.INSTANCE, Collections.emptyList(), collectionType,
-                namespace, collectionType ) );
-        
-        args.add( makeInfo( String.class, ActionType.EXISTENTIAL, URI.class, void.class, "has"+shortName,
-                UriHandler.INSTANCE, Collections.emptyList(), Boolean.class,
-                namespace, URI.class ) );
-
-        args.add( makeInfo( String.class, ActionType.REMOVER, URI.class, void.class, "remove"+shortName,
-                UriHandler.INSTANCE, Collections.emptyList(), void.class,
-                namespace, URI.class ) );
-        return args;
-    }
-    
-    private static List<Arguments> entFunctions(List<Arguments> args, String shortName, Class<?> valueType,
-            Class<?> collectionType) {
-        final String namespace = getUri(shortName);
-        args.add( makeInfo( valueType, ActionType.SETTER, valueType, void.class, "add"+shortName,
-                new EntityHandler(valueType), Collections.emptyList(), void.class,
-                namespace, valueType ) );
-
-        args.add( makeInfo( collectionType, ActionType.GETTER, void.class, valueType, "get"+shortName,
-                new EntityHandler(valueType), Collections.emptyList(), collectionType,
-                namespace, collectionType ) );
-        
-        args.add( makeInfo( valueType, ActionType.EXISTENTIAL, valueType, void.class, "has"+shortName,
-                new EntityHandler(valueType), Collections.emptyList(), Boolean.class,
-                namespace, valueType ) );
-
-        args.add( makeInfo( valueType, ActionType.REMOVER, valueType, void.class, "remove"+shortName,
-                new EntityHandler(valueType), Collections.emptyList(), void.class,
-                namespace, valueType ) );
-        return args;
-    }
-    
-    private static Arguments makeInfo(Class<?> methodArgType, ActionType actionType, Class<?> argumentType, Class<?> enclosedType,
-            String methodName, ObjectHandler objectHandler, List<Method> postExec,
-            Class<?> returnType, String uriString, Class<?> valueType){
-        return Arguments.of( methodName, methodArgType,  new PredicateInfo() {
-
-            @Override
-            public ActionType getActionType() {
-                return actionType;
-            }
-
-            @Override
-            public String getMethodName() {
-                return methodName;
-            }
-
-            @Override
-            public String getNamespace() {
-                return NAMESPACE;
-            }
-
-            @Override
-            public Property getProperty() {
-                return ResourceFactory.createProperty( uriString );
-            }
-
-            @Override
-            public String getUriString() {
-                return uriString;
-            }
-
-            @Override
-            public List<Method> getPostExec() {
-                return postExec;
-            }
-
-            @Override
-            public ObjectHandler getObjectHandler() {
-                return objectHandler;
-            }
-
-            @Override
-            public EffectivePredicate getPredicate() {
-                return null;
-            }
-
-            @Override
-            public Class<?> getArgumentType() {
-                return argumentType;
-            }
-
-            @Override
-            public Class<?> getReturnType() {
-                return returnType;
-            }
-
-            @Override
-            public Class<?> getEnclosedType() {
-                return enclosedType;
-            }
-
-            @Override
-            public Class<?> getValueType() {
-                return valueType;
-            }}
-            );
-        
+        return CollectionValueHelper.createAllPredicateInfo().stream()
+                .map( p -> Arguments.of( p.getMethodName(), p.getMethodArgType(),  p));
     }
 
     /* separate test because we have to create the test interface in the graph */
     @Test
     public void testEnt() throws Exception {
         assertTrue(model.isEmpty());
-        Property p = model.createProperty( getUri("Ent"));
+        Property p = model.createProperty( CollectionValueHelper.getUri("Ent"));
         
-        Resource t1r = model.createResource( getUri("t1p"));
+        Resource t1r = model.createResource( CollectionValueHelper.getUri("t1p"));
         TestInterface first = manager.read( t1r, TestInterface.class );
-        Resource t2r = model.createResource( getUri("t2p"));
+        Resource t2r = model.createResource( CollectionValueHelper.getUri("t2p"));
         TestInterface second = manager.read( t2r, TestInterface.class );
 
         assertFalse(underTest.hasEnt(first));
         assertFalse(underTest.hasEnt(second));
         
         underTest.addEnt( first );
-        
-        
-        RDFWriter.source(model)
-        .format(RDFFormat.TURTLE_LONG)
-        .output(System.out);
-        
         
         assertEquals( 1, model.listObjectsOfProperty(p).toList().size());
         assertTrue(underTest.hasEnt( first));
